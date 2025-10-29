@@ -1,0 +1,23 @@
+include: package:flutter_lints/flutter.yaml
+
+linter:
+  rules:
+    # 推奨ルール
+    prefer_const_constructors: true
+    prefer_const_declarations: true
+    prefer_final_fields: true
+    prefer_final_locals: true
+    avoid_print: true
+    avoid_unnecessary_containers: true
+    sized_box_for_whitespace: true
+    use_key_in_widget_constructors: true
+    
+    # コメント
+    lines_longer_than_80_chars: false
+
+analyzer:
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+  errors:
+    invalid_annotation_target: ignore
