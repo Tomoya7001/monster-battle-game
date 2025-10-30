@@ -8,6 +8,7 @@ import 'core/theme/app_theme.dart';
 import 'presentation/blocs/auth/auth_bloc.dart';
 import 'presentation/blocs/app/app_bloc.dart';
 
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 

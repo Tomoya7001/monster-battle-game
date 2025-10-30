@@ -2,6 +2,11 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
+    // テスト用コレクション（開発時のみ - 本番では削除すること）
+    match /test/{document=**} {
+      allow read, write: if true;  // 誰でもアクセス可能
+    }
+    
     // ユーザーは自分のデータのみアクセス可能
     match /users/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;

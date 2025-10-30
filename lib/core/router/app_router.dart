@@ -6,6 +6,7 @@ import '../../presentation/screens/splash/splash_screen.dart';
 import '../../presentation/screens/auth/login_screen.dart';
 import '../../presentation/screens/auth/signup_screen.dart';
 import '../../presentation/screens/home/home_screen.dart';
+import '../../presentation/screens/test/firestore_test_screen.dart';  // 🔥 追加
 
 /// アプリケーション全体のルーティング設定
 class AppRouter {
@@ -14,11 +15,12 @@ class AppRouter {
   static const String login = '/login';
   static const String signup = '/signup';
   static const String home = '/home';
+  static const String test = '/test';  // 🔥 追加
 
   /// GoRouterインスタンス
   static final GoRouter router = GoRouter(
     debugLogDiagnostics: true,
-    initialLocation: splash,
+    initialLocation: test,  // 🔥 テスト用に一時変更（後で splash に戻す）
     routes: [
       // スプラッシュ画面
       GoRoute(
@@ -57,6 +59,16 @@ class AppRouter {
         pageBuilder: (context, state) => MaterialPage(
           key: state.pageKey,
           child: const HomeScreen(),
+        ),
+      ),
+
+      // 🔥 Firestoreテスト画面（追加）
+      GoRoute(
+        path: test,
+        name: 'test',
+        pageBuilder: (context, state) => MaterialPage(
+          key: state.pageKey,
+          child: const FirestoreTestScreen(),
         ),
       ),
     ],
