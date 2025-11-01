@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'core/di/injection.dart';
 import 'firebase_options.dart';
-import 'presentation/screens/home_screen.dart'; // ← この行を追加
+import 'presentation/screens/home/home_screen.dart'; // ← この行を追加
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
