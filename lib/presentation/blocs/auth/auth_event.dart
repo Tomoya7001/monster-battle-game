@@ -1,4 +1,4 @@
-import 'package:equatable/equatable.dart';
+part of 'auth_bloc.dart';
 
 /// 認証関連のイベント
 abstract class AuthEvent extends Equatable {
@@ -11,6 +11,11 @@ abstract class AuthEvent extends Equatable {
 /// 認証状態チェック要求
 class AuthCheckRequested extends AuthEvent {
   const AuthCheckRequested();
+}
+
+/// Googleログイン要求（追加）
+class GoogleSignInRequested extends AuthEvent {
+  const GoogleSignInRequested();
 }
 
 /// ログアウト要求

@@ -20,7 +20,7 @@ class AppRouter {
   /// GoRouterインスタンス
   static final GoRouter router = GoRouter(
     debugLogDiagnostics: true,
-    initialLocation: test,  // 🔥 テスト用に一時変更（後で splash に戻す）
+    initialLocation: AppRouter.splash,  // 🔥 テスト用に一時変更（後で splash に戻す）
     routes: [
       // スプラッシュ画面
       GoRoute(

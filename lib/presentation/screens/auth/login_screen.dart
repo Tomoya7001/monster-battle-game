@@ -1,141 +1,156 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-
+import '../../blocs/auth/auth_bloc.dart';
 import '../../../core/router/app_router.dart';
 
 /// ログイン画面
 /// 
 /// Google/Apple Sign Inでの認証を提供
-/// 現在は仮実装（Week 2で本実装予定）
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // ロゴ
-              Container(
-                width: 100,
-                height: 100,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primaryContainer,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Icon(
-                  Icons.pets,
-                  size: 56,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
+      body: BlocConsumer<AuthBloc, AuthState>(
+        listener: (context, state) {
+          // 認証成功時、ホーム画面へ遷移
+          if (state is Authenticated) {
+            context.go(AppRouter.home);
+          } 
+          // エラー時、スナックバー表示
+          else if (state is AuthError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: Colors.red,
               ),
-              const SizedBox(height: 32),
+            );
+          }
+        },
+        builder: (context, state) {
+          // ローディング中
+          if (state is AuthLoading) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
 
-              // タイトル
-              Text(
-                'ログイン',
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 8),
-
-              // サブタイトル
-              Text(
-                'アカウントにログインしてゲームを始めよう',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.grey,
-                    ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 48),
-
-              // Google Sign In ボタン
-              _SignInButton(
-                icon: Icons.g_mobiledata_rounded,
-                label: 'Googleでログイン',
-                backgroundColor: Colors.white,
-                textColor: Colors.black87,
-                onPressed: () {
-                  // TODO: Week 2で実装
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Google Sign Inは Week 2 で実装予定です'),
-                      duration: Duration(seconds: 2),
-                    ),
-                  );
-                  
-                  // 仮の遷移（開発確認用）
-                  Future.delayed(const Duration(seconds: 1), () {
-                    if (context.mounted) {
-                      context.go(AppRouter.home);
-                    }
-                  });
-                },
-              ),
-              const SizedBox(height: 16),
-
-              // Apple Sign In ボタン
-              _SignInButton(
-                icon: Icons.apple,
-                label: 'Appleでログイン',
-                backgroundColor: Colors.black,
-                textColor: Colors.white,
-                onPressed: () {
-                  // TODO: Week 2で実装
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Apple Sign Inは Week 2 で実装予定です'),
-                      duration: Duration(seconds: 2),
-                    ),
-                  );
-                },
-              ),
-              const SizedBox(height: 32),
-
-              // 区切り線
-              Row(
-                children: [
-                  const Expanded(child: Divider()),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Text(
-                      'または',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.grey,
-                          ),
-                    ),
-                  ),
-                  const Expanded(child: Divider()),
-                ],
-              ),
-              const SizedBox(height: 32),
-
-              // 新規登録へのリンク
-              Row(
+          // ログイン画面
+          return SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text(
-                    'アカウントをお持ちでないですか？',
-                    style: Theme.of(context).textTheme.bodyMedium,
+                  // ロゴ
+                  Container(
+                    width: 100,
+                    height: 100,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primaryContainer,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Icon(
+                      Icons.pets,
+                      size: 56,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                   ),
-                  TextButton(
+                  const SizedBox(height: 32),
+
+                  // タイトル
+                  Text(
+                    'ログイン',
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 8),
+
+                  // サブタイトル
+                  Text(
+                    'アカウントにログインしてゲームを始めよう',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Colors.grey,
+                        ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 48),
+
+                  // Google Sign In ボタン
+                  _SignInButton(
+                    icon: Icons.g_mobiledata_rounded,
+                    label: 'Googleでログイン',
+                    backgroundColor: Colors.white,
+                    textColor: Colors.black87,
                     onPressed: () {
-                      context.go(AppRouter.signup);
+                      // Googleログインイベントを発火
+                      context.read<AuthBloc>().add(const GoogleSignInRequested());
                     },
-                    child: const Text('新規登録'),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Apple Sign In ボタン
+                  _SignInButton(
+                    icon: Icons.apple,
+                    label: 'Appleでログイン',
+                    backgroundColor: Colors.black,
+                    textColor: Colors.white,
+                    onPressed: () {
+                      // TODO: Apple Sign Inは後で実装
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Apple Sign Inは実装予定です'),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 32),
+
+                  // 区切り線
+                  Row(
+                    children: [
+                      const Expanded(child: Divider()),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          'または',
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: Colors.grey,
+                              ),
+                        ),
+                      ),
+                      const Expanded(child: Divider()),
+                    ],
+                  ),
+                  const SizedBox(height: 32),
+
+                  // 新規登録へのリンク
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'アカウントをお持ちでないですか？',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          context.go(AppRouter.signup);
+                        },
+                        child: const Text('新規登録'),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }

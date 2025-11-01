@@ -1,4 +1,4 @@
-import 'package:equatable/equatable.dart';
+part of 'auth_bloc.dart';
 
 /// 認証状態
 abstract class AuthState extends Equatable {

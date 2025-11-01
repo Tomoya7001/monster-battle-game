@@ -48,15 +48,18 @@ dependencies:
   uuid: ^4.3.0
   http: ^1.2.0
 
+  get_it: ^8.0.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^4.0.0
-
-  # コード生成
+  
+  # 既存のコード生成
   build_runner: ^2.4.0
   freezed: ^2.5.0
   json_serializable: ^6.8.0
+  fake_cloud_firestore: ^3.1.0
 
 flutter:
   uses-material-design: true
