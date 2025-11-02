@@ -1,20 +1,24 @@
 import 'package:equatable/equatable.dart';
+import '../../../../domain/entities/monster.dart';
+import '../../screens/gacha/widgets/gacha_tabs.dart';
 
+/// ガチャの状態
 enum GachaStatus {
-  initial,
-  loading,
-  success,
-  failure,
+  initial,   // 初期状態
+  loading,   // ローディング中(ガチャ実行中)
+  success,   // 成功(結果表示)
+  failure,   // 失敗(エラー)
 }
 
+/// ガチャの状態管理
 class GachaState extends Equatable {
   final GachaStatus status;
   final GachaType selectedType;
-  final int freeGems;
-  final int paidGems;
-  final int tickets;
-  final int pityCount;
-  final List<UserMonster> results;
+  final int freeGems;      // 無償石
+  final int paidGems;      // 有償石
+  final int tickets;       // ガチャチケット
+  final int pityCount;     // 天井カウント
+  final List<Monster> results; // ガチャ結果
   final String? errorMessage;
 
   const GachaState({
@@ -28,6 +32,7 @@ class GachaState extends Equatable {
     this.errorMessage,
   });
 
+  /// 状態をコピーして更新
   GachaState copyWith({
     GachaStatus? status,
     GachaType? selectedType,
@@ -35,7 +40,7 @@ class GachaState extends Equatable {
     int? paidGems,
     int? tickets,
     int? pityCount,
-    List<UserMonster>? results,
+    List<Monster>? results,
     String? errorMessage,
   }) {
     return GachaState(
@@ -46,7 +51,7 @@ class GachaState extends Equatable {
       tickets: tickets ?? this.tickets,
       pityCount: pityCount ?? this.pityCount,
       results: results ?? this.results,
-      errorMessage: errorMessage ?? this.errorMessage,
+      errorMessage: errorMessage,
     );
   }
 

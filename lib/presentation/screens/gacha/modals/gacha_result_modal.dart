@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import '../../../../domain/entities/monster.dart';
 
+/// ガチャ結果表示モーダル
+/// 
+/// Day 4: 基本実装
+/// Day 5-6: 演出追加
 class GachaResultModal extends StatelessWidget {
-  final List<UserMonster> results;
+  final List<Monster> results;
   final VoidCallback onClose;
 
   const GachaResultModal({
@@ -10,16 +15,18 @@ class GachaResultModal extends StatelessWidget {
     required this.onClose,
   });
 
+  /// モーダルを表示
   static Future<void> show(
     BuildContext context, {
-    required List<UserMonster> results,
+    required List<Monster> results,
+    required VoidCallback onClose,
   }) {
     return showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) => GachaResultModal(
         results: results,
-        onClose: () => Navigator.pop(context),
+        onClose: onClose,
       ),
     );
   }
@@ -29,14 +36,21 @@ class GachaResultModal extends StatelessWidget {
     final isSingle = results.length == 1;
 
     return Dialog(
+      backgroundColor: Colors.transparent,
       child: Container(
         padding: const EdgeInsets.all(24.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+        ),
         constraints: BoxConstraints(
           maxHeight: MediaQuery.of(context).size.height * 0.8,
+          maxWidth: MediaQuery.of(context).size.width * 0.9,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            // タイトル
             Text(
               isSingle ? '召喚結果' : '10連召喚結果',
               style: const TextStyle(
@@ -44,19 +58,40 @@ class GachaResultModal extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 24),
-            Expanded(
-              child: isSingle
-                  ? _buildSingleResult(results.first)
-                  : _buildMultiResults(results),
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: onClose,
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size(double.infinity, 48),
+            const SizedBox(height: 16),
+            
+            // 結果表示（スクロール可能）
+            Flexible(
+              child: SingleChildScrollView(
+                child: isSingle
+                    ? _buildSingleResult(results.first)
+                    : _buildMultiResults(results),
               ),
-              child: const Text('閉じる'),
+            ),
+            
+            const SizedBox(height: 16),
+            
+            // 閉じるボタン
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  onClose();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: const Text(
+                  '閉じる',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ),
             ),
           ],
         ),
@@ -64,20 +99,38 @@ class GachaResultModal extends StatelessWidget {
     );
   }
 
-  Widget _buildSingleResult(UserMonster monster) {
+  /// 単発結果表示
+  Widget _buildSingleResult(Monster monster) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // TODO: モンスター画像表示
+        // レアリティ表示
+        _buildRarityStars(monster.rarity),
+        const SizedBox(height: 16),
+        
+        // モンスター画像(仮)
         Container(
           width: 200,
           height: 200,
-          color: _getRarityColor(monster.rarity),
-          child: const Center(
-            child: Icon(Icons.pets, size: 100, color: Colors.white),
+          decoration: BoxDecoration(
+            color: _getRarityColor(monster.rarity).withOpacity(0.2),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: _getRarityColor(monster.rarity),
+              width: 3,
+            ),
+          ),
+          child: Center(
+            child: Icon(
+              Icons.pets,
+              size: 120,
+              color: _getRarityColor(monster.rarity),
+            ),
           ),
         ),
         const SizedBox(height: 16),
+        
+        // モンスター名
         Text(
           monster.name,
           style: const TextStyle(
@@ -86,68 +139,98 @@ class GachaResultModal extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(
-            monster.rarity,
-            (index) => const Icon(
-              Icons.star,
-              color: Colors.orange,
-              size: 24,
-            ),
+        
+        // レベル表示
+        Text(
+          'Lv.${monster.level}',
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.grey[600],
           ),
         ),
       ],
     );
   }
 
-  Widget _buildMultiResults(List<UserMonster> monsters) {
+  /// 10連結果表示
+  Widget _buildMultiResults(List<Monster> monsters) {
     return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
         mainAxisSpacing: 8,
         crossAxisSpacing: 8,
+        childAspectRatio: 0.75,
       ),
       itemCount: monsters.length,
       itemBuilder: (context, index) {
         final monster = monsters[index];
-        return Card(
-          color: _getRarityColor(monster.rarity),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // TODO: モンスター画像表示
-              const Icon(Icons.pets, size: 48, color: Colors.white),
-              const SizedBox(height: 4),
-              Text(
-                monster.name,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(
-                  monster.rarity,
-                  (index) => const Icon(
-                    Icons.star,
-                    color: Colors.orange,
-                    size: 12,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
+        return _buildResultCard(monster);
       },
     );
   }
 
+  /// 結果カード
+  Widget _buildResultCard(Monster monster) {
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: _getRarityColor(monster.rarity).withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: _getRarityColor(monster.rarity),
+          width: 2,
+        ),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // モンスター画像(仮)
+          Icon(
+            Icons.pets,
+            size: 40,
+            color: _getRarityColor(monster.rarity),
+          ),
+          const SizedBox(height: 4),
+          
+          // モンスター名
+          Text(
+            monster.name,
+            style: const TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 4),
+          
+          // レアリティ星
+          _buildRarityStars(monster.rarity, size: 10),
+        ],
+      ),
+    );
+  }
+
+  /// レアリティの星表示
+  Widget _buildRarityStars(int rarity, {double size = 20}) {
+    return Wrap(
+      alignment: WrapAlignment.center,
+      spacing: 2,
+      children: List.generate(
+        rarity,
+        (index) => Icon(
+          Icons.star,
+          color: _getRarityColor(rarity),
+          size: size,
+        ),
+      ),
+    );
+  }
+
+  /// レアリティに応じた色を取得
   Color _getRarityColor(int rarity) {
     switch (rarity) {
       case 5:

@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
+import '../../screens/gacha/widgets/gacha_tabs.dart';
 
+/// ガチャ関連のイベント
 abstract class GachaEvent extends Equatable {
   const GachaEvent();
 
@@ -7,6 +9,8 @@ abstract class GachaEvent extends Equatable {
   List<Object?> get props => [];
 }
 
+/// 初期化イベント
+/// ユーザーの通貨情報と天井カウンターを取得
 class GachaInitialize extends GachaEvent {
   final String userId;
 
@@ -16,6 +20,7 @@ class GachaInitialize extends GachaEvent {
   List<Object?> get props => [userId];
 }
 
+/// ガチャタイプ変更イベント
 class GachaTypeChanged extends GachaEvent {
   final GachaType type;
 
@@ -25,6 +30,7 @@ class GachaTypeChanged extends GachaEvent {
   List<Object?> get props => [type];
 }
 
+/// 単発ガチャ実行イベント
 class GachaDrawSingle extends GachaEvent {
   final String userId;
 
@@ -34,6 +40,7 @@ class GachaDrawSingle extends GachaEvent {
   List<Object?> get props => [userId];
 }
 
+/// 10連ガチャ実行イベント
 class GachaDrawMulti extends GachaEvent {
   final String userId;
 
@@ -41,4 +48,9 @@ class GachaDrawMulti extends GachaEvent {
 
   @override
   List<Object?> get props => [userId];
+}
+
+/// 結果モーダルを閉じるイベント
+class GachaResultClosed extends GachaEvent {
+  const GachaResultClosed();
 }
