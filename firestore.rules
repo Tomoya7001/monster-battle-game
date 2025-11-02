@@ -1,38 +1,48 @@
+// firestore.rules
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
-    // テスト用コレクション（開発時のみ - 本番では削除すること）
-    match /test/{document=**} {
-      allow read, write: if true;  // 誰でもアクセス可能
+    // ========================================
+    // マスターデータ（読み取り専用）
+    // ========================================
+    
+    match /monster_masters/{monsterId} {
+      allow read: if true;  // 全員が読める
+      allow write: if false;  // 書き込み不可（管理者のみ）
     }
     
-    // ユーザーは自分のデータのみアクセス可能
+    match /skill_masters/{skillId} {
+      allow read: if true;
+      allow write: if false;
+    }
+    
+    match /equipment_masters/{equipmentId} {
+      allow read: if true;
+      allow write: if false;
+    }
+    
+    match /trait_masters/{traitId} {
+      allow read: if true;
+      allow write: if false;
+    }
+    
+    // ========================================
+    // ユーザーデータ（認証済みユーザーのみ）
+    // ========================================
+    
     match /users/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
     
-    // マスターデータは認証済みユーザー全員が読み取り可能
-    match /monsters/{monsterId} {
-      allow read: if request.auth != null;
-      allow write: if false; // 管理者のみ（Firebase Consoleから）
+    match /user_monsters/{monsterDocId} {
+      allow read, write: if request.auth != null && 
+                           resource.data.user_id == request.auth.uid;
     }
     
-    match /skills/{skillId} {
-      allow read: if request.auth != null;
-      allow write: if false;
-    }
-    
-    match /equipment/{equipmentId} {
-      allow read: if request.auth != null;
-      allow write: if false;
-    }
-    
-    // バトルログは参加者のみ読み取り可能
-    match /battleLogs/{battleId} {
-      allow read: if request.auth != null && 
-                     request.auth.uid in resource.data.participants;
-      allow write: if false; // Cloud Functionsのみ
+    match /user_equipment/{equipmentDocId} {
+      allow read, write: if request.auth != null && 
+                           resource.data.user_id == request.auth.uid;
     }
   }
 }

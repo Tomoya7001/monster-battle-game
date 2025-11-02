@@ -1,0 +1,551 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Equipment Master Data",
+  "description": "Phase 1 装備マスターデータ (サンプル23種類)",
+  "version": "1.0.0",
+  "equipment": [
+    {
+      "equipment_id": 1,
+      "name": "鉄の剣",
+      "name_en": "Iron Sword",
+      "rarity": 2,
+      "category": "weapon",
+      "restrictions": {},
+      "effects": [
+        {
+          "type": "stat_boost",
+          "stat": "attack",
+          "boost_percentage": 0.08
+        }
+      ],
+      "crafting": {
+        "common_materials": 7,
+        "monster_materials": 3,
+        "gold": 4500
+      },
+      "description": "基本的な鉄製の剣"
+    },
+    {
+      "equipment_id": 2,
+      "name": "鋼の剣",
+      "name_en": "Steel Sword",
+      "rarity": 3,
+      "category": "weapon",
+      "restrictions": {},
+      "effects": [
+        {
+          "type": "stat_boost",
+          "stat": "attack",
+          "boost_percentage": 0.15
+        }
+      ],
+      "crafting": {
+        "common_materials": 25,
+        "monster_materials": 15,
+        "gold": 22500
+      },
+      "description": "丈夫な鋼製の剣"
+    },
+    {
+      "equipment_id": 3,
+      "name": "ミスリル剣",
+      "name_en": "Mithril Sword",
+      "rarity": 4,
+      "category": "weapon",
+      "restrictions": {},
+      "effects": [
+        {
+          "type": "stat_boost",
+          "stat": "attack",
+          "boost_percentage": 0.22
+        }
+      ],
+      "crafting": {
+        "common_materials": 50,
+        "monster_materials": 30,
+        "gold": 65000
+      },
+      "description": "軽くて丈夫な魔法金属の剣"
+    },
+    {
+      "equipment_id": 4,
+      "name": "エクスカリバー",
+      "name_en": "Excalibur",
+      "rarity": 5,
+      "category": "weapon",
+      "restrictions": {},
+      "effects": [
+        {
+          "type": "stat_boost",
+          "stat": "attack",
+          "boost_percentage": 0.25
+        },
+        {
+          "type": "critical_rate_boost",
+          "boost": 0.1
+        }
+      ],
+      "crafting": {
+        "common_materials": 100,
+        "monster_materials": 65,
+        "gold": 200000
+      },
+      "description": "伝説の聖剣。攻撃力とクリティカル率を上げる"
+    },
+    {
+      "equipment_id": 5,
+      "name": "フレイムブレード",
+      "name_en": "Flame Blade",
+      "rarity": 3,
+      "category": "weapon",
+      "restrictions": {
+        "attribute": "Fire"
+      },
+      "effects": [
+        {
+          "type": "stat_boost",
+          "stat": "attack",
+          "boost_percentage": 0.2
+        },
+        {
+          "type": "attribute_boost",
+          "attribute": "Fire",
+          "boost_percentage": 0.15
+        }
+      ],
+      "crafting": {
+        "common_materials": 25,
+        "monster_materials": 15,
+        "gold": 22500
+      },
+      "description": "炎属性専用。炎技の威力が上がる"
+    },
+    {
+      "equipment_id": 6,
+      "name": "竜牙の剣",
+      "name_en": "Dragon Fang Sword",
+      "rarity": 4,
+      "category": "weapon",
+      "restrictions": {
+        "species": "Dragon"
+      },
+      "effects": [
+        {
+          "type": "stat_boost",
+          "stat": "attack",
+          "boost_percentage": 0.28
+        },
+        {
+          "type": "stat_boost",
+          "stat": "speed",
+          "boost_percentage": 0.15
+        }
+      ],
+      "crafting": {
+        "common_materials": 50,
+        "monster_materials": 30,
+        "gold": 65000
+      },
+      "description": "ドラゴン専用。攻撃力と素早さを大きく上げる"
+    },
+    {
+      "equipment_id": 7,
+      "name": "革の鎧",
+      "name_en": "Leather Armor",
+      "rarity": 2,
+      "category": "armor",
+      "restrictions": {},
+      "effects": [
+        {
+          "type": "stat_boost",
+          "stat": "defense",
+          "boost_percentage": 0.08
+        }
+      ],
+      "crafting": {
+        "common_materials": 7,
+        "monster_materials": 3,
+        "gold": 4500
+      },
+      "description": "基本的な革製の鎧"
+    },
+    {
+      "equipment_id": 8,
+      "name": "鋼の鎧",
+      "name_en": "Steel Armor",
+      "rarity": 3,
+      "category": "armor",
+      "restrictions": {},
+      "effects": [
+        {
+          "type": "stat_boost",
+          "stat": "defense",
+          "boost_percentage": 0.15
+        }
+      ],
+      "crafting": {
+        "common_materials": 25,
+        "monster_materials": 15,
+        "gold": 22500
+      },
+      "description": "丈夫な鋼製の鎧"
+    },
+    {
+      "equipment_id": 9,
+      "name": "ミスリル鎧",
+      "name_en": "Mithril Armor",
+      "rarity": 4,
+      "category": "armor",
+      "restrictions": {},
+      "effects": [
+        {
+          "type": "stat_boost",
+          "stat": "defense",
+          "boost_percentage": 0.22
+        }
+      ],
+      "crafting": {
+        "common_materials": 50,
+        "monster_materials": 30,
+        "gold": 65000
+      },
+      "description": "魔法金属の鎧。軽量で防御力が高い"
+    },
+    {
+      "equipment_id": 10,
+      "name": "オーロラアーマー",
+      "name_en": "Aurora Armor",
+      "rarity": 5,
+      "category": "armor",
+      "restrictions": {},
+      "effects": [
+        {
+          "type": "stat_boost",
+          "stat": "defense",
+          "boost_percentage": 0.25
+        },
+        {
+          "type": "reflect_damage",
+          "percentage": 0.15
+        }
+      ],
+      "crafting": {
+        "common_materials": 100,
+        "monster_materials": 65,
+        "gold": 200000
+      },
+      "description": "虹色に輝く鎧。ダメージの一部を反射"
+    },
+    {
+      "equipment_id": 11,
+      "name": "強化装甲",
+      "name_en": "Reinforced Plating",
+      "rarity": 3,
+      "category": "armor",
+      "restrictions": {
+        "species": "Mechanoid"
+      },
+      "effects": [
+        {
+          "type": "stat_boost",
+          "stat": "defense",
+          "boost_percentage": 0.25
+        },
+        {
+          "type": "status_resistance",
+          "status": "paralysis",
+          "boost": 0.5
+        }
+      ],
+      "crafting": {
+        "common_materials": 25,
+        "monster_materials": 15,
+        "gold": 22500
+      },
+      "description": "メカノイド専用。麻痺耐性も上がる"
+    },
+    {
+      "equipment_id": 12,
+      "name": "力の腕輪",
+      "name_en": "Power Bracelet",
+      "rarity": 2,
+      "category": "accessory",
+      "restrictions": {},
+      "effects": [
+        {
+          "type": "stat_boost",
+          "stat": "attack",
+          "boost_percentage": 0.07
+        }
+      ],
+      "crafting": {
+        "common_materials": 7,
+        "monster_materials": 3,
+        "gold": 4500
+      },
+      "description": "攻撃力を少し上げる腕輪"
+    },
+    {
+      "equipment_id": 13,
+      "name": "守りの指輪",
+      "name_en": "Guard Ring",
+      "rarity": 3,
+      "category": "accessory",
+      "restrictions": {},
+      "effects": [
+        {
+          "type": "stat_boost",
+          "stat": "defense",
+          "boost_percentage": 0.12
+        }
+      ],
+      "crafting": {
+        "common_materials": 25,
+        "monster_materials": 15,
+        "gold": 22500
+      },
+      "description": "防御力を上げる指輪"
+    },
+    {
+      "equipment_id": 14,
+      "name": "再生の指輪",
+      "name_en": "Regeneration Ring",
+      "rarity": 3,
+      "category": "accessory",
+      "restrictions": {},
+      "effects": [
+        {
+          "type": "turn_healing",
+          "heal_percentage": 0.0625,
+          "duration": "permanent"
+        }
+      ],
+      "crafting": {
+        "common_materials": 25,
+        "monster_materials": 15,
+        "gold": 22500
+      },
+      "description": "毎ターンHPが回復する (最大HPの1/16)"
+    },
+    {
+      "equipment_id": 15,
+      "name": "疾風の羽",
+      "name_en": "Swift Feather",
+      "rarity": 4,
+      "category": "accessory",
+      "restrictions": {},
+      "effects": [
+        {
+          "type": "stat_boost",
+          "stat": "speed",
+          "boost_percentage": 0.2
+        }
+      ],
+      "crafting": {
+        "common_materials": 50,
+        "monster_materials": 30,
+        "gold": 65000
+      },
+      "description": "素早さを大きく上げる羽"
+    },
+    {
+      "equipment_id": 16,
+      "name": "鋭眼の眼鏡",
+      "name_en": "Sharp Eye Glasses",
+      "rarity": 4,
+      "category": "accessory",
+      "restrictions": {},
+      "effects": [
+        {
+          "type": "critical_rate_boost",
+          "boost": 0.125
+        },
+        {
+          "type": "accuracy_boost",
+          "boost": 0.1
+        }
+      ],
+      "crafting": {
+        "common_materials": 50,
+        "monster_materials": 30,
+        "gold": 65000
+      },
+      "description": "クリティカル率と命中率を上げる"
+    },
+    {
+      "equipment_id": 17,
+      "name": "マスターアミュレット",
+      "name_en": "Master Amulet",
+      "rarity": 5,
+      "category": "accessory",
+      "restrictions": {},
+      "effects": [
+        {
+          "type": "stat_boost",
+          "stat": "attack",
+          "boost_percentage": 0.15
+        },
+        {
+          "type": "stat_boost",
+          "stat": "magic",
+          "boost_percentage": 0.15
+        }
+      ],
+      "crafting": {
+        "common_materials": 100,
+        "monster_materials": 65,
+        "gold": 200000
+      },
+      "description": "攻撃力と魔力を上げる万能アミュレット"
+    },
+    {
+      "equipment_id": 18,
+      "name": "天使の翼",
+      "name_en": "Angel Wings",
+      "rarity": 5,
+      "category": "accessory",
+      "restrictions": {
+        "species": "Angel"
+      },
+      "effects": [
+        {
+          "type": "stat_boost",
+          "stat": "magic",
+          "boost_percentage": 0.3
+        },
+        {
+          "type": "turn_healing",
+          "heal_percentage": 0.1,
+          "duration": "permanent"
+        }
+      ],
+      "crafting": {
+        "common_materials": 100,
+        "monster_materials": 65,
+        "gold": 200000
+      },
+      "description": "天使専用。魔力を大幅に上げ、毎ターン回復"
+    },
+    {
+      "equipment_id": 19,
+      "name": "戦士の証",
+      "name_en": "Warrior's Badge",
+      "rarity": 2,
+      "category": "special",
+      "restrictions": {
+        "monster_rarity": 2
+      },
+      "effects": [
+        {
+          "type": "all_stats_boost",
+          "boost_percentage": 0.08
+        }
+      ],
+      "crafting": {
+        "common_materials": 10,
+        "monster_materials": 5,
+        "gold": 6000
+      },
+      "description": "★2専用。全ステータスを上げる (低レア救済)"
+    },
+    {
+      "equipment_id": 20,
+      "name": "魔力の結晶",
+      "name_en": "Magic Crystal",
+      "rarity": 3,
+      "category": "special",
+      "restrictions": {},
+      "effects": [
+        {
+          "type": "initial_cost_boost",
+          "amount": 1
+        }
+      ],
+      "crafting": {
+        "common_materials": 25,
+        "monster_materials": 15,
+        "gold": 22500
+      },
+      "description": "バトル開始時のコストが+1される"
+    },
+    {
+      "equipment_id": 21,
+      "name": "復活の種",
+      "name_en": "Revive Seed",
+      "rarity": 4,
+      "category": "special",
+      "restrictions": {},
+      "effects": [
+        {
+          "type": "endure",
+          "trigger": "fatal_damage",
+          "hp_after": 1,
+          "probability": 1.0
+        }
+      ],
+      "usage_type": "consumable",
+      "crafting": {
+        "common_materials": 50,
+        "monster_materials": 30,
+        "gold": 65000
+      },
+      "description": "瀕死のダメージを受けてもHP1で耐える (1回のみ)"
+    },
+    {
+      "equipment_id": 22,
+      "name": "英雄の盾",
+      "name_en": "Hero's Shield",
+      "rarity": 5,
+      "category": "special",
+      "restrictions": {
+        "species": "Human"
+      },
+      "effects": [
+        {
+          "type": "stat_boost",
+          "stat": "defense",
+          "boost_percentage": 0.3
+        },
+        {
+          "type": "stat_boost",
+          "stat": "hp",
+          "boost_percentage": 0.2
+        }
+      ],
+      "crafting": {
+        "common_materials": 100,
+        "monster_materials": 65,
+        "gold": 200000
+      },
+      "description": "ヒューマン専用。防御とHPを大幅に上げる"
+    }
+  ],
+  "metadata": {
+    "total_equipment": 22,
+    "rarity_distribution": {
+      "rarity_2": 4,
+      "rarity_3": 7,
+      "rarity_4": 6,
+      "rarity_5": 5
+    },
+    "category_distribution": {
+      "weapon": 6,
+      "armor": 5,
+      "accessory": 7,
+      "special": 4
+    },
+    "restriction_types": {
+      "generic": 16,
+      "species_specific": 4,
+      "attribute_specific": 1,
+      "rarity_specific": 1
+    }
+  },
+  "notes": {
+    "balance_reference": "week4_balance_config.yaml を参照",
+    "restrictions": "species, attribute, monster_rarityで制限可能",
+    "effects": "複数の効果を配列で指定可能",
+    "exclusive_bonus": "専用装備は汎用装備より10%強い",
+    "expansion": "残りの装備を追加して50-70種類まで拡張予定"
+  }
+}

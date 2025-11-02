@@ -1,0 +1,495 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Skill Master Data",
+  "description": "Phase 1 技マスターデータ (炎・水技のサンプル + 基本技)",
+  "version": "1.0.0",
+  "skills": [
+    {
+      "skill_id": 1,
+      "name": "炎の爪",
+      "name_en": "Flame Claw",
+      "attribute": "Fire",
+      "cost": 1,
+      "category": "physical",
+      "power_multiplier": 0.9,
+      "accuracy": 100,
+      "effects": [],
+      "description": "炎を纏った爪で引っ掻く"
+    },
+    {
+      "skill_id": 2,
+      "name": "火の粉",
+      "name_en": "Ember",
+      "attribute": "Fire",
+      "cost": 1,
+      "category": "magical",
+      "power_multiplier": 0.8,
+      "accuracy": 100,
+      "effects": [
+        {
+          "type": "burn",
+          "probability": 0.1
+        }
+      ],
+      "description": "小さな炎を飛ばす。稀に火傷を負わせる"
+    },
+    {
+      "skill_id": 3,
+      "name": "火炎放射",
+      "name_en": "Flamethrower",
+      "attribute": "Fire",
+      "cost": 2,
+      "category": "magical",
+      "power_multiplier": 1.5,
+      "accuracy": 100,
+      "effects": [
+        {
+          "type": "burn",
+          "probability": 0.2
+        }
+      ],
+      "description": "激しい炎を放射する"
+    },
+    {
+      "skill_id": 4,
+      "name": "炎の舞",
+      "name_en": "Fire Dance",
+      "attribute": "Fire",
+      "cost": 2,
+      "category": "support",
+      "power_multiplier": 0,
+      "accuracy": 100,
+      "effects": [
+        {
+          "type": "buff",
+          "stat": "attack",
+          "stage": 1,
+          "target": "self"
+        }
+      ],
+      "description": "炎を纏って舞い、攻撃力を上げる"
+    },
+    {
+      "skill_id": 5,
+      "name": "灼熱の業火",
+      "name_en": "Inferno",
+      "attribute": "Fire",
+      "cost": 3,
+      "category": "magical",
+      "power_multiplier": 2.0,
+      "accuracy": 95,
+      "effects": [
+        {
+          "type": "burn",
+          "probability": 0.3
+        }
+      ],
+      "description": "強烈な炎で敵を焼き尽くす"
+    },
+    {
+      "skill_id": 6,
+      "name": "炎の壁",
+      "name_en": "Fire Wall",
+      "attribute": "Fire",
+      "cost": 3,
+      "category": "support",
+      "power_multiplier": 0,
+      "accuracy": 100,
+      "effects": [
+        {
+          "type": "buff",
+          "stat": "defense",
+          "stage": 2,
+          "target": "self"
+        }
+      ],
+      "description": "炎の壁で身を守り、防御力を大きく上げる"
+    },
+    {
+      "skill_id": 7,
+      "name": "煉獄の炎",
+      "name_en": "Hellfire",
+      "attribute": "Fire",
+      "cost": 4,
+      "category": "magical",
+      "power_multiplier": 2.7,
+      "accuracy": 90,
+      "effects": [
+        {
+          "type": "burn",
+          "probability": 0.5
+        }
+      ],
+      "description": "地獄の炎で敵を焼く。高確率で火傷"
+    },
+    {
+      "skill_id": 8,
+      "name": "大爆発",
+      "name_en": "Explosion",
+      "attribute": "Fire",
+      "cost": 5,
+      "category": "physical",
+      "power_multiplier": 3.5,
+      "accuracy": 100,
+      "effects": [
+        {
+          "type": "recoil",
+          "percentage": 0.25
+        }
+      ],
+      "description": "自爆技。自分も大ダメージを受ける"
+    },
+    {
+      "skill_id": 9,
+      "name": "紅蓮覇王",
+      "name_en": "Crimson Overlord",
+      "attribute": "Fire",
+      "cost": 6,
+      "category": "magical",
+      "power_multiplier": 4.5,
+      "accuracy": 100,
+      "effects": [
+        {
+          "type": "burn",
+          "probability": 0.8
+        },
+        {
+          "type": "buff",
+          "stat": "attack",
+          "stage": 1,
+          "target": "self"
+        }
+      ],
+      "description": "フレアドラゴンの奥義。絶大な炎の力"
+    },
+    {
+      "skill_id": 10,
+      "name": "絆の炎",
+      "name_en": "Bond Flame",
+      "attribute": "Fire",
+      "cost": 2,
+      "category": "magical",
+      "power_multiplier": 1.6,
+      "accuracy": 100,
+      "effects": [
+        {
+          "type": "affection_bonus",
+          "multiplier": 0.1
+        }
+      ],
+      "description": "親密度に応じて威力が上がる炎技"
+    },
+    {
+      "skill_id": 11,
+      "name": "守護の炎",
+      "name_en": "Guardian Flame",
+      "attribute": "Fire",
+      "cost": 1,
+      "category": "support",
+      "power_multiplier": 0,
+      "accuracy": 100,
+      "effects": [
+        {
+          "type": "protect",
+          "turns": 1
+        }
+      ],
+      "description": "炎で身を守る。次のターン、ダメージを軽減"
+    },
+    {
+      "skill_id": 12,
+      "name": "コストブースト",
+      "name_en": "Cost Boost",
+      "attribute": "Fire",
+      "cost": 3,
+      "category": "support",
+      "power_multiplier": 0,
+      "accuracy": 100,
+      "effects": [
+        {
+          "type": "cost_boost",
+          "amount": 3,
+          "target": "self"
+        }
+      ],
+      "description": "次ターンのコスト回復量が+3になる"
+    },
+    {
+      "skill_id": 13,
+      "name": "水鉄砲",
+      "name_en": "Water Gun",
+      "attribute": "Water",
+      "cost": 1,
+      "category": "magical",
+      "power_multiplier": 0.8,
+      "accuracy": 100,
+      "effects": [],
+      "description": "水を勢いよく噴射する"
+    },
+    {
+      "skill_id": 14,
+      "name": "水の波動",
+      "name_en": "Water Pulse",
+      "attribute": "Water",
+      "cost": 2,
+      "category": "magical",
+      "power_multiplier": 1.4,
+      "accuracy": 100,
+      "effects": [
+        {
+          "type": "confusion",
+          "probability": 0.15
+        }
+      ],
+      "description": "波動で攻撃。稀に混乱させる"
+    },
+    {
+      "skill_id": 15,
+      "name": "アクアリング",
+      "name_en": "Aqua Ring",
+      "attribute": "Water",
+      "cost": 2,
+      "category": "support",
+      "power_multiplier": 0,
+      "accuracy": 100,
+      "effects": [
+        {
+          "type": "regeneration",
+          "turns": 5,
+          "heal_percentage": 0.0625
+        }
+      ],
+      "description": "水の輪を作り、毎ターンHPが回復する"
+    },
+    {
+      "skill_id": 16,
+      "name": "ハイドロポンプ",
+      "name_en": "Hydro Pump",
+      "attribute": "Water",
+      "cost": 3,
+      "category": "magical",
+      "power_multiplier": 2.2,
+      "accuracy": 90,
+      "effects": [],
+      "description": "強力な水流で攻撃する"
+    },
+    {
+      "skill_id": 17,
+      "name": "癒しの雨",
+      "name_en": "Healing Rain",
+      "attribute": "Water",
+      "cost": 2,
+      "category": "support",
+      "power_multiplier": 0,
+      "accuracy": 100,
+      "effects": [
+        {
+          "type": "heal",
+          "heal_percentage": 0.3,
+          "target": "self"
+        }
+      ],
+      "description": "雨で傷を癒す"
+    },
+    {
+      "skill_id": 18,
+      "name": "濁流",
+      "name_en": "Muddy Water",
+      "attribute": "Water",
+      "cost": 3,
+      "category": "magical",
+      "power_multiplier": 1.9,
+      "accuracy": 95,
+      "effects": [
+        {
+          "type": "debuff",
+          "stat": "accuracy",
+          "stage": 1,
+          "target": "opponent"
+        }
+      ],
+      "description": "濁った水で攻撃し、命中率を下げる"
+    },
+    {
+      "skill_id": 19,
+      "name": "大渦潮",
+      "name_en": "Whirlpool",
+      "attribute": "Water",
+      "cost": 4,
+      "category": "magical",
+      "power_multiplier": 2.8,
+      "accuracy": 90,
+      "effects": [
+        {
+          "type": "trap",
+          "turns": 3,
+          "damage_per_turn": 0.125
+        }
+      ],
+      "description": "渦に閉じ込め、毎ターンダメージ"
+    },
+    {
+      "skill_id": 20,
+      "name": "潮吹き",
+      "name_en": "Water Spout",
+      "attribute": "Water",
+      "cost": 5,
+      "category": "magical",
+      "power_multiplier": 3.6,
+      "accuracy": 100,
+      "effects": [
+        {
+          "type": "hp_dependent",
+          "full_hp_multiplier": 1.5
+        }
+      ],
+      "description": "HPが多いほど威力が上がる"
+    },
+    {
+      "skill_id": 21,
+      "name": "深海の怒り",
+      "name_en": "Deep Sea Rage",
+      "attribute": "Water",
+      "cost": 6,
+      "category": "magical",
+      "power_multiplier": 4.2,
+      "accuracy": 100,
+      "effects": [
+        {
+          "type": "debuff",
+          "stat": "speed",
+          "stage": 2,
+          "target": "opponent"
+        },
+        {
+          "type": "heal",
+          "heal_percentage": 0.3,
+          "target": "self"
+        }
+      ],
+      "description": "アクアリヴァイアサンの奥義。深海の力"
+    },
+    {
+      "skill_id": 22,
+      "name": "癒しの絆",
+      "name_en": "Healing Bond",
+      "attribute": "Water",
+      "cost": 2,
+      "category": "support",
+      "power_multiplier": 0,
+      "accuracy": 100,
+      "effects": [
+        {
+          "type": "heal",
+          "heal_percentage": 0.4,
+          "target": "self"
+        },
+        {
+          "type": "cure_status",
+          "target": "self"
+        }
+      ],
+      "description": "親密度技。HPを回復し、状態異常も治す"
+    },
+    {
+      "skill_id": 23,
+      "name": "水の守り",
+      "name_en": "Water Guard",
+      "attribute": "Water",
+      "cost": 1,
+      "category": "support",
+      "power_multiplier": 0,
+      "accuracy": 100,
+      "effects": [
+        {
+          "type": "buff",
+          "stat": "defense",
+          "stage": 1,
+          "target": "self"
+        }
+      ],
+      "description": "水の膜で身を守る"
+    },
+    {
+      "skill_id": 24,
+      "name": "雨乞い",
+      "name_en": "Rain Dance",
+      "attribute": "Water",
+      "cost": 3,
+      "category": "support",
+      "power_multiplier": 0,
+      "accuracy": 100,
+      "effects": [
+        {
+          "type": "weather",
+          "weather_type": "rain",
+          "turns": 5
+        }
+      ],
+      "description": "雨を降らせ、水技の威力を上げる"
+    },
+    {
+      "skill_id": 81,
+      "name": "剣技",
+      "name_en": "Sword Slash",
+      "attribute": "Light",
+      "cost": 2,
+      "category": "physical",
+      "power_multiplier": 1.5,
+      "accuracy": 100,
+      "effects": [],
+      "description": "剣で斬りつける基本技"
+    },
+    {
+      "skill_id": 82,
+      "name": "盾の構え",
+      "name_en": "Shield Stance",
+      "attribute": "Light",
+      "cost": 1,
+      "category": "support",
+      "power_multiplier": 0,
+      "accuracy": 100,
+      "effects": [
+        {
+          "type": "buff",
+          "stat": "defense",
+          "stage": 2,
+          "target": "self"
+        }
+      ],
+      "description": "盾で防御態勢を取る"
+    }
+  ],
+  "metadata": {
+    "total_skills": 26,
+    "cost_distribution": {
+      "cost_1": 6,
+      "cost_2": 8,
+      "cost_3": 6,
+      "cost_4": 2,
+      "cost_5": 2,
+      "cost_6": 2
+    },
+    "attribute_distribution": {
+      "Fire": 12,
+      "Water": 12,
+      "Thunder": 0,
+      "Wind": 0,
+      "Earth": 0,
+      "Light": 2,
+      "Dark": 0
+    },
+    "category_distribution": {
+      "physical": 3,
+      "magical": 13,
+      "support": 10
+    }
+  },
+  "notes": {
+    "balance_reference": "week4_balance_config.yaml を参照",
+    "power_multiplier": "攻撃力に対する倍率。実際のダメージ計算時に属性相性・乱数等が適用される",
+    "accuracy": "命中率 (100 = 100%)",
+    "effects": "特殊効果の配列。type, target, probability等を指定",
+    "remaining_attributes": "雷・風・大地・光・闇の技は同様のパターンで80-100種類まで拡張"
+  }
+}
