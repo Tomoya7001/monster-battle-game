@@ -1,19 +1,25 @@
+// lib/presentation/screens/monster/monster_list_screen.dart
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../../../core/models/monster_filter.dart';
+import '../../../domain/entities/monster.dart';
 import '../../bloc/monster/monster_bloc.dart';
 import '../../bloc/monster/monster_event.dart';
 import '../../bloc/monster/monster_state.dart';
-import '../../../domain/entities/monster.dart';
-import '../../../core/models/monster_filter.dart';
 import 'widgets/monster_card.dart';
 import 'widgets/monster_filter_dialog.dart';
 import 'widgets/monster_sort_dialog.dart';
 import 'monster_detail_screen.dart';
 
-/// モンスター一覧画面
-/// 
-/// 所持モンスターをグリッド形式で表示し、
-/// フィルター・ソート・検索機能を提供します。
+/// グリッド表示タイプ
+enum GridViewType {
+  large, // 2列表示
+  medium, // 4列表示
+  small, // 6列表示
+}
+
 class MonsterListScreen extends StatefulWidget {
   const MonsterListScreen({super.key});
 
@@ -22,8 +28,11 @@ class MonsterListScreen extends StatefulWidget {
 }
 
 class _MonsterListScreenState extends State<MonsterListScreen> {
-  final TextEditingController _searchController = TextEditingController();
-  final String _userId = 'demo_user'; // TODO: 実際のユーザーIDに置き換え
+  GridViewType _gridViewType = GridViewType.large;
+
+  String get _userId {
+    return FirebaseAuth.instance.currentUser?.uid ?? 'demo_user';
+  }
 
   @override
   void initState() {
@@ -32,358 +41,374 @@ class _MonsterListScreenState extends State<MonsterListScreen> {
   }
 
   @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('預かり所'),
+        title: const Text('モンスター一覧'),
         actions: [
-          // デバッグ用: ダミーデータ作成ボタン
-          if (_isDevelopmentMode())
-            IconButton(
-              icon: const Icon(Icons.add_circle_outline),
-              tooltip: 'ダミーデータ作成',
-              onPressed: () => _showCreateDummyDialog(context),
-            ),
-          // リフレッシュボタン
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            tooltip: '更新',
-            onPressed: () {
-              context.read<MonsterBloc>().add(RefreshMonsterList(_userId));
+          _buildGridToggleButton(),
+          BlocBuilder<MonsterBloc, MonsterState>(
+            builder: (context, state) {
+              if (state is MonsterListLoaded) {
+                return IconButton(
+                  icon: const Icon(Icons.search),
+                  onPressed: () {
+                    final filter = state.filter ?? const MonsterFilter();
+                    _showSearchDialog(context, filter);
+                  },
+                  tooltip: '検索',
+                );
+              }
+              return const SizedBox.shrink();
+            },
+          ),
+          BlocBuilder<MonsterBloc, MonsterState>(
+            builder: (context, state) {
+              if (state is MonsterListLoaded) {
+                final filter = state.filter ?? const MonsterFilter();
+                return IconButton(
+                  icon: Stack(
+                    children: [
+                      const Icon(Icons.filter_list),
+                      if (filter.isActive)
+                        Positioned(
+                          right: 0,
+                          top: 0,
+                          child: Container(
+                            width: 8,
+                            height: 8,
+                            decoration: const BoxDecoration(
+                              color: Colors.red,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                  onPressed: () => _showFilterDialog(context, filter),
+                  tooltip: 'フィルター',
+                );
+              }
+              return const SizedBox.shrink();
+            },
+          ),
+          BlocBuilder<MonsterBloc, MonsterState>(
+            builder: (context, state) {
+              if (state is MonsterListLoaded) {
+                return IconButton(
+                  icon: const Icon(Icons.sort),
+                  onPressed: () => _showSortDialog(context, state.sortType),
+                  tooltip: 'ソート',
+                );
+              }
+              return const SizedBox.shrink();
             },
           ),
         ],
       ),
-      body: Column(
-        children: [
-          // 検索・フィルター・ソートバー
-          _buildSearchBar(),
-          // モンスター一覧
-          Expanded(
-            child: BlocConsumer<MonsterBloc, MonsterState>(
-                buildWhen: (previous, current) => current is! MonsterUpdated,
-              listener: (context, state) {
-                if (state is MonsterError) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(state.message),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                } else if (state is MonsterUpdated) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(state.message)),
-                    );
-                } else if (state is DummyMonstersCreated) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('${state.count}体のダミーモンスターを作成しました'),
-                      backgroundColor: Colors.blue,
-                    ),
-                  );
-                }
-              },
-              builder: (context, state) {
-                if (state is MonsterLoading) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-
-                if (state is MonsterListLoaded) {
-                  return _buildMonsterList(state);
-                }
-
-                // 初期状態またはエラー後
-                return const Center(
-                  child: Text('モンスターデータを読み込んでいます...'),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// 検索バーを構築
-  Widget _buildSearchBar() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: BlocBuilder<MonsterBloc, MonsterState>(
+      body: BlocConsumer<MonsterBloc, MonsterState>(
+        listener: (context, state) {
+          if (state is MonsterError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+          if (state is MonsterUpdated) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: Colors.green,
+                duration: const Duration(seconds: 1),
+              ),
+            );
+          }
+        },
         builder: (context, state) {
-          if (state is! MonsterListLoaded) {
-            return const SizedBox.shrink();
+          if (state is MonsterLoading) {
+            return const Center(child: CircularProgressIndicator());
           }
 
-          return Column(
-            children: [
-              // 所持数表示
-              Row(
-                children: [
-                  Text(
-                    '所持: ${state.totalCount}/300',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              // 検索・フィルター・ソート
-              Row(
-                children: [
-                  // フィルターボタン
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: () => _showFilterDialog(context, state.filter ?? const MonsterFilter()),
-                      icon: Icon(
-                        Icons.filter_list,
-                        color: state.filter?.isActive ?? false ? Colors.blue : Colors.grey,
-                      ),
-                      label: Text(
-                        'フィルター${state.filter?.isActive ?? false ? " ●" : ""}',
-                        style: TextStyle(
-                          color: state.filter?.isActive ?? false ? Colors.blue : Colors.grey[700],
-                        ),
-                      ),
-                      style: OutlinedButton.styleFrom(
-                        side: BorderSide(
-                          color: state.filter?.isActive ?? false ? Colors.blue : Colors.grey,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  // ソートボタン
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: () => _showSortDialog(context, state.sortType),
-                      icon: const Icon(Icons.sort, color: Colors.grey),
-                      label: Text(
-                        'ソート',
-                        style: TextStyle(color: Colors.grey[700]),
-                      ),
-                      style: OutlinedButton.styleFrom(
-                        side: BorderSide(color: Colors.grey),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  // 検索ボタン
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: () => _showSearchDialog(context, state.filter ?? const MonsterFilter()),
-                      icon: const Icon(Icons.search, color: Colors.grey),
-                      label: Text(
-                        '検索',
-                        style: TextStyle(color: Colors.grey[700]),
-                      ),
-                      style: OutlinedButton.styleFrom(
-                        side: BorderSide(color: Colors.grey),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              // アクティブなフィルター表示
-              if (state.filter?.isActive ?? false) ...[
-                const SizedBox(height: 8),
-                _buildActiveFilters(state.filter ?? const MonsterFilter()),
-              ],
-            ],
-          );
+          if (state is MonsterListLoaded) {
+            if (state.monsters.isEmpty) {
+              return _buildEmptyState();
+            }
+            return _buildMonsterGrid(context, state);
+          }
+
+          if (state is MonsterError) {
+            return _buildErrorState(state.message);
+          }
+
+          return const Center(child: Text('モンスターを読み込んでください'));
         },
       ),
     );
   }
 
-  /// アクティブなフィルターを表示
-  Widget _buildActiveFilters(MonsterFilter filter) {
-    final List<Widget> chips = [];
-
-    if (filter.species != null) {
-      chips.add(_buildFilterChip(
-        label: speciesNameMap[filter.species] ?? filter.species!,
-        onDeleted: () {
-          context.read<MonsterBloc>().add(
-                ApplyFilter(filter.copyWith(clearSpecies: true)),
-              );
-        },
-      ));
-    }
-
-    if (filter.element != null) {
-      chips.add(_buildFilterChip(
-        label: elementNameMap[filter.element] ?? filter.element!,
-        onDeleted: () {
-          context.read<MonsterBloc>().add(
-                ApplyFilter(filter.copyWith(clearElement: true)),
-              );
-        },
-      ));
-    }
-
-    if (filter.rarity != null) {
-      chips.add(_buildFilterChip(
-        label: '★${filter.rarity}',
-        onDeleted: () {
-          context.read<MonsterBloc>().add(
-                ApplyFilter(filter.copyWith(clearRarity: true)),
-              );
-        },
-      ));
-    }
-
-    if (filter.favoriteOnly == true) {
-      chips.add(_buildFilterChip(
-        label: 'お気に入り',
-        onDeleted: () {
-          context.read<MonsterBloc>().add(
-                ApplyFilter(filter.copyWith(clearFavorite: true)),
-              );
-        },
-      ));
-    }
-
-    if (filter.searchKeyword != null && filter.searchKeyword!.isNotEmpty) {
-      chips.add(_buildFilterChip(
-        label: '検索: ${filter.searchKeyword}',
-        onDeleted: () {
-          context.read<MonsterBloc>().add(
-                ApplyFilter(filter.copyWith(clearKeyword: true)),
-              );
-        },
-      ));
-    }
-
-    chips.add(
-      TextButton.icon(
-        onPressed: () {
-          context.read<MonsterBloc>().add(
-                ApplyFilter(const MonsterFilter()),
-              );
-        },
-        icon: const Icon(Icons.clear_all, size: 16),
-        label: const Text('すべてクリア'),
-        style: TextButton.styleFrom(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-        ),
-      ),
-    );
-
-    return Wrap(
-      spacing: 8,
-      runSpacing: 4,
-      children: chips,
-    );
-  }
-
-  /// フィルターチップを構築
-  Widget _buildFilterChip({
-    required String label,
-    required VoidCallback onDeleted,
-  }) {
-    return Chip(
-      label: Text(label),
-      deleteIcon: const Icon(Icons.close, size: 18),
-      onDeleted: onDeleted,
-      backgroundColor: Colors.blue.withOpacity(0.1),
-      deleteIconColor: Colors.blue,
-      labelStyle: const TextStyle(
-        fontSize: 12,
-        color: Colors.blue,
-      ),
-    );
-  }
-
-  /// モンスター一覧を構築
-  Widget _buildMonsterList(MonsterListLoaded state) {
-    if (state.monsters.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(
-              Icons.pets,
-              size: 80,
-              color: Colors.grey,
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'モンスターがいません',
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.grey,
-              ),
-            ),
-            if (_isDevelopmentMode()) ...[
-              const SizedBox(height: 24),
-              ElevatedButton.icon(
-                onPressed: () => _showCreateDummyDialog(context),
-                icon: const Icon(Icons.add),
-                label: const Text('ダミーデータを作成'),
-              ),
-            ],
-          ],
-        ),
-      );
-    }
-
-    return GridView.builder(
-      padding: const EdgeInsets.all(16),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: 0.75,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
-      ),
-      itemCount: state.monsters.length,
-      itemBuilder: (context, index) {
-        final monster = state.monsters[index];
-        return MonsterCard(
-          monster: monster,
-          onTap: () => _navigateToDetail(context, monster),
-          onFavoriteToggle: (isFavorite) {
-            context.read<MonsterBloc>().add(
-                  ToggleFavorite(
-                    monsterId: monster.id,
-                    isFavorite: isFavorite,
-                  ),
-                );
-          },
-          // ✅ 追加: ロック機能の連携
-          onLockToggle: (isLocked) {
-            context.read<MonsterBloc>().add(
-                  ToggleLock(
-                    monsterId: monster.id,
-                    isLocked: isLocked,
-                  ),
-                );
-          },
-        );
+  Widget _buildGridToggleButton() {
+    return PopupMenuButton<GridViewType>(
+      icon: Icon(_getGridIcon()),
+      tooltip: '表示切替',
+      onSelected: (type) {
+        setState(() {
+          _gridViewType = type;
+        });
       },
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          value: GridViewType.large,
+          child: Row(
+            children: [
+              Icon(
+                Icons.grid_view,
+                color: _gridViewType == GridViewType.large
+                    ? Theme.of(context).primaryColor
+                    : null,
+              ),
+              const SizedBox(width: 8),
+              const Text('大（2列）'),
+              if (_gridViewType == GridViewType.large)
+                const Padding(
+                  padding: EdgeInsets.only(left: 8),
+                  child: Icon(Icons.check, size: 16),
+                ),
+            ],
+          ),
+        ),
+        PopupMenuItem(
+          value: GridViewType.medium,
+          child: Row(
+            children: [
+              Icon(
+                Icons.grid_on,
+                color: _gridViewType == GridViewType.medium
+                    ? Theme.of(context).primaryColor
+                    : null,
+              ),
+              const SizedBox(width: 8),
+              const Text('中（4列）'),
+              if (_gridViewType == GridViewType.medium)
+                const Padding(
+                  padding: EdgeInsets.only(left: 8),
+                  child: Icon(Icons.check, size: 16),
+                ),
+            ],
+          ),
+        ),
+        PopupMenuItem(
+          value: GridViewType.small,
+          child: Row(
+            children: [
+              Icon(
+                Icons.apps,
+                color: _gridViewType == GridViewType.small
+                    ? Theme.of(context).primaryColor
+                    : null,
+              ),
+              const SizedBox(width: 8),
+              const Text('小（6列）'),
+              if (_gridViewType == GridViewType.small)
+                const Padding(
+                  padding: EdgeInsets.only(left: 8),
+                  child: Icon(Icons.check, size: 16),
+                ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
-  /// フィルターダイアログを表示
+  IconData _getGridIcon() {
+    switch (_gridViewType) {
+      case GridViewType.large:
+        return Icons.grid_view;
+      case GridViewType.medium:
+        return Icons.grid_on;
+      case GridViewType.small:
+        return Icons.apps;
+    }
+  }
+
+  int _getGridCrossAxisCount() {
+    switch (_gridViewType) {
+      case GridViewType.large:
+        return 2;
+      case GridViewType.medium:
+        return 4;
+      case GridViewType.small:
+        return 6;
+    }
+  }
+
+  double _getGridChildAspectRatio() {
+    switch (_gridViewType) {
+      case GridViewType.large:
+        return 0.75;
+      case GridViewType.medium:
+        return 0.7;
+      case GridViewType.small:
+        return 0.65;
+    }
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.catching_pokemon,
+            size: 64,
+            color: Colors.grey[400],
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'モンスターがいません',
+            style: TextStyle(
+              fontSize: 18,
+              color: Colors.grey[600],
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'ガチャでモンスターを手に入れましょう！',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey[500],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildErrorState(String message) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(
+            Icons.error_outline,
+            size: 64,
+            color: Colors.red,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'エラーが発生しました',
+            style: TextStyle(
+              fontSize: 18,
+              color: Colors.grey[600],
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            message,
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey[500],
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: () {
+              context.read<MonsterBloc>().add(LoadUserMonsters(userId: _userId));
+            },
+            child: const Text('再読み込み'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMonsterGrid(BuildContext context, MonsterListLoaded state) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                '${state.monsters.length} / ${state.totalCount} 体',
+                style: TextStyle(
+                  color: Colors.grey[600],
+                  fontSize: 14,
+                ),
+              ),
+              Text(
+                _getGridTypeLabel(),
+                style: TextStyle(
+                  color: Colors.grey[600],
+                  fontSize: 12,
+                ),
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: GridView.builder(
+            padding: const EdgeInsets.all(8),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: _getGridCrossAxisCount(),
+              childAspectRatio: _getGridChildAspectRatio(),
+              crossAxisSpacing: 8,
+              mainAxisSpacing: 8,
+            ),
+            itemCount: state.monsters.length,
+            itemBuilder: (context, index) {
+              final monster = state.monsters[index];
+              return MonsterCard(
+                monster: monster,
+                onTap: () => _navigateToDetail(context, monster),
+                onFavoriteToggle: (isFavorite) {
+                  context.read<MonsterBloc>().add(
+                        ToggleFavorite(
+                          monsterId: monster.id,
+                          isFavorite: isFavorite,
+                        ),
+                      );
+                },
+                onLockToggle: (isLocked) {
+                  context.read<MonsterBloc>().add(
+                        ToggleLock(
+                          monsterId: monster.id,
+                          isLocked: isLocked,
+                        ),
+                      );
+                },
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  String _getGridTypeLabel() {
+    switch (_gridViewType) {
+      case GridViewType.large:
+        return '大表示（2列）';
+      case GridViewType.medium:
+        return '中表示（4列）';
+      case GridViewType.small:
+        return '小表示（6列）';
+    }
+  }
+
+  void _navigateToDetail(BuildContext context, Monster monster) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MonsterDetailScreen(monster: monster),
+      ),
+    );
+  }
+
   void _showFilterDialog(BuildContext context, MonsterFilter currentFilter) {
     showDialog(
       context: context,
@@ -396,7 +421,6 @@ class _MonsterListScreenState extends State<MonsterListScreen> {
     );
   }
 
-  /// ソートダイアログを表示
   void _showSortDialog(BuildContext context, MonsterSortType currentSort) {
     showDialog(
       context: context,
@@ -409,7 +433,6 @@ class _MonsterListScreenState extends State<MonsterListScreen> {
     );
   }
 
-  /// 検索ダイアログを表示
   void _showSearchDialog(BuildContext context, MonsterFilter currentFilter) {
     showDialog(
       context: context,
@@ -417,7 +440,6 @@ class _MonsterListScreenState extends State<MonsterListScreen> {
         final controller = TextEditingController(
           text: currentFilter.searchKeyword ?? '',
         );
-
         return AlertDialog(
           title: const Text('モンスター検索'),
           content: TextField(
@@ -427,21 +449,45 @@ class _MonsterListScreenState extends State<MonsterListScreen> {
               prefixIcon: Icon(Icons.search),
             ),
             autofocus: true,
+            onSubmitted: (value) {
+              Navigator.pop(dialogContext);
+              context.read<MonsterBloc>().add(
+                    ApplyFilter(
+                      currentFilter.copyWith(searchKeyword: value),
+                    ),
+                  );
+            },
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(dialogContext),
               child: const Text('キャンセル'),
             ),
-            TextButton(
+            if (currentFilter.searchKeyword?.isNotEmpty == true)
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(dialogContext);
+                  context.read<MonsterBloc>().add(
+                        ApplyFilter(
+                          currentFilter.copyWith(
+                            searchKeyword: '',
+                            clearKeyword: true,
+                          ),
+                        ),
+                      );
+                },
+                child: const Text('クリア'),
+              ),
+            ElevatedButton(
               onPressed: () {
-                final keyword = controller.text.trim();
+                Navigator.pop(dialogContext);
                 context.read<MonsterBloc>().add(
                       ApplyFilter(
-                        currentFilter.copyWith(searchKeyword: keyword),
+                        currentFilter.copyWith(
+                          searchKeyword: controller.text,
+                        ),
                       ),
                     );
-                Navigator.pop(dialogContext);
               },
               child: const Text('検索'),
             ),
@@ -449,50 +495,5 @@ class _MonsterListScreenState extends State<MonsterListScreen> {
         );
       },
     );
-  }
-
-  /// ダミーデータ作成ダイアログを表示
-  void _showCreateDummyDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: const Text('ダミーデータ作成'),
-        content: const Text('20体のダミーモンスターを作成しますか？'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('キャンセル'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              context.read<MonsterBloc>().add(
-                    CreateDummyMonsters(userId: _userId, count: 20),
-                  );
-              Navigator.pop(dialogContext);
-            },
-            child: const Text('作成'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// モンスター詳細画面へ遷移
-    void _navigateToDetail(BuildContext context, Monster monster) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => BlocProvider.value(
-          value: context.read<MonsterBloc>(), // 同じインスタンスを引き継ぐ
-          child: MonsterDetailScreen(monster: monster),
-        ),
-      ),
-    );
-  }
-
-  /// 開発モードかどうか
-  bool _isDevelopmentMode() {
-    // TODO: 本番環境では false を返す
-    return true;
   }
 }

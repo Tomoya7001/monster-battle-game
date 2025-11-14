@@ -1,22 +1,22 @@
+// lib/presentation/screens/monster/widgets/monster_card.dart
+
 import 'package:flutter/material.dart';
 import '../../../../domain/entities/monster.dart';
 
-/// モンスターカード
-/// 
-/// GridView内で表示される個々のモンスターのカードです。
-/// モンスター画像、名前、レベル、レアリティ、HP状態などを表示します。
 class MonsterCard extends StatelessWidget {
   final Monster monster;
   final VoidCallback onTap;
   final Function(bool) onFavoriteToggle;
-  final Function(bool)? onLockToggle; // ✅ 追加: ロック機能のコールバック
+  final Function(bool)? onLockToggle;
+  final bool isCompact; // ✅ 追加: コンパクト表示フラグ
 
   const MonsterCard({
     super.key,
     required this.monster,
     required this.onTap,
     required this.onFavoriteToggle,
-    this.onLockToggle, // ✅ 追加: オプショナル
+    this.onLockToggle,
+    this.isCompact = false, // ✅ デフォルトは通常サイズ
   });
 
   @override
@@ -34,94 +34,122 @@ class MonsterCard extends StatelessWidget {
         ),
         child: Stack(
           children: [
-            // メインコンテンツ
             Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 // モンスター画像エリア
                 Expanded(
-                  flex: 3,
+                  flex: isCompact ? 2 : 3,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: _getElementColor().withOpacity(0.1),
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(10),
-                        topRight: Radius.circular(10),
+                      color: _getRarityColor().withOpacity(0.1),
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(10),
                       ),
                     ),
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          // 暫定: アイコン表示（後で画像に置き換え）
-                          Icon(
+                    child: Stack(
+                      children: [
+                        // モンスター画像（プレースホルダー）
+                        Center(
+                          child: Icon(
                             _getSpeciesIcon(),
-                            size: 60,
+                            size: isCompact ? 32 : 48,
                             color: _getElementColor(),
                           ),
-                          const SizedBox(height: 8),
-                          // HPバー
-                          _buildHpBar(),
-                        ],
-                      ),
+                        ),
+                        // レベル表示
+                        Positioned(
+                          bottom: 4,
+                          left: 4,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.7),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              'Lv.${monster.level}',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: isCompact ? 10 : 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                        // HPバー
+                        if (!isCompact)
+                          Positioned(
+                            bottom: 4,
+                            right: 4,
+                            left: 40,
+                            child: _buildHpBar(),
+                          ),
+                      ],
                     ),
                   ),
                 ),
                 // 情報エリア
                 Expanded(
-                  flex: 2,
+                  flex: isCompact ? 1 : 2,
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: EdgeInsets.all(isCompact ? 4.0 : 8.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         // 名前
                         Text(
                           monster.monsterName,
-                          style: const TextStyle(
-                            fontSize: 14,
+                          style: TextStyle(
+                            fontSize: isCompact ? 11 : 14,
                             fontWeight: FontWeight.bold,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        const SizedBox(height: 4),
-                        // レベル・レアリティ
-                        Row(
-                          children: [
-                            Text(
-                              'Lv.${monster.level}',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey[700],
-                                fontWeight: FontWeight.w600,
+                        if (!isCompact) ...[
+                          const SizedBox(height: 4),
+                          // レアリティ
+                          Row(
+                            children: [
+                              Text(
+                                monster.rarityStars,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: _getRarityColor(),
+                                ),
                               ),
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              monster.rarityStars,
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: _getRarityColor(),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          // 種族・属性
+                          Row(
+                            children: [
+                              _buildBadge(
+                                monster.speciesName,
+                                Colors.grey[700]!,
                               ),
+                              const SizedBox(width: 4),
+                              _buildBadge(
+                                monster.elementName,
+                                _getElementColor(),
+                              ),
+                            ],
+                          ),
+                        ] else ...[
+                          // コンパクト表示ではレアリティのみ
+                          Text(
+                            monster.rarityStars,
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: _getRarityColor(),
                             ),
-                          ],
-                        ),
-                        const SizedBox(height: 4),
-                        // 種族・属性
-                        Row(
-                          children: [
-                            _buildBadge(
-                              monster.speciesName,
-                              Colors.grey[700]!,
-                            ),
-                            const SizedBox(width: 4),
-                            _buildBadge(
-                              monster.elementName,
-                              _getElementColor(),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ],
                     ),
                   ),
@@ -130,16 +158,15 @@ class MonsterCard extends StatelessWidget {
             ),
             // お気に入りボタン
             Positioned(
-              top: 8,
-              right: 8,
+              top: isCompact ? 4 : 8,
+              right: isCompact ? 4 : 8,
               child: GestureDetector(
-                // ✅ 修正: イベント伝播を停止
                 onTap: () {
                   onFavoriteToggle(!monster.isFavorite);
                 },
-                behavior: HitTestBehavior.opaque, // ✅ 追加: タップ領域を明確化
+                behavior: HitTestBehavior.opaque,
                 child: Container(
-                  padding: const EdgeInsets.all(4),
+                  padding: EdgeInsets.all(isCompact ? 2 : 4),
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.9),
                     shape: BoxShape.circle,
@@ -147,99 +174,103 @@ class MonsterCard extends StatelessWidget {
                   child: Icon(
                     monster.isFavorite ? Icons.star : Icons.star_border,
                     color: monster.isFavorite ? Colors.amber : Colors.grey,
-                    size: 20,
+                    size: isCompact ? 16 : 20,
                   ),
                 ),
               ),
             ),
-            // ロックアイコン（表示のみ → タップ可能に変更）
-            // ✅ 修正: ロックボタンをタップ可能に
-            Positioned(
-              top: 8,
-              left: 8,
-              child: GestureDetector(
-                onTap: onLockToggle != null
-                    ? () {
-                        onLockToggle!(!monster.isLocked);
-                      }
-                    : null,
-                behavior: HitTestBehavior.opaque, // ✅ 追加: タップ領域を明確化
-                child: Container(
-                  padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.9),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    monster.isLocked ? Icons.lock : Icons.lock_open,
-                    color: monster.isLocked ? Colors.red[400] : Colors.grey,
-                    size: 16,
+            // ロックアイコン
+            if (onLockToggle != null)
+              Positioned(
+                top: isCompact ? 4 : 8,
+                left: isCompact ? 4 : 8,
+                child: GestureDetector(
+                  onTap: () {
+                    onLockToggle!(!monster.isLocked);
+                  },
+                  behavior: HitTestBehavior.opaque,
+                  child: Container(
+                    padding: EdgeInsets.all(isCompact ? 2 : 4),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.9),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      monster.isLocked ? Icons.lock : Icons.lock_open,
+                      color: monster.isLocked ? Colors.red : Colors.grey,
+                      size: isCompact ? 16 : 20,
+                    ),
                   ),
                 ),
               ),
-            ),
           ],
         ),
       ),
     );
   }
 
-  /// HPバーを構築
+  /// HPバーを構築 ✅ 修正: currentHp / maxHp を正しく表示
   Widget _buildHpBar() {
     final percentage = monster.hpPercentage;
     final color = _getHpBarColor(percentage);
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        children: [
-          // HPテキスト
-          Text(
-            'HP: ${monster.currentHp}/${monster.maxHp}',
-            style: const TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.bold,
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // ✅ 修正: 実際のHP値を表示（100固定ではない）
+        Text(
+          '${monster.currentHp}/${monster.maxHp}',
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 9,
+            fontWeight: FontWeight.bold,
+            shadows: [
+              Shadow(
+                offset: Offset(1, 1),
+                blurRadius: 2,
+                color: Colors.black,
+              ),
+            ],
           ),
-          const SizedBox(height: 4),
-          // HPバー
-          Container(
-            height: 6,
-            decoration: BoxDecoration(
-              color: Colors.grey[300],
-              borderRadius: BorderRadius.circular(3),
-            ),
-            child: FractionallySizedBox(
-              alignment: Alignment.centerLeft,
-              widthFactor: percentage,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: color,
-                  borderRadius: BorderRadius.circular(3),
-                ),
+        ),
+        const SizedBox(height: 2),
+        Container(
+          height: 6,
+          decoration: BoxDecoration(
+            color: Colors.black.withOpacity(0.5),
+            borderRadius: BorderRadius.circular(3),
+          ),
+          child: FractionallySizedBox(
+            alignment: Alignment.centerLeft,
+            widthFactor: percentage.clamp(0.0, 1.0),
+            child: Container(
+              decoration: BoxDecoration(
+                color: color,
+                borderRadius: BorderRadius.circular(3),
               ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
   /// バッジを構築
   Widget _buildBadge(String text, Color color) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
       decoration: BoxDecoration(
         color: color.withOpacity(0.2),
         borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: color, width: 1),
+        border: Border.all(color: color.withOpacity(0.5)),
       ),
       child: Text(
         text,
         style: TextStyle(
           fontSize: 10,
           color: color,
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.w600,
         ),
       ),
     );
@@ -249,20 +280,21 @@ class MonsterCard extends StatelessWidget {
   Color _getRarityColor() {
     switch (monster.rarity) {
       case 5:
-        return const Color(0xFFFFD700); // 金
+        return const Color(0xFFFFD700); // Gold
       case 4:
-        return const Color(0xFF9B59B6); // 紫
+        return const Color(0xFF9C27B0); // Purple
       case 3:
-        return const Color(0xFF3498DB); // 青
+        return const Color(0xFF2196F3); // Blue
       case 2:
+        return const Color(0xFF4CAF50); // Green
       default:
-        return const Color(0xFF95A5A6); // 灰色
+        return const Color(0xFF9E9E9E); // Grey
     }
   }
 
   /// 属性カラーを取得
   Color _getElementColor() {
-    switch (monster.element) {
+    switch (monster.element.toLowerCase()) {
       case 'fire':
         return const Color(0xFFFF5722);
       case 'water':
@@ -277,7 +309,6 @@ class MonsterCard extends StatelessWidget {
         return const Color(0xFFFFEB3B);
       case 'dark':
         return const Color(0xFF9C27B0);
-      case 'none':
       default:
         return const Color(0xFF95A5A6);
     }
@@ -296,7 +327,7 @@ class MonsterCard extends StatelessWidget {
 
   /// 種族アイコンを取得
   IconData _getSpeciesIcon() {
-    switch (monster.species) {
+    switch (monster.species.toLowerCase()) {
       case 'angel':
         return Icons.auto_awesome;
       case 'demon':

@@ -1,21 +1,103 @@
-import 'package:equatable/equatable.dart';
+// lib/core/models/monster_filter.dart
 
-/// モンスターのソートタイプ
-enum MonsterSortType {
-  levelDesc,      // レベル降順
-  levelAsc,       // レベル昇順
-  rarityDesc,     // レアリティ降順
-  rarityAsc,      // レアリティ昇順
-  acquiredDesc,   // 取得日時（新しい順）
-  acquiredAsc,    // 取得日時（古い順）
-  favoriteFirst,  // お気に入り優先
-  nameAsc,        // 名前昇順
-  nameDesc,       // 名前降順
+/// モンスターフィルター
+class MonsterFilter {
+  final String? species;
+  final String? element;
+  final int? rarity;
+  final bool favoriteOnly;
+  final bool lockedOnly;
+  final String? searchKeyword;
+
+  const MonsterFilter({
+    this.species,
+    this.element,
+    this.rarity,
+    this.favoriteOnly = false,
+    this.lockedOnly = false,
+    this.searchKeyword,
+  });
+
+  /// フィルターが適用されているかどうか
+  bool get hasActiveFilters {
+    return species != null ||
+        element != null ||
+        rarity != null ||
+        favoriteOnly ||
+        lockedOnly ||
+        (searchKeyword?.isNotEmpty == true);
+  }
+
+  /// フィルターをコピーして新しいインスタンスを作成
+  MonsterFilter copyWith({
+    String? species,
+    String? element,
+    int? rarity,
+    bool? favoriteOnly,
+    bool? lockedOnly,
+    String? searchKeyword,
+  }) {
+    return MonsterFilter(
+      species: species ?? this.species,
+      element: element ?? this.element,
+      rarity: rarity ?? this.rarity,
+      favoriteOnly: favoriteOnly ?? this.favoriteOnly,
+      lockedOnly: lockedOnly ?? this.lockedOnly,
+      searchKeyword: searchKeyword ?? this.searchKeyword,
+    );
+  }
+
+  /// フィルターをクリア
+  MonsterFilter clear() {
+    return const MonsterFilter();
+  }
+
+  @override
+  String toString() {
+    return 'MonsterFilter(species: $species, element: $element, rarity: $rarity, favoriteOnly: $favoriteOnly, lockedOnly: $lockedOnly, searchKeyword: $searchKeyword)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is MonsterFilter &&
+        other.species == species &&
+        other.element == element &&
+        other.rarity == rarity &&
+        other.favoriteOnly == favoriteOnly &&
+        other.lockedOnly == lockedOnly &&
+        other.searchKeyword == searchKeyword;
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(
+      species,
+      element,
+      rarity,
+      favoriteOnly,
+      lockedOnly,
+      searchKeyword,
+    );
+  }
 }
 
-/// MonsterSortTypeの拡張
+/// ソートタイプ
+enum MonsterSortType {
+  levelDesc, // レベル降順
+  levelAsc, // レベル昇順
+  rarityDesc, // レアリティ降順
+  rarityAsc, // レアリティ昇順
+  nameAsc, // 名前昇順
+  nameDesc, // 名前降順
+  acquiredDesc, // 取得日降順（新しい順）
+  acquiredAsc, // 取得日昇順（古い順）
+  hpDesc, // HP降順
+  hpAsc, // HP昇順
+}
+
+/// ソートタイプの表示名
 extension MonsterSortTypeExtension on MonsterSortType {
-  /// 表示名を取得
   String get displayName {
     switch (this) {
       case MonsterSortType.levelDesc:
@@ -26,129 +108,18 @@ extension MonsterSortTypeExtension on MonsterSortType {
         return 'レアリティ（高い順）';
       case MonsterSortType.rarityAsc:
         return 'レアリティ（低い順）';
-      case MonsterSortType.acquiredDesc:
-        return '取得日時（新しい順）';
-      case MonsterSortType.acquiredAsc:
-        return '取得日時（古い順）';
-      case MonsterSortType.favoriteFirst:
-        return 'お気に入り優先';
       case MonsterSortType.nameAsc:
-        return '名前（昇順）';
+        return '名前（A-Z）';
       case MonsterSortType.nameDesc:
-        return '名前（降順）';
+        return '名前（Z-A）';
+      case MonsterSortType.acquiredDesc:
+        return '取得日（新しい順）';
+      case MonsterSortType.acquiredAsc:
+        return '取得日（古い順）';
+      case MonsterSortType.hpDesc:
+        return 'HP（高い順）';
+      case MonsterSortType.hpAsc:
+        return 'HP（低い順）';
     }
   }
 }
-
-/// モンスターフィルター
-class MonsterFilter extends Equatable {
-  final String? species;        // 種族フィルター
-  final String? element;        // 属性フィルター
-  final int? rarity;            // レアリティフィルター
-  final bool? favoriteOnly;     // お気に入りのみ
-  final bool? lockedOnly;       // ロック中のみ
-  final String? searchKeyword;  // 検索キーワード
-
-  const MonsterFilter({
-    this.species,
-    this.element,
-    this.rarity,
-    this.favoriteOnly,
-    this.lockedOnly,
-    this.searchKeyword,
-  });
-
-  @override
-  List<Object?> get props => [
-        species,
-        element,
-        rarity,
-        favoriteOnly,
-        lockedOnly,
-        searchKeyword,
-      ];
-
-  /// フィルターがアクティブか
-  bool get isActive {
-    return species != null ||
-        element != null ||
-        rarity != null ||
-        (favoriteOnly == true) ||
-        (lockedOnly == true) ||
-        (searchKeyword != null && searchKeyword!.isNotEmpty);
-  }
-
-  /// コピーwithクリア機能付き
-  MonsterFilter copyWith({
-    String? species,
-    String? element,
-    int? rarity,
-    bool? favoriteOnly,
-    bool? lockedOnly,
-    String? searchKeyword,
-    bool clearSpecies = false,
-    bool clearElement = false,
-    bool clearRarity = false,
-    bool clearFavorite = false,
-    bool clearLocked = false,
-    bool clearKeyword = false,
-  }) {
-    return MonsterFilter(
-      species: clearSpecies ? null : (species ?? this.species),
-      element: clearElement ? null : (element ?? this.element),
-      rarity: clearRarity ? null : (rarity ?? this.rarity),
-      favoriteOnly: clearFavorite ? null : (favoriteOnly ?? this.favoriteOnly),
-      lockedOnly: clearLocked ? null : (lockedOnly ?? this.lockedOnly),
-      searchKeyword: clearKeyword ? null : (searchKeyword ?? this.searchKeyword),
-    );
-  }
-}
-
-/// 種族リスト
-const List<String> speciesList = [
-  'angel',
-  'demon',
-  'human',
-  'spirit',
-  'mechanoid',
-  'dragon',
-  'mutant',
-];
-
-/// 種族名マップ
-const Map<String, String> speciesNameMap = {
-  'angel': '天使',
-  'demon': '悪魔',
-  'human': '人間',
-  'spirit': '精霊',
-  'mechanoid': '機械',
-  'dragon': 'ドラゴン',
-  'mutant': '変異体',
-};
-
-/// 属性リスト
-const List<String> elementList = [
-  'fire',
-  'water',
-  'thunder',
-  'wind',
-  'earth',
-  'light',
-  'dark',
-  'none',
-];
-
-/// 属性名マップ
-const Map<String, String> elementNameMap = {
-  'fire': '火',
-  'water': '水',
-  'thunder': '雷',
-  'wind': '風',
-  'earth': '土',
-  'light': '光',
-  'dark': '闇',
-  'none': '無',
-};
-
-/// レアリティリスト
-const List<int> rarityList = [2, 3, 4, 5];

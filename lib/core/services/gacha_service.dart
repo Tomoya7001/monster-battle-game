@@ -1,166 +1,361 @@
+// lib/core/services/gacha_service.dart
+
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../models/gacha_ticket.dart';
-import '../models/gacha_history.dart';
 
+// ガチャ確率定数
+const double RATE_5_STAR = 0.02; // 2%
+const double RATE_4_STAR = 0.15; // 15%
+const double RATE_3_STAR = 0.30; // 30%
+const double RATE_2_STAR = 0.53; // 53%
+
+/// ガチャ結果モデル
+class GachaResult {
+  final String userMonsterId;
+  final Map<String, dynamic> monsterMaster;
+  final int rarity;
+  final Map<String, int> individualValues;
+  final Map<String, dynamic>? mainTrait;
+
+  GachaResult({
+    required this.userMonsterId,
+    required this.monsterMaster,
+    required this.rarity,
+    required this.individualValues,
+    this.mainTrait,
+  });
+}
+
+/// チケット交換オプション
+class TicketExchangeOption {
+  final String id;
+  final String name;
+  final int requiredTickets;
+  final String rewardType;
+  final double guaranteeRate;
+
+  TicketExchangeOption({
+    required this.id,
+    required this.name,
+    required this.requiredTickets,
+    required this.rewardType,
+    required this.guaranteeRate,
+  });
+}
+
+/// ガチャサービス
 class GachaService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final Random _random = Random();
 
   // ========================================
-  // チケット関連
+  // ガチャ実行
   // ========================================
 
-  // チケット残高取得
-  Future<GachaTicket> getTicketBalance(String userId) async {
-    try {
-      final doc = await _firestore
-          .collection('user_gacha_tickets')
-          .doc(userId)
-          .get();
+  /// 単発ガチャを引く
+  Future<GachaResult> drawSingle({
+    required String userId,
+    bool isGuaranteed4Star = false,
+  }) async {
+    // 1. レアリティ抽選
+    final rarity = _determineRarity(isGuaranteed4Star);
+
+    // 2. そのレアリティのモンスターマスターを取得
+    final monsters = await _getMonstersByRarity(rarity);
+
+    if (monsters.isEmpty) {
+      throw Exception('レアリティ$rarityのモンスターが存在しません');
+    }
+
+    // 3. ランダムで1体選択
+    final selectedMonster = monsters[_random.nextInt(monsters.length)];
+
+    // 4. 個体値生成
+    final ivs = _generateIndividualValues();
+
+    // 5. メイン特性抽選
+    final mainTrait = await _selectMainTrait(selectedMonster);
+
+    // 6. マスターデータから基礎HP取得
+    final baseStats =
+        selectedMonster['base_stats'] as Map<String, dynamic>? ?? {};
+    final baseHp = baseStats['hp'] as int? ?? 100;
+    final initialHp = baseHp + ivs['hp']!;
+
+    // 7. UserMonsterドキュメントを作成
+    final userMonsterRef = _firestore.collection('user_monsters').doc();
+
+    await userMonsterRef.set({
+      'user_id': userId, // ✅ snake_case
+      'monster_id': selectedMonster['monster_id'], // ✅ snake_case
+      'level': 1,
+      'exp': 0,
+      'current_hp': initialHp, // ✅ 追加
+      'last_hp_update': FieldValue.serverTimestamp(), // ✅ 追加
+      'intimacy_level': 1, // ✅ snake_case
+      'intimacy_exp': 0, // ✅ snake_case
+      'iv_hp': ivs['hp'], // ✅ snake_case
+      'iv_attack': ivs['attack'], // ✅ snake_case
+      'iv_defense': ivs['defense'], // ✅ snake_case
+      'iv_magic': ivs['magic'], // ✅ snake_case
+      'iv_speed': ivs['speed'], // ✅ snake_case
+      'point_hp': 0, // ✅ snake_case
+      'point_attack': 0, // ✅ snake_case
+      'point_defense': 0, // ✅ snake_case
+      'point_magic': 0, // ✅ snake_case
+      'point_speed': 0, // ✅ snake_case
+      'remaining_points': 0, // ✅ snake_case
+      'main_trait_id': mainTrait?['trait_id'], // ✅ snake_case
+      'equipped_skills': _getInitialSkills(selectedMonster),
+      'equipped_equipment': <String>[],
+      'skin_id': 1, // ✅ snake_case
+      'is_favorite': false, // ✅ snake_case
+      'is_locked': false, // ✅ snake_case
+      'acquired_at': FieldValue.serverTimestamp(), // ✅ snake_case
+      'last_used_at': null, // ✅ 追加
+    });
+
+    return GachaResult(
+      userMonsterId: userMonsterRef.id,
+      monsterMaster: selectedMonster,
+      rarity: rarity,
+      individualValues: ivs,
+      mainTrait: mainTrait,
+    );
+  }
+
+  /// 10連ガチャを引く
+  Future<List<GachaResult>> draw10Pull({
+    required String userId,
+  }) async {
+    final results = <GachaResult>[];
+
+    for (int i = 0; i < 10; i++) {
+      // 10連目は★4以上確定
+      final isGuaranteed = (i == 9);
+
+      final result = await drawSingle(
+        userId: userId,
+        isGuaranteed4Star: isGuaranteed,
+      );
+
+      results.add(result);
+    }
+
+    return results;
+  }
+
+  /// レアリティを抽選
+  int _determineRarity(bool isGuaranteed4Star) {
+    if (isGuaranteed4Star) {
+      // ★4以上確定の場合
+      final rand = _random.nextDouble();
+      // ★5: 2% ÷ 17% = 11.76%
+      // ★4: 15% ÷ 17% = 88.24%
+      return rand < (RATE_5_STAR / (RATE_5_STAR + RATE_4_STAR)) ? 5 : 4;
+    }
+
+    // 通常抽選
+    final rand = _random.nextDouble();
+
+    if (rand < RATE_5_STAR) {
+      return 5;
+    } else if (rand < RATE_5_STAR + RATE_4_STAR) {
+      return 4;
+    } else if (rand < RATE_5_STAR + RATE_4_STAR + RATE_3_STAR) {
+      return 3;
+    } else {
+      return 2;
+    }
+  }
+
+  /// 指定レアリティのモンスターマスターを取得
+  Future<List<Map<String, dynamic>>> _getMonstersByRarity(int rarity) async {
+    final snapshot = await _firestore
+        .collection('monster_masters')
+        .where('rarity', isEqualTo: rarity)
+        .get();
+
+    return snapshot.docs.map((doc) {
+      final data = doc.data();
+      data['monster_id'] = doc.id; // ドキュメントIDを追加
+      return data;
+    }).toList();
+  }
+
+  /// 個体値生成（0〜10）
+  Map<String, int> _generateIndividualValues() {
+    return {
+      'hp': _random.nextInt(11),
+      'attack': _random.nextInt(11),
+      'defense': _random.nextInt(11),
+      'magic': _random.nextInt(11),
+      'speed': _random.nextInt(11),
+    };
+  }
+
+  /// メイン特性抽選
+  Future<Map<String, dynamic>?> _selectMainTrait(
+      Map<String, dynamic> monster) async {
+    final traitsData = monster['traits'];
+
+    if (traitsData == null) {
+      return null;
+    }
+
+    List<dynamic>? traitPool;
+
+    if (traitsData is Map<String, dynamic>) {
+      traitPool = traitsData['main_trait_pool'] as List<dynamic>?;
+    } else if (traitsData is List) {
+      traitPool = traitsData;
+    }
+
+    if (traitPool == null || traitPool.isEmpty) {
+      return null;
+    }
+
+    final rand = _random.nextDouble();
+    double cumulative = 0.0;
+
+    for (var trait in traitPool) {
+      if (trait is Map<String, dynamic>) {
+        final probability = (trait['probability'] as num?)?.toDouble() ?? 0.0;
+        cumulative += probability;
+        if (rand < cumulative) {
+          return trait;
+        }
+      }
+    }
+
+    // フォールバック: 最初の特性を返す
+    if (traitPool.first is Map<String, dynamic>) {
+      return traitPool.first as Map<String, dynamic>;
+    }
+
+    return null;
+  }
+
+  /// 初期技を取得
+  List<String> _getInitialSkills(Map<String, dynamic> monster) {
+    final initialSkills = monster['initial_skills'];
+
+    if (initialSkills == null) {
+      return <String>[];
+    }
+
+    if (initialSkills is List) {
+      return initialSkills.map((e) => e.toString()).toList();
+    }
+
+    return <String>[];
+  }
+
+  // ========================================
+  // チケット管理
+  // ========================================
+
+  /// チケット残高を取得
+  Future<int> getTicketBalance(String userId) async {
+    final doc =
+        await _firestore.collection('user_gacha_tickets').doc(userId).get();
+
+    if (!doc.exists) {
+      // 初期化
+      await _firestore.collection('user_gacha_tickets').doc(userId).set({
+        'ticketCount': 0,
+        'createdAt': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+      return 0;
+    }
+
+    return doc.data()!['ticketCount'] as int? ?? 0;
+  }
+
+  /// チケットを追加
+  Future<void> addTickets(String userId, int count) async {
+    final docRef = _firestore.collection('user_gacha_tickets').doc(userId);
+
+    await _firestore.runTransaction((transaction) async {
+      final doc = await transaction.get(docRef);
 
       if (!doc.exists) {
-        return GachaTicket(userId: userId);
+        transaction.set(docRef, {
+          'ticketCount': count,
+          'createdAt': FieldValue.serverTimestamp(),
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
+      } else {
+        final currentCount = doc.data()!['ticketCount'] as int? ?? 0;
+        transaction.update(docRef, {
+          'ticketCount': currentCount + count,
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
       }
-
-      final data = doc.data()!;
-      return GachaTicket(
-        userId: userId,
-        ticketCount: data['ticketCount'] as int? ?? 0,
-        totalPulls: data['totalPulls'] as int? ?? 0,
-        createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
-        updatedAt: (data['updatedAt'] as Timestamp?)?.toDate(),
-      );
-    } catch (e) {
-      throw Exception('チケット残高の取得に失敗しました: $e');
-    }
+    });
   }
 
-  // ガチャ実行時にチケット追加
-  Future<void> addTickets(String userId, int count) async {
-    try {
-      final docRef = _firestore.collection('user_gacha_tickets').doc(userId);
-
-      await _firestore.runTransaction((transaction) async {
-        final doc = await transaction.get(docRef);
-
-        if (!doc.exists) {
-          transaction.set(docRef, {
-            'userId': userId,
-            'ticketCount': count,
-            'totalPulls': count,
-            'createdAt': FieldValue.serverTimestamp(),
-            'updatedAt': FieldValue.serverTimestamp(),
-          });
-        } else {
-          final currentCount = doc.data()!['ticketCount'] as int;
-          final totalPulls = doc.data()!['totalPulls'] as int;
-
-          transaction.update(docRef, {
-            'ticketCount': currentCount + count,
-            'totalPulls': totalPulls + count,
-            'updatedAt': FieldValue.serverTimestamp(),
-          });
-        }
-      });
-    } catch (e) {
-      throw Exception('チケットの追加に失敗しました: $e');
-    }
+  /// チケット交換オプションを取得
+  List<TicketExchangeOption> getExchangeOptions() {
+    return [
+      TicketExchangeOption(
+        id: 'star4_guaranteed',
+        name: '★4確定ガチャ',
+        requiredTickets: 50,
+        rewardType: 'star4',
+        guaranteeRate: 1.0,
+      ),
+      TicketExchangeOption(
+        id: 'star5_guaranteed',
+        name: '★5確定ガチャ',
+        requiredTickets: 100,
+        rewardType: 'star5',
+        guaranteeRate: 1.0,
+      ),
+    ];
   }
 
-  // チケット交換オプション取得
-  Future<List<TicketExchangeOption>> getExchangeOptions() async {
-    try {
-      final snapshot = await _firestore
-          .collection('gacha_ticket_exchange')
-          .orderBy('requiredTickets')
-          .get();
+  /// チケット交換を実行
+  Future<Map<String, dynamic>> exchangeTickets(
+    String userId,
+    TicketExchangeOption option,
+  ) async {
+    // チケット残高確認
+    final balance = await getTicketBalance(userId);
 
-      return snapshot.docs
-          .map((doc) => TicketExchangeOption.fromJson({
-                'id': doc.id,
-                ...doc.data(),
-              }))
-          .toList();
-    } catch (e) {
-      throw Exception('交換オプションの取得に失敗しました: $e');
+    if (balance < option.requiredTickets) {
+      throw Exception('チケットが不足しています');
     }
+
+    // 報酬を決定
+    final reward = await _determineExchangeReward(option);
+
+    // チケット消費
+    await _consumeTickets(userId, option.requiredTickets);
+
+    // モンスター付与
+    await _grantMonster(userId, reward['monsterId'] as String);
+
+    // 履歴記録
+    await _recordExchange(userId, option, reward);
+
+    return reward;
   }
 
-  // チケット交換実行
-  Future<Map<String, dynamic>> exchangeTickets({
-    required String userId,
-    required String optionId,
-  }) async {
-    try {
-      // 交換オプション取得
-      final optionDoc = await _firestore
-          .collection('gacha_ticket_exchange')
-          .doc(optionId)
-          .get();
-
-      if (!optionDoc.exists) {
-        throw Exception('無効な交換オプションです');
-      }
-
-      final option = TicketExchangeOption.fromJson({
-        'id': optionDoc.id,
-        ...optionDoc.data()!,
-      });
-
-      // ユーザーのチケット残高確認
-      final ticketData = await getTicketBalance(userId);
-
-      if (ticketData.ticketCount < option.requiredTickets) {
-        throw Exception(
-            'チケットが不足しています。必要: ${option.requiredTickets}, 所持: ${ticketData.ticketCount}');
-      }
-
-      // ガチャ実行（報酬決定）
-      final reward = await _executeGachaWithOption(option);
-
-      // チケット消費
-      await _consumeTickets(userId, option.requiredTickets);
-
-      // ユーザーにモンスター付与
-      await _grantMonster(userId, reward['monsterId'] as String);
-
-      // 履歴記録
-      await _recordExchange(userId, option, reward);
-
-      return reward;
-    } catch (e) {
-      throw Exception('チケット交換に失敗しました: $e');
-    }
-  }
-
-  // ガチャ実行（交換オプションに基づく）
-  Future<Map<String, dynamic>> _executeGachaWithOption(
+  /// 交換報酬を決定
+  Future<Map<String, dynamic>> _determineExchangeReward(
       TicketExchangeOption option) async {
-    final random = _random.nextInt(100);
-
+    final random = _random.nextDouble();
     String monsterId;
     int rarity;
 
-    if (option.specificMonsterId != null) {
-      monsterId = option.specificMonsterId!;
+    if (option.rewardType == 'star5') {
+      monsterId = await _getRandomMonster(5);
       rarity = 5;
-    } else if (option.rewardType == 'star5') {
-      if (random < option.guaranteeRate) {
-        monsterId = await _getRandomMonster(5);
-        rarity = 5;
-      } else {
-        monsterId = await _getRandomMonster(4);
-        rarity = 4;
-      }
     } else if (option.rewardType == 'star4') {
-      if (random < option.guaranteeRate) {
-        monsterId = await _getRandomMonster(4);
-        rarity = 4;
-      } else {
-        monsterId = await _getRandomMonster(5);
-        rarity = 5;
-      }
+      monsterId = await _getRandomMonster(4);
+      rarity = 4;
     } else {
       throw Exception('不明な報酬タイプ');
     }
@@ -171,7 +366,7 @@ class GachaService {
     };
   }
 
-  // ランダムモンスター取得
+  /// ランダムモンスター取得
   Future<String> _getRandomMonster(int rarity) async {
     final snapshot = await _firestore
         .collection('monster_masters')
@@ -186,7 +381,7 @@ class GachaService {
     return snapshot.docs[randomIndex].id;
   }
 
-  // チケット消費
+  /// チケット消費
   Future<void> _consumeTickets(String userId, int count) async {
     final docRef = _firestore.collection('user_gacha_tickets').doc(userId);
 
@@ -210,7 +405,7 @@ class GachaService {
     });
   }
 
-  // モンスター付与
+  /// モンスター付与
   Future<void> _grantMonster(String userId, String monsterId) async {
     final monsterDoc =
         await _firestore.collection('monster_masters').doc(monsterId).get();
@@ -219,37 +414,58 @@ class GachaService {
       throw Exception('モンスターが見つかりません');
     }
 
+    // マスターデータから基礎HP取得
+    final masterData = monsterDoc.data()!;
+    final baseStats = masterData['base_stats'] as Map<String, dynamic>? ?? {};
+    final baseHp = baseStats['hp'] as int? ?? 100;
+    
+    // 個体値生成
+    final ivHp = _generateIV();
+    final ivAttack = _generateIV();
+    final ivDefense = _generateIV();
+    final ivMagic = _generateIV();
+    final ivSpeed = _generateIV();
+    
+    // 初期HPを計算（Lv1なのでbaseHp + ivHp）
+    final initialHp = baseHp + ivHp;
+
     await _firestore.collection('user_monsters').add({
-      'userId': userId,
-      'monsterId': monsterId,
+      'user_id': userId,                   // ✅ snake_case
+      'monster_id': monsterId,             // ✅ snake_case
       'level': 1,
       'exp': 0,
-      'intimacyLevel': 1,
-      'intimacyExp': 0,
-      'ivHp': _generateIV(),
-      'ivAttack': _generateIV(),
-      'ivDefense': _generateIV(),
-      'ivMagic': _generateIV(),
-      'ivSpeed': _generateIV(),
-      'pointHp': 0,
-      'pointAttack': 0,
-      'pointDefense': 0,
-      'pointMagic': 0,
-      'pointSpeed': 0,
-      'remainingPoints': 0,
-      'skinId': 1,
-      'isFavorite': false,
-      'isLocked': false,
-      'acquiredAt': FieldValue.serverTimestamp(),
+      'current_hp': initialHp,             // ✅ 追加
+      'last_hp_update': FieldValue.serverTimestamp(),  // ✅ 追加
+      'intimacy_level': 1,                 // ✅ snake_case
+      'intimacy_exp': 0,                   // ✅ snake_case
+      'iv_hp': ivHp,                       // ✅ snake_case
+      'iv_attack': ivAttack,               // ✅ snake_case
+      'iv_defense': ivDefense,             // ✅ snake_case
+      'iv_magic': ivMagic,                 // ✅ snake_case
+      'iv_speed': ivSpeed,                 // ✅ snake_case
+      'point_hp': 0,                       // ✅ snake_case
+      'point_attack': 0,                   // ✅ snake_case
+      'point_defense': 0,                  // ✅ snake_case
+      'point_magic': 0,                    // ✅ snake_case
+      'point_speed': 0,                    // ✅ snake_case
+      'remaining_points': 0,               // ✅ snake_case
+      'main_trait_id': null,               // ✅ 追加
+      'equipped_skills': <String>[],       // ✅ 追加
+      'equipped_equipment': <String>[],    // ✅ 追加
+      'skin_id': 1,                        // ✅ snake_case
+      'is_favorite': false,                // ✅ snake_case
+      'is_locked': false,                  // ✅ snake_case
+      'acquired_at': FieldValue.serverTimestamp(),  // ✅ snake_case
+      'last_used_at': null,                // ✅ 追加
     });
   }
 
-  // 個体値生成（±0〜10）
+  /// 個体値生成（0〜10）
   int _generateIV() {
-    return _random.nextInt(21) - 10;
+    return _random.nextInt(11);
   }
 
-  // 交換履歴記録
+  /// 交換履歴記録
   Future<void> _recordExchange(
     String userId,
     TicketExchangeOption option,
@@ -284,39 +500,48 @@ class GachaService {
         'userId': userId,
         'gachaType': gachaType,
         'pullCount': pullCount,
-        'results': results.map((r) => {
-          'monsterId': r['id'] ?? 'temp_${_random.nextInt(10000)}',
-          'monsterName': r['name'] ?? '不明',
-          'rarity': r['rarity'] ?? 2,
-          'race': r['race'] ?? '不明',
-          'element': r['element'] ?? '不明',
-        }).toList(),
+        'results': results
+            .map((r) => {
+                  'monsterId': r['id'] ?? 'temp_${_random.nextInt(10000)}',
+                  'monsterName': r['name'] ?? '不明',
+                  'rarity': r['rarity'] ?? 2,
+                  'race': r['race'] ?? '不明',
+                  'element': r['element'] ?? 'none',
+                })
+            .toList(),
         'gemsUsed': gemsUsed,
         'ticketsUsed': ticketsUsed,
-        'pulledAt': FieldValue.serverTimestamp(),
+        'createdAt': FieldValue.serverTimestamp(),
       };
 
-      await _firestore.collection('gacha_histories').add(historyData);
+      await _firestore.collection('gacha_history').add(historyData);
     } catch (e) {
-      throw Exception('ガチャ履歴の保存に失敗しました: $e');
+      print('ガチャ履歴保存エラー: $e');
+      // 履歴保存失敗はクリティカルではないのでエラーは投げない
     }
   }
 
-  /// ガチャ履歴を取得（最新100件）
-  Future<List<GachaHistory>> getGachaHistory(String userId) async {
+  /// ガチャ履歴を取得
+  Future<List<Map<String, dynamic>>> getGachaHistory(
+    String userId, {
+    int limit = 50,
+  }) async {
     try {
       final snapshot = await _firestore
-          .collection('gacha_histories')
+          .collection('gacha_history')
           .where('userId', isEqualTo: userId)
-          .orderBy('pulledAt', descending: true)
-          .limit(100)
+          .orderBy('createdAt', descending: true)
+          .limit(limit)
           .get();
 
-      return snapshot.docs
-          .map((doc) => GachaHistory.fromJson(doc.data(), doc.id))
-          .toList();
+      return snapshot.docs.map((doc) {
+        final data = doc.data();
+        data['id'] = doc.id;
+        return data;
+      }).toList();
     } catch (e) {
-      throw Exception('ガチャ履歴の取得に失敗しました: $e');
+      print('ガチャ履歴取得エラー: $e');
+      return [];
     }
   }
 }
