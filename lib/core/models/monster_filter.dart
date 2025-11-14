@@ -84,16 +84,17 @@ class MonsterFilter {
 
 /// ソートタイプ
 enum MonsterSortType {
-  levelDesc, // レベル降順
-  levelAsc, // レベル昇順
-  rarityDesc, // レアリティ降順
-  rarityAsc, // レアリティ昇順
-  nameAsc, // 名前昇順
-  nameDesc, // 名前降順
-  acquiredDesc, // 取得日降順（新しい順）
-  acquiredAsc, // 取得日昇順（古い順）
-  hpDesc, // HP降順
-  hpAsc, // HP昇順
+  levelDesc,
+  levelAsc,
+  rarityDesc,
+  rarityAsc,
+  acquiredDesc,
+  acquiredAsc,
+  favoriteFirst,
+  nameAsc,
+  nameDesc,
+  hpDesc,      // ✅ 追加
+  hpAsc,       // ✅ 追加
 }
 
 /// ソートタイプの表示名
@@ -108,17 +109,19 @@ extension MonsterSortTypeExtension on MonsterSortType {
         return 'レアリティ（高い順）';
       case MonsterSortType.rarityAsc:
         return 'レアリティ（低い順）';
-      case MonsterSortType.nameAsc:
-        return '名前（A-Z）';
-      case MonsterSortType.nameDesc:
-        return '名前（Z-A）';
       case MonsterSortType.acquiredDesc:
-        return '取得日（新しい順）';
+        return '取得日時（新しい順）';
       case MonsterSortType.acquiredAsc:
-        return '取得日（古い順）';
-      case MonsterSortType.hpDesc:
+        return '取得日時（古い順）';
+      case MonsterSortType.favoriteFirst:
+        return 'お気に入り優先';
+      case MonsterSortType.nameAsc:
+        return '名前（昇順）';
+      case MonsterSortType.nameDesc:
+        return '名前（降順）';
+      case MonsterSortType.hpDesc:           // ✅ 追加
         return 'HP（高い順）';
-      case MonsterSortType.hpAsc:
+      case MonsterSortType.hpAsc:            // ✅ 追加
         return 'HP（低い順）';
     }
   }

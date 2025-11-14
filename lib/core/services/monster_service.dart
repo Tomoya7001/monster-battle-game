@@ -187,6 +187,14 @@ class MonsterService {
       case MonsterSortType.nameDesc:
         sorted.sort((a, b) => b.monsterName.compareTo(a.monsterName));
         break;
+
+      case MonsterSortType.hpDesc:
+        sorted.sort((a, b) => b.currentHp.compareTo(a.currentHp));
+        break;
+
+      case MonsterSortType.hpAsc:
+        sorted.sort((a, b) => a.currentHp.compareTo(b.currentHp));
+        break;
     }
 
     return sorted;
