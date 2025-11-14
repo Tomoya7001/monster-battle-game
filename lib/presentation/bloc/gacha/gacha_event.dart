@@ -1,7 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../screens/gacha/widgets/gacha_tabs.dart';
 
-/// ガチャ関連のイベント
 abstract class GachaEvent extends Equatable {
   const GachaEvent();
 
@@ -10,47 +8,70 @@ abstract class GachaEvent extends Equatable {
 }
 
 /// 初期化イベント
-/// ユーザーの通貨情報と天井カウンターを取得
-class GachaInitialize extends GachaEvent {
-  final String userId;
+class InitializeGacha extends GachaEvent {
+  const InitializeGacha();
+}
 
-  const GachaInitialize(this.userId);
+class ExecuteGacha extends GachaEvent {
+  final String gachaType;
+  final int count;
+  final String? userId; // 追加
+
+  const ExecuteGacha({
+    required this.gachaType,
+    required this.count,
+    this.userId, // 追加
+  });
 
   @override
-  List<Object?> get props => [userId];
+  List<Object?> get props => [gachaType, count, userId]; // 修正
 }
 
 /// ガチャタイプ変更イベント
-class GachaTypeChanged extends GachaEvent {
-  final GachaType type;
+class ChangeGachaType extends GachaEvent {
+  final String gachaType;
 
-  const GachaTypeChanged(this.type);
+  const ChangeGachaType(this.gachaType);
 
   @override
-  List<Object?> get props => [type];
+  List<Object?> get props => [gachaType];
 }
 
-/// 単発ガチャ実行イベント
-class GachaDrawSingle extends GachaEvent {
+/// 天井カウンターリセットイベント
+class ResetPityCounter extends GachaEvent {
+  const ResetPityCounter();
+}
+
+/// チケット残高読み込みイベント
+class LoadTicketBalance extends GachaEvent {
   final String userId;
 
-  const GachaDrawSingle(this.userId);
+  const LoadTicketBalance(this.userId);
 
   @override
   List<Object?> get props => [userId];
 }
 
-/// 10連ガチャ実行イベント
-class GachaDrawMulti extends GachaEvent {
+/// チケット交換イベント
+class ExchangeTickets extends GachaEvent {
+  final String userId;
+  final String optionId;
+
+  const ExchangeTickets({
+    required this.userId,
+    required this.optionId,
+  });
+
+  @override
+  List<Object?> get props => [userId, optionId];
+}
+
+/// ガチャ履歴取得イベント
+class LoadGachaHistory extends GachaEvent {
   final String userId;
 
-  const GachaDrawMulti(this.userId);
+  const LoadGachaHistory(this.userId);
 
   @override
   List<Object?> get props => [userId];
-}
-
-/// 結果モーダルを閉じるイベント
-class GachaResultClosed extends GachaEvent {
-  const GachaResultClosed();
 }

@@ -4,9 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../blocs/auth/auth_bloc.dart';
 import '../../../core/router/app_router.dart';
 
-/// ログイン画面
-/// 
-/// Google/Apple Sign Inでの認証を提供
+/// ログイン画面（開発用簡易版）
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
@@ -15,12 +13,9 @@ class LoginScreen extends StatelessWidget {
     return Scaffold(
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
-          // 認証成功時、ホーム画面へ遷移
           if (state is Authenticated) {
             context.go(AppRouter.home);
-          } 
-          // エラー時、スナックバー表示
-          else if (state is AuthError) {
+          } else if (state is AuthError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.message),
@@ -30,14 +25,10 @@ class LoginScreen extends StatelessWidget {
           }
         },
         builder: (context, state) {
-          // ローディング中
           if (state is AuthLoading) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const Center(child: CircularProgressIndicator());
           }
 
-          // ログイン画面
           return SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(24.0),
@@ -61,7 +52,6 @@ class LoginScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 32),
 
-                  // タイトル
                   Text(
                     'ログイン',
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
@@ -71,9 +61,8 @@ class LoginScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
 
-                  // サブタイトル
                   Text(
-                    'アカウントにログインしてゲームを始めよう',
+                    'モンスター対戦ゲーム',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: Colors.grey,
                         ),
@@ -81,127 +70,44 @@ class LoginScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 48),
 
-                  // Google Sign In ボタン
-                  _SignInButton(
-                    icon: Icons.g_mobiledata_rounded,
-                    label: 'Googleでログイン',
-                    backgroundColor: Colors.white,
-                    textColor: Colors.black87,
+                  // 開発用：簡易ログインボタン
+                  ElevatedButton.icon(
                     onPressed: () {
-                      // Googleログインイベントを発火
-                      context.read<AuthBloc>().add(const GoogleSignInRequested());
-                    },
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Apple Sign In ボタン
-                  _SignInButton(
-                    icon: Icons.apple,
-                    label: 'Appleでログイン',
-                    backgroundColor: Colors.black,
-                    textColor: Colors.white,
-                    onPressed: () {
-                      // TODO: Apple Sign Inは後で実装
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Apple Sign Inは実装予定です'),
-                          duration: Duration(seconds: 2),
-                        ),
+                      // ダミーのユーザーIDでログイン
+                      context.read<AuthBloc>().add(
+                        const AuthLoginSuccess('dev_user_12345'),
                       );
                     },
+                    icon: const Icon(Icons.login),
+                    label: const Text('開発用ログイン'),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                    ),
                   ),
+                  
                   const SizedBox(height: 32),
-
-                  // 区切り線
-                  Row(
-                    children: [
-                      const Expanded(child: Divider()),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Text(
-                          'または',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: Colors.grey,
-                              ),
-                        ),
-                      ),
-                      const Expanded(child: Divider()),
-                    ],
-                  ),
-                  const SizedBox(height: 32),
-
-                  // 新規登録へのリンク
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'アカウントをお持ちでないですか？',
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          context.go(AppRouter.signup);
-                        },
-                        child: const Text('新規登録'),
-                      ),
-                    ],
+                  
+                  // 注意書き
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.orange.shade50,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.orange.shade200),
+                    ),
+                    child: const Text(
+                      '⚠️ 開発中モード\n「開発用ログイン」でゲームを開始できます\n本番用の認証は後で実装します',
+                      style: TextStyle(fontSize: 12),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                 ],
               ),
             ),
           );
         },
-      ),
-    );
-  }
-}
-
-/// サインインボタンウィジェット
-class _SignInButton extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final Color backgroundColor;
-  final Color textColor;
-  final VoidCallback onPressed;
-
-  const _SignInButton({
-    required this.icon,
-    required this.label,
-    required this.backgroundColor,
-    required this.textColor,
-    required this.onPressed,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: onPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: backgroundColor,
-        foregroundColor: textColor,
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-          side: backgroundColor == Colors.white
-              ? const BorderSide(color: Colors.grey, width: 0.5)
-              : BorderSide.none,
-        ),
-        elevation: 2,
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, size: 24),
-          const SizedBox(width: 12),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: textColor,
-            ),
-          ),
-        ],
       ),
     );
   }

@@ -1,56 +1,50 @@
 import 'package:flutter/material.dart';
 
-/// ガチャの種類
-enum GachaType {
-  normal,   // 通常
-  premium,  // プレミアム
-  pickup,   // ピックアップ
-}
-
-/// ガチャタブ切り替えウィジェット
-/// 
-/// Day 1: 基本的なタブ切り替え
-/// Day 3-4: BLoCと連携して状態管理
-class GachaTabs extends StatefulWidget {
-  final GachaType initialType;
-  final Function(GachaType)? onTypeChanged;
+/// ガチャ種別タブウィジェット
+/// 通常・プレミアム・ピックアップの切り替え
+class GachaTabs extends StatelessWidget {
+  final String selectedTab;
+  final ValueChanged<String> onTabChanged;
 
   const GachaTabs({
-    super.key,
-    this.initialType = GachaType.normal,
-    this.onTypeChanged,
-  });
-
-  @override
-  State<GachaTabs> createState() => _GachaTabsState();
-}
-
-class _GachaTabsState extends State<GachaTabs> {
-  late GachaType _selectedType;
-
-  @override
-  void initState() {
-    super.initState();
-    _selectedType = widget.initialType;
-  }
+    Key? key,
+    required this.selectedTab,
+    required this.onTabChanged,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
+      margin: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
         children: [
-          _buildTab(
-            type: GachaType.normal,
-            label: '通常',
+          Expanded(
+            child: _buildTab(
+              context: context,
+              label: '通常',
+              isSelected: selectedTab == '通常',
+              onTap: () => onTabChanged('通常'),
+            ),
           ),
-          _buildTab(
-            type: GachaType.premium,
-            label: 'プレミアム',
+          const SizedBox(width: 8),
+          Expanded(
+            child: _buildTab(
+              context: context,
+              label: 'プレミアム',
+              isSelected: selectedTab == 'プレミアム',
+              onTap: () => onTabChanged('プレミアム'),
+              color: Colors.purple,
+            ),
           ),
-          _buildTab(
-            type: GachaType.pickup,
-            label: 'ピックアップ',
+          const SizedBox(width: 8),
+          Expanded(
+            child: _buildTab(
+              context: context,
+              label: 'ピックアップ',
+              isSelected: selectedTab == 'ピックアップ',
+              onTap: () => onTabChanged('ピックアップ'),
+              color: Colors.orange,
+            ),
           ),
         ],
       ),
@@ -58,62 +52,37 @@ class _GachaTabsState extends State<GachaTabs> {
   }
 
   Widget _buildTab({
-    required GachaType type,
+    required BuildContext context,
     required String label,
+    required bool isSelected,
+    required VoidCallback onTap,
+    Color? color,
   }) {
-    final isSelected = _selectedType == type;
-    
-    return Expanded(
-      child: InkWell(
-        onTap: () {
-          setState(() {
-            _selectedType = type;
-          });
-          // コールバック実行(Day 3-4でBLoCに通知)
-          widget.onTypeChanged?.call(type);
-          
-          // 開発用: 選択されたタブを表示
-          debugPrint('[GachaTabs] Selected: $type');
-        },
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 16.0),
-          decoration: BoxDecoration(
-            border: Border(
-              bottom: BorderSide(
-                color: isSelected 
-                  ? Theme.of(context).primaryColor 
-                  : Colors.transparent,
-                width: 3,
-              ),
-            ),
+    final tabColor = color ?? Colors.blue;
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        decoration: BoxDecoration(
+          color: isSelected ? tabColor : Colors.grey.shade200,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: isSelected ? tabColor : Colors.grey.shade300,
+            width: 2,
           ),
+        ),
+        child: Center(
           child: Text(
             label,
-            textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 16,
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              color: isSelected 
-                ? Theme.of(context).primaryColor 
-                : Colors.grey,
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: isSelected ? Colors.white : Colors.grey.shade700,
             ),
           ),
         ),
       ),
     );
-  }
-}
-
-/// ガチャタイプの表示名を取得
-extension GachaTypeExtension on GachaType {
-  String get displayName {
-    switch (this) {
-      case GachaType.normal:
-        return '通常';
-      case GachaType.premium:
-        return 'プレミアム';
-      case GachaType.pickup:
-        return 'ピックアップ';
-    }
   }
 }

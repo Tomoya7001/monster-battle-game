@@ -1,53 +1,26 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import '../../domain/repositories/auth_repository.dart';
 
+/// 認証リポジトリ実装（開発用簡易版）
+/// 
+/// 注：本格的なGoogle認証は後で実装します
 class AuthRepositoryImpl implements AuthRepository {
   final FirebaseAuth _firebaseAuth;
-  final GoogleSignIn _googleSignIn;
   
   AuthRepositoryImpl({
     FirebaseAuth? firebaseAuth,
-    GoogleSignIn? googleSignIn,
-  })  : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
-        _googleSignIn = googleSignIn ?? GoogleSignIn();
+  }) : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance;
   
   @override
   Future<User?> signInWithGoogle() async {
-    try {
-      // Google認証フロー開始
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      
-      // ユーザーがキャンセルした場合
-      if (googleUser == null) return null;
-      
-      // 認証情報取得
-      final GoogleSignInAuthentication googleAuth = 
-          await googleUser.authentication;
-      
-      // Firebase用のクレデンシャル作成
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-      
-      // Firebaseにサインイン
-      final UserCredential userCredential = 
-          await _firebaseAuth.signInWithCredential(credential);
-      
-      return userCredential.user;
-    } catch (e) {
-      print('Google Sign In Error: $e');
-      rethrow;
-    }
+    // TODO: 本番ではGoogle認証を実装
+    // 現在は未実装
+    throw UnimplementedError('Google Sign Inは後で実装します');
   }
   
   @override
   Future<void> signOut() async {
-    await Future.wait([
-      _firebaseAuth.signOut(),
-      _googleSignIn.signOut(),
-    ]);
+    await _firebaseAuth.signOut();
   }
   
   @override

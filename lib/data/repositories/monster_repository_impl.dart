@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../domain/entities/monster.dart';
 import '../../domain/repositories/monster_repository.dart';
+import '../models/monster_model.dart';
 
 class MonsterRepositoryImpl implements MonsterRepository {
   final FirebaseFirestore _firestore;
-  static const String _collection = 'monsters';
+  static const String _collection = 'user_monsters';
+  static const String _masterCollection = 'monster_masters';
 
   MonsterRepositoryImpl(this._firestore);
 
@@ -13,14 +15,28 @@ class MonsterRepositoryImpl implements MonsterRepository {
     try {
       final snapshot = await _firestore
           .collection(_collection)
-          .where('userId', isEqualTo: userId)
-          .orderBy('acquiredAt', descending: true)
+          .where('user_id', isEqualTo: userId)
+          .orderBy('acquired_at', descending: true)
           .get();
 
-      return snapshot.docs
-          .map((doc) => Monster.fromJson(doc.data()))
+      // モンスターIDを収集
+      final monsterIds = snapshot.docs
+          .map((doc) => doc.data()['monster_id'] as String?)
+          .where((id) => id != null)
+          .toSet()
           .toList();
+
+      // マスターデータを一括取得
+      final masterDataMap = await _getMonsterMasterData(monsterIds.cast<String>());
+
+      // Monsterエンティティに変換
+      return snapshot.docs.map((doc) {
+        final monsterId = doc.data()['monster_id'] as String?;
+        final masterData = masterDataMap[monsterId];
+        return MonsterModel.fromFirestore(doc, masterData);
+      }).toList();
     } catch (e) {
+      print('Error getting monsters: $e');
       throw Exception('Failed to get monsters: $e');
     }
   }
@@ -35,8 +51,25 @@ class MonsterRepositoryImpl implements MonsterRepository {
 
       if (!doc.exists) return null;
 
-      return Monster.fromJson(doc.data()!);
+      // マスターデータを取得
+      final data = doc.data()!;
+      final masterMonsterId = data['monster_id'] as String?;
+      
+      Map<String, dynamic>? masterData;
+      if (masterMonsterId != null) {
+        final masterDoc = await _firestore
+            .collection(_masterCollection)
+            .doc(masterMonsterId)
+            .get();
+        
+        if (masterDoc.exists) {
+          masterData = masterDoc.data();
+        }
+      }
+
+      return MonsterModel.fromFirestore(doc, masterData);
     } catch (e) {
+      print('Error getting monster: $e');
       throw Exception('Failed to get monster: $e');
     }
   }
@@ -47,7 +80,7 @@ class MonsterRepositoryImpl implements MonsterRepository {
       await _firestore
           .collection(_collection)
           .doc(monster.id)
-          .set(monster.toJson());
+          .set(MonsterModel.toFirestore(monster));
     } catch (e) {
       throw Exception('Failed to create monster: $e');
     }
@@ -59,7 +92,7 @@ class MonsterRepositoryImpl implements MonsterRepository {
       await _firestore
           .collection(_collection)
           .doc(monster.id)
-          .update(monster.toJson());
+          .update(MonsterModel.toFirestore(monster));
     } catch (e) {
       throw Exception('Failed to update monster: $e');
     }
@@ -81,12 +114,27 @@ class MonsterRepositoryImpl implements MonsterRepository {
   Stream<List<Monster>> watchMonsters(String userId) {
     return _firestore
         .collection(_collection)
-        .where('userId', isEqualTo: userId)
-        .orderBy('acquiredAt', descending: true)
+        .where('user_id', isEqualTo: userId)
+        .orderBy('acquired_at', descending: true)
         .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => Monster.fromJson(doc.data()))
-            .toList());
+        .asyncMap((snapshot) async {
+      // モンスターIDを収集
+      final monsterIds = snapshot.docs
+          .map((doc) => doc.data()['monster_id'] as String?)
+          .where((id) => id != null)
+          .toSet()
+          .toList();
+
+      // マスターデータを一括取得
+      final masterDataMap = await _getMonsterMasterData(monsterIds.cast<String>());
+
+      // Monsterエンティティに変換
+      return snapshot.docs.map((doc) {
+        final monsterId = doc.data()['monster_id'] as String?;
+        final masterData = masterDataMap[monsterId];
+        return MonsterModel.fromFirestore(doc, masterData);
+      }).toList();
+    });
   }
 
   @override
@@ -94,15 +142,28 @@ class MonsterRepositoryImpl implements MonsterRepository {
     try {
       final snapshot = await _firestore
           .collection(_collection)
-          .where('userId', isEqualTo: userId)
-          .where('inParty', isEqualTo: true)
-          .orderBy('partySlot')
+          .where('user_id', isEqualTo: userId)
+          .where('in_party', isEqualTo: true)
+          .orderBy('party_slot')
           .limit(5)
           .get();
 
-      return snapshot.docs
-          .map((doc) => Monster.fromJson(doc.data()))
+      // モンスターIDを収集
+      final monsterIds = snapshot.docs
+          .map((doc) => doc.data()['monster_id'] as String?)
+          .where((id) => id != null)
+          .toSet()
           .toList();
+
+      // マスターデータを一括取得
+      final masterDataMap = await _getMonsterMasterData(monsterIds.cast<String>());
+
+      // Monsterエンティティに変換
+      return snapshot.docs.map((doc) {
+        final monsterId = doc.data()['monster_id'] as String?;
+        final masterData = masterDataMap[monsterId];
+        return MonsterModel.fromFirestore(doc, masterData);
+      }).toList();
     } catch (e) {
       throw Exception('Failed to get party monsters: $e');
     }
@@ -116,13 +177,13 @@ class MonsterRepositoryImpl implements MonsterRepository {
       // すべてのモンスターをパーティから外す
       final allMonstersSnapshot = await _firestore
           .collection(_collection)
-          .where('userId', isEqualTo: userId)
+          .where('user_id', isEqualTo: userId)
           .get();
 
       for (var doc in allMonstersSnapshot.docs) {
         batch.update(doc.reference, {
-          'inParty': false,
-          'partySlot': null,
+          'in_party': false,
+          'party_slot': null,
         });
       }
 
@@ -132,8 +193,8 @@ class MonsterRepositoryImpl implements MonsterRepository {
             .collection(_collection)
             .doc(monsterIds[i]);
         batch.update(monsterRef, {
-          'inParty': true,
-          'partySlot': i,
+          'in_party': true,
+          'party_slot': i,
         });
       }
 
@@ -155,35 +216,45 @@ class MonsterRepositoryImpl implements MonsterRepository {
         throw Exception('Monster not found');
       }
 
-      final monster = Monster.fromJson(doc.data()!);
-      var currentExp = monster.exp + exp;
-      var currentLevel = monster.level;
-
-      // レベルアップ処理（簡易版）
-      while (currentExp >= _getExpForNextLevel(currentLevel)) {
-        currentExp -= _getExpForNextLevel(currentLevel);
-        currentLevel++;
-        if (currentLevel >= 100) {
-          currentLevel = 100;
-          currentExp = 0;
-          break;
-        }
-      }
+      final data = doc.data()!;
+      final currentExp = data['exp'] as int? ?? 0;
+      final newExp = currentExp + exp;
 
       await _firestore
           .collection(_collection)
           .doc(monsterId)
-          .update({
-        'exp': currentExp,
-        'level': currentLevel,
-      });
+          .update({'exp': newExp});
     } catch (e) {
       throw Exception('Failed to add exp: $e');
     }
   }
 
-  // レベルアップに必要な経験値を計算
-  int _getExpForNextLevel(int level) {
-    return (level * level * 10).toInt();
+  /// モンスターマスタデータを取得
+  Future<Map<String, Map<String, dynamic>>> _getMonsterMasterData(
+    List<String> monsterIds,
+  ) async {
+    if (monsterIds.isEmpty) return {};
+
+    try {
+      final Map<String, Map<String, dynamic>> masterDataMap = {};
+
+      // 一括取得（Firestoreの制限により10件ずつ）
+      for (int i = 0; i < monsterIds.length; i += 10) {
+        final batch = monsterIds.skip(i).take(10).toList();
+        final snapshot = await _firestore
+            .collection(_masterCollection)
+            .where(FieldPath.documentId, whereIn: batch)
+            .get();
+
+        for (var doc in snapshot.docs) {
+          masterDataMap[doc.id] = doc.data();
+        }
+      }
+
+      return masterDataMap;
+    } catch (e) {
+      print('Error getting monster master data: $e');
+      return {};
+    }
   }
 }

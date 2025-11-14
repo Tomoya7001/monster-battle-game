@@ -1,207 +1,275 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:math';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'gacha_event.dart';
 import 'gacha_state.dart';
-import '../../../../domain/entities/monster.dart';
+import '../../../core/services/gacha_service.dart';
 
-/// ガチャのBLoC
-/// 
-/// Day 3-4: 基本実装
-/// - 初期化
-/// - タイプ変更
-/// - 単発/10連ガチャ実行
-/// 
-/// 注意: Week 6で実装したGachaServiceは Day 3-4 では未使用
-///       仮データで動作確認を行います
 class GachaBloc extends Bloc<GachaEvent, GachaState> {
-  GachaBloc() : super(const GachaState()) {
-    on<GachaInitialize>(_onInitialize);
-    on<GachaTypeChanged>(_onTypeChanged);
-    on<GachaDrawSingle>(_onDrawSingle);
-    on<GachaDrawMulti>(_onDrawMulti);
-    on<GachaResultClosed>(_onResultClosed);
+  final GachaService _gachaService;
+  final Random _random = Random();
+
+  GachaBloc({GachaService? gachaService})
+      : _gachaService = gachaService ?? GachaService(),
+        super(const GachaInitial()) {
+    on<InitializeGacha>(_onInitialize);
+    on<ExecuteGacha>(_onExecute);
+    on<ChangeGachaType>(_onChangeType);
+    on<ResetPityCounter>(_onResetPity);
+    on<LoadTicketBalance>(_onLoadTicketBalance);
+    on<ExchangeTickets>(_onExchangeTickets);
+    on<LoadGachaHistory>(_onLoadGachaHistory);
   }
 
-  /// 初期化処理
   Future<void> _onInitialize(
-    GachaInitialize event,
+    InitializeGacha event,
     Emitter<GachaState> emit,
   ) async {
-    try {
-      // TODO: Firestoreからユーザーの通貨情報を取得
-      // Week 7では仮データを使用
-      
-      emit(state.copyWith(
-        status: GachaStatus.initial,
-        freeGems: 1500,  // 仮データ
-        paidGems: 0,
-        tickets: 5,
-        pityCount: 25,   // 仮データ
-      ));
-    } catch (e) {
-      emit(state.copyWith(
-        status: GachaStatus.failure,
-        errorMessage: '初期化に失敗しました: $e',
-      ));
-    }
+    emit(const GachaInitial());
   }
 
-  /// ガチャタイプ変更
-  void _onTypeChanged(
-    GachaTypeChanged event,
+  Future<void> _onExecute(
+    ExecuteGacha event,
     Emitter<GachaState> emit,
-  ) {
-    emit(state.copyWith(
-      selectedType: event.type,
+  ) async {
+    emit(GachaLoading(
+      selectedType: state.selectedType,
+      pityCount: state.pityCount,
+      gems: state.gems,
+      tickets: state.tickets,
+      gachaTickets: state.gachaTickets,
     ));
-  }
 
-  /// 単発ガチャ実行
-  Future<void> _onDrawSingle(
-    GachaDrawSingle event,
-    Emitter<GachaState> emit,
-  ) async {
-    // ローディング開始
-    emit(state.copyWith(status: GachaStatus.loading));
-
-    try {
-      // 通貨チェック
-      const cost = 150;
-      if (state.freeGems < cost) {
-        throw Exception('石が不足しています');
-      }
-
-      // TODO: Week 8以降で GachaService を使ってガチャ実行
-      // final result = await _gachaService.drawSingle(userId: event.userId);
-      
-      // Week 7では仮データを使用
-      await Future.delayed(const Duration(seconds: 1)); // 演出用の遅延
-      
-      // 仮のモンスター作成
-      final result = _createDummyMonster();
-      
-      // TODO: Week 8以降で Firestoreに保存
-      // - user_monstersコレクションに追加
-      // - usersコレクションの通貨を減算
-      // - gacha_pity_countersを更新
-      
-      // 成功状態に更新
-      emit(state.copyWith(
-        status: GachaStatus.success,
-        results: [result],
-        freeGems: state.freeGems - cost,
-        pityCount: state.pityCount + 1,
+    final cost = event.count == 1 ? 150 : 1500;
+    if (state.gems < cost) {
+      emit(GachaError(
+        error: '石が不足しています',
+        selectedType: state.selectedType,
+        pityCount: state.pityCount,
+        gems: state.gems,
+        tickets: state.tickets,
+        gachaTickets: state.gachaTickets,
       ));
-    } catch (e) {
-      emit(state.copyWith(
-        status: GachaStatus.failure,
-        errorMessage: e.toString(),
-      ));
+      return;
     }
-  }
 
-  /// 10連ガチャ実行
-  Future<void> _onDrawMulti(
-    GachaDrawMulti event,
-    Emitter<GachaState> emit,
-  ) async {
-    // ローディング開始
-    emit(state.copyWith(status: GachaStatus.loading));
+    await Future.delayed(const Duration(milliseconds: 500));
 
     try {
-      // 通貨チェック
-      const cost = 1500;
-      if (state.freeGems < cost) {
-        throw Exception('石が不足しています');
+      final results = List.generate(event.count, (index) {
+        return _generateRandomMonster(event.gachaType);
+      });
+
+      // ガチャチケット追加
+      if (event.userId != null && event.userId!.isNotEmpty) {
+        try {
+          await _gachaService.addTickets(event.userId!, event.count);
+        } catch (e) {
+          print('チケット追加エラー: $e');
+          // エラーが発生してもガチャ結果は返す（チケットは次回同期）
+        }
       }
 
-      // TODO: Week 8以降で GachaService を使ってガチャ実行
-      // final results = await _gachaService.drawMulti(userId: event.userId);
-      
-      // Week 7では仮データを使用
-      await Future.delayed(const Duration(seconds: 2)); // 演出用の遅延
-      
-      // 仮のモンスター10体作成
-      final results = List.generate(10, (index) => _createDummyMonster());
-      
-      // TODO: Week 8以降で Firestoreに保存
-      
-      // 成功状態に更新
-      emit(state.copyWith(
-        status: GachaStatus.success,
+      final newGems = state.gems - cost;
+      final newPityCount = state.pityCount + event.count;
+      final newGachaTickets = state.gachaTickets + event.count;
+
+      // ガチャ履歴を保存
+      if (event.userId != null && event.userId!.isNotEmpty) {
+        try {
+          await _gachaService.saveGachaHistory(
+            userId: event.userId!,
+            gachaType: event.gachaType,
+            pullCount: event.count,
+            results: results,
+            gemsUsed: cost,
+            ticketsUsed: 0, // 現在は石のみ
+          );
+        } catch (e) {
+          print('ガチャ履歴保存エラー: $e');
+          // エラーが出てもガチャ結果は表示する
+        }
+      }
+
+      emit(GachaLoaded(
         results: results,
-        freeGems: state.freeGems - cost,
-        pityCount: state.pityCount + 10,
+        selectedType: state.selectedType,
+        pityCount: newPityCount,
+        gems: newGems,
+        tickets: state.tickets,
+        gachaTickets: newGachaTickets,
       ));
     } catch (e) {
-      emit(state.copyWith(
-        status: GachaStatus.failure,
-        errorMessage: e.toString(),
+      emit(GachaError(
+        error: 'ガチャの実行に失敗しました: $e',
+        selectedType: state.selectedType,
+        pityCount: state.pityCount,
+        gems: state.gems,
+        tickets: state.tickets,
+        gachaTickets: state.gachaTickets,
       ));
     }
   }
 
-  /// 結果モーダルを閉じる
-  void _onResultClosed(
-    GachaResultClosed event,
+  Future<void> _onChangeType(
+    ChangeGachaType event,
     Emitter<GachaState> emit,
-  ) {
-    emit(state.copyWith(
-      status: GachaStatus.initial,
-      results: [],
+  ) async {
+    emit(GachaInitial(
+      selectedType: event.gachaType,
+      pityCount: state.pityCount,
+      gems: state.gems,
+      tickets: state.tickets,
+      gachaTickets: state.gachaTickets,
     ));
   }
 
-  /// ダミーモンスター作成(開発用)
-  Monster _createDummyMonster() {
-    final random = Random();
-    
-    // ランダムでレアリティを決定
-    final randomValue = random.nextInt(100);
-    final rarity = randomValue < 2 ? 5 : randomValue < 17 ? 4 : randomValue < 47 ? 3 : 2;
-    
-    // ランダムで種族と属性を決定
-    final species = ['dragon', 'angel', 'demon', 'human', 'spirit', 'mechanoid', 'mutant'];
-    final elements = ['fire', 'water', 'thunder', 'wind', 'earth', 'light', 'dark'];
-    
-    final randomSpecies = species[random.nextInt(species.length)];
-    final randomElement = elements[random.nextInt(elements.length)];
-    
-    final now = DateTime.now();
-    // 一意なIDを生成（マイクロ秒 + ランダム値）
-    final uniqueId = 'dummy_${now.microsecondsSinceEpoch}_${random.nextInt(99999)}';
-    
-    return Monster(
-      id: uniqueId,
-      masterId: 'master_${random.nextInt(100).toString().padLeft(3, '0')}',
-      userId: 'test_user',
-      name: 'テストモンスター★$rarity',
-      level: 1,
-      exp: 0,
-      species: randomSpecies,
-      element: randomElement,
-      rarity: rarity,
-      hp: 100,
-      maxHp: 100,
-      attack: 50 + random.nextInt(20),
-      defense: 40 + random.nextInt(20),
-      magic: 30 + random.nextInt(20),
-      speed: 60 + random.nextInt(20),
-      ivHp: random.nextInt(11),
-      ivAttack: random.nextInt(11),
-      ivDefense: random.nextInt(11),
-      ivMagic: random.nextInt(11),
-      ivSpeed: random.nextInt(11),
-      pointHp: 0,
-      pointAttack: 0,
-      pointDefense: 0,
-      pointMagic: 0,
-      pointSpeed: 0,
-      remainingPoints: 0,
-      skillIds: [],
-      mainAbilityId: 'ability_${random.nextInt(100).toString().padLeft(3, '0')}',
-      equipmentIds: [],
-      acquiredAt: now,
-    );
+  Future<void> _onResetPity(
+    ResetPityCounter event,
+    Emitter<GachaState> emit,
+  ) async {
+    emit(GachaInitial(
+      selectedType: state.selectedType,
+      pityCount: 0,
+      gems: state.gems,
+      tickets: state.tickets,
+      gachaTickets: state.gachaTickets,
+    ));
+  }
+
+  Future<void> _onLoadTicketBalance(
+    LoadTicketBalance event,
+    Emitter<GachaState> emit,
+  ) async {
+    try {
+      final ticketData = await _gachaService.getTicketBalance(event.userId);
+
+      emit(TicketBalanceLoaded(
+        ticketCount: ticketData.ticketCount,
+        totalPulls: ticketData.totalPulls,
+        selectedType: state.selectedType,
+        pityCount: state.pityCount,
+        gems: state.gems,
+        tickets: state.tickets,
+      ));
+    } catch (e) {
+      emit(GachaError(
+        error: 'チケット残高の取得に失敗しました: $e',
+        selectedType: state.selectedType,
+        pityCount: state.pityCount,
+        gems: state.gems,
+        tickets: state.tickets,
+        gachaTickets: state.gachaTickets,
+      ));
+    }
+  }
+
+  Future<void> _onExchangeTickets(
+    ExchangeTickets event,
+    Emitter<GachaState> emit,
+  ) async {
+    emit(GachaLoading(
+      selectedType: state.selectedType,
+      pityCount: state.pityCount,
+      gems: state.gems,
+      tickets: state.tickets,
+      gachaTickets: state.gachaTickets,
+    ));
+
+    try {
+      final reward = await _gachaService.exchangeTickets(
+        userId: event.userId,
+        optionId: event.optionId,
+      );
+
+      // チケット残高を再取得
+      final ticketData = await _gachaService.getTicketBalance(event.userId);
+
+      emit(TicketExchangeSuccess(
+        reward: reward,
+        selectedType: state.selectedType,
+        pityCount: state.pityCount,
+        gems: state.gems,
+        tickets: state.tickets,
+        gachaTickets: ticketData.ticketCount,
+      ));
+    } catch (e) {
+      emit(GachaError(
+        error: 'チケット交換に失敗しました: $e',
+        selectedType: state.selectedType,
+        pityCount: state.pityCount,
+        gems: state.gems,
+        tickets: state.tickets,
+        gachaTickets: state.gachaTickets,
+      ));
+    }
+  }
+
+  Future<void> _onLoadGachaHistory(
+    LoadGachaHistory event,
+    Emitter<GachaState> emit,
+  ) async {
+    try {
+      final history = await _gachaService.getGachaHistory(event.userId);
+
+      emit(GachaHistoryLoaded(
+        history: history,
+        selectedType: state.selectedType,
+        pityCount: state.pityCount,
+        gems: state.gems,
+        tickets: state.tickets,
+        gachaTickets: state.gachaTickets,
+      ));
+    } catch (e) {
+      emit(GachaError(
+        error: 'ガチャ履歴の取得に失敗しました: $e',
+        selectedType: state.selectedType,
+        pityCount: state.pityCount,
+        gems: state.gems,
+        tickets: state.tickets,
+        gachaTickets: state.gachaTickets,
+      ));
+    }
+  }
+
+  Map<String, dynamic> _generateRandomMonster(String gachaType) {
+    int rarity = _determineRarity(gachaType);
+    final races = ['エンジェル', 'デーモン', 'ヒューマン', 'スピリット', 'ミュータント', 'メカノイド', 'ドラゴン'];
+    final elements = ['炎', '水', '雷', '風', '大地', '光', '闇'];
+
+    final race = races[_random.nextInt(races.length)];
+    final element = elements[_random.nextInt(elements.length)];
+
+    return {
+      'id': 'temp_${_random.nextInt(10000)}',
+      'name': '$element の$race',
+      'rarity': rarity,
+      'race': race,
+      'element': element,
+      'level': 1,
+      'hp': 100 + _random.nextInt(50),
+      'attack': 50 + _random.nextInt(30),
+      'defense': 40 + _random.nextInt(20),
+      'magic': 45 + _random.nextInt(25),
+      'speed': 60 + _random.nextInt(40),
+    };
+  }
+
+  int _determineRarity(String gachaType) {
+    final roll = _random.nextDouble() * 100;
+
+    if (gachaType == 'プレミアム') {
+      if (roll < 10) return 5;
+      return 4;
+    } else if (gachaType == 'ピックアップ') {
+      if (roll < 5) return 5;
+      if (roll < 20) return 4;
+      if (roll < 50) return 3;
+      return 2;
+    } else {
+      if (roll < 2) return 5;
+      if (roll < 17) return 4;
+      if (roll < 47) return 3;
+      return 2;
+    }
   }
 }

@@ -1,65 +1,58 @@
 import 'package:flutter/material.dart';
 
 /// 通貨表示ウィジェット
-/// 
-/// 所持している石とチケットの数を表示
-/// Day 1: 仮データで表示
-/// Day 3-4: BLoCから実データを取得
+/// ガチャ画面上部に石とチケットの所持数を表示
 class CurrencyDisplay extends StatelessWidget {
-  final int freeGems;
+  final int gems;
   final int tickets;
 
   const CurrencyDisplay({
-    super.key,
-    this.freeGems = 1500, // デフォルト値(仮データ)
-    this.tickets = 5,
-  });
+    Key? key,
+    required this.gems,
+    required this.tickets,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16.0),
-      color: Colors.white,
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade300),
+      ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          // 石の表示
-          _CurrencyItem(
+          _buildCurrencyItem(
             icon: Icons.diamond,
             label: '石',
-            value: freeGems,
+            amount: gems,
             color: Colors.blue,
           ),
-          const SizedBox(width: 32),
-          // チケットの表示
-          _CurrencyItem(
-            icon: Icons.receipt,
+          Container(
+            width: 1,
+            height: 40,
+            color: Colors.grey.shade300,
+          ),
+          _buildCurrencyItem(
+            icon: Icons.confirmation_number,
             label: 'チケット',
-            value: tickets,
+            amount: tickets,
             color: Colors.orange,
           ),
         ],
       ),
     );
   }
-}
 
-/// 通貨アイテム(石またはチケット)
-class _CurrencyItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final int value;
-  final Color color;
-
-  const _CurrencyItem({
-    required this.icon,
-    required this.label,
-    required this.value,
-    required this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildCurrencyItem({
+    required IconData icon,
+    required String label,
+    required int amount,
+    required Color color,
+  }) {
     return Row(
       children: [
         Icon(icon, color: color, size: 28),
@@ -69,13 +62,13 @@ class _CurrencyItem extends StatelessWidget {
           children: [
             Text(
               label,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12,
-                color: Colors.grey,
+                color: Colors.grey.shade600,
               ),
             ),
             Text(
-              value.toString(),
+              amount.toString(),
               style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,

@@ -1,156 +1,143 @@
 import 'package:flutter/material.dart';
 
-/// ガチャボタンウィジェット
-/// 
-/// 単発・10連ガチャのボタンを表示
-/// Day 2: 基本UI
-/// Day 3-4: 実際のガチャ実行処理
+/// ガチャ実行ボタンウィジェット
 class GachaButtons extends StatelessWidget {
-  final VoidCallback? onSinglePressed;
-  final VoidCallback? onMultiPressed;
+  final VoidCallback onSinglePull;
+  final VoidCallback onMultiPull;
   final int singleCost;
   final int multiCost;
-  final bool isLoading;
 
   const GachaButtons({
-    super.key,
-    this.onSinglePressed,
-    this.onMultiPressed,
-    this.singleCost = 150,
-    this.multiCost = 1500,
-    this.isLoading = false,
-  });
+    Key? key,
+    required this.onSinglePull,
+    required this.onMultiPull,
+    required this.singleCost,
+    required this.multiCost,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16.0),
-      color: Colors.white,
+      margin: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
         children: [
-          // 単発ボタン
           Expanded(
-            child: _GachaButton(
+            child: _buildButton(
+              context: context,
               label: '単発',
               cost: singleCost,
-              costType: '石',
-              onPressed: onSinglePressed,
-              isLoading: isLoading,
+              onPressed: onSinglePull,
               color: Colors.blue,
             ),
           ),
           const SizedBox(width: 16),
-          // 10連ボタン(強調)
           Expanded(
-            child: _GachaButton(
+            child: _buildButton(
+              context: context,
               label: '10連',
               cost: multiCost,
-              costType: '石',
-              onPressed: onMultiPressed,
-              isLoading: isLoading,
-              color: Colors.orange,
-              isHighlight: true,
+              onPressed: onMultiPull,
+              color: Colors.purple,
+              isSpecial: true,
             ),
           ),
         ],
       ),
     );
   }
-}
 
-/// 個別のガチャボタン
-class _GachaButton extends StatelessWidget {
-  final String label;
-  final int cost;
-  final String costType;
-  final VoidCallback? onPressed;
-  final bool isLoading;
-  final Color color;
-  final bool isHighlight;
-
-  const _GachaButton({
-    required this.label,
-    required this.cost,
-    required this.costType,
-    this.onPressed,
-    this.isLoading = false,
-    required this.color,
-    this.isHighlight = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: isLoading ? null : onPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: color,
-        foregroundColor: Colors.white,
-        disabledBackgroundColor: Colors.grey[400],
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+  Widget _buildButton({
+    required BuildContext context,
+    required String label,
+    required int cost,
+    required VoidCallback onPressed,
+    required Color color,
+    bool isSpecial = false,
+  }) {
+    return Container(
+      height: 90,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: isSpecial
+              ? [color, color.withOpacity(0.7)]
+              : [color.withOpacity(0.8), color.withOpacity(0.6)],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
         ),
-        elevation: isHighlight ? 4 : 2,
-        shadowColor: color.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: color.withOpacity(0.3),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
-      child: isLoading
-          ? const SizedBox(
-              width: 24,
-              height: 24,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-              ),
-            )
-          : Column(
-              mainAxisSize: MainAxisSize.min,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onPressed,
+          borderRadius: BorderRadius.circular(12),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // ラベル
                 Text(
                   label,
                   style: const TextStyle(
-                    fontSize: 20,
+                    fontSize: 18,
                     fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
                 ),
-                const SizedBox(height: 4),
-                // コスト表示
+                const SizedBox(height: 2),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.diamond, size: 16),
+                    const Icon(
+                      Icons.diamond,
+                      color: Colors.white,
+                      size: 16,
+                    ),
                     const SizedBox(width: 4),
                     Text(
-                      '$cost$costType',
+                      cost.toString(),
                       style: const TextStyle(
                         fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
                       ),
                     ),
                   ],
                 ),
-                // 10連の特典表示
-                if (isHighlight)
-                  Container(
-                    margin: const EdgeInsets.only(top: 4),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 6,
-                      vertical: 2,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: const Text(
-                      '★3以上確定',
-                      style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
+                if (isSpecial)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 2),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 1,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.amber,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: const Text(
+                        'おすすめ',
+                        style: TextStyle(
+                          fontSize: 9,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),
               ],
             ),
+          ),
+        ),
+      ),
     );
   }
 }

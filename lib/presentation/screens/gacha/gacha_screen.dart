@@ -1,198 +1,467 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../bloc/gacha/gacha_bloc.dart';
+import '../../bloc/gacha/gacha_event.dart';
+import '../../bloc/gacha/gacha_state.dart';
 import 'widgets/currency_display.dart';
 import 'widgets/gacha_tabs.dart';
 import 'widgets/pity_counter.dart';
 import 'widgets/gacha_buttons.dart';
+import 'widgets/gacha_animation.dart';
+import 'widgets/ceiling_ticket_display.dart';
 import 'modals/probability_modal.dart';
 import 'modals/gacha_result_modal.dart';
-import '../../bloc/gacha/gacha_bloc.dart';
-import '../../bloc/gacha/gacha_event.dart';
-import '../../bloc/gacha/gacha_state.dart';
+import '../../../core/utils/preferences.dart';
+import 'widgets/ticket_exchange_modal.dart';
+import '../../blocs/auth/auth_bloc.dart';
+import 'gacha_history_screen.dart';
 
-/// Week 7: ガチャ画面
-/// 
-/// Day 1-2: UI実装完了 ✅
-/// Day 3-4: BLoC統合完了 ✅
-/// Day 5-6: 演出とアニメーション
-class GachaScreen extends StatelessWidget {
-  const GachaScreen({super.key});
+class GachaScreenWithProvider extends StatelessWidget {
+  const GachaScreenWithProvider({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => GachaBloc()
-        ..add(const GachaInitialize('test_user')), // TODO: 実際のユーザーID
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('召喚'),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.history),
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('ガチャ履歴(Week 8で実装)')),
-                );
-              },
-            ),
-          ],
-        ),
-        body: const GachaScreenContent(),
-      ),
+      create: (context) => GachaBloc()..add(const InitializeGacha()),
+      child: const GachaScreen(),
     );
   }
 }
 
-class GachaScreenContent extends StatelessWidget {
-  const GachaScreenContent({super.key});
+class GachaScreen extends StatefulWidget {
+  const GachaScreen({Key? key}) : super(key: key);
+
+  @override
+  State<GachaScreen> createState() => _GachaScreenState();
+}
+
+class _GachaScreenState extends State<GachaScreen> {
+  String _selectedTab = '通常';
+  bool _isAnimating = false;
+  bool _skipAnimation = false;
+  List<dynamic>? _pendingResults;
+  
+  String? get _userId {
+    final authState = context.read<AuthBloc>().state;
+    if (authState is Authenticated) {
+      return authState.userId;
+    }
+    return null;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSkipSetting();
+    // チケット残高読み込み
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final userId = _userId;
+      if (userId != null && userId.isNotEmpty) {
+        context.read<GachaBloc>().add(LoadTicketBalance(userId));
+      }
+    });
+  }
+
+  Future<void> _loadSkipSetting() async {
+    final skipSetting = await GachaPreferences.getSkipAnimation();
+    if (mounted) {
+      setState(() => _skipAnimation = skipSetting);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<GachaBloc, GachaState>(
+    return BlocListener<GachaBloc, GachaState>(
       listener: (context, state) {
-        // 成功時: 結果モーダル表示
-        if (state.status == GachaStatus.success && state.results.isNotEmpty) {
-          GachaResultModal.show(
-            context,
-            results: state.results,
-            onClose: () {
-              context.read<GachaBloc>().add(const GachaResultClosed());
-            },
-          );
-        }
-        
-        // 失敗時: エラーメッセージ表示
-        if (state.status == GachaStatus.failure) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.errorMessage ?? 'エラーが発生しました'),
-              backgroundColor: Colors.red,
-            ),
-          );
+        if (state is GachaLoading) {
+          SchedulerBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              setState(() {
+                _isAnimating = true;
+                _pendingResults = null;
+                _skipAnimation = false;
+              });
+            }
+          });
+        } else if (state is GachaLoaded) {
+          SchedulerBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              setState(() {
+                _pendingResults = state.results;
+              });
+            }
+          });
+        } else if (state is GachaError) {
+          SchedulerBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              setState(() {
+                _isAnimating = false;
+                _pendingResults = null;
+              });
+              _showErrorDialog(state.error);
+            }
+          });
+        } else if (state is TicketExchangeSuccess) {
+          SchedulerBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              setState(() {
+                _isAnimating = false;
+              });
+              _showExchangeSuccessDialog(state.reward);
+            }
+          });
         }
       },
-      builder: (context, state) {
-        return Stack(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('ガチャ'),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.help_outline),
+              onPressed: _showProbabilityModal,
+            ),
+          ],
+        ),
+        body: Stack(
           children: [
-            Column(
+            _buildGachaUI(),
+            if (_isAnimating && _pendingResults != null)
+              _buildAnimationOverlay(),
+            if (_isAnimating && !_skipAnimation && _pendingResults != null)
+              _buildSkipButton(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGachaUI() {
+    return BlocBuilder<GachaBloc, GachaState>(
+      builder: (context, state) {
+        return SingleChildScrollView(
+          child: Column(
+            children: [
+              const SizedBox(height: 16),
+              CurrencyDisplay(
+                gems: state.gems,
+                tickets: state.tickets,
+              ),
+              const SizedBox(height: 16),
+              // 天井チケット表示（新規追加）
+              CeilingTicketDisplay(
+                userId: _userId ?? '', // nullの場合は空文字列
+                currentTickets: state.gachaTickets,
+              ),
+              const SizedBox(height: 16),
+              GachaTabs(
+                selectedTab: _selectedTab,
+                onTabChanged: (tab) {
+                  setState(() => _selectedTab = tab);
+                  context.read<GachaBloc>().add(ChangeGachaType(tab));
+                },
+              ),
+              const SizedBox(height: 24),
+              _buildGachaBanner(),
+              const SizedBox(height: 24),
+              PityCounter(
+                current: state.pityCount,
+                max: 100,
+              ),
+              const SizedBox(height: 24),
+              GachaButtons(
+                onSinglePull: _executeSinglePull,
+                onMultiPull: _executeMultiPull,
+                singleCost: 150,
+                multiCost: 1500,
+              ),
+              const SizedBox(height: 16),
+              _buildActionButtons(),
+              const SizedBox(height: 32),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildGachaBanner() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      height: 200,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Colors.purple.shade400, Colors.blue.shade400],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Stack(
+        children: [
+          Positioned(
+            left: 16,
+            top: 16,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // 通貨表示(BLoCから取得)
-                CurrencyDisplay(
-                  freeGems: state.freeGems,
-                  tickets: state.tickets,
-                ),
-                
-                // タブ切り替え
-                GachaTabs(
-                  initialType: state.selectedType,
-                  onTypeChanged: (type) {
-                    context.read<GachaBloc>().add(GachaTypeChanged(type));
-                  },
-                ),
-                
-                // ガチャ演出エリア
-                Expanded(
-                  child: Container(
-                    color: Colors.grey[200],
-                    child: const Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.casino, size: 100, color: Colors.grey),
-                          SizedBox(height: 16),
-                          Text(
-                            'ガチャ演出エリア\n(Day 5-6で実装)',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 16, color: Colors.grey),
-                          ),
-                        ],
-                      ),
-                    ),
+                Text(
+                  _getBannerTitle(),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                
-                // 天井カウンター(BLoCから取得)
-                PityCounter(
-                  currentCount: state.pityCount,
-                  pityLimit: 100,
-                ),
-                
-                // ガチャボタン
-                GachaButtons(
-                  isLoading: state.status == GachaStatus.loading,
-                  onSinglePressed: () {
-                    context.read<GachaBloc>().add(
-                      const GachaDrawSingle('test_user'), // TODO: 実際のユーザーID
-                    );
-                  },
-                  onMultiPressed: () {
-                    context.read<GachaBloc>().add(
-                      const GachaDrawMulti('test_user'), // TODO: 実際のユーザーID
-                    );
-                  },
-                ),
-                
-                // 下部メニュー
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      TextButton(
-                        onPressed: () {
-                          ProbabilityModal.show(context);
-                        },
-                        child: const Text('排出確率'),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('詳細(Week 8で実装)')),
-                          );
-                        },
-                        child: const Text('詳細'),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('履歴(Week 8で実装)')),
-                          );
-                        },
-                        child: const Text('履歴'),
-                      ),
-                    ],
+                const SizedBox(height: 8),
+                Text(
+                  _getBannerSubtitle(),
+                  style: const TextStyle(
+                    color: Colors.white70,
+                    fontSize: 14,
                   ),
                 ),
               ],
             ),
-            
-            // ローディングオーバーレイ
-            if (state.status == GachaStatus.loading)
-              Container(
-                color: Colors.black54,
-                child: const Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                      ),
-                      SizedBox(height: 16),
-                      Text(
-                        '召喚中...',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-          ],
+          ),
+          Positioned(
+            right: 16,
+            bottom: 16,
+            child: Icon(
+              Icons.catching_pokemon,
+              size: 80,
+              color: Colors.white.withOpacity(0.3),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActionButtons() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        TextButton.icon(
+          onPressed: _showProbabilityModal,
+          icon: const Icon(Icons.info_outline),
+          label: const Text('排出確率'),
+        ),
+        TextButton.icon(
+          onPressed: _showHistory,
+          icon: const Icon(Icons.history),
+          label: const Text('履歴'),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAnimationOverlay() {
+    if (_pendingResults == null) return const SizedBox.shrink();
+
+    final monsters = _pendingResults!.map((m) {
+      return GachaMonster(
+        name: m['name'] ?? '不明',
+        rarity: m['rarity'] ?? 2,
+        race: m['race'] ?? '不明',
+        element: m['element'] ?? '不明',
+      );
+    }).toList();
+
+    return GachaAnimationWidget(
+      monsters: monsters,
+      skipAnimation: _skipAnimation,
+      isMultiPull: monsters.length > 1,
+      onAnimationComplete: _onAnimationComplete,
+    );
+  }
+
+  Widget _buildSkipButton() {
+    return Positioned(
+      right: 16,
+      bottom: 16,
+      child: ElevatedButton.icon(
+        onPressed: () {
+          if (mounted) {
+            setState(() => _skipAnimation = true);
+          }
+        },
+        icon: const Icon(Icons.fast_forward),
+        label: const Text('スキップ'),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.white.withOpacity(0.2),
+          foregroundColor: Colors.white,
+        ),
+      ),
+    );
+  }
+
+  void _onAnimationComplete() {
+    if (_pendingResults != null && mounted) {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          setState(() => _isAnimating = false);
+          _showResultModal(_pendingResults!);
+          _pendingResults = null;
+        }
+      });
+    }
+  }
+
+  String _getBannerTitle() {
+    switch (_selectedTab) {
+      case 'プレミアム':
+        return 'プレミアムガチャ';
+      case 'ピックアップ':
+        return '炎属性ピックアップ！';
+      default:
+        return '通常ガチャ';
+    }
+  }
+
+  String _getBannerSubtitle() {
+    switch (_selectedTab) {
+      case 'プレミアム':
+        return '★4以上確定！';
+      case 'ピックアップ':
+        return '期間: 2025/11/01 - 11/07';
+      default:
+        return '全モンスター対象';
+    }
+  }
+
+  void _executeSinglePull() {
+    final userId = _userId;
+    if (userId == null || userId.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('ログインが必要です')),
+      );
+      return;
+    }
+    
+    context.read<GachaBloc>().add(
+          ExecuteGacha(
+            gachaType: _selectedTab, 
+            count: 1, 
+            userId: userId, // 追加
+          ),
         );
-      },
+  }
+
+  void _executeMultiPull() {
+    final userId = _userId;
+    if (userId == null || userId.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('ログインが必要です')),
+      );
+      return;
+    }
+    
+    context.read<GachaBloc>().add(
+          ExecuteGacha(
+            gachaType: _selectedTab, 
+            count: 10, 
+            userId: userId, // 追加
+          ),
+        );
+  }
+
+  void _showResultModal(List<dynamic> results) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => GachaResultModal(results: results),
+    );
+  }
+
+  void _showProbabilityModal() {
+    showDialog(
+      context: context,
+      builder: (context) => const ProbabilityModal(),
+    );
+  }
+
+  void _showHistory() {
+    final userId = _userId;
+    if (userId == null || userId.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('ログインが必要です')),
+      );
+      return;
+    }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => BlocProvider.value(
+          value: context.read<GachaBloc>(),
+          child: GachaHistoryScreen(userId: userId),
+        ),
+      ),
+    );
+  }
+
+  void _showErrorDialog(String error) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('エラー'),
+        content: Text(error),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showExchangeSuccessDialog(Map<String, dynamic> reward) {
+    final userId = _userId;
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: Row(
+          children: [
+            Icon(Icons.celebration, color: Colors.amber),
+            const SizedBox(width: 8),
+            const Text('交換成功!'),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.stars,
+              size: 80,
+              color: reward['rarity'] == 5 ? Colors.amber : Colors.purple,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              '★${reward['rarity']}のモンスターを獲得しました!',
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+        actions: [
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              // チケット残高を再読み込み
+              if (userId != null) {
+                context.read<GachaBloc>().add(LoadTicketBalance(userId));
+              }
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -1,93 +1,177 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import '../gacha/gacha_screen.dart';
+import '../../bloc/gacha/gacha_bloc.dart';
+import '../../bloc/gacha/gacha_event.dart';
+import '../../blocs/auth/auth_bloc.dart';
+import '../../../core/router/app_router.dart';
+import '../monster/monster_list_screen.dart';
+import '../../bloc/monster/monster_bloc.dart';
 
-/// Week 7: シンプルなホーム画面
-/// ガチャ画面実装の前に、まずこれを表示する
+/// ホーム画面
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('モンスター対戦ゲーム'),
-        backgroundColor: Colors.blue,
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              'Week 7: ガチャ画面実装',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 32),
-            const Text(
-              'これから実装する機能:',
-              style: TextStyle(fontSize: 18),
-            ),
-            const SizedBox(height: 16),
-            _buildFeatureItem('ガチャ画面'),
-            _buildFeatureItem('単発/10連ガチャ'),
-            _buildFeatureItem('結果表示'),
-            _buildFeatureItem('天井カウンター'),
-            const SizedBox(height: 48),
-            ElevatedButton(
+    // 現在のユーザーID取得
+    final authState = context.watch<AuthBloc>().state;
+    String? userId;
+    if (authState is Authenticated) {
+      userId = authState.userId;
+    }
+
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+        // ログアウト完了時にログイン画面へ遷移
+        if (state is Unauthenticated) {
+          context.go(AppRouter.login);
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('ホーム'),
+          actions: [
+            // ログアウトボタン
+            IconButton(
+              icon: const Icon(Icons.logout),
+              tooltip: 'ログアウト',
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const GachaScreen(),
+                // ログアウト確認ダイアログ
+                showDialog(
+                  context: context,
+                  builder: (dialogContext) => AlertDialog(
+                    title: const Text('ログアウト'),
+                    content: const Text('ログアウトしますか？'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(dialogContext),
+                        child: const Text('キャンセル'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(dialogContext);
+                          context.read<AuthBloc>().add(const AuthLogoutRequested());
+                        },
+                        child: const Text('ログアウト'),
+                      ),
+                    ],
                   ),
                 );
               },
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 32,
-                  vertical: 16,
-                ),
-                backgroundColor: Colors.blue,
-              ),
-              child: const Text(
-                'ガチャ画面へ(実装中)',
-                style: TextStyle(fontSize: 18),
-              ),
             ),
           ],
         ),
-      ),
-      // デバッグ用: 管理画面へのアクセス
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // TODO: 管理画面への遷移(デバッグ用)
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('管理画面は AdminScreen() から'),
-            ),
-          );
-        },
-        backgroundColor: Colors.grey,
-        child: const Icon(Icons.admin_panel_settings),
-      ),
-    );
-  }
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                'モンスター対戦ゲーム',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 16),
+              
+              // ユーザーID表示
+              if (userId != null)
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  margin: const EdgeInsets.symmetric(horizontal: 32),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.shade50,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Column(
+                    children: [
+                      const Text(
+                        'ログイン中',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'UserID: ${userId.substring(0, 8)}...',
+                        style: const TextStyle(
+                          fontSize: 10,
+                          fontFamily: 'monospace',
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              const SizedBox(height: 32),
+              
+              // ガチャ画面へのナビゲーション
+              ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => BlocProvider(
+                        create: (context) => GachaBloc()..add(const InitializeGacha()),
+                        child: const GachaScreen(),
+                      ),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.catching_pokemon),
+                label: const Text('ガチャ'),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 32,
+                    vertical: 16,
+                  ),
+                ),
+              ),
 
-  Widget _buildFeatureItem(String feature) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.check_circle_outline, color: Colors.blue),
-          const SizedBox(width: 8),
-          Text(
-            feature,
-            style: const TextStyle(fontSize: 16),
+              const SizedBox(height: 16),
+
+              ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => BlocProvider(
+                        create: (context) => MonsterBloc(),
+                        child: const MonsterListScreen(),
+                      ),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.pets),
+                label: const Text('モンスター一覧'),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 32,
+                    vertical: 16,
+                  ),
+                ),
+              ),
+              
+              const SizedBox(height: 16),
+              
+              // バトルボタン
+              ElevatedButton.icon(
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('バトル機能は実装中です')),
+                  );
+                },
+                icon: const Icon(Icons.sports_kabaddi),
+                label: const Text('バトル'),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 32,
+                    vertical: 16,
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

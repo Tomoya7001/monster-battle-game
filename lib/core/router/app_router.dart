@@ -6,7 +6,8 @@ import '../../presentation/screens/splash/splash_screen.dart';
 import '../../presentation/screens/auth/login_screen.dart';
 import '../../presentation/screens/auth/signup_screen.dart';
 import '../../presentation/screens/home/home_screen.dart';
-import '../../presentation/screens/test/firestore_test_screen.dart';  // 🔥 追加
+import '../../presentation/screens/test/firestore_test_screen.dart';
+import '../../presentation/blocs/auth/auth_bloc.dart';
 
 /// アプリケーション全体のルーティング設定
 class AppRouter {
@@ -110,9 +111,13 @@ class AppRouter {
 
     // 画面遷移時のリダイレクト処理
     redirect: (context, state) {
-      // TODO: 認証状態に応じたリダイレクト処理を実装
-      // 例: 未認証の場合はログイン画面へ、認証済みの場合はホーム画面へ
-      return null; // nullを返すと、リダイレクトなしで元のパスへ遷移
+      // デバッグ用：認証状態を出力
+      final authState = context.read<AuthBloc>().state;
+      print('🔍 現在の認証状態: $authState');
+      print('🔍 現在のパス: ${state.matchedLocation}');
+      
+      // redirectは使わない（splash_screen.dartのBlocListenerで処理）
+      return null;
     },
   );
 }
