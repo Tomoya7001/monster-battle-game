@@ -137,33 +137,33 @@ class GachaBloc extends Bloc<GachaEvent, GachaState> {
   }
 
   Future<void> _onLoadTicketBalance(
-    LoadTicketBalance event,
-    Emitter<GachaState> emit,
-  ) async {
-    try {
-      final ticketData = await _gachaService.getTicketBalance(event.userId);
+  LoadTicketBalance event,
+  Emitter<GachaState> emit,
+) async {
+  try {
+    final ticketData = await _gachaService.getTicketBalance(event.userId);
 
-      emit(TicketBalanceLoaded(
-        ticketCount: ticketData.ticketCount,
-        totalPulls: ticketData.totalPulls,
-        selectedType: state.selectedType,
-        pityCount: state.pityCount,
-        gems: state.gems,
-        tickets: state.tickets,
-      ));
-    } catch (e) {
-      emit(GachaError(
-        error: 'チケット残高の取得に失敗しました: $e',
-        selectedType: state.selectedType,
-        pityCount: state.pityCount,
-        gems: state.gems,
-        tickets: state.tickets,
-        gachaTickets: state.gachaTickets,
-      ));
-    }
+    emit(TicketBalanceLoaded(
+      ticketCount: ticketData.ticketCount,
+      totalPulls: ticketData.totalPulls,
+      selectedType: state.selectedType,
+      pityCount: state.pityCount,
+      gems: state.gems,
+      tickets: state.tickets,
+    ));
+  } catch (e) {
+    emit(GachaError(
+      error: 'チケット残高の取得に失敗しました: $e',
+      selectedType: state.selectedType,
+      pityCount: state.pityCount,
+      gems: state.gems,
+      tickets: state.tickets,
+      gachaTickets: state.gachaTickets,
+    ));
   }
+}
 
-  Future<void> _onExchangeTickets(
+Future<void> _onExchangeTickets(
     ExchangeTickets event,
     Emitter<GachaState> emit,
   ) async {
@@ -176,13 +176,14 @@ class GachaBloc extends Bloc<GachaEvent, GachaState> {
     ));
 
     try {
+      // optionIdを使用するよう修正
       final reward = await _gachaService.exchangeTickets(
         userId: event.userId,
         optionId: event.optionId,
       );
 
       // チケット残高を再取得
-      final ticketData = await _gachaService.getTicketBalance(event.userId);
+      final ticketBalance = await _gachaService.getTicketBalance(event.userId);
 
       emit(TicketExchangeSuccess(
         reward: reward,
@@ -190,7 +191,7 @@ class GachaBloc extends Bloc<GachaEvent, GachaState> {
         pityCount: state.pityCount,
         gems: state.gems,
         tickets: state.tickets,
-        gachaTickets: ticketData.ticketCount,
+        gachaTickets: ticketBalance,
       ));
     } catch (e) {
       emit(GachaError(

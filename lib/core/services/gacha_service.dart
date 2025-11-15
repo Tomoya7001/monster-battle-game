@@ -2,6 +2,7 @@
 
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../models/gacha_ticket.dart';
 
 // ガチャ確率定数
 const double RATE_5_STAR = 0.02; // 2%
@@ -297,30 +298,39 @@ class GachaService {
   }
 
   /// チケット交換オプションを取得
-  List<TicketExchangeOption> getExchangeOptions() {
+  Future<List<TicketExchangeOption>> getExchangeOptions() async {
     return [
-      TicketExchangeOption(
+      const TicketExchangeOption(
         id: 'star4_guaranteed',
         name: '★4確定ガチャ',
         requiredTickets: 50,
         rewardType: 'star4',
-        guaranteeRate: 1.0,
+        guaranteeRate: 100,
+        description: '★4モンスター1体確定',
       ),
-      TicketExchangeOption(
+      const TicketExchangeOption(
         id: 'star5_guaranteed',
         name: '★5確定ガチャ',
         requiredTickets: 100,
         rewardType: 'star5',
-        guaranteeRate: 1.0,
+        guaranteeRate: 100,
+        description: '★5モンスター1体確定',
       ),
     ];
   }
 
-  /// チケット交換を実行
-  Future<Map<String, dynamic>> exchangeTickets(
-    String userId,
-    TicketExchangeOption option,
-  ) async {
+  /// チケット交換を実行（修正版）
+  Future<Map<String, dynamic>> exchangeTickets({
+    required String userId,
+    required String optionId,
+  }) async {
+    // オプションを取得
+    final options = await getExchangeOptions();
+    final option = options.firstWhere(
+      (opt) => opt.id == optionId,
+      orElse: () => throw Exception('無効な交換オプションID: $optionId'),
+    );
+
     // チケット残高確認
     final balance = await getTicketBalance(userId);
 

@@ -1,5 +1,3 @@
-// lib/core/models/monster_filter.dart
-
 /// モンスターフィルター
 class MonsterFilter {
   final String? species;
@@ -19,7 +17,7 @@ class MonsterFilter {
   });
 
   /// フィルターが適用されているかどうか
-  bool get hasActiveFilters {
+  bool get isActive {
     return species != null ||
         element != null ||
         rarity != null ||
@@ -36,6 +34,7 @@ class MonsterFilter {
     bool? favoriteOnly,
     bool? lockedOnly,
     String? searchKeyword,
+    bool clearKeyword = false,
   }) {
     return MonsterFilter(
       species: species ?? this.species,
@@ -43,7 +42,7 @@ class MonsterFilter {
       rarity: rarity ?? this.rarity,
       favoriteOnly: favoriteOnly ?? this.favoriteOnly,
       lockedOnly: lockedOnly ?? this.lockedOnly,
-      searchKeyword: searchKeyword ?? this.searchKeyword,
+      searchKeyword: clearKeyword ? null : (searchKeyword ?? this.searchKeyword),
     );
   }
 
@@ -93,8 +92,8 @@ enum MonsterSortType {
   favoriteFirst,
   nameAsc,
   nameDesc,
-  hpDesc,      // ✅ 追加
-  hpAsc,       // ✅ 追加
+  hpDesc,
+  hpAsc,
 }
 
 /// ソートタイプの表示名
@@ -119,9 +118,9 @@ extension MonsterSortTypeExtension on MonsterSortType {
         return '名前（昇順）';
       case MonsterSortType.nameDesc:
         return '名前（降順）';
-      case MonsterSortType.hpDesc:           // ✅ 追加
+      case MonsterSortType.hpDesc:
         return 'HP（高い順）';
-      case MonsterSortType.hpAsc:            // ✅ 追加
+      case MonsterSortType.hpAsc:
         return 'HP（低い順）';
     }
   }

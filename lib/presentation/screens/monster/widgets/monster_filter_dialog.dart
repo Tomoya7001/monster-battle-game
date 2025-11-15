@@ -23,6 +23,48 @@ class _MonsterFilterDialogState extends State<MonsterFilterDialog> {
   late bool _favoriteOnly;
   late bool _lockedOnly;
 
+  final List<String> speciesList = [
+    'angel',
+    'demon',
+    'human',
+    'spirit',
+    'mechanoid',
+    'dragon',
+    'mutant',
+  ];
+
+  final Map<String, String> speciesNameMap = {
+    'angel': '天使',
+    'demon': '悪魔',
+    'human': 'ヒューマン',
+    'spirit': '精霊',
+    'mechanoid': '機械',
+    'dragon': 'ドラゴン',
+    'mutant': 'ミュータント',
+  };
+
+  final List<String> elementList = [
+    'fire',
+    'water',
+    'thunder',
+    'wind',
+    'earth',
+    'light',
+    'dark',
+  ];
+
+  final Map<String, String> elementNameMap = {
+    'fire': '火',
+    'water': '水',
+    'thunder': '雷',
+    'wind': '風',
+    'earth': '土',
+    'light': '光',
+    'dark': '闇',
+  };
+
+  final List<int> rarityList = [2, 3, 4, 5];
+
   @override
   void initState() {
     super.initState();

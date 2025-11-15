@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/models/gacha_ticket.dart';
-import '../../../../core/services/gacha_service.dart';
+import '../../../../core/services/gacha_service.dart' hide TicketExchangeOption;
 import '../../../bloc/gacha/gacha_bloc.dart';
 import '../../../bloc/gacha/gacha_event.dart';
 

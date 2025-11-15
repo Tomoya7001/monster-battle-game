@@ -2,57 +2,56 @@ import 'package:equatable/equatable.dart';
 
 abstract class GachaEvent extends Equatable {
   const GachaEvent();
+}
+
+class LoadGachaData extends GachaEvent {
+  final String userId;
+
+  const LoadGachaData({required this.userId});
 
   @override
-  List<Object?> get props => [];
+  List<Object> get props => [userId];
 }
 
-/// 初期化イベント
-class InitializeGacha extends GachaEvent {
-  const InitializeGacha();
+class SelectGachaType extends GachaEvent {
+  final String type;
+
+  const SelectGachaType({required this.type});
+
+  @override
+  List<Object> get props => [type];
 }
 
-class ExecuteGacha extends GachaEvent {
-  final String gachaType;
+class DrawSingleGacha extends GachaEvent {
+  final String userId;
+  final bool useFreeTicket;
   final int count;
-  final String? userId; // 追加
 
-  const ExecuteGacha({
-    required this.gachaType,
-    required this.count,
-    this.userId, // 追加
+  const DrawSingleGacha({
+    required this.userId,
+    this.useFreeTicket = false,
+    this.count = 1,
   });
 
   @override
-  List<Object?> get props => [gachaType, count, userId]; // 修正
+  List<Object> get props => [userId, useFreeTicket, count];
 }
 
-/// ガチャタイプ変更イベント
-class ChangeGachaType extends GachaEvent {
-  final String gachaType;
-
-  const ChangeGachaType(this.gachaType);
-
-  @override
-  List<Object?> get props => [gachaType];
-}
-
-/// 天井カウンターリセットイベント
-class ResetPityCounter extends GachaEvent {
-  const ResetPityCounter();
-}
-
-/// チケット残高読み込みイベント
-class LoadTicketBalance extends GachaEvent {
+class DrawMultiGacha extends GachaEvent {
   final String userId;
+  final bool useTickets;
+  final int count;
 
-  const LoadTicketBalance(this.userId);
+  const DrawMultiGacha({
+    required this.userId,
+    this.useTickets = false,
+    this.count = 10,
+  });
 
   @override
-  List<Object?> get props => [userId];
+  List<Object> get props => [userId, useTickets, count];
 }
 
-/// チケット交換イベント
 class ExchangeTickets extends GachaEvent {
   final String userId;
   final String optionId;
@@ -63,15 +62,14 @@ class ExchangeTickets extends GachaEvent {
   });
 
   @override
-  List<Object?> get props => [userId, optionId];
+  List<Object> get props => [userId, optionId];
 }
 
-/// ガチャ履歴取得イベント
 class LoadGachaHistory extends GachaEvent {
   final String userId;
 
-  const LoadGachaHistory(this.userId);
+  const LoadGachaHistory({required this.userId});
 
   @override
-  List<Object?> get props => [userId];
+  List<Object> get props => [userId];
 }
