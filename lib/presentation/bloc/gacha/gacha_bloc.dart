@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'gacha_event.dart';
@@ -59,13 +60,11 @@ class GachaBloc extends Bloc<GachaEvent, GachaState> {
         return _generateRandomMonster(event.gachaType);
       });
 
-      // ガチャチケット追加
       if (event.userId != null && event.userId!.isNotEmpty) {
         try {
           await _gachaService.addTickets(event.userId!, event.count);
         } catch (e) {
           print('チケット追加エラー: $e');
-          // エラーが発生してもガチャ結果は返す（チケットは次回同期）
         }
       }
 
@@ -73,7 +72,6 @@ class GachaBloc extends Bloc<GachaEvent, GachaState> {
       final newPityCount = state.pityCount + event.count;
       final newGachaTickets = state.gachaTickets + event.count;
 
-      // ガチャ履歴を保存
       if (event.userId != null && event.userId!.isNotEmpty) {
         try {
           await _gachaService.saveGachaHistory(
@@ -82,11 +80,10 @@ class GachaBloc extends Bloc<GachaEvent, GachaState> {
             pullCount: event.count,
             results: results,
             gemsUsed: cost,
-            ticketsUsed: 0, // 現在は石のみ
+            ticketsUsed: 0,
           );
         } catch (e) {
           print('ガチャ履歴保存エラー: $e');
-          // エラーが出てもガチャ結果は表示する
         }
       }
 
@@ -137,33 +134,33 @@ class GachaBloc extends Bloc<GachaEvent, GachaState> {
   }
 
   Future<void> _onLoadTicketBalance(
-  LoadTicketBalance event,
-  Emitter<GachaState> emit,
-) async {
-  try {
-    final ticketData = await _gachaService.getTicketBalance(event.userId);
+    LoadTicketBalance event,
+    Emitter<GachaState> emit,
+  ) async {
+    try {
+      final ticketCount = await _gachaService.getTicketBalance(event.userId);
 
-    emit(TicketBalanceLoaded(
-      ticketCount: ticketData.ticketCount,
-      totalPulls: ticketData.totalPulls,
-      selectedType: state.selectedType,
-      pityCount: state.pityCount,
-      gems: state.gems,
-      tickets: state.tickets,
-    ));
-  } catch (e) {
-    emit(GachaError(
-      error: 'チケット残高の取得に失敗しました: $e',
-      selectedType: state.selectedType,
-      pityCount: state.pityCount,
-      gems: state.gems,
-      tickets: state.tickets,
-      gachaTickets: state.gachaTickets,
-    ));
+      emit(TicketBalanceLoaded(
+        ticketCount: ticketCount,
+        totalPulls: 0,
+        selectedType: state.selectedType,
+        pityCount: state.pityCount,
+        gems: state.gems,
+        tickets: state.tickets,
+      ));
+    } catch (e) {
+      emit(GachaError(
+        error: 'チケット残高の取得に失敗しました: $e',
+        selectedType: state.selectedType,
+        pityCount: state.pityCount,
+        gems: state.gems,
+        tickets: state.tickets,
+        gachaTickets: state.gachaTickets,
+      ));
+    }
   }
-}
 
-Future<void> _onExchangeTickets(
+  Future<void> _onExchangeTickets(
     ExchangeTickets event,
     Emitter<GachaState> emit,
   ) async {
@@ -176,13 +173,11 @@ Future<void> _onExchangeTickets(
     ));
 
     try {
-      // optionIdを使用するよう修正
       final reward = await _gachaService.exchangeTickets(
         userId: event.userId,
         optionId: event.optionId,
       );
 
-      // チケット残高を再取得
       final ticketBalance = await _gachaService.getTicketBalance(event.userId);
 
       emit(TicketExchangeSuccess(

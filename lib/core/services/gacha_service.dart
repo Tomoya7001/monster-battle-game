@@ -27,23 +27,6 @@ class GachaResult {
   });
 }
 
-/// チケット交換オプション
-class TicketExchangeOption {
-  final String id;
-  final String name;
-  final int requiredTickets;
-  final String rewardType;
-  final double guaranteeRate;
-
-  TicketExchangeOption({
-    required this.id,
-    required this.name,
-    required this.requiredTickets,
-    required this.rewardType,
-    required this.guaranteeRate,
-  });
-}
-
 /// ガチャサービス
 class GachaService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -306,7 +289,7 @@ class GachaService {
         requiredTickets: 50,
         rewardType: 'star4',
         guaranteeRate: 100,
-        description: '★4モンスター1体確定',
+        // description削除
       ),
       const TicketExchangeOption(
         id: 'star5_guaranteed',
@@ -314,7 +297,7 @@ class GachaService {
         requiredTickets: 100,
         rewardType: 'star5',
         guaranteeRate: 100,
-        description: '★5モンスター1体確定',
+        // description削除
       ),
     ];
   }

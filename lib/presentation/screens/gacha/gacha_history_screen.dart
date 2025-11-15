@@ -23,7 +23,7 @@ class _GachaHistoryScreenState extends State<GachaHistoryScreen> {
   void initState() {
     super.initState();
     // 履歴を読み込み
-    context.read<GachaBloc>().add(LoadGachaHistory(widget.userId));
+    context.read<GachaBloc>().add(LoadGachaHistory(userId: widget.userId));
   }
 
   @override
@@ -51,7 +51,7 @@ class _GachaHistoryScreenState extends State<GachaHistoryScreen> {
                     onPressed: () {
                       context
                           .read<GachaBloc>()
-                          .add(LoadGachaHistory(widget.userId));
+                          .add(LoadGachaHistory(userId: widget.userId));
                     },
                     child: const Text('再読み込み'),
                   ),
