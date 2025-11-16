@@ -22,7 +22,6 @@ class _GachaHistoryScreenState extends State<GachaHistoryScreen> {
   @override
   void initState() {
     super.initState();
-    // 履歴を読み込み
     context.read<GachaBloc>().add(LoadGachaHistory(userId: widget.userId));
   }
 
@@ -61,7 +60,15 @@ class _GachaHistoryScreenState extends State<GachaHistoryScreen> {
           }
 
           if (state is GachaHistoryLoaded) {
-            final history = state.history.cast<GachaHistory>();
+            // ✅ 修正: Map<String, dynamic>からGachaHistoryに変換
+            final history = state.history.map((item) {
+              if (item is GachaHistory) {
+                return item;
+              }
+              final map = item as Map<String, dynamic>;
+              final id = map['id'] as String? ?? '';
+              return GachaHistory.fromJson(map, id);
+            }).toList();
 
             if (history.isEmpty) {
               return Center(

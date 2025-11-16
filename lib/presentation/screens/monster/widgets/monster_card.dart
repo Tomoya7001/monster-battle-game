@@ -8,7 +8,7 @@ class MonsterCard extends StatelessWidget {
   final VoidCallback onTap;
   final Function(bool) onFavoriteToggle;
   final Function(bool)? onLockToggle;
-  final bool isCompact; // ✅ 追加: コンパクト表示フラグ
+  final bool isCompact;
 
   const MonsterCard({
     super.key,
@@ -16,7 +16,7 @@ class MonsterCard extends StatelessWidget {
     required this.onTap,
     required this.onFavoriteToggle,
     this.onLockToggle,
-    this.isCompact = false, // ✅ デフォルトは通常サイズ
+    this.isCompact = false,
   });
 
   @override
@@ -53,18 +53,18 @@ class MonsterCard extends StatelessWidget {
                         Center(
                           child: Icon(
                             _getSpeciesIcon(),
-                            size: isCompact ? 32 : 48,
+                            size: isCompact ? 24 : 48, // ✅ 修正: コンパクト時はさらに小さく
                             color: _getElementColor(),
                           ),
                         ),
                         // レベル表示
                         Positioned(
-                          bottom: 4,
-                          left: 4,
+                          bottom: 2,
+                          left: 2,
                           child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 6,
-                              vertical: 2,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: isCompact ? 3 : 6,
+                              vertical: isCompact ? 1 : 2,
                             ),
                             decoration: BoxDecoration(
                               color: Colors.black.withOpacity(0.7),
@@ -74,7 +74,7 @@ class MonsterCard extends StatelessWidget {
                               'Lv.${monster.level}',
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: isCompact ? 10 : 12,
+                                fontSize: isCompact ? 8 : 12, // ✅ 修正: さらに小さく
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -96,7 +96,7 @@ class MonsterCard extends StatelessWidget {
                 Expanded(
                   flex: isCompact ? 1 : 2,
                   child: Padding(
-                    padding: EdgeInsets.all(isCompact ? 4.0 : 8.0),
+                    padding: EdgeInsets.all(isCompact ? 2.0 : 8.0), // ✅ 修正: パディング削減
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -105,7 +105,7 @@ class MonsterCard extends StatelessWidget {
                         Text(
                           monster.monsterName,
                           style: TextStyle(
-                            fontSize: isCompact ? 11 : 14,
+                            fontSize: isCompact ? 9 : 14, // ✅ 修正: さらに小さく
                             fontWeight: FontWeight.bold,
                           ),
                           maxLines: 1,
@@ -114,29 +114,29 @@ class MonsterCard extends StatelessWidget {
                         if (!isCompact) ...[
                           const SizedBox(height: 4),
                           // レアリティ
-                          Row(
-                            children: [
-                              Text(
-                                monster.rarityStars,
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: _getRarityColor(),
-                                ),
-                              ),
-                            ],
+                          Text(
+                            monster.rarityStars,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: _getRarityColor(),
+                            ),
                           ),
                           const SizedBox(height: 4),
-                          // 種族・属性
+                          // 種族・属性 ✅ 修正: Expandedでラップしてオーバーフロー防止
                           Row(
                             children: [
-                              _buildBadge(
-                                monster.speciesName,
-                                Colors.grey[700]!,
+                              Flexible(
+                                child: _buildBadge(
+                                  monster.speciesName,
+                                  Colors.grey[700]!,
+                                ),
                               ),
-                              const SizedBox(width: 4),
-                              _buildBadge(
-                                monster.elementName,
-                                _getElementColor(),
+                              const SizedBox(width: 2),
+                              Flexible(
+                                child: _buildBadge(
+                                  monster.elementName,
+                                  _getElementColor(),
+                                ),
                               ),
                             ],
                           ),
@@ -145,7 +145,7 @@ class MonsterCard extends StatelessWidget {
                           Text(
                             monster.rarityStars,
                             style: TextStyle(
-                              fontSize: 10,
+                              fontSize: 8, // ✅ 修正: さらに小さく
                               color: _getRarityColor(),
                             ),
                           ),
@@ -158,15 +158,15 @@ class MonsterCard extends StatelessWidget {
             ),
             // お気に入りボタン
             Positioned(
-              top: isCompact ? 4 : 8,
-              right: isCompact ? 4 : 8,
+              top: isCompact ? 2 : 8,
+              right: isCompact ? 2 : 8,
               child: GestureDetector(
                 onTap: () {
                   onFavoriteToggle(!monster.isFavorite);
                 },
                 behavior: HitTestBehavior.opaque,
                 child: Container(
-                  padding: EdgeInsets.all(isCompact ? 2 : 4),
+                  padding: EdgeInsets.all(isCompact ? 1 : 4),
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.9),
                     shape: BoxShape.circle,
@@ -174,7 +174,7 @@ class MonsterCard extends StatelessWidget {
                   child: Icon(
                     monster.isFavorite ? Icons.star : Icons.star_border,
                     color: monster.isFavorite ? Colors.amber : Colors.grey,
-                    size: isCompact ? 16 : 20,
+                    size: isCompact ? 12 : 20, // ✅ 修正: さらに小さく
                   ),
                 ),
               ),
@@ -182,15 +182,15 @@ class MonsterCard extends StatelessWidget {
             // ロックアイコン
             if (onLockToggle != null)
               Positioned(
-                top: isCompact ? 4 : 8,
-                left: isCompact ? 4 : 8,
+                top: isCompact ? 2 : 8,
+                left: isCompact ? 2 : 8,
                 child: GestureDetector(
                   onTap: () {
                     onLockToggle!(!monster.isLocked);
                   },
                   behavior: HitTestBehavior.opaque,
                   child: Container(
-                    padding: EdgeInsets.all(isCompact ? 2 : 4),
+                    padding: EdgeInsets.all(isCompact ? 1 : 4),
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.9),
                       shape: BoxShape.circle,
@@ -198,7 +198,7 @@ class MonsterCard extends StatelessWidget {
                     child: Icon(
                       monster.isLocked ? Icons.lock : Icons.lock_open,
                       color: monster.isLocked ? Colors.red : Colors.grey,
-                      size: isCompact ? 16 : 20,
+                      size: isCompact ? 12 : 20, // ✅ 修正: さらに小さく
                     ),
                   ),
                 ),
@@ -209,7 +209,7 @@ class MonsterCard extends StatelessWidget {
     );
   }
 
-  /// HPバーを構築 ✅ 修正: currentHp / maxHp を正しく表示
+  /// HPバーを構築
   Widget _buildHpBar() {
     final percentage = monster.hpPercentage;
     final color = _getHpBarColor(percentage);
@@ -218,7 +218,6 @@ class MonsterCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.end,
       mainAxisSize: MainAxisSize.min,
       children: [
-        // ✅ 修正: 実際のHP値を表示（100固定ではない）
         Text(
           '${monster.currentHp}/${monster.maxHp}',
           style: const TextStyle(
@@ -256,10 +255,10 @@ class MonsterCard extends StatelessWidget {
     );
   }
 
-  /// バッジを構築
+  /// バッジを構築 ✅ 修正: オーバーフロー防止
   Widget _buildBadge(String text, Color color) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 1), // ✅ 修正: パディング削減
       decoration: BoxDecoration(
         color: color.withOpacity(0.2),
         borderRadius: BorderRadius.circular(4),
@@ -268,31 +267,30 @@ class MonsterCard extends StatelessWidget {
       child: Text(
         text,
         style: TextStyle(
-          fontSize: 10,
+          fontSize: 9, // ✅ 修正: フォントサイズ削減
           color: color,
           fontWeight: FontWeight.w600,
         ),
+        overflow: TextOverflow.ellipsis, // ✅ 追加: オーバーフロー時に省略
       ),
     );
   }
 
-  /// レアリティカラーを取得
   Color _getRarityColor() {
     switch (monster.rarity) {
       case 5:
-        return const Color(0xFFFFD700); // Gold
+        return const Color(0xFFFFD700);
       case 4:
-        return const Color(0xFF9C27B0); // Purple
+        return const Color(0xFF9C27B0);
       case 3:
-        return const Color(0xFF2196F3); // Blue
+        return const Color(0xFF2196F3);
       case 2:
-        return const Color(0xFF4CAF50); // Green
+        return const Color(0xFF4CAF50);
       default:
-        return const Color(0xFF9E9E9E); // Grey
+        return const Color(0xFF9E9E9E);
     }
   }
 
-  /// 属性カラーを取得
   Color _getElementColor() {
     switch (monster.element.toLowerCase()) {
       case 'fire':
@@ -314,7 +312,6 @@ class MonsterCard extends StatelessWidget {
     }
   }
 
-  /// HPバーの色を取得
   Color _getHpBarColor(double percentage) {
     if (percentage >= 0.7) {
       return Colors.green;
@@ -325,7 +322,6 @@ class MonsterCard extends StatelessWidget {
     }
   }
 
-  /// 種族アイコンを取得
   IconData _getSpeciesIcon() {
     switch (monster.species.toLowerCase()) {
       case 'angel':

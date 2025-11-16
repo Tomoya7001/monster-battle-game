@@ -29,6 +29,12 @@ class MonsterListScreen extends StatefulWidget {
 
 class _MonsterListScreenState extends State<MonsterListScreen> {
   GridViewType _gridViewType = GridViewType.large;
+  
+  // ✅ 追加: 最後に読み込んだモンスターリストを保持
+  List<Monster> _cachedMonsters = [];
+  MonsterFilter? _cachedFilter;
+  MonsterSortType _cachedSortType = MonsterSortType.levelDesc;
+  int _cachedTotalCount = 0;
 
   String get _userId {
     return FirebaseAuth.instance.currentUser?.uid ?? 'demo_user';
@@ -47,62 +53,44 @@ class _MonsterListScreenState extends State<MonsterListScreen> {
         title: const Text('モンスター一覧'),
         actions: [
           _buildGridToggleButton(),
-          BlocBuilder<MonsterBloc, MonsterState>(
-            builder: (context, state) {
-              if (state is MonsterListLoaded) {
-                return IconButton(
-                  icon: const Icon(Icons.search),
-                  onPressed: () {
-                    final filter = state.filter ?? const MonsterFilter();
-                    _showSearchDialog(context, filter);
-                  },
-                  tooltip: '検索',
-                );
-              }
-              return const SizedBox.shrink();
+          // ✅ 修正: キャッシュを使用して常にアイコンを表示
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () {
+              final filter = _cachedFilter ?? const MonsterFilter();
+              _showSearchDialog(context, filter);
             },
+            tooltip: '検索',
           ),
-          BlocBuilder<MonsterBloc, MonsterState>(
-            builder: (context, state) {
-              if (state is MonsterListLoaded) {
-                final filter = state.filter ?? const MonsterFilter();
-                return IconButton(
-                  icon: Stack(
-                    children: [
-                      const Icon(Icons.filter_list),
-                      if (filter.isActive)
-                        Positioned(
-                          right: 0,
-                          top: 0,
-                          child: Container(
-                            width: 8,
-                            height: 8,
-                            decoration: const BoxDecoration(
-                              color: Colors.red,
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                        ),
-                    ],
+          IconButton(
+            icon: Stack(
+              children: [
+                const Icon(Icons.filter_list),
+                if (_cachedFilter?.isActive ?? false)
+                  Positioned(
+                    right: 0,
+                    top: 0,
+                    child: Container(
+                      width: 8,
+                      height: 8,
+                      decoration: const BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
                   ),
-                  onPressed: () => _showFilterDialog(context, filter),
-                  tooltip: 'フィルター',
-                );
-              }
-              return const SizedBox.shrink();
-            },
+              ],
+            ),
+            onPressed: () => _showFilterDialog(
+              context,
+              _cachedFilter ?? const MonsterFilter(),
+            ),
+            tooltip: 'フィルター',
           ),
-          BlocBuilder<MonsterBloc, MonsterState>(
-            builder: (context, state) {
-              if (state is MonsterListLoaded) {
-                return IconButton(
-                  icon: const Icon(Icons.sort),
-                  onPressed: () => _showSortDialog(context, state.sortType),
-                  tooltip: 'ソート',
-                );
-              }
-              return const SizedBox.shrink();
-            },
+          IconButton(
+            icon: const Icon(Icons.sort),
+            onPressed: () => _showSortDialog(context, _cachedSortType),
+            tooltip: 'ソート',
           ),
         ],
       ),
@@ -117,6 +105,8 @@ class _MonsterListScreenState extends State<MonsterListScreen> {
             );
           }
           if (state is MonsterUpdated) {
+            // ✅ 修正: キャッシュを更新
+            _updateCachedMonster(state.monster);
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.message),
@@ -124,6 +114,13 @@ class _MonsterListScreenState extends State<MonsterListScreen> {
                 duration: const Duration(seconds: 1),
               ),
             );
+          }
+          if (state is MonsterListLoaded) {
+            // ✅ 修正: キャッシュを更新
+            _cachedMonsters = state.monsters;
+            _cachedFilter = state.filter;
+            _cachedSortType = state.sortType;
+            _cachedTotalCount = state.totalCount;
           }
         },
         builder: (context, state) {
@@ -135,7 +132,14 @@ class _MonsterListScreenState extends State<MonsterListScreen> {
             if (state.monsters.isEmpty) {
               return _buildEmptyState();
             }
-            return _buildMonsterGrid(context, state);
+            return _buildMonsterGrid(context, state.monsters);
+          }
+
+          // ✅ 修正: MonsterUpdated時もキャッシュを使用して表示を維持
+          if (state is MonsterUpdated || state is MonsterError) {
+            if (_cachedMonsters.isNotEmpty) {
+              return _buildMonsterGrid(context, _cachedMonsters);
+            }
           }
 
           if (state is MonsterError) {
@@ -146,6 +150,17 @@ class _MonsterListScreenState extends State<MonsterListScreen> {
         },
       ),
     );
+  }
+
+  // ✅ 追加: キャッシュ内のモンスターを更新
+  void _updateCachedMonster(Monster updatedMonster) {
+    final index = _cachedMonsters.indexWhere((m) => m.id == updatedMonster.id);
+    if (index != -1) {
+      setState(() {
+        _cachedMonsters = List.from(_cachedMonsters);
+        _cachedMonsters[index] = updatedMonster;
+      });
+    }
   }
 
   Widget _buildGridToggleButton() {
@@ -249,9 +264,9 @@ class _MonsterListScreenState extends State<MonsterListScreen> {
       case GridViewType.large:
         return 0.75;
       case GridViewType.medium:
-        return 0.7;
+        return 0.65; // ✅ 修正: オーバーフロー対策で調整
       case GridViewType.small:
-        return 0.65;
+        return 0.6; // ✅ 修正: オーバーフロー対策で調整
     }
   }
 
@@ -325,7 +340,8 @@ class _MonsterListScreenState extends State<MonsterListScreen> {
     );
   }
 
-  Widget _buildMonsterGrid(BuildContext context, MonsterListLoaded state) {
+  // ✅ 修正: MonsterListLoadedではなくList<Monster>を受け取る
+  Widget _buildMonsterGrid(BuildContext context, List<Monster> monsters) {
     return Column(
       children: [
         Padding(
@@ -334,7 +350,7 @@ class _MonsterListScreenState extends State<MonsterListScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '${state.monsters.length} / ${state.totalCount} 体',
+                '${monsters.length} / $_cachedTotalCount 体',
                 style: TextStyle(
                   color: Colors.grey[600],
                   fontSize: 14,
@@ -359,11 +375,12 @@ class _MonsterListScreenState extends State<MonsterListScreen> {
               crossAxisSpacing: 8,
               mainAxisSpacing: 8,
             ),
-            itemCount: state.monsters.length,
+            itemCount: monsters.length,
             itemBuilder: (context, index) {
-              final monster = state.monsters[index];
+              final monster = monsters[index];
               return MonsterCard(
                 monster: monster,
+                isCompact: _gridViewType != GridViewType.large, // ✅ 修正: 中・小表示時はコンパクト
                 onTap: () => _navigateToDetail(context, monster),
                 onFavoriteToggle: (isFavorite) {
                   context.read<MonsterBloc>().add(
@@ -401,10 +418,14 @@ class _MonsterListScreenState extends State<MonsterListScreen> {
   }
 
   void _navigateToDetail(BuildContext context, Monster monster) {
+    // ✅ 修正: BlocProviderを引き継ぐ
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => MonsterDetailScreen(monster: monster),
+        builder: (_) => BlocProvider.value(
+          value: context.read<MonsterBloc>(),
+          child: MonsterDetailScreen(monster: monster),
+        ),
       ),
     );
   }

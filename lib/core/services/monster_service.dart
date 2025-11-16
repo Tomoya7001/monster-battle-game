@@ -295,6 +295,65 @@ class MonsterService {
     }
   }
 
+  /// 既存モンスターのHP値を再計算して更新
+Future<int> recalculateAllMonsterHp(String userId) async {
+  try {
+    final snapshot = await _firestore
+        .collection('user_monsters')
+        .where('user_id', isEqualTo: userId)
+        .get();
+
+    if (snapshot.docs.isEmpty) return 0;
+
+    int updatedCount = 0;
+    final batch = _firestore.batch();
+
+    for (final doc in snapshot.docs) {
+      final data = doc.data();
+      final monsterId = data['monster_id'] as String?;
+
+      if (monsterId == null) continue;
+
+      // マスターデータ取得
+      final masterDoc = await _firestore
+          .collection('monster_masters')
+          .doc(monsterId)
+          .get();
+
+      if (!masterDoc.exists) continue;
+
+      final master = masterDoc.data()!;
+      final baseHp = _getBaseHpFromMaster(master);
+      final growthHp = _getGrowthHpFromMaster(master);
+
+      final level = (data['level'] as int?) ?? 1;
+      final ivHp = (data['iv_hp'] as int?) ?? 0;
+      final pointHp = (data['point_hp'] as int?) ?? 0;
+
+      final correctHp = _calcInitialHp(
+        baseHp: baseHp,
+        ivHp: ivHp,
+        pointHp: pointHp,
+        level: level,
+        growthHpPerLevel: growthHp,
+      );
+
+      batch.update(doc.reference, {
+        'current_hp': correctHp,
+        'last_hp_update': FieldValue.serverTimestamp(),
+      });
+
+      updatedCount++;
+    }
+
+    await batch.commit();
+    return updatedCount;
+  } catch (e) {
+    print('HP再計算エラー: $e');
+    return 0;
+  }
+}
+
     /// テスト用: ダミーモンスターを生成
     Future<int> createDummyMonsters({
       required String userId,

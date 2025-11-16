@@ -37,76 +37,80 @@ class GachaService {
   // ========================================
 
   /// 単発ガチャを引く
-  Future<GachaResult> drawSingle({
-    required String userId,
-    bool isGuaranteed4Star = false,
-  }) async {
-    // 1. レアリティ抽選
-    final rarity = _determineRarity(isGuaranteed4Star);
+Future<GachaResult> drawSingle({
+  required String userId,
+  bool isGuaranteed4Star = false,
+}) async {
+  // 1. レアリティ抽選
+  final rarity = _determineRarity(isGuaranteed4Star);
 
-    // 2. そのレアリティのモンスターマスターを取得
-    final monsters = await _getMonstersByRarity(rarity);
+  // 2. そのレアリティのモンスターマスターを取得
+  final monsters = await _getMonstersByRarity(rarity);
 
-    if (monsters.isEmpty) {
-      throw Exception('レアリティ$rarityのモンスターが存在しません');
-    }
-
-    // 3. ランダムで1体選択
-    final selectedMonster = monsters[_random.nextInt(monsters.length)];
-
-    // 4. 個体値生成
-    final ivs = _generateIndividualValues();
-
-    // 5. メイン特性抽選
-    final mainTrait = await _selectMainTrait(selectedMonster);
-
-    // 6. マスターデータから基礎HP取得
-    final baseStats =
-        selectedMonster['base_stats'] as Map<String, dynamic>? ?? {};
-    final baseHp = baseStats['hp'] as int? ?? 100;
-    final initialHp = baseHp + ivs['hp']!;
-
-    // 7. UserMonsterドキュメントを作成
-    final userMonsterRef = _firestore.collection('user_monsters').doc();
-
-    await userMonsterRef.set({
-      'user_id': userId, // ✅ snake_case
-      'monster_id': selectedMonster['monster_id'], // ✅ snake_case
-      'level': 1,
-      'exp': 0,
-      'current_hp': initialHp, // ✅ 追加
-      'last_hp_update': FieldValue.serverTimestamp(), // ✅ 追加
-      'intimacy_level': 1, // ✅ snake_case
-      'intimacy_exp': 0, // ✅ snake_case
-      'iv_hp': ivs['hp'], // ✅ snake_case
-      'iv_attack': ivs['attack'], // ✅ snake_case
-      'iv_defense': ivs['defense'], // ✅ snake_case
-      'iv_magic': ivs['magic'], // ✅ snake_case
-      'iv_speed': ivs['speed'], // ✅ snake_case
-      'point_hp': 0, // ✅ snake_case
-      'point_attack': 0, // ✅ snake_case
-      'point_defense': 0, // ✅ snake_case
-      'point_magic': 0, // ✅ snake_case
-      'point_speed': 0, // ✅ snake_case
-      'remaining_points': 0, // ✅ snake_case
-      'main_trait_id': mainTrait?['trait_id'], // ✅ snake_case
-      'equipped_skills': _getInitialSkills(selectedMonster),
-      'equipped_equipment': <String>[],
-      'skin_id': 1, // ✅ snake_case
-      'is_favorite': false, // ✅ snake_case
-      'is_locked': false, // ✅ snake_case
-      'acquired_at': FieldValue.serverTimestamp(), // ✅ snake_case
-      'last_used_at': null, // ✅ 追加
-    });
-
-    return GachaResult(
-      userMonsterId: userMonsterRef.id,
-      monsterMaster: selectedMonster,
-      rarity: rarity,
-      individualValues: ivs,
-      mainTrait: mainTrait,
-    );
+  if (monsters.isEmpty) {
+    throw Exception('レアリティ$rarityのモンスターが存在しません');
   }
+
+  // 3. ランダムで1体選択
+  final selectedMonster = monsters[_random.nextInt(monsters.length)];
+
+  // 4. 個体値生成
+  final ivs = _generateIndividualValues();
+
+  // 5. メイン特性抽選
+  final mainTrait = await _selectMainTrait(selectedMonster);
+
+  // 6. マスターデータから基礎HP取得
+  final baseStats =
+      selectedMonster['base_stats'] as Map<String, dynamic>? ?? {};
+  final baseHp = baseStats['hp'] as int? ?? 100;
+  final initialHp = baseHp + ivs['hp']!;
+
+  // ✅ 修正: ドキュメントIDを使用
+  final monsterDocId = selectedMonster['_document_id'] as String? ?? 
+                       selectedMonster['monster_id'].toString();
+
+  // 7. UserMonsterドキュメントを作成
+  final userMonsterRef = _firestore.collection('user_monsters').doc();
+
+  await userMonsterRef.set({
+    'user_id': userId,
+    'monster_id': monsterDocId, // ✅ 修正: 文字列のドキュメントIDを使用
+    'level': 1,
+    'exp': 0,
+    'current_hp': initialHp > 0 ? initialHp : 1,
+    'last_hp_update': FieldValue.serverTimestamp(),
+    'intimacy_level': 1,
+    'intimacy_exp': 0,
+    'iv_hp': ivs['hp'],
+    'iv_attack': ivs['attack'],
+    'iv_defense': ivs['defense'],
+    'iv_magic': ivs['magic'],
+    'iv_speed': ivs['speed'],
+    'point_hp': 0,
+    'point_attack': 0,
+    'point_defense': 0,
+    'point_magic': 0,
+    'point_speed': 0,
+    'remaining_points': 0,
+    'main_trait_id': mainTrait?['trait_id']?.toString(),
+    'equipped_skills': _getInitialSkills(selectedMonster),
+    'equipped_equipment': <String>[],
+    'skin_id': 1,
+    'is_favorite': false,
+    'is_locked': false,
+    'acquired_at': FieldValue.serverTimestamp(),
+    'last_used_at': null,
+  });
+
+  return GachaResult(
+    userMonsterId: userMonsterRef.id,
+    monsterMaster: selectedMonster,
+    rarity: rarity,
+    individualValues: ivs,
+    mainTrait: mainTrait,
+  );
+}
 
   /// 10連ガチャを引く
   Future<List<GachaResult>> draw10Pull({
@@ -162,7 +166,12 @@ class GachaService {
 
     return snapshot.docs.map((doc) {
       final data = doc.data();
-      data['monster_id'] = doc.id; // ドキュメントIDを追加
+      // ✅ 修正: ドキュメントIDを文字列として保存（monster_idとは別）
+      data['_document_id'] = doc.id;
+      // monster_idが存在しない場合のみ設定
+      if (!data.containsKey('monster_id')) {
+        data['monster_id'] = doc.id;
+      }
       return data;
     }).toList();
   }
@@ -504,13 +513,12 @@ class GachaService {
             .toList(),
         'gemsUsed': gemsUsed,
         'ticketsUsed': ticketsUsed,
-        'createdAt': FieldValue.serverTimestamp(),
+        'pulledAt': FieldValue.serverTimestamp(), // ✅ 修正: createdAt → pulledAt
       };
 
       await _firestore.collection('gacha_history').add(historyData);
     } catch (e) {
       print('ガチャ履歴保存エラー: $e');
-      // 履歴保存失敗はクリティカルではないのでエラーは投げない
     }
   }
 

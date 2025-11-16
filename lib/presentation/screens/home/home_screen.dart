@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../../../core/services/monster_service.dart';
 import '../gacha/gacha_screen.dart';
 import '../../bloc/gacha/gacha_bloc.dart';
 import '../../bloc/gacha/gacha_event.dart';
@@ -168,6 +170,20 @@ class HomeScreen extends StatelessWidget {
                     vertical: 16,
                   ),
                 ),
+              ),
+
+              const SizedBox(height: 16),
+
+              ElevatedButton(
+                onPressed: () async {
+                  final userId = FirebaseAuth.instance.currentUser?.uid ?? 'demo_user';
+                  final service = MonsterService();
+                  final count = await service.recalculateAllMonsterHp(userId);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('$count 体のモンスターのHPを再計算しました')),
+                  );
+                },
+                child: const Text('HP再計算（デバッグ）'),
               ),
             ],
           ),
