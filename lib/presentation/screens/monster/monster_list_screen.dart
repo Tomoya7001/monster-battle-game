@@ -34,7 +34,7 @@ class _MonsterListScreenState extends State<MonsterListScreen> {
   List<Monster> _cachedMonsters = [];
   MonsterFilter? _cachedFilter;
   MonsterSortType _cachedSortType = MonsterSortType.levelDesc;
-  int _cachedTotalCount = 0;
+  int _cachedTotalCount = 100;
 
   String get _userId {
     return FirebaseAuth.instance.currentUser?.uid ?? 'demo_user';
@@ -350,7 +350,7 @@ class _MonsterListScreenState extends State<MonsterListScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '${monsters.length} / $_cachedTotalCount 体',
+                '${monsters.length} / 100 体',
                 style: TextStyle(
                   color: Colors.grey[600],
                   fontSize: 14,

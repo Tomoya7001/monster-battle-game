@@ -438,10 +438,58 @@ Future<int> recalculateAllMonsterHp(String userId) async {
       required int ivHp,
       required int pointHp,
       required int level,
-      required int growthHpPerLevel,
+      required int growthHpPerLevel, // 互換性のため残す（未使用）
     }) {
-      final lvBonus = (level > 1) ? growthHpPerLevel * (level - 1) : 0;
-      final hp = baseHp + ivHp + pointHp + lvBonus;
-      return hp < 1 ? 1 : hp; // 簡易クランプ
+      // Monster.maxHp と同じ計算式を使用
+      // 基礎値 * レベル倍率（1レベルごとに+5%）
+      final double baseStat = baseHp * (1.0 + (level - 1) * 0.05);
+      
+      // 個体値を加算
+      final double withIv = baseStat + ivHp;
+      
+      // ポイント振り分けによる追加（収穫逓減の法則）
+      final double pointBonus = _calculateDiminishingReturn(pointHp);
+      
+      final int hp = (withIv + pointBonus).round();
+      return hp < 1 ? 1 : hp;
+    }
+
+    /// 収穫逓減の法則によるポイント計算
+    double _calculateDiminishingReturn(int points) {
+      if (points <= 0) return 0.0;
+
+      double total = 0.0;
+
+      // 0-50: +1.0
+      if (points > 0) {
+        final int range1 = points.clamp(0, 50);
+        total += range1 * 1.0;
+      }
+
+      // 51-100: +0.8
+      if (points > 50) {
+        final int range2 = (points - 50).clamp(0, 50);
+        total += range2 * 0.8;
+      }
+
+      // 101-150: +0.6
+      if (points > 100) {
+        final int range3 = (points - 100).clamp(0, 50);
+        total += range3 * 0.6;
+      }
+
+      // 151-200: +0.4
+      if (points > 150) {
+        final int range4 = (points - 150).clamp(0, 50);
+        total += range4 * 0.4;
+      }
+
+      // 201以上: +0.2
+      if (points > 200) {
+        final int range5 = points - 200;
+        total += range5 * 0.2;
+      }
+
+      return total;
     }
   }

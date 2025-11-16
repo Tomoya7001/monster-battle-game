@@ -531,7 +531,7 @@ Future<GachaResult> drawSingle({
       final snapshot = await _firestore
           .collection('gacha_history')
           .where('userId', isEqualTo: userId)
-          .orderBy('createdAt', descending: true)
+          .orderBy('pulledAt', descending: true)
           .limit(limit)
           .get();
 
