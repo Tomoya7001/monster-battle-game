@@ -294,6 +294,44 @@ class MonsterService {
       return 0;
     }
   }
+  // レベルアップごとに4ポイント、Lv50で合計200ポイント
+  Future<int> recalculateRemainingPoints(String userId) async {
+    final snapshot = await _firestore
+        .collection('user_monsters')
+        .where('user_id', isEqualTo: userId)
+        .get();
+
+    if (snapshot.docs.isEmpty) return 0;
+
+    int updatedCount = 0;
+    final batch = _firestore.batch();
+
+    for (final doc in snapshot.docs) {
+      final data = doc.data();
+      final level = (data['level'] as int?) ?? 1;
+      
+      // レベルに応じた総ポイント（Lv1で0、Lv2で4、Lv50で196）
+      final totalPoints = (level - 1) * 4;
+      
+      // 既に振り分けたポイント
+      final usedPoints = (data['point_hp'] as int? ?? 0) +
+          (data['point_attack'] as int? ?? 0) +
+          (data['point_defense'] as int? ?? 0) +
+          (data['point_magic'] as int? ?? 0) +
+          (data['point_speed'] as int? ?? 0);
+      
+      // 残りポイント
+      final remaining = totalPoints - usedPoints;
+      
+      if (remaining >= 0) {
+        batch.update(doc.reference, {'remaining_points': remaining});
+        updatedCount++;
+      }
+    }
+
+    await batch.commit();
+    return updatedCount;
+  }
 
   /// 既存モンスターのHP値を再計算して更新
 Future<int> recalculateAllMonsterHp(String userId) async {
@@ -411,6 +449,70 @@ Future<int> recalculateAllMonsterHp(String userId) async {
 
       await batch.commit();
       return count;
+    }
+
+    Future<void> allocatePoints(String monsterId, String statType, int amount) async {
+      final docRef = _firestore.collection('user_monsters').doc(monsterId);
+      
+      await _firestore.runTransaction((transaction) async {
+        final doc = await transaction.get(docRef);
+        if (!doc.exists) throw Exception('モンスターが見つかりません');
+        
+        final data = doc.data()!;
+        final remaining = (data['remaining_points'] as int?) ?? 0;
+        
+        if (remaining < amount) throw Exception('ポイントが不足しています');
+        
+        final fieldName = 'point_$statType';
+        final currentValue = (data[fieldName] as int?) ?? 0;
+        
+        transaction.update(docRef, {
+          fieldName: currentValue + amount,
+          'remaining_points': remaining - amount,
+        });
+      });
+    }
+
+    Future<void> resetPoints(String monsterId) async {
+      final docRef = _firestore.collection('user_monsters').doc(monsterId);
+      
+      await _firestore.runTransaction((transaction) async {
+        final doc = await transaction.get(docRef);
+        if (!doc.exists) throw Exception('モンスターが見つかりません');
+        
+        final data = doc.data()!;
+        final totalPoints = (data['point_hp'] as int? ?? 0) +
+            (data['point_attack'] as int? ?? 0) +
+            (data['point_defense'] as int? ?? 0) +
+            (data['point_magic'] as int? ?? 0) +
+            (data['point_speed'] as int? ?? 0) +
+            (data['remaining_points'] as int? ?? 0);
+        
+        transaction.update(docRef, {
+          'point_hp': 0,
+          'point_attack': 0,
+          'point_defense': 0,
+          'point_magic': 0,
+          'point_speed': 0,
+          'remaining_points': totalPoints,
+        });
+      });
+    }
+
+    Future<void> updateEquippedSkills(String monsterId, List<String> skillIds) async {
+      await _firestore.collection('user_monsters').doc(monsterId).update({
+        'equipped_skills': skillIds,
+      });
+    }
+
+    Future<List<Map<String, dynamic>>> getAvailableSkills() async {
+      final snapshot = await _firestore.collection('skill_masters').get();
+      return snapshot.docs.map((doc) => {...doc.data(), 'id': doc.id}).toList();
+    }
+
+    Future<List<Map<String, dynamic>>> getAvailableTraits() async {
+      final snapshot = await _firestore.collection('trait_masters').get();
+      return snapshot.docs.map((doc) => {...doc.data(), 'id': doc.id}).toList();
     }
 
     // ───────────────────── ヘルパ ─────────────────────

@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../core/models/monster_filter.dart';
 import '../../../domain/entities/monster.dart';
 import '../../bloc/monster/monster_bloc.dart';
@@ -12,6 +13,9 @@ import 'widgets/monster_card.dart';
 import 'widgets/monster_filter_dialog.dart';
 import 'widgets/monster_sort_dialog.dart';
 import 'monster_detail_screen.dart';
+import '../../blocs/auth/auth_bloc.dart';
+import '../../../core/services/master_data_service.dart';
+import '../../../core/services/monster_service.dart';
 
 /// グリッド表示タイプ
 enum GridViewType {
@@ -35,9 +39,27 @@ class _MonsterListScreenState extends State<MonsterListScreen> {
   MonsterFilter? _cachedFilter;
   MonsterSortType _cachedSortType = MonsterSortType.levelDesc;
   int _cachedTotalCount = 100;
+  
+  final MonsterService _monsterService = MonsterService();
 
   String get _userId {
-    return FirebaseAuth.instance.currentUser?.uid ?? 'demo_user';
+    // Firebase Auth を優先
+    final firebaseUid = FirebaseAuth.instance.currentUser?.uid;
+    if (firebaseUid != null && firebaseUid.isNotEmpty) {
+      return firebaseUid;
+    }
+    
+    // AuthBloc から取得
+    try {
+      final authState = context.read<AuthBloc>().state;
+      if (authState is Authenticated) {
+        return authState.userId;
+      }
+    } catch (e) {
+      print('AuthBloc取得エラー: $e');
+    }
+    
+    return 'demo_user';
   }
 
   @override
@@ -52,6 +74,12 @@ class _MonsterListScreenState extends State<MonsterListScreen> {
       appBar: AppBar(
         title: const Text('モンスター一覧'),
         actions: [
+          // ✅ デバッグ用（後で削除）
+          IconButton(
+            icon: const Icon(Icons.bug_report),
+            onPressed: () => _debugPrintFirestoreData(),
+            tooltip: 'デバッグ',
+          ),
           _buildGridToggleButton(),
           // ✅ 修正: キャッシュを使用して常にアイコンを表示
           IconButton(
@@ -516,5 +544,71 @@ class _MonsterListScreenState extends State<MonsterListScreen> {
         );
       },
     );
+  }
+
+  // ✅ デバッグ用（後で削除）
+  Future<void> _debugPrintFirestoreData() async {
+    final firestore = FirebaseFirestore.instance;
+    final userId = _userId;
+    // ↓すでに投入済み
+    // final masterDataService = MasterDataService();
+    // await masterDataService.insertDummySkillData();
+    // ポイント再計算（1回実行）
+    final updatedCount = await _monsterService.recalculateRemainingPoints(userId);
+    print('ポイント再計算完了: $updatedCount体');
+
+
+    // await masterDataService.insertDummyTraitData();
+    print('ダミーデータ投入完了');
+    
+    print('========================================');
+    print('デバッグ情報');
+    print('========================================');
+    print('現在のユーザーID: $userId');
+    
+    // user_monstersの全データを取得
+    final allMonsters = await firestore.collection('user_monsters').get();
+    print('user_monsters 総数: ${allMonsters.docs.length}');
+    
+    // 現在のユーザーのモンスター
+    final userMonsters = await firestore
+        .collection('user_monsters')
+        .where('user_id', isEqualTo: userId)
+        .get();
+    print('ユーザーのモンスター数: ${userMonsters.docs.length}');
+    
+    print('--- 最新5件のモンスター ---');
+    final recentMonsters = userMonsters.docs.take(5);
+    for (var doc in recentMonsters) {
+      final data = doc.data();
+      print('ID: ${doc.id}');
+      print('  monster_id: ${data['monster_id']}');
+      print('  level: ${data['level']}');
+      print('  iv_hp: ${data['iv_hp']}');
+      print('  current_hp: ${data['current_hp']}');
+      print('  acquired_at: ${data['acquired_at']}');
+      print('');
+    }
+    
+    // 全ユーザーIDを確認
+    final uniqueUserIds = allMonsters.docs
+        .map((doc) => doc.data()['user_id'] as String?)
+        .toSet()
+        .toList();
+    print('--- 全ユーザーID ---');
+    for (var id in uniqueUserIds) {
+      print('  $id');
+    }
+    print('========================================');
+    
+    // UIにも表示
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('デバッグ情報をコンソールに出力しました\nユーザーID: $userId\nモンスター数: ${userMonsters.docs.length}'),
+          duration: const Duration(seconds: 5),
+        ),
+      );
+    }
   }
 }

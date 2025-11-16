@@ -139,3 +139,40 @@ class CreateDummyMonsters extends MonsterEvent {
   @override
   List<Object?> get props => [userId, count];
 }
+
+class AllocatePoints extends MonsterEvent {
+  final String monsterId;
+  final String statType; // 'hp', 'attack', 'defense', 'magic', 'speed'
+  final int amount;
+
+  const AllocatePoints({
+    required this.monsterId,
+    required this.statType,
+    required this.amount,
+  });
+
+  @override
+  List<Object?> get props => [monsterId, statType, amount];
+}
+
+class ResetPoints extends MonsterEvent {
+  final String monsterId;
+
+  const ResetPoints({required this.monsterId});
+
+  @override
+  List<Object?> get props => [monsterId];
+}
+
+class UpdateEquippedSkills extends MonsterEvent {
+  final String monsterId;
+  final List<String> skillIds;
+
+  const UpdateEquippedSkills({
+    required this.monsterId,
+    required this.skillIds,
+  });
+
+  @override
+  List<Object?> get props => [monsterId, skillIds];
+}

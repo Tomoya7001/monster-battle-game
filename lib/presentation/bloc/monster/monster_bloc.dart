@@ -29,6 +29,9 @@ class MonsterBloc extends Bloc<MonsterEvent, MonsterState> {
     on<ClearFilter>(_onClearFilter);
     on<RefreshMonsterList>(_onRefreshMonsterList);
     on<CreateDummyMonsters>(_onCreateDummyMonsters);
+    on<AllocatePoints>(_onAllocatePoints);
+    on<ResetPoints>(_onResetPoints);
+    on<UpdateEquippedSkills>(_onUpdateEquippedSkills);
   }
 
   /// ユーザーのモンスター一覧を読み込む
@@ -347,6 +350,55 @@ class MonsterBloc extends Bloc<MonsterEvent, MonsterState> {
         message: 'ダミーモンスターの作成に失敗しました',
         error: e,
       ));
+    }
+  }
+
+  Future<void> _onAllocatePoints(
+    AllocatePoints event,
+    Emitter<MonsterState> emit,
+  ) async {
+    try {
+      await _monsterService.allocatePoints(
+        event.monsterId,
+        event.statType,
+        event.amount,
+      );
+      final monster = await _monsterService.getMonsterById(event.monsterId);
+      if (monster != null) {
+        emit(MonsterUpdated(monster: monster, message: 'ポイントを振り分けました'));
+      }
+    } catch (e) {
+      emit(MonsterError(message: 'ポイント振り分けに失敗しました: $e'));
+    }
+  }
+
+  Future<void> _onResetPoints(
+    ResetPoints event,
+    Emitter<MonsterState> emit,
+  ) async {
+    try {
+      await _monsterService.resetPoints(event.monsterId);
+      final monster = await _monsterService.getMonsterById(event.monsterId);
+      if (monster != null) {
+        emit(MonsterUpdated(monster: monster, message: 'ポイントをリセットしました'));
+      }
+    } catch (e) {
+      emit(MonsterError(message: 'リセットに失敗しました: $e'));
+    }
+  }
+
+  Future<void> _onUpdateEquippedSkills(
+    UpdateEquippedSkills event,
+    Emitter<MonsterState> emit,
+  ) async {
+    try {
+      await _monsterService.updateEquippedSkills(event.monsterId, event.skillIds);
+      final monster = await _monsterService.getMonsterById(event.monsterId);
+      if (monster != null) {
+        emit(MonsterUpdated(monster: monster, message: '技を更新しました'));
+      }
+    } catch (e) {
+      emit(MonsterError(message: '技の更新に失敗しました: $e'));
     }
   }
 }
