@@ -341,7 +341,7 @@ class _BattleScreenContent extends StatelessWidget {
     );
   }
 
-  Widget _buildMonsterSelection(BuildContext context, BattleStateModel battleState) {
+  Widget _buildMonsterSelection(BuildContext context, BattleStateModel battleState, {bool isBottomSheet = false}) {
     return Container(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -381,17 +381,20 @@ class _BattleScreenContent extends StatelessWidget {
                   ? const Icon(Icons.check, color: Colors.grey)
                   : const Icon(Icons.arrow_forward_ios),
               onTap: isUsed
-                  ? null
-                  : () {
-                      if (battleState.phase == BattlePhase.selectFirstMonster) {
+                    ? null
+                    : () {
+                        if (isBottomSheet) {
+                        Navigator.pop(context); // BottomSheetの場合のみ閉じる
+                        }
+                        if (battleState.phase == BattlePhase.selectFirstMonster) {
                         context.read<BattleBloc>().add(
-                              SelectFirstMonster(monsterId: monster.baseMonster.id),
+                                SelectFirstMonster(monsterId: monster.baseMonster.id),
                             );
-                      } else {
+                        } else {
                         context.read<BattleBloc>().add(
-                              SwitchMonster(monsterId: monster.baseMonster.id),
+                                SwitchMonster(monsterId: monster.baseMonster.id),
                             );
-                      }
+                        }
                     },
             );
           }),
@@ -407,10 +410,10 @@ class _BattleScreenContent extends StatelessWidget {
 
   void _showSwitchDialog(BuildContext context, BattleStateModel battleState) {
     showModalBottomSheet(
-      context: context,
-      builder: (ctx) => _buildMonsterSelection(context, battleState),
+        context: context,
+        builder: (ctx) => _buildMonsterSelection(context, battleState, isBottomSheet: true),
     );
-  }
+    }
 
   void _showResultDialog(BuildContext context, String title, Color color) {
     showDialog(

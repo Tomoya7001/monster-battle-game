@@ -28,6 +28,17 @@ class BattleSkill {
 
   /// Firestoreから変換
   factory BattleSkill.fromFirestore(Map<String, dynamic> data) {
+    // effects の型チェック
+    Map<String, dynamic> effectsMap = {};
+    final effectsData = data['effects'];
+    if (effectsData is Map<String, dynamic>) {
+        effectsMap = effectsData;
+    } else if (effectsData is List && effectsData.isNotEmpty) {
+        // 配列の場合は最初の要素を使用（または空Mapにする）
+        if (effectsData.first is Map<String, dynamic>) {
+        effectsMap = effectsData.first as Map<String, dynamic>;
+        }
+    }
     return BattleSkill(
       id: data['skill_id']?.toString() ?? data['id']?.toString() ?? '',
       name: data['name'] as String? ?? '不明',
@@ -38,7 +49,7 @@ class BattleSkill {
           ?? (data['power'] as num? ?? 0) / 100.0, // powerが100なら1.0倍
       accuracy: data['accuracy'] as int? ?? 100,
       target: data['target'] as String? ?? 'enemy',
-      effects: data['effects'] as Map<String, dynamic>? ?? {},
+      effects: effectsMap,
       description: data['description'] as String? ?? '',
     );
   }

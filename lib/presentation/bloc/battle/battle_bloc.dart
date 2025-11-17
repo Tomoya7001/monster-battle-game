@@ -270,7 +270,17 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
     newMonster.hasParticipated = true;
     newMonster.resetCost(); // コストリセット
 
-    _battleState!.addLog('${newMonster.baseMonster.monsterName}に交代！');
+    emit(BattleInProgress(
+    battleState: _battleState!,
+    message: '${newMonster.baseMonster.monsterName}に交代！',
+    ));
+
+    // 少し待ってからCPU行動（非同期タイミング問題回避）
+    await Future.delayed(const Duration(milliseconds: 100));
+
+    if (_battleState!.enemyActiveMonster?.canAct == true) {
+    await _executeCpuAction(emit);
+    }
 
     // CPUのターン
     if (_battleState!.enemyActiveMonster?.canAct == true) {
@@ -316,6 +326,14 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
         emit(BattlePlayerLose(battleState: _battleState!));
       }
       return;
+    }
+
+    // プレイヤー瀕死で交代不可の場合
+    if (_battleState!.playerActiveMonster?.isFainted == true && 
+        !_battleState!.canPlayerSendMore) {
+    _battleState!.phase = BattlePhase.battleEnd;
+    emit(BattlePlayerLose(battleState: _battleState!));
+    return;
     }
 
     // 瀕死処理
