@@ -10,6 +10,7 @@ import '../../blocs/auth/auth_bloc.dart';
 import '../../../core/router/app_router.dart';
 import '../monster/monster_list_screen.dart';
 import '../../bloc/monster/monster_bloc.dart';
+import '../battle/battle_screen.dart';
 
 /// ホーム画面
 class HomeScreen extends StatelessWidget {
@@ -157,9 +158,33 @@ class HomeScreen extends StatelessWidget {
               
               // バトルボタン
               ElevatedButton.icon(
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('バトル機能は実装中です')),
+                onPressed: () async {
+                  // プレイヤーのモンスターを取得
+                  final authState = context.read<AuthBloc>().state;
+                  if (authState is! Authenticated) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('ログインしてください')),
+                    );
+                    return;
+                  }
+
+                  final monsters = await MonsterService().getUserMonsters(authState.userId);
+                  
+                  if (monsters.length < 3) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('バトルには最低3体のモンスターが必要です')),
+                    );
+                    return;
+                  }
+
+                  // 最初の5体（または全体）をパーティとして使用
+                  final party = monsters.take(5).toList();
+
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => BattleScreen(playerParty: party),
+                    ),
                   );
                 },
                 icon: const Icon(Icons.sports_kabaddi),
