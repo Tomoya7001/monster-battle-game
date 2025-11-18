@@ -21,6 +21,10 @@ class BattleStateModel {
   BattlePhase phase;
   String? lastActionMessage;
   List<String> battleLog;
+  
+  // 交代フラグ（このターンに交代した場合true）
+  bool playerSwitchedThisTurn;
+  bool enemySwitchedThisTurn;
 
   BattleStateModel({
     required this.playerParty,
@@ -33,7 +37,9 @@ class BattleStateModel {
         isPlayerTurn = true,
         phase = BattlePhase.selectFirstMonster,
         lastActionMessage = null,
-        battleLog = [];
+        battleLog = [],
+        playerSwitchedThisTurn = false,
+        enemySwitchedThisTurn = false;
 
   /// プレイヤーが追加でモンスターを出せるか
   bool get canPlayerSendMore => playerUsedMonsterIds.length < 3;

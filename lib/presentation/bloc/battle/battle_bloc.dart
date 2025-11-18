@@ -260,6 +260,9 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
       return;
     }
 
+    // 強制交代（瀕死による交代）かどうかを判定
+    final isForcedSwitch = _battleState!.phase == BattlePhase.monsterFainted;
+
     final newMonster = _battleState!.playerParty
         .firstWhere((m) => m.baseMonster.id == event.monsterId);
 
@@ -269,21 +272,20 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
     _battleState!.playerUsedMonsterIds.add(event.monsterId);
     newMonster.hasParticipated = true;
     newMonster.resetCost(); // コストリセット
+    _battleState!.playerSwitchedThisTurn = true; // 交代フラグ設定
+
+    _battleState!.addLog('${newMonster.baseMonster.monsterName}に交代！');
 
     emit(BattleInProgress(
-    battleState: _battleState!,
-    message: '${newMonster.baseMonster.monsterName}に交代！',
+      battleState: _battleState!,
+      message: '${newMonster.baseMonster.monsterName}に交代！',
     ));
 
     // 少し待ってからCPU行動（非同期タイミング問題回避）
     await Future.delayed(const Duration(milliseconds: 100));
 
-    if (_battleState!.enemyActiveMonster?.canAct == true) {
-    await _executeCpuAction(emit);
-    }
-
-    // CPUのターン
-    if (_battleState!.enemyActiveMonster?.canAct == true) {
+    // 自発的な交代の場合のみCPU攻撃（強制交代の場合はスキップ）
+    if (!isForcedSwitch && _battleState!.enemyActiveMonster?.canAct == true) {
       await _executeCpuAction(emit);
     }
 
@@ -314,40 +316,43 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
   ) async {
     if (_battleState == null) return;
 
-    // バトル終了判定
+    // バトル終了判定（最優先）
     if (_battleState!.isBattleEnd) {
       _battleState!.phase = BattlePhase.battleEnd;
       
       if (_battleState!.isPlayerWin) {
         _battleState!.addLog('プレイヤーの勝利！');
+        await _saveBattleHistory(isWin: true);
         emit(BattlePlayerWin(battleState: _battleState!));
       } else {
         _battleState!.addLog('プレイヤーの敗北...');
+        await _saveBattleHistory(isWin: false);
         emit(BattlePlayerLose(battleState: _battleState!));
       }
       return;
     }
 
-    // プレイヤー瀕死で交代不可の場合
-    if (_battleState!.playerActiveMonster?.isFainted == true && 
-        !_battleState!.canPlayerSendMore) {
-    _battleState!.phase = BattlePhase.battleEnd;
-    emit(BattlePlayerLose(battleState: _battleState!));
-    return;
-    }
-
-    // 瀕死処理
+    // プレイヤーモンスター瀕死処理
     if (_battleState!.playerActiveMonster?.isFainted == true) {
       if (_battleState!.canPlayerSendMore) {
         _battleState!.phase = BattlePhase.monsterFainted;
+        _battleState!.addLog('次のモンスターを選んでください');
         emit(BattleInProgress(
           battleState: _battleState!,
           message: '次のモンスターを選んでください',
         ));
         return;
+      } else {
+        // これ以上出せない場合は敗北
+        _battleState!.phase = BattlePhase.battleEnd;
+        _battleState!.addLog('プレイヤーの敗北...');
+        await _saveBattleHistory(isWin: false);
+        emit(BattlePlayerLose(battleState: _battleState!));
+        return;
       }
     }
 
+    // 相手モンスター瀕死処理
     if (_battleState!.enemyActiveMonster?.isFainted == true) {
       if (_battleState!.canEnemySendMore) {
         // CPUの次のモンスターを自動選択
@@ -357,13 +362,29 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
         _battleState!.enemyUsedMonsterIds.add(nextMonster.baseMonster.id);
         nextMonster.hasParticipated = true;
         nextMonster.resetCost();
+        _battleState!.enemySwitchedThisTurn = true; // 交代フラグ設定
         _battleState!.addLog('相手は${nextMonster.baseMonster.monsterName}を繰り出した！');
+      } else {
+        // これ以上出せない場合は勝利
+        _battleState!.phase = BattlePhase.battleEnd;
+        _battleState!.addLog('プレイヤーの勝利！');
+        await _saveBattleHistory(isWin: true);
+        emit(BattlePlayerWin(battleState: _battleState!));
+        return;
       }
     }
 
-    // コスト回復
-    _battleState!.playerActiveMonster?.recoverCost();
-    _battleState!.enemyActiveMonster?.recoverCost();
+    // コスト回復（交代したターンはスキップ）
+    if (!_battleState!.playerSwitchedThisTurn) {
+      _battleState!.playerActiveMonster?.recoverCost();
+    }
+    if (!_battleState!.enemySwitchedThisTurn) {
+      _battleState!.enemyActiveMonster?.recoverCost();
+    }
+
+    // 交代フラグをリセット
+    _battleState!.playerSwitchedThisTurn = false;
+    _battleState!.enemySwitchedThisTurn = false;
 
     // ターン数増加
     _battleState!.turnNumber++;
@@ -382,6 +403,30 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
   ) async {
     _battleState = null;
     emit(const BattleInitial());
+  }
+
+  /// バトル履歴をFirestoreに保存
+  Future<void> _saveBattleHistory({required bool isWin}) async {
+    if (_battleState == null) return;
+
+    try {
+      final userId = 'dev_user_12345'; // TODO: AuthBlocから取得
+
+      final battleData = {
+        'user_id': userId,
+        'battle_type': 'cpu',
+        'result': isWin ? 'win' : 'lose',
+        'turn_count': _battleState!.turnNumber,
+        'battle_log': _battleState!.battleLog,
+        'player_party': _battleState!.playerUsedMonsterIds,
+        'enemy_party': _battleState!.enemyUsedMonsterIds,
+        'created_at': FieldValue.serverTimestamp(),
+      };
+
+      await _firestore.collection('battle_history').add(battleData);
+    } catch (e) {
+      print('バトル履歴保存エラー: $e');
+    }
   }
 
   /// MonsterリストをBattleMonsterに変換
@@ -483,56 +528,8 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
 
   /// CPUパーティ生成（簡易版）
   Future<List<BattleMonster>> _generateCpuParty() async {
-    // monster_mastersからランダムに3体選択
-    final mastersSnapshot = await _firestore.collection('monster_masters').limit(10).get();
-    
-    if (mastersSnapshot.docs.isEmpty) {
-      // マスターデータがない場合はダミーモンスターを生成
-      return _generateDummyCpuParty();
-    }
-
-    final selectedDocs = mastersSnapshot.docs.take(3).toList();
-    final List<BattleMonster> cpuParty = [];
-
-    for (int i = 0; i < selectedDocs.length; i++) {
-      final masterData = selectedDocs[i].data();
-      
-      // CPUモンスターを生成
-      final cpuMonster = Monster(
-        id: 'cpu_monster_$i',
-        userId: 'cpu',
-        monsterId: selectedDocs[i].id,
-        monsterName: masterData['name'] as String? ?? 'CPU Monster $i',
-        species: (masterData['species'] as String? ?? 'human').toLowerCase(),
-        element: _extractElement(masterData),
-        rarity: masterData['rarity'] as int? ?? 3,
-        level: 50,
-        exp: 0,
-        currentHp: 100,
-        lastHpUpdate: DateTime.now(),
-        acquiredAt: DateTime.now(),
-        baseHp: (masterData['base_stats'] as Map<String, dynamic>?)?['hp'] as int? ?? 100,
-        baseAttack: (masterData['base_stats'] as Map<String, dynamic>?)?['attack'] as int? ?? 50,
-        baseDefense: (masterData['base_stats'] as Map<String, dynamic>?)?['defense'] as int? ?? 50,
-        baseMagic: (masterData['base_stats'] as Map<String, dynamic>?)?['magic'] as int? ?? 50,
-        baseSpeed: (masterData['base_stats'] as Map<String, dynamic>?)?['speed'] as int? ?? 50,
-      );
-
-      final skills = _getDefaultSkills();
-      cpuParty.add(BattleMonster(baseMonster: cpuMonster, skills: skills));
-    }
-
-    return cpuParty;
-  }
-
-  String _extractElement(Map<String, dynamic> masterData) {
-    final attributesData = masterData['attributes'];
-    if (attributesData is List && attributesData.isNotEmpty) {
-      return attributesData.first.toString().toLowerCase();
-    } else if (attributesData is String) {
-      return attributesData.toLowerCase();
-    }
-    return 'none';
+    // Phase 1では常にダミーモンスター（弱い）を使用
+    return _generateDummyCpuParty();
   }
 
   /// ダミーCPUパーティ
@@ -551,11 +548,11 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
         currentHp: 100,
         lastHpUpdate: DateTime.now(),
         acquiredAt: DateTime.now(),
-        baseHp: 80,
-        baseAttack: 40,
-        baseDefense: 50,
-        baseMagic: 45,
-        baseSpeed: 35,
+        baseHp: 65,
+        baseAttack: 30,
+        baseDefense: 35,
+        baseMagic: 28,
+        baseSpeed: 25,
       ),
       Monster(
         id: 'cpu_2',
@@ -570,11 +567,11 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
         currentHp: 100,
         lastHpUpdate: DateTime.now(),
         acquiredAt: DateTime.now(),
-        baseHp: 70,
-        baseAttack: 55,
-        baseDefense: 40,
-        baseMagic: 30,
-        baseSpeed: 50,
+        baseHp: 60,
+        baseAttack: 35,
+        baseDefense: 30,
+        baseMagic: 25,
+        baseSpeed: 32,
       ),
       Monster(
         id: 'cpu_3',
@@ -589,11 +586,11 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
         currentHp: 100,
         lastHpUpdate: DateTime.now(),
         acquiredAt: DateTime.now(),
-        baseHp: 75,
-        baseAttack: 50,
-        baseDefense: 55,
-        baseMagic: 35,
-        baseSpeed: 45,
+        baseHp: 68,
+        baseAttack: 32,
+        baseDefense: 38,
+        baseMagic: 26,
+        baseSpeed: 28,
       ),
     ];
 

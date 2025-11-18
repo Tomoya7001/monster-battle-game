@@ -58,6 +58,28 @@ class _BattleScreenContent extends StatelessWidget {
             );
           },
         ),
+        actions: [
+          // バトルログボタン
+          BlocBuilder<BattleBloc, BattleState>(
+            builder: (context, state) {
+              if (state is BattleInProgress || 
+                  state is BattlePlayerWin || 
+                  state is BattlePlayerLose) {
+                final battleState = state is BattleInProgress
+                    ? state.battleState
+                    : state is BattlePlayerWin
+                        ? state.battleState
+                        : (state as BattlePlayerLose).battleState;
+                        
+                return IconButton(
+                  icon: const Icon(Icons.list),
+                  onPressed: () => _showBattleLog(context, battleState),
+                );
+              }
+              return const SizedBox.shrink();
+            },
+          ),
+        ],
       ),
       body: BlocConsumer<BattleBloc, BattleState>(
         listener: (context, state) {
@@ -381,20 +403,20 @@ class _BattleScreenContent extends StatelessWidget {
                   ? const Icon(Icons.check, color: Colors.grey)
                   : const Icon(Icons.arrow_forward_ios),
               onTap: isUsed
-                    ? null
-                    : () {
-                        if (isBottomSheet) {
-                        Navigator.pop(context); // BottomSheetの場合のみ閉じる
-                        }
-                        if (battleState.phase == BattlePhase.selectFirstMonster) {
+                  ? null
+                  : () {
+                      if (isBottomSheet) {
+                        Navigator.pop(context);
+                      }
+                      if (battleState.phase == BattlePhase.selectFirstMonster) {
                         context.read<BattleBloc>().add(
-                                SelectFirstMonster(monsterId: monster.baseMonster.id),
-                            );
-                        } else {
+                          SelectFirstMonster(monsterId: monster.baseMonster.id),
+                        );
+                      } else {
                         context.read<BattleBloc>().add(
-                                SwitchMonster(monsterId: monster.baseMonster.id),
-                            );
-                        }
+                          SwitchMonster(monsterId: monster.baseMonster.id),
+                        );
+                      }
                     },
             );
           }),
@@ -410,10 +432,44 @@ class _BattleScreenContent extends StatelessWidget {
 
   void _showSwitchDialog(BuildContext context, BattleStateModel battleState) {
     showModalBottomSheet(
-        context: context,
-        builder: (ctx) => _buildMonsterSelection(context, battleState, isBottomSheet: true),
+      context: context,
+      builder: (ctx) => BlocProvider.value(
+        value: context.read<BattleBloc>(),
+        child: _buildMonsterSelection(context, battleState, isBottomSheet: true),
+      ),
     );
-    }
+  }
+
+  void _showBattleLog(BuildContext context, BattleStateModel battleState) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('バトルログ'),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: battleState.battleLog.length,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Text(
+                  battleState.battleLog[index],
+                  style: const TextStyle(fontSize: 12),
+                ),
+              );
+            },
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('閉じる'),
+          ),
+        ],
+      ),
+    );
+  }
 
   void _showResultDialog(BuildContext context, String title, Color color) {
     showDialog(
