@@ -59,6 +59,7 @@ firebase_options.dart
 # 環境設定
 .env
 .env.local
-firebase/serviceAccountKey.json
+# firebase/serviceAccountKey.json
+**/serviceAccountKey.json
 firebase/functions/node_modules/
 build_log.txt
