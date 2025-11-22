@@ -335,16 +335,16 @@ class _BattleScreenContent extends StatelessWidget {
             children: [
               Expanded(
                 child: ElevatedButton.icon(
-                  onPressed: battleState.canPlayerSendMore
-                      ? () => _showSwitchDialog(context, battleState)
-                      : null,
-                  icon: const Icon(Icons.swap_horiz),
-                  label: const Text('交代'),
-                  style: ElevatedButton.styleFrom(
+                    onPressed: battleState.hasAvailableSwitchMonster
+                        ? () => _showSwitchDialog(context, battleState)
+                        : null,
+                    icon: const Icon(Icons.swap_horiz),
+                    label: const Text('交代'),
+                    style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.orange,
-                  ),
+                    ),
                 ),
-              ),
+            ),
               const SizedBox(width: 8),
               Expanded(
                 child: ElevatedButton.icon(
@@ -369,85 +369,86 @@ class _BattleScreenContent extends StatelessWidget {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'モンスターを選択:',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        Text(
+          'モンスターを選択: (${battleState.playerFieldMonsterIds.length}/3体使用中)',
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
         ...battleState.playerParty.map((monster) {
-          final monsterId = monster.baseMonster.id;
-          final isActive = battleState.playerActiveMonster?.baseMonster.id == monsterId;
-          final isFainted = monster.isFainted;
-          final isFieldMonster = battleState.playerFieldMonsterIds.contains(monsterId);
-          
-          // ★修正: 交代可能か判定
-          final canSwitch = battleState.canSwitchTo(monsterId);
+            final monsterId = monster.baseMonster.id;
+            final isActive = battleState.playerActiveMonster?.baseMonster.id == monsterId;
+            final isFainted = monster.isFainted;
+            final isFieldMonster = battleState.playerFieldMonsterIds.contains(monsterId);
+            
+            // ★修正: シンプルに判定
+            final canSwitch = battleState.canSwitchTo(monsterId);
 
-          // 表示テキスト
-          String subtitle;
-          Color backgroundColor;
-          IconData icon;
-          
-          if (isActive) {
-            subtitle = '出撃中';
-            backgroundColor = Colors.blue;
-            icon = Icons.check_circle;
-          } else if (isFainted) {
-            subtitle = '瀕死';
-            backgroundColor = Colors.red;
-            icon = Icons.cancel;
-          } else if (isFieldMonster) {
-            subtitle = 'HP: ${monster.currentHp}/${monster.maxHp} (控え中)';
-            backgroundColor = Colors.orange;
-            icon = Icons.arrow_back;
-          } else if (!battleState.canPlayerSendMore) {
-            subtitle = 'HP: ${monster.currentHp}/${monster.maxHp} (3体制限)';
-            backgroundColor = Colors.grey;
-            icon = Icons.block;
-          } else {
-            subtitle = 'HP: ${monster.currentHp}/${monster.maxHp}';
-            backgroundColor = Colors.green;
-            icon = Icons.arrow_forward_ios;
-          }
+            // 表示テキスト
+            String subtitle;
+            Color backgroundColor;
+            IconData icon;
+            
+            if (isActive) {
+                subtitle = '出撃中';
+                backgroundColor = Colors.blue;
+                icon = Icons.check_circle;
+            } else if (isFainted) {
+                subtitle = '瀕死';
+                backgroundColor = Colors.red;
+                icon = Icons.cancel;
+            } else if (isFieldMonster) {
+                subtitle = 'HP: ${monster.currentHp}/${monster.maxHp} (戻せます)';
+                backgroundColor = Colors.orange;
+                icon = Icons.arrow_back;
+            } else if (!battleState.canPlayerSendMore) {
+                subtitle = 'HP: ${monster.currentHp}/${monster.maxHp} (3体制限)';
+                backgroundColor = Colors.grey;
+                icon = Icons.block;
+            } else {
+                subtitle = 'HP: ${monster.currentHp}/${monster.maxHp}';
+                backgroundColor = Colors.green;
+                icon = Icons.arrow_forward_ios;
+            }
 
-          return ListTile(
-            enabled: canSwitch,
-            leading: CircleAvatar(
-              backgroundColor: canSwitch ? backgroundColor : Colors.grey,
-              child: Text(
-                monster.baseMonster.monsterName.substring(0, 1),
-                style: const TextStyle(color: Colors.white),
-              ),
-            ),
-            title: Text(
-              monster.baseMonster.monsterName,
-              style: TextStyle(
-                color: canSwitch ? Colors.black : Colors.grey,
-              ),
-            ),
-            subtitle: Text(
-              subtitle,
-              style: TextStyle(
-                color: canSwitch ? Colors.black87 : Colors.grey,
-              ),
-            ),
-            trailing: Icon(
-              icon,
-              color: canSwitch ? backgroundColor : Colors.grey,
-            ),
-            onTap: canSwitch
-                ? () {
-                    if (battleState.phase == BattlePhase.selectFirstMonster) {
-                      context.read<BattleBloc>().add(SelectFirstMonster(monsterId: monsterId));
-                    } else {
-                      context.read<BattleBloc>().add(SwitchMonster(monsterId: monsterId));
-                      if (isBottomSheet) {
-                        Navigator.pop(context);
-                      }
+            return ListTile(
+                enabled: canSwitch,
+                leading: CircleAvatar(
+                backgroundColor: canSwitch ? backgroundColor : Colors.grey,
+                child: Text(
+                    monster.baseMonster.monsterName.substring(0, 1),
+                    style: const TextStyle(color: Colors.white),
+                ),
+                ),
+                title: Text(
+                monster.baseMonster.monsterName,
+                style: TextStyle(
+                    color: canSwitch ? Colors.black : Colors.grey,
+                ),
+                ),
+                subtitle: Text(
+                subtitle,
+                style: TextStyle(
+                    color: canSwitch ? Colors.black87 : Colors.grey,
+                    fontSize: 12,
+                ),
+                ),
+                trailing: Icon(
+                icon,
+                color: canSwitch ? backgroundColor : Colors.grey,
+                ),
+                onTap: canSwitch
+                    ? () {
+                        if (battleState.phase == BattlePhase.selectFirstMonster) {
+                        context.read<BattleBloc>().add(SelectFirstMonster(monsterId: monsterId));
+                        } else {
+                        context.read<BattleBloc>().add(SwitchMonster(monsterId: monsterId));
+                        if (isBottomSheet) {
+                            Navigator.pop(context);
+                        }
+                        }
                     }
-                  }
-                : null,
-          );
+                    : null,
+            );
         }).toList(),
       ],
     ),

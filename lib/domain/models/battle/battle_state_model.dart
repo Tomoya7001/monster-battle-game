@@ -5,13 +5,15 @@ import 'battle_skill.dart';
 class BattleStateModel {
   // プレイヤー側
   final List<BattleMonster> playerParty; // 手持ち5体
-  final Set<String> playerFieldMonsterIds; // ★修正: 場に出したモンスターID（瀕死含む、最大3体）
+  final Set<String> playerFieldMonsterIds; // 場に出したモンスターID（瀕死含む、最大3体）
   BattleMonster? playerActiveMonster;
+  bool playerSwitchedThisTurn; // ★追加: このターンに交代したか
 
   // 相手側（CPU）
   final List<BattleMonster> enemyParty;
-  final Set<String> enemyFieldMonsterIds; // ★修正: 場に出したモンスターID
+  final Set<String> enemyFieldMonsterIds; // 場に出したモンスターID
   BattleMonster? enemyActiveMonster;
+  bool enemySwitchedThisTurn; // ★追加: このターンに交代したか
 
   // ターン管理
   int turnNumber;
@@ -29,6 +31,8 @@ class BattleStateModel {
         enemyFieldMonsterIds = {},
         playerActiveMonster = null,
         enemyActiveMonster = null,
+        playerSwitchedThisTurn = false, // ★追加
+        enemySwitchedThisTurn = false, // ★追加
         turnNumber = 1,
         isPlayerTurn = true,
         phase = BattlePhase.selectFirstMonster,
@@ -41,30 +45,62 @@ class BattleStateModel {
   /// 相手が追加でモンスターを出せるか
   bool get canEnemySendMore => enemyFieldMonsterIds.length < 3;
 
-  /// ★追加: モンスターが交代可能か判定
-  bool canSwitchTo(String monsterId) {
+  /// 交代可能なモンスターが存在するか（既に使ったモンスター含む）
+bool get hasAvailableSwitchMonster {
+  return playerParty.any((m) => 
+    !m.isFainted && 
+    m.baseMonster.id != playerActiveMonster?.baseMonster.id
+  );
+}
+
+  /// ★追加: プレイヤーが使用したモンスターIDリスト（Firestore保存用）
+  List<String> get playerUsedMonsterIds => playerFieldMonsterIds.toList();
+
+  /// ★追加: 相手が使用したモンスターIDリスト（Firestore保存用）
+  List<String> get enemyUsedMonsterIds => enemyFieldMonsterIds.toList();
+
+  /// モンスターが交代可能か判定（詳細ログ付き）
+    bool canSwitchTo(String monsterId, {bool debug = false}) {
+    if (debug) {
+        print('=== canSwitchTo Debug ===');
+        print('Target Monster ID: $monsterId');
+        print('Active Monster ID: ${playerActiveMonster?.baseMonster.id}');
+        print('Field Monster IDs: $playerFieldMonsterIds');
+        print('canPlayerSendMore: $canPlayerSendMore');
+    }
+    
     // 現在場に出ているモンスターには交代できない
     if (playerActiveMonster?.baseMonster.id == monsterId) {
-      return false;
+        if (debug) print('❌ Already active');
+        return false;
     }
     
     // 瀕死のモンスターには交代できない
     final monster = playerParty.firstWhere(
-      (m) => m.baseMonster.id == monsterId,
-      orElse: () => throw Exception('Monster not found'),
+        (m) => m.baseMonster.id == monsterId,
+        orElse: () => throw Exception('Monster not found: $monsterId'),
     );
     
     if (monster.isFainted) {
-      return false;
+        if (debug) print('❌ Fainted');
+        return false;
     }
     
-    // 3体制限チェック（新しいモンスターの場合のみ）
-    if (!playerFieldMonsterIds.contains(monsterId) && !canPlayerSendMore) {
-      return false;
+    // 既に場に出したモンスターは常に交代可能
+    if (playerFieldMonsterIds.contains(monsterId)) {
+        if (debug) print('✅ Already used, can switch back');
+        return true;
     }
     
+    // 新しいモンスターの場合は3体制限をチェック
+    if (!canPlayerSendMore) {
+        if (debug) print('❌ 3-monster limit reached');
+        return false;
+    }
+    
+    if (debug) print('✅ Can switch (new monster)');
     return true;
-  }
+    }
 
   /// プレイヤーの勝利判定
   bool get isPlayerWin {
