@@ -63,3 +63,7 @@ firebase_options.dart
 **/serviceAccountKey.json
 firebase/functions/node_modules/
 build_log.txt
+
+# ★追加: skill-importerのnode_modules
+skill-importer/node_modules/
+**/node_modules/
