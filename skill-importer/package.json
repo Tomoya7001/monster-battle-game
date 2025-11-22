@@ -1,0 +1,21 @@
+{
+  "name": "skill-data-importer",
+  "version": "1.0.0",
+  "description": "モンスター対戦ゲーム 技マスターデータインポートツール",
+  "main": "import_skills.js",
+  "scripts": {
+    "import": "node import_skills.js",
+    "test": "node import_skills.js"
+  },
+  "keywords": [
+    "firebase",
+    "firestore",
+    "import",
+    "game"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "firebase-admin": "^12.0.0"
+  }
+}

@@ -61,7 +61,7 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
   Future<void> _onSelectFirstMonster(
     SelectFirstMonster event,
     Emitter<BattleState> emit,
-  ) async {
+    ) async {
     if (_battleState == null) return;
 
     // プレイヤーのモンスター選択
@@ -69,7 +69,7 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
         .firstWhere((m) => m.baseMonster.id == event.monsterId);
     
     _battleState!.playerActiveMonster = playerMonster;
-    _battleState!.playerUsedMonsterIds.add(event.monsterId);
+    _battleState!.playerFieldMonsterIds.add(event.monsterId); // ★修正: Setに追加
     playerMonster.hasParticipated = true;
 
     _battleState!.addLog('${playerMonster.baseMonster.monsterName}を繰り出した！');
@@ -77,7 +77,7 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
     // CPUも最初のモンスターを選択
     final cpuMonster = _battleState!.enemyParty[0];
     _battleState!.enemyActiveMonster = cpuMonster;
-    _battleState!.enemyUsedMonsterIds.add(cpuMonster.baseMonster.id);
+    _battleState!.enemyFieldMonsterIds.add(cpuMonster.baseMonster.id); // ★修正: Setに追加
     cpuMonster.hasParticipated = true;
 
     _battleState!.addLog('相手は${cpuMonster.baseMonster.monsterName}を繰り出した！');
@@ -86,10 +86,10 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
     _battleState!.phase = BattlePhase.actionSelect;
 
     emit(BattleInProgress(
-      battleState: _battleState!,
-      message: '行動を選んでください',
+        battleState: _battleState!,
+        message: '行動を選んでください',
     ));
-  }
+    }
 
   /// 技使用
   Future<void> _onUseSkill(
@@ -241,56 +241,59 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
   Future<void> _onSwitchMonster(
     SwitchMonster event,
     Emitter<BattleState> emit,
-  ) async {
+    ) async {
     if (_battleState == null) return;
-    if (!_battleState!.canPlayerSendMore) {
-      emit(BattleInProgress(
-        battleState: _battleState!,
-        message: 'これ以上モンスターを出せません（3体制限）',
-      ));
-      return;
-    }
 
-    // すでに使用済みのモンスターは選択不可
-    if (_battleState!.playerUsedMonsterIds.contains(event.monsterId)) {
-      emit(BattleInProgress(
+    // ★修正: 交代可能かチェック
+    if (!_battleState!.canSwitchTo(event.monsterId)) {
+        String message = 'このモンスターには交代できません';
+        
+        final monster = _battleState!.playerParty
+            .firstWhere((m) => m.baseMonster.id == event.monsterId);
+        
+        if (monster.isFainted) {
+        message = 'このモンスターは瀕死です';
+        } else if (_battleState!.playerActiveMonster?.baseMonster.id == event.monsterId) {
+        message = 'このモンスターは既に場に出ています';
+        } else if (!_battleState!.canPlayerSendMore) {
+        message = 'これ以上モンスターを出せません（3体制限）';
+        }
+        
+        emit(BattleInProgress(
         battleState: _battleState!,
-        message: 'このモンスターは既に使用済みです',
-      ));
-      return;
+        message: message,
+        ));
+        return;
     }
-
-    // 強制交代（瀕死による交代）かどうかを判定
-    final isForcedSwitch = _battleState!.phase == BattlePhase.monsterFainted;
 
     final newMonster = _battleState!.playerParty
         .firstWhere((m) => m.baseMonster.id == event.monsterId);
 
+    // ★修正: 新しいモンスターの場合のみFieldIdsに追加
+    if (!_battleState!.playerFieldMonsterIds.contains(event.monsterId)) {
+        _battleState!.playerFieldMonsterIds.add(event.monsterId);
+    }
+
     // 交代処理
     _battleState!.playerActiveMonster?.resetStages();
     _battleState!.playerActiveMonster = newMonster;
-    _battleState!.playerUsedMonsterIds.add(event.monsterId);
     newMonster.hasParticipated = true;
     newMonster.resetCost(); // コストリセット
-    _battleState!.playerSwitchedThisTurn = true; // 交代フラグ設定
-
-    _battleState!.addLog('${newMonster.baseMonster.monsterName}に交代！');
 
     emit(BattleInProgress(
-      battleState: _battleState!,
-      message: '${newMonster.baseMonster.monsterName}に交代！',
+        battleState: _battleState!,
+        message: '${newMonster.baseMonster.monsterName}に交代！',
     ));
 
-    // 少し待ってからCPU行動（非同期タイミング問題回避）
+    // 少し待ってからCPU行動
     await Future.delayed(const Duration(milliseconds: 100));
 
-    // 自発的な交代の場合のみCPU攻撃（強制交代の場合はスキップ）
-    if (!isForcedSwitch && _battleState!.enemyActiveMonster?.canAct == true) {
-      await _executeCpuAction(emit);
+    if (_battleState!.enemyActiveMonster?.canAct == true) {
+        await _executeCpuAction(emit);
     }
 
     add(const ProcessTurnEnd());
-  }
+    }
 
   /// 待機
   Future<void> _onWaitTurn(
@@ -354,24 +357,24 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
 
     // 相手モンスター瀕死処理
     if (_battleState!.enemyActiveMonster?.isFainted == true) {
-      if (_battleState!.canEnemySendMore) {
-        // CPUの次のモンスターを自動選択
-        final nextMonster = _battleState!.enemyParty
-            .firstWhere((m) => !_battleState!.enemyUsedMonsterIds.contains(m.baseMonster.id));
-        _battleState!.enemyActiveMonster = nextMonster;
-        _battleState!.enemyUsedMonsterIds.add(nextMonster.baseMonster.id);
-        nextMonster.hasParticipated = true;
-        nextMonster.resetCost();
-        _battleState!.enemySwitchedThisTurn = true; // 交代フラグ設定
-        _battleState!.addLog('相手は${nextMonster.baseMonster.monsterName}を繰り出した！');
-      } else {
-        // これ以上出せない場合は勝利
-        _battleState!.phase = BattlePhase.battleEnd;
-        _battleState!.addLog('プレイヤーの勝利！');
-        await _saveBattleHistory(isWin: true);
-        emit(BattlePlayerWin(battleState: _battleState!));
-        return;
-      }
+    if (_battleState!.canEnemySendMore) {
+        // ★修正: 瀕死でない未使用モンスターを探す
+        final availableMonster = _battleState!.enemyParty.firstWhere(
+        (m) => !m.isFainted && 
+                m.baseMonster.id != _battleState!.enemyActiveMonster?.baseMonster.id,
+        orElse: () => throw Exception('No available monster'),
+        );
+        
+        // 新しいモンスターの場合のみFieldIdsに追加
+        if (!_battleState!.enemyFieldMonsterIds.contains(availableMonster.baseMonster.id)) {
+        _battleState!.enemyFieldMonsterIds.add(availableMonster.baseMonster.id);
+        }
+        
+        _battleState!.enemyActiveMonster = availableMonster;
+        availableMonster.hasParticipated = true;
+        availableMonster.resetCost();
+        _battleState!.addLog('相手は${availableMonster.baseMonster.monsterName}を繰り出した！');
+    }
     }
 
     // コスト回復（交代したターンはスキップ）

@@ -19,4 +19,10 @@ abstract class MonsterRepository {
   
   // 経験値追加
   Future<void> addExp(String monsterId, int exp);
+  
+  // ★ 追加：技装備更新
+  Future<void> updateEquippedSkills(String monsterId, List<String> skillIds);
+  
+  // ★ 追加：装備更新
+  Future<void> updateEquippedEquipment(String monsterId, List<String> equipmentIds);
 }

@@ -1,0 +1,1113 @@
+{
+  "skills": [
+    {
+      "skill_id": "skill_001",
+      "name": "たいあたり",
+      "name_en": "Tackle",
+      "type": "physical",
+      "element": "none",
+      "cost": 1,
+      "power_multiplier": 1.0,
+      "accuracy": 100,
+      "target": "enemy",
+      "effects": {},
+      "description": "体当たりで攻撃する基本技",
+      "priority": 0,
+      "pp": 35,
+      "category": "damage_only"
+    },
+    {
+      "skill_id": "skill_002",
+      "name": "ひっかく",
+      "name_en": "Scratch",
+      "type": "physical",
+      "element": "none",
+      "cost": 1,
+      "power_multiplier": 1.1,
+      "accuracy": 100,
+      "target": "enemy",
+      "effects": {},
+      "description": "爪で引っ掻く",
+      "priority": 0,
+      "pp": 35,
+      "category": "damage_only"
+    },
+    {
+      "skill_id": "skill_003",
+      "name": "かみつく",
+      "name_en": "Bite",
+      "type": "physical",
+      "element": "none",
+      "cost": 1,
+      "power_multiplier": 1.2,
+      "accuracy": 100,
+      "target": "enemy",
+      "effects": {},
+      "description": "牙で噛みつく",
+      "priority": 0,
+      "pp": 25,
+      "category": "damage_only"
+    },
+    {
+      "skill_id": "skill_004",
+      "name": "でんこうせっか",
+      "name_en": "Quick Attack",
+      "type": "physical",
+      "element": "none",
+      "cost": 1,
+      "power_multiplier": 1.0,
+      "accuracy": 100,
+      "target": "enemy",
+      "effects": {},
+      "description": "素早い先制攻撃。必ず先制できる",
+      "priority": 1,
+      "pp": 30,
+      "category": "priority_move"
+    },
+    {
+      "skill_id": "skill_005",
+      "name": "強打",
+      "name_en": "Power Strike",
+      "type": "physical",
+      "element": "none",
+      "cost": 2,
+      "power_multiplier": 1.5,
+      "accuracy": 100,
+      "target": "enemy",
+      "effects": {},
+      "description": "力を込めた一撃",
+      "priority": 0,
+      "pp": 20,
+      "category": "damage_only"
+    },
+    {
+      "skill_id": "skill_006",
+      "name": "れんぞくぎり",
+      "name_en": "Fury Cutter",
+      "type": "physical",
+      "element": "none",
+      "cost": 2,
+      "power_multiplier": 1.3,
+      "accuracy": 95,
+      "target": "enemy",
+      "effects": {},
+      "description": "連続で斬りつける",
+      "priority": 0,
+      "pp": 20,
+      "category": "damage_only"
+    },
+    {
+      "skill_id": "skill_007",
+      "name": "渾身の一撃",
+      "name_en": "Full Power",
+      "type": "physical",
+      "element": "none",
+      "cost": 3,
+      "power_multiplier": 2.0,
+      "accuracy": 100,
+      "target": "enemy",
+      "effects": {},
+      "description": "全力で攻撃する",
+      "priority": 0,
+      "pp": 15,
+      "category": "damage_only"
+    },
+    {
+      "skill_id": "skill_008",
+      "name": "破壊光線",
+      "name_en": "Hyper Beam",
+      "type": "physical",
+      "element": "none",
+      "cost": 4,
+      "power_multiplier": 3.0,
+      "accuracy": 90,
+      "target": "enemy",
+      "effects": {},
+      "description": "強力な光線を放つ。威力が高い",
+      "priority": 0,
+      "pp": 5,
+      "category": "damage_only"
+    },
+    {
+      "skill_id": "skill_009",
+      "name": "まもる",
+      "name_en": "Protect",
+      "type": "special",
+      "element": "none",
+      "cost": 2,
+      "power_multiplier": 0,
+      "accuracy": 100,
+      "target": "self",
+      "effects": {
+        "protect": true,
+        "turns": 1
+      },
+      "description": "このターン、攻撃技を受けない",
+      "priority": 4,
+      "pp": 10,
+      "category": "defense"
+    },
+    {
+      "skill_id": "skill_010",
+      "name": "ねむる",
+      "name_en": "Rest",
+      "type": "heal",
+      "element": "none",
+      "cost": 2,
+      "power_multiplier": 0,
+      "accuracy": 100,
+      "target": "self",
+      "effects": {
+        "heal_percentage": 100,
+        "status_ailment": "sleep",
+        "status_turns": 2
+      },
+      "description": "HPを全回復するが2ターン眠る",
+      "priority": 0,
+      "pp": 10,
+      "category": "heal"
+    },
+    {
+      "skill_id": "skill_101",
+      "name": "ひのこ",
+      "name_en": "Ember",
+      "type": "magical",
+      "element": "fire",
+      "cost": 1,
+      "power_multiplier": 1.0,
+      "accuracy": 100,
+      "target": "enemy",
+      "effects": {
+        "status_ailment": "burn",
+        "status_chance": 10
+      },
+      "description": "小さな炎で攻撃。10%の確率で火傷",
+      "priority": 0,
+      "pp": 25,
+      "category": "damage_with_effect"
+    },
+    {
+      "skill_id": "skill_102",
+      "name": "かえんほうしゃ",
+      "name_en": "Flamethrower",
+      "type": "magical",
+      "element": "fire",
+      "cost": 2,
+      "power_multiplier": 1.6,
+      "accuracy": 100,
+      "target": "enemy",
+      "effects": {
+        "status_ailment": "burn",
+        "status_chance": 10
+      },
+      "description": "炎を放射する。10%の確率で火傷",
+      "priority": 0,
+      "pp": 15,
+      "category": "damage_with_effect"
+    },
+    {
+      "skill_id": "skill_103",
+      "name": "だいもんじ",
+      "name_en": "Fire Blast",
+      "type": "magical",
+      "element": "fire",
+      "cost": 3,
+      "power_multiplier": 2.2,
+      "accuracy": 85,
+      "target": "enemy",
+      "effects": {
+        "status_ailment": "burn",
+        "status_chance": 30
+      },
+      "description": "大の字の炎で攻撃。30%の確率で火傷",
+      "priority": 0,
+      "pp": 5,
+      "category": "damage_with_effect"
+    },
+    {
+      "skill_id": "skill_104",
+      "name": "フレアドライブ",
+      "name_en": "Flare Blitz",
+      "type": "physical",
+      "element": "fire",
+      "cost": 3,
+      "power_multiplier": 2.4,
+      "accuracy": 100,
+      "target": "enemy",
+      "effects": {
+        "recoil_percentage": 33
+      },
+      "description": "炎を纏って突進。与ダメージの33%反動",
+      "priority": 0,
+      "pp": 15,
+      "category": "recoil_move"
+    },
+    {
+      "skill_id": "skill_105",
+      "name": "オーバーヒート",
+      "name_en": "Overheat",
+      "type": "magical",
+      "element": "fire",
+      "cost": 4,
+      "power_multiplier": 3.2,
+      "accuracy": 90,
+      "target": "enemy",
+      "effects": {
+        "self_debuff": {
+          "stat": "magic",
+          "stage": -2
+        }
+      },
+      "description": "全力の炎攻撃。自分の魔力が2段階下がる",
+      "priority": 0,
+      "pp": 5,
+      "category": "damage_with_debuff"
+    },
+    {
+      "skill_id": "skill_201",
+      "name": "みずでっぽう",
+      "name_en": "Water Gun",
+      "type": "magical",
+      "element": "water",
+      "cost": 1,
+      "power_multiplier": 1.0,
+      "accuracy": 100,
+      "target": "enemy",
+      "effects": {},
+      "description": "水を発射して攻撃",
+      "priority": 0,
+      "pp": 25,
+      "category": "damage_only"
+    },
+    {
+      "skill_id": "skill_202",
+      "name": "バブルこうせん",
+      "name_en": "Bubble Beam",
+      "type": "magical",
+      "element": "water",
+      "cost": 2,
+      "power_multiplier": 1.5,
+      "accuracy": 100,
+      "target": "enemy",
+      "effects": {
+        "debuff": {
+          "stat": "speed",
+          "stage": -1,
+          "chance": 10
+        }
+      },
+      "description": "泡で攻撃。10%で素早さ1段階低下",
+      "priority": 0,
+      "pp": 20,
+      "category": "damage_with_effect"
+    },
+    {
+      "skill_id": "skill_203",
+      "name": "なみのり",
+      "name_en": "Surf",
+      "type": "magical",
+      "element": "water",
+      "cost": 2,
+      "power_multiplier": 1.7,
+      "accuracy": 100,
+      "target": "enemy",
+      "effects": {},
+      "description": "大きな波で攻撃",
+      "priority": 0,
+      "pp": 15,
+      "category": "damage_only"
+    },
+    {
+      "skill_id": "skill_204",
+      "name": "ハイドロポンプ",
+      "name_en": "Hydro Pump",
+      "type": "magical",
+      "element": "water",
+      "cost": 3,
+      "power_multiplier": 2.2,
+      "accuracy": 80,
+      "target": "enemy",
+      "effects": {},
+      "description": "強力な水流で攻撃",
+      "priority": 0,
+      "pp": 5,
+      "category": "damage_only"
+    },
+    {
+      "skill_id": "skill_205",
+      "name": "アクアジェット",
+      "name_en": "Aqua Jet",
+      "type": "physical",
+      "element": "water",
+      "cost": 1,
+      "power_multiplier": 1.0,
+      "accuracy": 100,
+      "target": "enemy",
+      "effects": {},
+      "description": "水の勢いで突進。必ず先制できる",
+      "priority": 1,
+      "pp": 20,
+      "category": "priority_move"
+    },
+    {
+      "skill_id": "skill_301",
+      "name": "でんきショック",
+      "name_en": "Thunder Shock",
+      "type": "magical",
+      "element": "thunder",
+      "cost": 1,
+      "power_multiplier": 1.0,
+      "accuracy": 100,
+      "target": "enemy",
+      "effects": {
+        "status_ailment": "paralysis",
+        "status_chance": 10
+      },
+      "description": "電撃で攻撃。10%の確率で麻痺",
+      "priority": 0,
+      "pp": 30,
+      "category": "damage_with_effect"
+    },
+    {
+      "skill_id": "skill_302",
+      "name": "10まんボルト",
+      "name_en": "Thunderbolt",
+      "type": "magical",
+      "element": "thunder",
+      "cost": 2,
+      "power_multiplier": 1.6,
+      "accuracy": 100,
+      "target": "enemy",
+      "effects": {
+        "status_ailment": "paralysis",
+        "status_chance": 10
+      },
+      "description": "強力な電撃。10%の確率で麻痺",
+      "priority": 0,
+      "pp": 15,
+      "category": "damage_with_effect"
+    },
+    {
+      "skill_id": "skill_303",
+      "name": "かみなり",
+      "name_en": "Thunder",
+      "type": "magical",
+      "element": "thunder",
+      "cost": 3,
+      "power_multiplier": 2.2,
+      "accuracy": 70,
+      "target": "enemy",
+      "effects": {
+        "status_ailment": "paralysis",
+        "status_chance": 30
+      },
+      "description": "雷を落とす。30%の確率で麻痺",
+      "priority": 0,
+      "pp": 10,
+      "category": "damage_with_effect"
+    },
+    {
+      "skill_id": "skill_304",
+      "name": "でんじは",
+      "name_en": "Thunder Wave",
+      "type": "special",
+      "element": "thunder",
+      "cost": 1,
+      "power_multiplier": 0,
+      "accuracy": 90,
+      "target": "enemy",
+      "effects": {
+        "status_ailment": "paralysis",
+        "status_chance": 100
+      },
+      "description": "電磁波で相手を麻痺状態にする",
+      "priority": 0,
+      "pp": 20,
+      "category": "status_only"
+    },
+    {
+      "skill_id": "skill_305",
+      "name": "ボルトチェンジ",
+      "name_en": "Volt Switch",
+      "type": "magical",
+      "element": "thunder",
+      "cost": 2,
+      "power_multiplier": 1.4,
+      "accuracy": 100,
+      "target": "enemy",
+      "effects": {
+        "force_switch": true
+      },
+      "description": "攻撃後、自分は強制的に交代する",
+      "priority": 0,
+      "pp": 20,
+      "category": "switch_move"
+    },
+    {
+      "skill_id": "skill_401",
+      "name": "かぜおこし",
+      "name_en": "Gust",
+      "type": "magical",
+      "element": "wind",
+      "cost": 1,
+      "power_multiplier": 1.0,
+      "accuracy": 100,
+      "target": "enemy",
+      "effects": {},
+      "description": "風で攻撃する基本技",
+      "priority": 0,
+      "pp": 35,
+      "category": "damage_only"
+    },
+    {
+      "skill_id": "skill_402",
+      "name": "エアスラッシュ",
+      "name_en": "Air Slash",
+      "type": "magical",
+      "element": "wind",
+      "cost": 2,
+      "power_multiplier": 1.5,
+      "accuracy": 95,
+      "target": "enemy",
+      "effects": {
+        "flinch_chance": 30
+      },
+      "description": "空気の刃で攻撃。30%でひるみ",
+      "priority": 0,
+      "pp": 15,
+      "category": "damage_with_effect"
+    },
+    {
+      "skill_id": "skill_403",
+      "name": "ぼうふう",
+      "name_en": "Hurricane",
+      "type": "magical",
+      "element": "wind",
+      "cost": 3,
+      "power_multiplier": 2.2,
+      "accuracy": 70,
+      "target": "enemy",
+      "effects": {
+        "confusion_chance": 30
+      },
+      "description": "暴風で攻撃。30%で混乱",
+      "priority": 0,
+      "pp": 10,
+      "category": "damage_with_effect"
+    },
+    {
+      "skill_id": "skill_404",
+      "name": "おいかぜ",
+      "name_en": "Tailwind",
+      "type": "buff",
+      "element": "wind",
+      "cost": 2,
+      "power_multiplier": 0,
+      "accuracy": 100,
+      "target": "self",
+      "effects": {
+        "buff": {
+          "stat": "speed",
+          "stage": 2
+        }
+      },
+      "description": "素早さを2段階上げる",
+      "priority": 0,
+      "pp": 15,
+      "category": "buff_only"
+    },
+    {
+      "skill_id": "skill_405",
+      "name": "しんくうは",
+      "name_en": "Vacuum Wave",
+      "type": "magical",
+      "element": "wind",
+      "cost": 1,
+      "power_multiplier": 1.0,
+      "accuracy": 100,
+      "target": "enemy",
+      "effects": {},
+      "description": "真空波で攻撃。必ず先制できる",
+      "priority": 1,
+      "pp": 30,
+      "category": "priority_move"
+    },
+    {
+      "skill_id": "skill_501",
+      "name": "いわおとし",
+      "name_en": "Rock Throw",
+      "type": "physical",
+      "element": "earth",
+      "cost": 1,
+      "power_multiplier": 1.2,
+      "accuracy": 90,
+      "target": "enemy",
+      "effects": {},
+      "description": "岩を投げつける",
+      "priority": 0,
+      "pp": 15,
+      "category": "damage_only"
+    },
+    {
+      "skill_id": "skill_502",
+      "name": "じしん",
+      "name_en": "Earthquake",
+      "type": "physical",
+      "element": "earth",
+      "cost": 3,
+      "power_multiplier": 2.0,
+      "accuracy": 100,
+      "target": "enemy",
+      "effects": {},
+      "description": "地震で攻撃。強力な物理技",
+      "priority": 0,
+      "pp": 10,
+      "category": "damage_only"
+    },
+    {
+      "skill_id": "skill_503",
+      "name": "がんせきふうじ",
+      "name_en": "Rock Tomb",
+      "type": "physical",
+      "element": "earth",
+      "cost": 2,
+      "power_multiplier": 1.2,
+      "accuracy": 95,
+      "target": "enemy",
+      "effects": {
+        "debuff": {
+          "stat": "speed",
+          "stage": -1,
+          "chance": 100
+        }
+      },
+      "description": "岩で攻撃。相手の素早さを1段階下げる",
+      "priority": 0,
+      "pp": 15,
+      "category": "damage_with_effect"
+    },
+    {
+      "skill_id": "skill_504",
+      "name": "ステルスロック",
+      "name_en": "Stealth Rock",
+      "type": "special",
+      "element": "earth",
+      "cost": 2,
+      "power_multiplier": 0,
+      "accuracy": 100,
+      "target": "enemy",
+      "effects": {
+        "entry_hazard": "stealth_rock"
+      },
+      "description": "交代時にダメージ（将来実装）",
+      "priority": 0,
+      "pp": 20,
+      "category": "field_effect"
+    },
+    {
+      "skill_id": "skill_505",
+      "name": "すなあらし",
+      "name_en": "Sandstorm",
+      "type": "special",
+      "element": "earth",
+      "cost": 1,
+      "power_multiplier": 0,
+      "accuracy": 100,
+      "target": "self",
+      "effects": {
+        "buff": {
+          "stat": "defense",
+          "stage": 1
+        }
+      },
+      "description": "防御を1段階上げる",
+      "priority": 0,
+      "pp": 20,
+      "category": "buff_only"
+    },
+    {
+      "skill_id": "skill_601",
+      "name": "せいなるひかり",
+      "name_en": "Sacred Light",
+      "type": "magical",
+      "element": "light",
+      "cost": 2,
+      "power_multiplier": 1.5,
+      "accuracy": 100,
+      "target": "enemy",
+      "effects": {},
+      "description": "聖なる光で攻撃",
+      "priority": 0,
+      "pp": 15,
+      "category": "damage_only"
+    },
+    {
+      "skill_id": "skill_602",
+      "name": "ひかりのつるぎ",
+      "name_en": "Light Sword",
+      "type": "physical",
+      "element": "light",
+      "cost": 2,
+      "power_multiplier": 1.6,
+      "accuracy": 100,
+      "target": "enemy",
+      "effects": {},
+      "description": "光の剣で斬りつける",
+      "priority": 0,
+      "pp": 15,
+      "category": "damage_only"
+    },
+    {
+      "skill_id": "skill_603",
+      "name": "しんぱん",
+      "name_en": "Judgment",
+      "type": "magical",
+      "element": "light",
+      "cost": 3,
+      "power_multiplier": 2.0,
+      "accuracy": 100,
+      "target": "enemy",
+      "effects": {},
+      "description": "審判の光で攻撃",
+      "priority": 0,
+      "pp": 10,
+      "category": "damage_only"
+    },
+    {
+      "skill_id": "skill_604",
+      "name": "いやしのひかり",
+      "name_en": "Healing Light",
+      "type": "heal",
+      "element": "light",
+      "cost": 2,
+      "power_multiplier": 0,
+      "accuracy": 100,
+      "target": "self",
+      "effects": {
+        "heal_percentage": 50,
+        "cure_status": true
+      },
+      "description": "HPを50%回復し、状態異常を治す",
+      "priority": 0,
+      "pp": 10,
+      "category": "heal"
+    },
+    {
+      "skill_id": "skill_605",
+      "name": "てんしのまもり",
+      "name_en": "Angel's Protection",
+      "type": "buff",
+      "element": "light",
+      "cost": 2,
+      "power_multiplier": 0,
+      "accuracy": 100,
+      "target": "self",
+      "effects": {
+        "buff": {
+          "stat": "defense",
+          "stage": 2
+        }
+      },
+      "description": "防御を2段階上げる",
+      "priority": 0,
+      "pp": 15,
+      "category": "buff_only"
+    },
+    {
+      "skill_id": "skill_701",
+      "name": "シャドークロー",
+      "name_en": "Shadow Claw",
+      "type": "physical",
+      "element": "dark",
+      "cost": 2,
+      "power_multiplier": 1.4,
+      "accuracy": 100,
+      "target": "enemy",
+      "effects": {
+        "high_crit": true
+      },
+      "description": "影の爪で攻撃。急所に当たりやすい",
+      "priority": 0,
+      "pp": 15,
+      "category": "high_crit_move"
+    },
+    {
+      "skill_id": "skill_702",
+      "name": "ダークパルス",
+      "name_en": "Dark Pulse",
+      "type": "magical",
+      "element": "dark",
+      "cost": 2,
+      "power_multiplier": 1.6,
+      "accuracy": 100,
+      "target": "enemy",
+      "effects": {
+        "flinch_chance": 20
+      },
+      "description": "闇の波動で攻撃。20%でひるみ",
+      "priority": 0,
+      "pp": 15,
+      "category": "damage_with_effect"
+    },
+    {
+      "skill_id": "skill_703",
+      "name": "あくのはどう",
+      "name_en": "Evil Wave",
+      "type": "magical",
+      "element": "dark",
+      "cost": 3,
+      "power_multiplier": 2.2,
+      "accuracy": 100,
+      "target": "enemy",
+      "effects": {},
+      "description": "悪の波動で攻撃",
+      "priority": 0,
+      "pp": 5,
+      "category": "damage_only"
+    },
+    {
+      "skill_id": "skill_704",
+      "name": "のろい",
+      "name_en": "Curse",
+      "type": "debuff",
+      "element": "dark",
+      "cost": 2,
+      "power_multiplier": 0,
+      "accuracy": 100,
+      "target": "enemy",
+      "effects": {
+        "debuff": {
+          "stat": "attack",
+          "stage": -1
+        },
+        "debuff2": {
+          "stat": "defense",
+          "stage": -1
+        }
+      },
+      "description": "相手の攻撃と防御を1段階下げる",
+      "priority": 0,
+      "pp": 10,
+      "category": "debuff_only"
+    },
+    {
+      "skill_id": "skill_705",
+      "name": "ナイトヘッド",
+      "name_en": "Night Shade",
+      "type": "magical",
+      "element": "dark",
+      "cost": 1,
+      "power_multiplier": 1.0,
+      "accuracy": 100,
+      "target": "enemy",
+      "effects": {},
+      "description": "暗黒の力で攻撃",
+      "priority": 0,
+      "pp": 15,
+      "category": "damage_only"
+    },
+    {
+      "skill_id": "skill_801",
+      "name": "つるぎのまい",
+      "name_en": "Swords Dance",
+      "type": "buff",
+      "element": "none",
+      "cost": 2,
+      "power_multiplier": 0,
+      "accuracy": 100,
+      "target": "self",
+      "effects": {
+        "buff": {
+          "stat": "attack",
+          "stage": 2
+        }
+      },
+      "description": "攻撃を2段階上げる",
+      "priority": 0,
+      "pp": 20,
+      "category": "buff_only"
+    },
+    {
+      "skill_id": "skill_802",
+      "name": "めいそう",
+      "name_en": "Calm Mind",
+      "type": "buff",
+      "element": "none",
+      "cost": 2,
+      "power_multiplier": 0,
+      "accuracy": 100,
+      "target": "self",
+      "effects": {
+        "buff": {
+          "stat": "magic",
+          "stage": 1
+        },
+        "buff2": {
+          "stat": "defense",
+          "stage": 1
+        }
+      },
+      "description": "魔力と防御を1段階ずつ上げる",
+      "priority": 0,
+      "pp": 20,
+      "category": "buff_only"
+    },
+    {
+      "skill_id": "skill_803",
+      "name": "こうそくいどう",
+      "name_en": "Agility",
+      "type": "buff",
+      "element": "none",
+      "cost": 2,
+      "power_multiplier": 0,
+      "accuracy": 100,
+      "target": "self",
+      "effects": {
+        "buff": {
+          "stat": "speed",
+          "stage": 2
+        }
+      },
+      "description": "素早さを2段階上げる",
+      "priority": 0,
+      "pp": 30,
+      "category": "buff_only"
+    },
+    {
+      "skill_id": "skill_804",
+      "name": "てっぺき",
+      "name_en": "Iron Defense",
+      "type": "buff",
+      "element": "none",
+      "cost": 2,
+      "power_multiplier": 0,
+      "accuracy": 100,
+      "target": "self",
+      "effects": {
+        "buff": {
+          "stat": "defense",
+          "stage": 2
+        }
+      },
+      "description": "防御を2段階上げる",
+      "priority": 0,
+      "pp": 15,
+      "category": "buff_only"
+    },
+    {
+      "skill_id": "skill_805",
+      "name": "なきごえ",
+      "name_en": "Growl",
+      "type": "debuff",
+      "element": "none",
+      "cost": 1,
+      "power_multiplier": 0,
+      "accuracy": 100,
+      "target": "enemy",
+      "effects": {
+        "debuff": {
+          "stat": "attack",
+          "stage": -1
+        }
+      },
+      "description": "相手の攻撃を1段階下げる",
+      "priority": 0,
+      "pp": 40,
+      "category": "debuff_only"
+    },
+    {
+      "skill_id": "skill_806",
+      "name": "しっぽをふる",
+      "name_en": "Tail Whip",
+      "type": "debuff",
+      "element": "none",
+      "cost": 1,
+      "power_multiplier": 0,
+      "accuracy": 100,
+      "target": "enemy",
+      "effects": {
+        "debuff": {
+          "stat": "defense",
+          "stage": -1
+        }
+      },
+      "description": "相手の防御を1段階下げる",
+      "priority": 0,
+      "pp": 30,
+      "category": "debuff_only"
+    },
+    {
+      "skill_id": "skill_807",
+      "name": "あまえる",
+      "name_en": "Charm",
+      "type": "debuff",
+      "element": "none",
+      "cost": 1,
+      "power_multiplier": 0,
+      "accuracy": 100,
+      "target": "enemy",
+      "effects": {
+        "debuff": {
+          "stat": "attack",
+          "stage": -2
+        }
+      },
+      "description": "相手の攻撃を2段階下げる",
+      "priority": 0,
+      "pp": 20,
+      "category": "debuff_only"
+    },
+    {
+      "skill_id": "skill_808",
+      "name": "いやなおと",
+      "name_en": "Screech",
+      "type": "debuff",
+      "element": "none",
+      "cost": 1,
+      "power_multiplier": 0,
+      "accuracy": 85,
+      "target": "enemy",
+      "effects": {
+        "debuff": {
+          "stat": "defense",
+          "stage": -2
+        }
+      },
+      "description": "相手の防御を2段階下げる",
+      "priority": 0,
+      "pp": 40,
+      "category": "debuff_only"
+    },
+    {
+      "skill_id": "skill_809",
+      "name": "かいふくのいのり",
+      "name_en": "Recover",
+      "type": "heal",
+      "element": "none",
+      "cost": 2,
+      "power_multiplier": 0,
+      "accuracy": 100,
+      "target": "self",
+      "effects": {
+        "heal_percentage": 50
+      },
+      "description": "HPを50%回復する",
+      "priority": 0,
+      "pp": 10,
+      "category": "heal"
+    },
+    {
+      "skill_id": "skill_810",
+      "name": "どくどく",
+      "name_en": "Toxic",
+      "type": "special",
+      "element": "none",
+      "cost": 1,
+      "power_multiplier": 0,
+      "accuracy": 90,
+      "target": "enemy",
+      "effects": {
+        "status_ailment": "poison",
+        "status_chance": 100
+      },
+      "description": "相手を猛毒状態にする",
+      "priority": 0,
+      "pp": 10,
+      "category": "status_only"
+    },
+    {
+      "skill_id": "skill_811",
+      "name": "おにび",
+      "name_en": "Will-O-Wisp",
+      "type": "special",
+      "element": "fire",
+      "cost": 1,
+      "power_multiplier": 0,
+      "accuracy": 85,
+      "target": "enemy",
+      "effects": {
+        "status_ailment": "burn",
+        "status_chance": 100
+      },
+      "description": "相手を火傷状態にする",
+      "priority": 0,
+      "pp": 15,
+      "category": "status_only"
+    },
+    {
+      "skill_id": "skill_812",
+      "name": "ねむりごな",
+      "name_en": "Sleep Powder",
+      "type": "special",
+      "element": "none",
+      "cost": 1,
+      "power_multiplier": 0,
+      "accuracy": 75,
+      "target": "enemy",
+      "effects": {
+        "status_ailment": "sleep",
+        "status_chance": 100
+      },
+      "description": "相手を眠り状態にする",
+      "priority": 0,
+      "pp": 15,
+      "category": "status_only"
+    },
+    {
+      "skill_id": "skill_813",
+      "name": "こおりのいぶき",
+      "name_en": "Ice Breath",
+      "type": "magical",
+      "element": "water",
+      "cost": 2,
+      "power_multiplier": 1.2,
+      "accuracy": 90,
+      "target": "enemy",
+      "effects": {
+        "status_ailment": "freeze",
+        "status_chance": 10
+      },
+      "description": "冷気で攻撃。10%の確率で凍結",
+      "priority": 0,
+      "pp": 10,
+      "category": "damage_with_effect"
+    },
+    {
+      "skill_id": "skill_814",
+      "name": "あやしいひかり",
+      "name_en": "Confuse Ray",
+      "type": "special",
+      "element": "none",
+      "cost": 1,
+      "power_multiplier": 0,
+      "accuracy": 100,
+      "target": "enemy",
+      "effects": {
+        "status_ailment": "confusion",
+        "status_chance": 100
+      },
+      "description": "相手を混乱状態にする",
+      "priority": 0,
+      "pp": 10,
+      "category": "status_only"
+    },
+    {
+      "skill_id": "skill_815",
+      "name": "コストブースト",
+      "name_en": "Cost Boost",
+      "type": "buff",
+      "element": "none",
+      "cost": 1,
+      "power_multiplier": 0,
+      "accuracy": 100,
+      "target": "self",
+      "effects": {
+        "cost_gain": 2
+      },
+      "description": "自分のコストを2増やす",
+      "priority": 0,
+      "pp": 10,
+      "category": "cost_manipulation"
+    }
+  ]
+}

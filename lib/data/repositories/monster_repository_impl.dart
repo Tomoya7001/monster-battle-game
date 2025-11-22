@@ -257,4 +257,52 @@ class MonsterRepositoryImpl implements MonsterRepository {
       return {};
     }
   }
+
+  /// 技装備を更新
+  @override
+  Future<void> updateEquippedSkills(
+    String monsterId,
+    List<String> skillIds,
+  ) async {
+    try {
+      // バリデーション：4つまで
+      if (skillIds.length > 4) {
+        throw Exception('Cannot equip more than 4 skills');
+      }
+
+      await _firestore
+          .collection(_collection)
+          .doc(monsterId)
+          .update({
+        'equipped_skills': skillIds,
+        'updated_at': FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      throw Exception('Failed to update equipped skills: $e');
+    }
+  }
+
+  /// 装備を更新
+  @override
+  Future<void> updateEquippedEquipment(
+    String monsterId,
+    List<String> equipmentIds,
+  ) async {
+    try {
+      // バリデーション：基本1つ、ヒューマンは2つ
+      if (equipmentIds.length > 2) {
+        throw Exception('Cannot equip more than 2 equipment');
+      }
+
+      await _firestore
+          .collection(_collection)
+          .doc(monsterId)
+          .update({
+        'equipped_equipment': equipmentIds,
+        'updated_at': FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      throw Exception('Failed to update equipped equipment: $e');
+    }
+  }
 }

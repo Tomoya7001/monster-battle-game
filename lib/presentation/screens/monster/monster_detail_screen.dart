@@ -310,55 +310,200 @@ class _MonsterDetailScreenState extends State<MonsterDetailScreen>
   }
 
   Widget _buildSkillsTab(Monster monster) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text('装備中の技（最大4個）', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 12),
+  return SingleChildScrollView(
+    padding: const EdgeInsets.all(16),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // ★修正: 装備中の技を常に表示
+        const Text(
+          '装備中の技（最大4個）',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 12),
+        
+        // 装備中の技リスト
+        if (monster.equippedSkills.isEmpty)
+          const Card(
+            child: Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text(
+                '技が装備されていません。\n下から技を選択して追加してください。',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.grey),
+              ),
+            ),
+          )
+        else
           ...monster.equippedSkills.map((skillId) {
-            final skill = _availableSkills.firstWhere((s) => s['skill_id'] == skillId, orElse: () => {'name': skillId});
+            final skill = _availableSkills.firstWhere(
+              (s) => s['skill_id'] == skillId,
+              orElse: () => {'name': skillId, 'cost': '?', 'power': '?'},
+            );
             return Card(
+              color: Colors.blue.shade50,
               child: ListTile(
-                title: Text(skill['name'] as String? ?? skillId),
-                subtitle: Text('コスト: ${skill['cost'] ?? '?'} / 威力: ${skill['power'] ?? '?'}'),
+                leading: Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.blue,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(Icons.bolt, color: Colors.white),
+                ),
+                title: Text(
+                  skill['name'] as String? ?? skillId,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                subtitle: Text(
+                  'コスト: ${skill['cost']} / 威力: ${skill['power']}',
+                ),
                 trailing: IconButton(
                   icon: const Icon(Icons.remove_circle, color: Colors.red),
+                  tooltip: '装備解除',
                   onPressed: () {
-                    final newSkills = List<String>.from(monster.equippedSkills)..remove(skillId);
-                    context.read<MonsterBloc>().add(UpdateEquippedSkills(monsterId: monster.id, skillIds: newSkills));
+                    final newSkills = List<String>.from(monster.equippedSkills)
+                      ..remove(skillId);
+                    context.read<MonsterBloc>().add(
+                      UpdateEquippedSkills(
+                        monsterId: monster.id,
+                        skillIds: newSkills,
+                      ),
+                    );
                   },
                 ),
               ),
             );
           }),
-          if (monster.equippedSkills.length < 4) ...[
-            const SizedBox(height: 16),
-            const Text('技を追加', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
-            ..._availableSkills.where((s) => !monster.equippedSkills.contains(s['skill_id'])).map((skill) {
-              return Card(
-                child: ListTile(
-                  title: Text(skill['name'] as String? ?? ''),
-                  subtitle: Text('コスト: ${skill['cost']} / 威力: ${skill['power']}'),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.add_circle, color: Colors.green),
-                    onPressed: monster.equippedSkills.length < 4
-                        ? () {
-                            final newSkills = List<String>.from(monster.equippedSkills)..add(skill['skill_id'].toString());
-                            context.read<MonsterBloc>().add(UpdateEquippedSkills(monsterId: monster.id, skillIds: newSkills));
-                          }
-                        : null,
+        
+        const SizedBox(height: 24),
+        const Divider(),
+        const SizedBox(height: 16),
+        
+        // ★修正: 常に「利用可能な技」セクションを表示
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              '利用可能な技',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            if (monster.equippedSkills.length >= 4)
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: Colors.orange.shade100,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.orange),
+                ),
+                child: const Text(
+                  '装備枠が満杯です',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.orange,
                   ),
                 ),
-              );
-            }),
+              ),
           ],
-        ],
-      ),
-    );
-  }
+        ),
+        const SizedBox(height: 12),
+        
+        // ★修正: 装備していない技を常に表示
+        ..._availableSkills
+            .where((s) => !monster.equippedSkills.contains(s['skill_id']))
+            .map((skill) {
+          final isMaxEquipped = monster.equippedSkills.length >= 4;
+          
+          return Card(
+            color: isMaxEquipped ? Colors.grey.shade100 : null,
+            child: ListTile(
+              enabled: !isMaxEquipped,
+              leading: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: isMaxEquipped ? Colors.grey : Colors.green,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(Icons.add, color: Colors.white),
+              ),
+              title: Text(
+                skill['name'] as String? ?? '',
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  color: isMaxEquipped ? Colors.grey : Colors.black,
+                ),
+              ),
+              subtitle: Text(
+                'コスト: ${skill['cost']} / 威力: ${skill['power']}',
+                style: TextStyle(
+                  color: isMaxEquipped ? Colors.grey : Colors.black87,
+                ),
+              ),
+              trailing: IconButton(
+                icon: Icon(
+                  Icons.add_circle,
+                  color: isMaxEquipped ? Colors.grey : Colors.green,
+                ),
+                tooltip: isMaxEquipped ? '装備枠が満杯です' : '装備する',
+                onPressed: isMaxEquipped
+                    ? null
+                    : () {
+                        final newSkills = List<String>.from(monster.equippedSkills)
+                          ..add(skill['skill_id'].toString());
+                        context.read<MonsterBloc>().add(
+                          UpdateEquippedSkills(
+                            monsterId: monster.id,
+                            skillIds: newSkills,
+                          ),
+                        );
+                      },
+              ),
+            ),
+          );
+        }),
+        
+        // ヘルプテキスト
+        const SizedBox(height: 16),
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.blue.shade50,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.blue.shade200),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: const [
+              Row(
+                children: [
+                  Icon(Icons.info_outline, size: 16, color: Colors.blue),
+                  SizedBox(width: 8),
+                  Text(
+                    'ヒント',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 4),
+              Text(
+                '• 最大4つまで技を装備できます\n'
+                '• バトルでは装備した技のみ使用可能です\n'
+                '• 技の付け替えはいつでも可能です',
+                style: TextStyle(fontSize: 12, color: Colors.black87),
+              ),
+            ],
+          ),
+        ),
+      ],
+    ),
+  );
+}
 
   Widget _buildTraitsTab(Monster monster) {
     final mainTraits = _availableTraits.where((t) => t['type'] == 'main').toList();
