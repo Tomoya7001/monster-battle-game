@@ -128,18 +128,39 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
 
     _battleState!.phase = BattlePhase.executing;
 
-    // すばやさ判定
-    final playerFirst = BattleCalculationService.isPlayerFirst(playerMonster, enemyMonster);
+    // ★修正: 優先度を考慮した行動順決定
+    final playerPriority = BattleCalculationService.getPriority(skill);
+    
+    // CPUの技を事前に選択して優先度を取得
+    final cpuSkills = enemyMonster.skills.where((s) => enemyMonster.canUseSkill(s)).toList();
+    BattleSkill? cpuSkill;
+    int cpuPriority = 0;
+    
+    if (cpuSkills.isNotEmpty) {
+      cpuSkill = cpuSkills[_random.nextInt(cpuSkills.length)];
+      cpuPriority = BattleCalculationService.getPriority(cpuSkill);
+    }
+
+    // 行動順決定ロジック
+    bool playerFirst;
+    
+    if (playerPriority != cpuPriority) {
+      // 優先度が異なる場合は優先度の高い方が先制
+      playerFirst = playerPriority > cpuPriority;
+    } else {
+      // 優先度が同じ場合は素早さで判定
+      playerFirst = BattleCalculationService.isPlayerFirst(playerMonster, enemyMonster);
+    }
 
     if (playerFirst) {
       // プレイヤー先制
       await _executePlayerSkill(playerMonster, enemyMonster, skill, emit);
       if (!_battleState!.isBattleEnd && enemyMonster.canAct) {
-        await _executeCpuAction(emit);
+        await _executeCpuActionWithSkill(emit, cpuSkill);
       }
     } else {
       // CPU先制
-      await _executeCpuAction(emit);
+      await _executeCpuActionWithSkill(emit, cpuSkill);
       if (!_battleState!.isBattleEnd && playerMonster.canAct) {
         await _executePlayerSkill(playerMonster, enemyMonster, skill, emit);
       }
@@ -161,7 +182,15 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
     _battleState!.addLog('${playerMonster.baseMonster.monsterName}の${skill.name}！');
 
     // 1. 攻撃処理（最優先）
+    int damageDealt = 0;
     if (skill.isAttack) {
+      // ★追加: まもる判定
+      if (enemyMonster.isProtecting) {
+        _battleState!.addLog('${enemyMonster.baseMonster.monsterName}は攻撃を防いだ！');
+        emit(BattleInProgress(battleState: _battleState!, message: '攻撃を防いだ！'));
+        return;
+      }
+      
       // 命中判定
       if (!BattleCalculationService.checkHit(skill, playerMonster, enemyMonster)) {
         _battleState!.addLog('攻撃は外れた！');
@@ -177,6 +206,7 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
       );
 
       if (result.damage > 0) {
+        damageDealt = result.damage; // ★追加: ダメージを記録
         enemyMonster.takeDamage(result.damage);
 
         String message = '${result.damage}のダメージ！';
@@ -195,7 +225,27 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
       }
     }
 
-    // 2. 回復処理（攻撃後 = ドレイン対応）
+    // 2. ドレイン技の処理（攻撃後、反動前）
+    final drainMessages = BattleCalculationService.applyDrain(
+      skill: skill,
+      user: playerMonster,
+      damageDealt: damageDealt,
+    );
+    for (var msg in drainMessages) {
+      _battleState!.addLog(msg);
+    }
+
+    // 3. 反動技の処理（ドレイン後）
+    final recoilMessages = BattleCalculationService.applyRecoil(
+      skill: skill,
+      user: playerMonster,
+      damageDealt: damageDealt,
+    );
+    for (var msg in recoilMessages) {
+      _battleState!.addLog(msg);
+    }
+
+    // 4. 回復処理（非攻撃技の回復）
     final healMessages = BattleCalculationService.applyHeal(
       skill: skill,
       user: playerMonster,
@@ -205,7 +255,16 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
       _battleState!.addLog(msg);
     }
 
-    // 3. バフ・デバフ効果を適用
+    // ★追加: まもる処理
+    final protectMessages = BattleCalculationService.applyProtect(
+      skill: skill,
+      user: playerMonster,
+    );
+    for (var msg in protectMessages) {
+      _battleState!.addLog(msg);
+    }
+
+    // 5. バフ・デバフ効果を適用
     if (!enemyMonster.isFainted) {
       final statChangeMessages = BattleCalculationService.applyStatChanges(
         skill: skill,
@@ -217,7 +276,7 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
       }
     }
 
-    // 4. 状態異常を付与
+    // 6. 状態異常を付与
     if (skill.isAttack && !enemyMonster.isFainted) {
       final statusMessages = BattleCalculationService.applyStatusAilments(
         skill: skill,
@@ -231,8 +290,8 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
     emit(BattleInProgress(battleState: _battleState!, message: _battleState!.lastActionMessage));
   }
 
-  /// CPU行動実行（簡易AI）
-  Future<void> _executeCpuAction(Emitter<BattleState> emit) async {
+  /// CPU行動実行（事前に選択された技を使用）
+  Future<void> _executeCpuActionWithSkill(Emitter<BattleState> emit, BattleSkill? preSelectedSkill) async {
     if (_battleState == null) return;
     if (_battleState!.enemyActiveMonster == null) return;
     if (_battleState!.playerActiveMonster == null) return;
@@ -247,25 +306,39 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
       return;
     }
 
-    // 使用可能な技を取得（回復技も含む）
-    final usableSkills = cpuMonster.skills
-        .where((s) => cpuMonster.canUseSkill(s))
-        .toList();
+    // 事前に選択された技がある場合はそれを使用、なければランダム選択
+    BattleSkill skill;
+    if (preSelectedSkill != null && cpuMonster.canUseSkill(preSelectedSkill)) {
+      skill = preSelectedSkill;
+    } else {
+      // 使用可能な技を取得（回復技も含む）
+      final usableSkills = cpuMonster.skills
+          .where((s) => cpuMonster.canUseSkill(s))
+          .toList();
 
-    if (usableSkills.isEmpty) {
-      // 技が使えない場合は待機
-      _battleState!.addLog('${cpuMonster.baseMonster.monsterName}は様子を見ている');
-      return;
+      if (usableSkills.isEmpty) {
+        // 技が使えない場合は待機
+        _battleState!.addLog('${cpuMonster.baseMonster.monsterName}は様子を見ている');
+        return;
+      }
+
+      // ランダムで技を選択（簡易AI）
+      skill = usableSkills[_random.nextInt(usableSkills.length)];
     }
-
-    // ランダムで技を選択（簡易AI）
-    final skill = usableSkills[_random.nextInt(usableSkills.length)];
 
     cpuMonster.useSkill(skill);
     _battleState!.addLog('相手の${cpuMonster.baseMonster.monsterName}の${skill.name}！');
 
     // 1. 攻撃処理（最優先）
+    int damageDealt = 0;
     if (skill.isAttack) {
+      // ★追加: まもる判定
+      if (playerMonster.isProtecting) {
+        _battleState!.addLog('${playerMonster.baseMonster.monsterName}は攻撃を防いだ！');
+        emit(BattleInProgress(battleState: _battleState!, message: '攻撃を防いだ！'));
+        return;
+      }
+      
       // 命中判定
       if (!BattleCalculationService.checkHit(skill, cpuMonster, playerMonster)) {
         _battleState!.addLog('攻撃は外れた！');
@@ -281,6 +354,7 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
       );
 
       if (result.damage > 0) {
+        damageDealt = result.damage;
         playerMonster.takeDamage(result.damage);
 
         String message = '${result.damage}のダメージ！';
@@ -299,7 +373,27 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
       }
     }
 
-    // 2. 回復処理（攻撃後 = ドレイン対応）
+    // 2. ドレイン技の処理（攻撃後、反動前）
+    final drainMessages = BattleCalculationService.applyDrain(
+      skill: skill,
+      user: cpuMonster,
+      damageDealt: damageDealt,
+    );
+    for (var msg in drainMessages) {
+      _battleState!.addLog(msg);
+    }
+
+    // 3. 反動技の処理（ドレイン後）
+    final recoilMessages = BattleCalculationService.applyRecoil(
+      skill: skill,
+      user: cpuMonster,
+      damageDealt: damageDealt,
+    );
+    for (var msg in recoilMessages) {
+      _battleState!.addLog(msg);
+    }
+
+    // 4. 回復処理（非攻撃技の回復）
     final healMessages = BattleCalculationService.applyHeal(
       skill: skill,
       user: cpuMonster,
@@ -309,7 +403,16 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
       _battleState!.addLog(msg);
     }
 
-    // 3. バフ・デバフ効果を適用
+    // ★追加: まもる処理
+    final protectMessages = BattleCalculationService.applyProtect(
+      skill: skill,
+      user: cpuMonster,
+    );
+    for (var msg in protectMessages) {
+      _battleState!.addLog(msg);
+    }
+
+    // 5. バフ・デバフ効果を適用
     if (!playerMonster.isFainted) {
       final statChangeMessages = BattleCalculationService.applyStatChanges(
         skill: skill,
@@ -321,7 +424,7 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
       }
     }
 
-    // 4. 状態異常を付与
+    // 6. 状態異常を付与
     if (skill.isAttack && !playerMonster.isFainted) {
       final statusMessages = BattleCalculationService.applyStatusAilments(
         skill: skill,
@@ -567,6 +670,14 @@ Future<void> _onSwitchMonster(
     // 交代フラグをリセット
     _battleState!.playerSwitchedThisTurn = false;
     _battleState!.enemySwitchedThisTurn = false;
+
+    // ★追加: まもる状態をリセット
+    if (_battleState!.playerActiveMonster != null) {
+      _battleState!.playerActiveMonster!.resetProtecting();
+    }
+    if (_battleState!.enemyActiveMonster != null) {
+      _battleState!.enemyActiveMonster!.resetProtecting();
+    }
 
     // ターン数増加
     _battleState!.turnNumber++;

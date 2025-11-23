@@ -32,6 +32,9 @@ class BattleMonster {
   
   // バトル参加フラグ
   bool hasParticipated;
+
+  // ★追加: まもる状態フラグ
+  bool isProtecting = false;
   
   BattleMonster({
     required this.baseMonster,
@@ -163,5 +166,10 @@ class BattleMonster {
     if (speedStageTurns == 0 && speedStage != 0) speedStage = 0;
     if (accuracyStageTurns == 0 && accuracyStage != 0) accuracyStage = 0;
     if (evasionStageTurns == 0 && evasionStage != 0) evasionStage = 0;
+  }
+
+  /// ターン終了時の処理（まもる状態をリセット）
+  void resetProtecting() {
+    isProtecting = false;
   }
 }

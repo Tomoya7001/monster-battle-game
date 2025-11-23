@@ -455,6 +455,285 @@
             "priority": 0,
             "pp": 30,
             "category": "buff_only"
+        },
+        {
+            "skill_id": "skill_837",
+            "name": "すてみタックル",
+            "name_en": "Double-Edge",
+            "type": "physical",
+            "element": "none",
+            "cost": 3,
+            "power_multiplier": 2.5,
+            "accuracy": 100,
+            "target": "enemy",
+            "effects": {
+                "recoil": 33
+            },
+            "description": "威力が高いが、与えたダメージの33%を反動で受ける",
+            "priority": 0,
+            "pp": 15,
+            "category": "recoil"
+        },
+        {
+            "skill_id": "skill_838",
+            "name": "ブレイブチャージ",
+            "name_en": "Brave Charge",
+            "type": "physical",
+            "element": "none",
+            "cost": 4,
+            "power_multiplier": 3.0,
+            "accuracy": 100,
+            "target": "enemy",
+            "effects": {
+                "recoil": 50
+            },
+            "description": "超高威力だが、与えたダメージの50%を反動で受ける",
+            "priority": 0,
+            "pp": 10,
+            "category": "recoil"
+        },
+        {
+            "skill_id": "skill_839",
+            "name": "でんこうせっか",
+            "name_en": "Quick Attack",
+            "type": "physical",
+            "element": "none",
+            "cost": 1,
+            "power_multiplier": 0.9,
+            "accuracy": 100,
+            "target": "enemy",
+            "effects": {
+                "priority": 1
+            },
+            "description": "必ず先制攻撃できる",
+            "priority": 1,
+            "pp": 30,
+            "category": "priority"
+        },
+        {
+            "skill_id": "skill_840",
+            "name": "しんそく",
+            "name_en": "Extremespeed",
+            "type": "physical",
+            "element": "none",
+            "cost": 2,
+            "power_multiplier": 1.6,
+            "accuracy": 100,
+            "target": "enemy",
+            "effects": {
+                "priority": 2
+            },
+            "description": "超高優先度の先制攻撃",
+            "priority": 2,
+            "pp": 20,
+            "category": "priority"
+        },
+        {
+            "skill_id": "skill_841",
+            "name": "まもる",
+            "name_en": "Protect",
+            "type": "support",
+            "element": "none",
+            "cost": 2,
+            "power_multiplier": 0,
+            "accuracy": 100,
+            "target": "self",
+            "effects": {
+                "protect": true,
+                "priority": 4
+            },
+            "description": "このターン、相手の攻撃を完全に防ぐ",
+            "priority": 4,
+            "pp": 10,
+            "category": "protect"
+        },
+        {
+            "skill_id": "skill_842",
+            "name": "ドレインパンチ",
+            "name_en": "Drain Punch",
+            "type": "physical",
+            "element": "none",
+            "cost": 2,
+            "power_multiplier": 1.5,
+            "accuracy": 100,
+            "target": "enemy",
+            "effects": {
+                "drain": 50
+            },
+            "description": "与えたダメージの50%を回復する",
+            "priority": 0,
+            "pp": 20,
+            "category": "drain"
+        },
+        {
+            "skill_id": "skill_843",
+            "name": "ギガドレイン",
+            "name_en": "Giga Drain",
+            "type": "magical",
+            "element": "none",
+            "cost": 2,
+            "power_multiplier": 1.5,
+            "accuracy": 100,
+            "target": "enemy",
+            "effects": {
+                "drain": 50
+            },
+            "description": "与えたダメージの50%を回復する",
+            "priority": 0,
+            "pp": 15,
+            "category": "drain"
+        },
+        {
+            "skill_id": "skill_844",
+            "name": "ゆめくい",
+            "name_en": "Dream Eater",
+            "type": "magical",
+            "element": "none",
+            "cost": 3,
+            "power_multiplier": 2.0,
+            "accuracy": 100,
+            "target": "enemy",
+            "effects": {
+                "drain": 50,
+                "sleep_required": true
+            },
+            "description": "眠っている相手の夢を食べて回復",
+            "priority": 0,
+            "pp": 10,
+            "category": "drain"
+        },
+        {
+            "skill_id": "skill_845",
+            "name": "フレアドライブ",
+            "name_en": "Flare Blitz",
+            "type": "physical",
+            "element": "Fire",
+            "cost": 4,
+            "power_multiplier": 2.8,
+            "accuracy": 100,
+            "target": "enemy",
+            "effects": {
+                "recoil": 33,
+                "status_ailment": "burn",
+                "status_chance": 10
+            },
+            "description": "炎を纏って突撃。反動あり、稀に火傷",
+            "priority": 0,
+            "pp": 10,
+            "category": "recoil"
+        },
+        {
+            "skill_id": "skill_846",
+            "name": "ボルテッカー",
+            "name_en": "Volt Tackle",
+            "type": "physical",
+            "element": "Thunder",
+            "cost": 4,
+            "power_multiplier": 2.8,
+            "accuracy": 100,
+            "target": "enemy",
+            "effects": {
+                "recoil": 33,
+                "status_ailment": "paralysis",
+                "status_chance": 10
+            },
+            "description": "電撃を纏って突撃。反動あり、稀に麻痺",
+            "priority": 0,
+            "pp": 10,
+            "category": "recoil"
+        },
+        {
+            "skill_id": "skill_847",
+            "name": "ウッドハンマー",
+            "name_en": "Wood Hammer",
+            "type": "physical",
+            "element": "Earth",
+            "cost": 4,
+            "power_multiplier": 2.8,
+            "accuracy": 100,
+            "target": "enemy",
+            "effects": {
+                "recoil": 33
+            },
+            "description": "硬い木材で殴打。反動あり",
+            "priority": 0,
+            "pp": 10,
+            "category": "recoil"
+        },
+        {
+            "skill_id": "skill_848",
+            "name": "みきり",
+            "name_en": "Detect",
+            "type": "support",
+            "element": "none",
+            "cost": 2,
+            "power_multiplier": 0,
+            "accuracy": 100,
+            "target": "self",
+            "effects": {
+                "protect": true,
+                "priority": 4
+            },
+            "description": "相手の攻撃を見切って回避する",
+            "priority": 4,
+            "pp": 10,
+            "category": "protect"
+        },
+        {
+            "skill_id": "skill_849",
+            "name": "こうそくいどう",
+            "name_en": "Agility",
+            "type": "buff",
+            "element": "none",
+            "cost": 1,
+            "power_multiplier": 0,
+            "accuracy": 100,
+            "target": "self",
+            "effects": {
+                "buff": {
+                    "stat": "speed",
+                    "stage": 2
+                }
+            },
+            "description": "素早さを2段階上げる",
+            "priority": 0,
+            "pp": 20,
+            "category": "buff_only"
+        },
+        {
+            "skill_id": "skill_850",
+            "name": "アクアテール",
+            "name_en": "Aqua Tail",
+            "type": "physical",
+            "element": "Water",
+            "cost": 3,
+            "power_multiplier": 2.0,
+            "accuracy": 90,
+            "target": "enemy",
+            "effects": {},
+            "description": "水の尾で叩きつける",
+            "priority": 0,
+            "pp": 15,
+            "category": "physical"
+        },
+        {
+            "skill_id": "skill_851",
+            "name": "かえんほうしゃ",
+            "name_en": "Flamethrower",
+            "type": "magical",
+            "element": "Fire",
+            "cost": 2,
+            "power_multiplier": 1.8,
+            "accuracy": 100,
+            "target": "enemy",
+            "effects": {
+                "status_ailment": "burn",
+                "status_chance": 10
+            },
+            "description": "炎を放射して攻撃。稀に火傷",
+            "priority": 0,
+            "pp": 20,
+            "category": "damage_with_effect"
         }
     ]
 }

@@ -549,6 +549,99 @@ class BattleCalculationService {
     return messages;
   }
 
+  // ========== 特殊効果システム ==========
+
+  /// 反動技の処理（与ダメージの一定%を自分も受ける）
+  /// 
+  /// JSONデータ例:
+  /// {
+  ///   "recoil": 33  // 与ダメの33%を反動ダメージ
+  /// }
+  static List<String> applyRecoil({
+    required BattleSkill skill,
+    required BattleMonster user,
+    required int damageDealt,
+  }) {
+    final List<String> messages = [];
+    
+    final recoilPercentage = skill.effects['recoil'];
+    if (recoilPercentage == null || damageDealt <= 0) return messages;
+    
+    final percentage = recoilPercentage is int ? recoilPercentage : (recoilPercentage as num).toInt();
+    final recoilDamage = (damageDealt * percentage / 100).round().clamp(1, user.currentHp);
+    
+    user.takeDamage(recoilDamage);
+    messages.add('${user.baseMonster.monsterName}は反動で${recoilDamage}ダメージを受けた！');
+    
+    return messages;
+  }
+
+  /// ドレイン技の処理（与ダメージの一定%を回復）
+  /// 
+  /// JSONデータ例:
+  /// {
+  ///   "drain": 50  // 与ダメの50%を回復
+  /// }
+  static List<String> applyDrain({
+    required BattleSkill skill,
+    required BattleMonster user,
+    required int damageDealt,
+  }) {
+    final List<String> messages = [];
+    
+    final drainPercentage = skill.effects['drain'];
+    if (drainPercentage == null || damageDealt <= 0) return messages;
+    
+    final percentage = drainPercentage is int ? drainPercentage : (drainPercentage as num).toInt();
+    final healAmount = (damageDealt * percentage / 100).round();
+    
+    if (healAmount <= 0) return messages;
+    
+    final beforeHp = user.currentHp;
+    user.heal(healAmount);
+    final actualHeal = user.currentHp - beforeHp;
+    
+    if (actualHeal > 0) {
+      messages.add('${user.baseMonster.monsterName}はHPを${actualHeal}吸収した！');
+    }
+    
+    return messages;
+  }
+
+  /// まもる状態を設定
+  /// 
+  /// JSONデータ例:
+  /// {
+  ///   "protect": true
+  /// }
+  static List<String> applyProtect({
+    required BattleSkill skill,
+    required BattleMonster user,
+  }) {
+    final List<String> messages = [];
+    
+    final isProtect = skill.effects['protect'];
+    if (isProtect != true) return messages;
+    
+    // ★修正: まもる状態を設定
+    user.isProtecting = true;
+    messages.add('${user.baseMonster.monsterName}は身を守っている！');
+    
+    return messages;
+  }
+
+  /// 優先度を取得（先制技判定用）
+  /// 
+  /// JSONデータ例:
+  /// {
+  ///   "priority": 1  // +1で先制、-1で後攻
+  /// }
+  static int getPriority(BattleSkill skill) {
+    final priority = skill.effects['priority'];
+    if (priority == null) return 0;
+    return priority is int ? priority : (priority as num).toInt();
+  }
+
   // ========== 回復技システム ==========
 
   /// 回復技を実行
