@@ -203,7 +203,7 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
     }
 
     // ★Week 3追加: 状態異常を付与
-    if (result.damage > 0 && !enemyMonster.isFainted) {
+    if (!enemyMonster.isFainted) {
       final statusMessages = BattleCalculationService.applyStatusAilments(
         skill: skill,
         target: enemyMonster,
@@ -292,7 +292,7 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
     }
 
     // ★Week 3追加: 状態異常を付与
-    if (result.damage > 0 && !playerMonster.isFainted) {
+    if (!playerMonster.isFainted) {
       final statusMessages = BattleCalculationService.applyStatusAilments(
         skill: skill,
         target: playerMonster,

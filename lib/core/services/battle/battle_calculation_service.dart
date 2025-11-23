@@ -307,15 +307,18 @@ class BattleCalculationService {
   ///   ]
   /// }
   static List<String> applyStatusAilments({
-    required BattleSkill skill,
-    required BattleMonster target,
-  }) {
+  required BattleSkill skill,
+  required BattleMonster target,
+    }) {
     final List<String> messages = [];
 
-    // 既に状態異常がある場合は付与できない
+    // ★修正: 既に状態異常がある場合はログを追加
     if (target.statusAilment != null) {
-      return messages;
+        messages.add('${target.baseMonster.monsterName}は既に${_getStatusName(target.statusAilment!)}状態です');
+        return messages;
     }
+
+  // 以下、既存のコード...
 
     // パターン2（新形式）の処理
     final ailments = skill.effects['status_ailments'] as List<dynamic>?;
