@@ -18,6 +18,14 @@ class BattleMonster {
   int accuracyStage;
   int evasionStage;
   
+  // ★NEW: バフ・デバフの持続ターン数（0 = 無制限）
+  int attackStageTurns;
+  int defenseStageTurns;
+  int magicStageTurns;
+  int speedStageTurns;
+  int accuracyStageTurns;
+  int evasionStageTurns;
+  
   // 状態異常
   String? statusAilment; // burn, poison, paralysis, sleep, freeze, confusion
   int statusTurns;
@@ -38,6 +46,12 @@ class BattleMonster {
         speedStage = 0,
         accuracyStage = 0,
         evasionStage = 0,
+        attackStageTurns = 0,    // ★NEW
+        defenseStageTurns = 0,   // ★NEW
+        magicStageTurns = 0,     // ★NEW
+        speedStageTurns = 0,     // ★NEW
+        accuracyStageTurns = 0,  // ★NEW
+        evasionStageTurns = 0,   // ★NEW
         statusAilment = null,
         statusTurns = 0,
         hasParticipated = false;
@@ -123,5 +137,31 @@ class BattleMonster {
     speedStage = 0;
     accuracyStage = 0;
     evasionStage = 0;
+
+    // ★NEW: 持続ターンもリセット
+    attackStageTurns = 0;
+    defenseStageTurns = 0;
+    magicStageTurns = 0;
+    speedStageTurns = 0;
+    accuracyStageTurns = 0;
+    evasionStageTurns = 0;
+  }
+  
+  // ★NEW: バフ/デバフの持続ターン減算処理
+  void decreaseStatStageTurns() {
+    if (attackStageTurns > 0) attackStageTurns--;
+    if (defenseStageTurns > 0) defenseStageTurns--;
+    if (magicStageTurns > 0) magicStageTurns--;
+    if (speedStageTurns > 0) speedStageTurns--;
+    if (accuracyStageTurns > 0) accuracyStageTurns--;
+    if (evasionStageTurns > 0) evasionStageTurns--;
+    
+    // 持続ターンが0になったらステージをリセット
+    if (attackStageTurns == 0 && attackStage != 0) attackStage = 0;
+    if (defenseStageTurns == 0 && defenseStage != 0) defenseStage = 0;
+    if (magicStageTurns == 0 && magicStage != 0) magicStage = 0;
+    if (speedStageTurns == 0 && speedStage != 0) speedStage = 0;
+    if (accuracyStageTurns == 0 && accuracyStage != 0) accuracyStage = 0;
+    if (evasionStageTurns == 0 && evasionStage != 0) evasionStage = 0;
   }
 }

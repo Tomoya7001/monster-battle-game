@@ -363,55 +363,78 @@ class _BattleScreenContent extends StatelessWidget {
 
     // ★NEW: バフ/デバフ表示ウィジェット
     Widget _buildStatChangesDisplay(BattleMonster monster) {
-    final List<Widget> statChips = [];
+      final List<Widget> statChips = [];
 
-    final statChanges = {
+      final statChanges = {
         '攻': monster.attackStage,
         '防': monster.defenseStage,
         '魔': monster.magicStage,
         '速': monster.speedStage,
         '命': monster.accuracyStage,
         '回': monster.evasionStage,
-    };
+      };
 
-    statChanges.forEach((stat, stage) {
+      statChanges.forEach((stat, stage) {
         if (stage != 0) {
-        statChips.add(_buildStatChip(stat, stage));
+          statChips.add(_buildStatChip(stat, stage, monster)); // ★monster引数を追加
         }
-    });
+      });
 
-    return Wrap(
+      return Wrap(
         spacing: 4,
         runSpacing: 4,
         children: statChips,
-    );
+      );
     }
 
-    // ★NEW: ステータス変化チップ
-    Widget _buildStatChip(String statName, int stage) {
-    final isPositive = stage > 0;
-    final absStage = stage.abs();
-    final arrow = isPositive ? '↑' : '↓';
-    final arrowText = arrow * absStage.clamp(1, 3);
-    
-    return Container(
+    // ★NEW: ステータス変化チップ（残りターン数付き）
+    Widget _buildStatChip(String statName, int stage, BattleMonster monster) { // ★monster引数を追加
+      final isPositive = stage > 0;
+      final absStage = stage.abs();
+      final arrow = isPositive ? '↑' : '↓';
+      final arrowText = arrow * absStage.clamp(1, 3);
+      
+      // ★NEW: 残りターン数を取得
+      int turnsRemaining = 0;
+      switch (statName) {
+        case '攻':
+          turnsRemaining = monster.attackStageTurns;
+          break;
+        case '防':
+          turnsRemaining = monster.defenseStageTurns;
+          break;
+        case '魔':
+          turnsRemaining = monster.magicStageTurns;
+          break;
+        case '速':
+          turnsRemaining = monster.speedStageTurns;
+          break;
+        case '命':
+          turnsRemaining = monster.accuracyStageTurns;
+          break;
+        case '回':
+          turnsRemaining = monster.evasionStageTurns;
+          break;
+      }
+      
+      return Container(
         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
         decoration: BoxDecoration(
-        color: isPositive ? Colors.green.shade100 : Colors.red.shade100,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
+          color: isPositive ? Colors.green.shade100 : Colors.red.shade100,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
             color: isPositive ? Colors.green.shade300 : Colors.red.shade300,
-        ),
+          ),
         ),
         child: Text(
-        '$statName$arrowText',
-        style: TextStyle(
+          turnsRemaining > 0 ? '$statName$arrowText(${turnsRemaining}T)' : '$statName$arrowText',
+          style: TextStyle(
             fontSize: 11,
             fontWeight: FontWeight.bold,
             color: isPositive ? Colors.green.shade700 : Colors.red.shade700,
+          ),
         ),
-        ),
-    );
+      );
     }
 
     // ★NEW: 属性バッジ
@@ -727,31 +750,169 @@ Color _getElementColor(String element) {
   void _showBattleLog(BuildContext context, BattleStateModel battleState) {
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('バトルログ'),
-        content: SizedBox(
-          width: double.maxFinite,
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: battleState.battleLog.length,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4),
-                child: Text(
-                  battleState.battleLog[index],
-                  style: const TextStyle(fontSize: 12),
-                ),
-              );
-            },
+      builder: (ctx) => Dialog(
+        child: Container(
+          width: MediaQuery.of(context).size.width * 0.9,
+          height: MediaQuery.of(context).size.height * 0.7,
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              // タイトル
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'バトルログ',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.pop(ctx),
+                  ),
+                ],
+              ),
+              const Divider(),
+              
+              // ログリスト（スクロール可能）
+              Expanded(
+                child: battleState.battleLog.isEmpty
+                    ? const Center(
+                        child: Text(
+                          'ログはまだありません',
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      )
+                    : ListView.builder(
+                        itemCount: battleState.battleLog.length,
+                        itemBuilder: (context, index) {
+                          final log = battleState.battleLog[index];
+                          return _buildLogItem(log);
+                        },
+                      ),
+              ),
+            ],
           ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('閉じる'),
+      ),
+    );
+  }
+
+  // ★NEW: ログアイテムのビルド（色分け・アイコン付き）
+  Widget _buildLogItem(String log) {
+    // ログの種類を判定
+    LogType logType = _detectLogType(log);
+    
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+      decoration: BoxDecoration(
+        color: logType.backgroundColor,
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: logType.borderColor, width: 1),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // アイコン
+          Icon(
+            logType.icon,
+            size: 16,
+            color: logType.iconColor,
+          ),
+          const SizedBox(width: 8),
+          
+          // テキスト
+          Expanded(
+            child: Text(
+              log,
+              style: TextStyle(
+                fontSize: 13,
+                color: logType.textColor,
+                height: 1.3,
+              ),
+            ),
           ),
         ],
       ),
+    );
+  }
+
+  // ★NEW: ログの種類を検出
+  LogType _detectLogType(String log) {
+    // ダメージ系
+    if (log.contains('ダメージ') || log.contains('攻撃')) {
+      return LogType(
+        icon: Icons.flash_on,
+        iconColor: Colors.red.shade700,
+        backgroundColor: Colors.red.shade50,
+        borderColor: Colors.red.shade200,
+        textColor: Colors.red.shade900,
+      );
+    }
+    
+    // 回復系
+    if (log.contains('回復')) {
+      return LogType(
+        icon: Icons.favorite,
+        iconColor: Colors.green.shade700,
+        backgroundColor: Colors.green.shade50,
+        borderColor: Colors.green.shade200,
+        textColor: Colors.green.shade900,
+      );
+    }
+    
+    // 状態異常系
+    if (log.contains('やけど') || log.contains('どく') || log.contains('まひ') ||
+        log.contains('ねむり') || log.contains('こおり') || log.contains('こんらん')) {
+      return LogType(
+        icon: Icons.warning,
+        iconColor: Colors.purple.shade700,
+        backgroundColor: Colors.purple.shade50,
+        borderColor: Colors.purple.shade200,
+        textColor: Colors.purple.shade900,
+      );
+    }
+    
+    // バフ/デバフ系
+    if (log.contains('上がった') || log.contains('下がった') || log.contains('元に戻った')) {
+      return LogType(
+        icon: Icons.trending_up,
+        iconColor: Colors.blue.shade700,
+        backgroundColor: Colors.blue.shade50,
+        borderColor: Colors.blue.shade200,
+        textColor: Colors.blue.shade900,
+      );
+    }
+    
+    // 交代系
+    if (log.contains('繰り出した') || log.contains('交代')) {
+      return LogType(
+        icon: Icons.swap_horiz,
+        iconColor: Colors.orange.shade700,
+        backgroundColor: Colors.orange.shade50,
+        borderColor: Colors.orange.shade200,
+        textColor: Colors.orange.shade900,
+      );
+    }
+    
+    // 倒れた
+    if (log.contains('倒れた')) {
+      return LogType(
+        icon: Icons.cancel,
+        iconColor: Colors.grey.shade700,
+        backgroundColor: Colors.grey.shade100,
+        borderColor: Colors.grey.shade300,
+        textColor: Colors.grey.shade900,
+      );
+    }
+    
+    // その他（デフォルト）
+    return LogType(
+      icon: Icons.info_outline,
+      iconColor: Colors.grey.shade600,
+      backgroundColor: Colors.grey.shade50,
+      borderColor: Colors.grey.shade200,
+      textColor: Colors.grey.shade800,
     );
   }
 
@@ -778,4 +939,21 @@ Color _getElementColor(String element) {
       ),
     );
   }
+}
+
+// ★NEW: ログタイプのデータクラス
+class LogType {
+  final IconData icon;
+  final Color iconColor;
+  final Color backgroundColor;
+  final Color borderColor;
+  final Color textColor;
+
+  LogType({
+    required this.icon,
+    required this.iconColor,
+    required this.backgroundColor,
+    required this.borderColor,
+    required this.textColor,
+  });
 }

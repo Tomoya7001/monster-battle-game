@@ -250,25 +250,31 @@ class BattleCalculationService {
       }
     }
 
-    // ステージを適用
+    // ステージを適用（★ここに持続ターンも追加）
     switch (stat) {
       case 'attack':
         monster.attackStage = newStage;
+        monster.attackStageTurns = 3; // ★NEW: 3ターン持続
         break;
       case 'defense':
         monster.defenseStage = newStage;
+        monster.defenseStageTurns = 3; // ★NEW
         break;
       case 'magic':
         monster.magicStage = newStage;
+        monster.magicStageTurns = 3; // ★NEW
         break;
       case 'speed':
         monster.speedStage = newStage;
+        monster.speedStageTurns = 3; // ★NEW
         break;
       case 'accuracy':
         monster.accuracyStage = newStage;
+        monster.accuracyStageTurns = 3; // ★NEW
         break;
       case 'evasion':
         monster.evasionStage = newStage;
+        monster.evasionStageTurns = 3; // ★NEW
         break;
     }
 
@@ -503,6 +509,161 @@ class BattleCalculationService {
     }
 
     return baseRecovery.clamp(0, 6);
+  }
+
+  /// バフ/デバフの持続ターンを減算
+  static List<String> decreaseStatStageTurns(BattleMonster monster) {
+    final List<String> messages = [];
+    
+    // ターン減算前の値を保存
+    final previousAttackStage = monster.attackStage;
+    final previousDefenseStage = monster.defenseStage;
+    final previousMagicStage = monster.magicStage;
+    final previousSpeedStage = monster.speedStage;
+    final previousAccuracyStage = monster.accuracyStage;
+    final previousEvasionStage = monster.evasionStage;
+    
+    // 持続ターンを減算
+    monster.decreaseStatStageTurns();
+    
+    // リセットされたステータスを検出してメッセージを追加
+    if (previousAttackStage != 0 && monster.attackStage == 0) {
+      messages.add('${monster.baseMonster.monsterName}の攻撃が元に戻った');
+    }
+    if (previousDefenseStage != 0 && monster.defenseStage == 0) {
+      messages.add('${monster.baseMonster.monsterName}の防御が元に戻った');
+    }
+    if (previousMagicStage != 0 && monster.magicStage == 0) {
+      messages.add('${monster.baseMonster.monsterName}の魔力が元に戻った');
+    }
+    if (previousSpeedStage != 0 && monster.speedStage == 0) {
+      messages.add('${monster.baseMonster.monsterName}の素早さが元に戻った');
+    }
+    if (previousAccuracyStage != 0 && monster.accuracyStage == 0) {
+      messages.add('${monster.baseMonster.monsterName}の命中率が元に戻った');
+    }
+    if (previousEvasionStage != 0 && monster.evasionStage == 0) {
+      messages.add('${monster.baseMonster.monsterName}の回避率が元に戻った');
+    }
+    
+    return messages;
+  }
+
+  // ========== 回復技システム ==========
+
+  /// 回復技を実行
+  /// 
+  /// ★Firestoreデータ構造に対応（3パターンサポート）:
+  /// 
+  /// パターン1（Firestore実際の形式）:
+  /// {
+  ///   "heal_percentage": 50
+  /// }
+  /// 
+  /// パターン2（既存形式）:
+  /// {
+  ///   "heal": {"percentage": 50}
+  /// }
+  /// 
+  /// パターン3（新形式）:
+  /// {
+  ///   "heal_effects": [
+  ///     {"type": "percentage", "value": 50, "target": "self"}
+  ///   ]
+  /// }
+  static List<String> applyHeal({
+    required BattleSkill skill,
+    required BattleMonster user,
+    BattleMonster? target,
+  }) {
+    final List<String> messages = [];
+
+    // ★パターン1（Firestore実際の形式）: heal_percentageが直接ある場合
+    final healPercentage = skill.effects['heal_percentage'];
+    if (healPercentage != null) {
+      final percentage = healPercentage is int ? healPercentage : (healPercentage as num).toInt();
+      final healAmount = (user.maxHp * percentage / 100).round();
+
+      final beforeHp = user.currentHp;
+      user.heal(healAmount);
+      final actualHeal = user.currentHp - beforeHp;
+
+      if (actualHeal > 0) {
+        messages.add('${user.baseMonster.monsterName}のHPが${actualHeal}回復した！');
+      } else {
+        messages.add('${user.baseMonster.monsterName}のHPは満タンだ！');
+      }
+
+      // ★状態異常回復
+      if (skill.effects['cure_status'] == true && user.statusAilment != null) {
+        final ailmentName = _getStatusName(user.statusAilment!);
+        user.statusAilment = null;
+        user.statusTurns = 0;
+        messages.add('${user.baseMonster.monsterName}の${ailmentName}が治った！');
+      }
+
+      return messages;
+    }
+
+    // パターン3（新形式）の処理
+    final healEffects = skill.effects['heal_effects'] as List<dynamic>?;
+    if (healEffects != null && healEffects.isNotEmpty) {
+      for (var healData in healEffects) {
+        final data = healData as Map<String, dynamic>;
+        
+        final targetType = data['target'] as String? ?? 'self';
+        BattleMonster? healTarget;
+        if (targetType == 'self') {
+          healTarget = user;
+        } else if (targetType == 'ally' && target != null) {
+          healTarget = target;
+        }
+
+        if (healTarget == null) continue;
+
+        final healType = data['type'] as String? ?? 'percentage';
+        final value = data['value'] as int? ?? 50;
+
+        int healAmount;
+        if (healType == 'percentage') {
+          // パーセンテージ回復
+          healAmount = (healTarget.maxHp * value / 100).round();
+        } else {
+          // 固定値回復
+          healAmount = value;
+        }
+
+        final beforeHp = healTarget.currentHp;
+        healTarget.heal(healAmount);
+        final actualHeal = healTarget.currentHp - beforeHp;
+
+        if (actualHeal > 0) {
+          messages.add('${healTarget.baseMonster.monsterName}のHPが${actualHeal}回復した！');
+        } else {
+          messages.add('${healTarget.baseMonster.monsterName}のHPは満タンだ！');
+        }
+      }
+      return messages;
+    }
+
+    // パターン2（既存形式）の処理
+    final healData = skill.effects['heal'] as Map<String, dynamic>?;
+    if (healData == null) return messages;
+
+    final percentage = healData['percentage'] as int? ?? 50;
+    final healAmount = (user.maxHp * percentage / 100).round();
+
+    final beforeHp = user.currentHp;
+    user.heal(healAmount);
+    final actualHeal = user.currentHp - beforeHp;
+
+    if (actualHeal > 0) {
+      messages.add('${user.baseMonster.monsterName}のHPが${actualHeal}回復した！');
+    } else {
+      messages.add('${user.baseMonster.monsterName}のHPは満タンだ！');
+    }
+
+    return messages;
   }
 
   // ========== 既存メソッド（互換性維持） ==========

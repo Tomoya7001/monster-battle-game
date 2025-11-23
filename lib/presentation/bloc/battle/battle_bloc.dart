@@ -160,50 +160,65 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
     playerMonster.useSkill(skill);
     _battleState!.addLog('${playerMonster.baseMonster.monsterName}の${skill.name}！');
 
-    // 命中判定
-    if (!BattleCalculationService.checkHit(skill, playerMonster, enemyMonster)) {
-      _battleState!.addLog('攻撃は外れた！');
-      emit(BattleInProgress(battleState: _battleState!, message: '攻撃は外れた！'));
-      return;
+    // 1. 攻撃処理（最優先）
+    if (skill.isAttack) {
+      // 命中判定
+      if (!BattleCalculationService.checkHit(skill, playerMonster, enemyMonster)) {
+        _battleState!.addLog('攻撃は外れた！');
+        emit(BattleInProgress(battleState: _battleState!, message: '攻撃は外れた！'));
+        return;
+      }
+
+      // ダメージ計算
+      final result = BattleCalculationService.calculateDamage(
+        attacker: playerMonster,
+        defender: enemyMonster,
+        skill: skill,
+      );
+
+      if (result.damage > 0) {
+        enemyMonster.takeDamage(result.damage);
+
+        String message = '${result.damage}のダメージ！';
+        if (result.isCritical) {
+          message = '急所に当たった！$message';
+        }
+        if (result.effectivenessText.isNotEmpty) {
+          message = '${result.effectivenessText} $message';
+        }
+
+        _battleState!.addLog(message);
+
+        if (enemyMonster.isFainted) {
+          _battleState!.addLog('${enemyMonster.baseMonster.monsterName}は倒れた！');
+        }
+      }
     }
 
-    // ダメージ計算
-    final result = BattleCalculationService.calculateDamage(
-      attacker: playerMonster,
-      defender: enemyMonster,
-      skill: skill,
-    );
-
-    if (result.damage > 0) {
-      enemyMonster.takeDamage(result.damage);
-
-      String message = '${result.damage}のダメージ！';
-      if (result.isCritical) {
-        message = '急所に当たった！$message';
-      }
-      if (result.effectivenessText.isNotEmpty) {
-        message = '${result.effectivenessText} $message';
-      }
-
-      _battleState!.addLog(message);
-
-      if (enemyMonster.isFainted) {
-        _battleState!.addLog('${enemyMonster.baseMonster.monsterName}は倒れた！');
-      }
-    }
-
-    // ★Week 2追加: バフ・デバフ効果を適用
-    final statChangeMessages = BattleCalculationService.applyStatChanges(
+    // 2. 回復処理（攻撃後 = ドレイン対応）
+    final healMessages = BattleCalculationService.applyHeal(
       skill: skill,
       user: playerMonster,
       target: enemyMonster,
     );
-    for (var msg in statChangeMessages) {
+    for (var msg in healMessages) {
       _battleState!.addLog(msg);
     }
 
-    // ★Week 3追加: 状態異常を付与
+    // 3. バフ・デバフ効果を適用
     if (!enemyMonster.isFainted) {
+      final statChangeMessages = BattleCalculationService.applyStatChanges(
+        skill: skill,
+        user: playerMonster,
+        target: enemyMonster,
+      );
+      for (var msg in statChangeMessages) {
+        _battleState!.addLog(msg);
+      }
+    }
+
+    // 4. 状態異常を付与
+    if (skill.isAttack && !enemyMonster.isFainted) {
       final statusMessages = BattleCalculationService.applyStatusAilments(
         skill: skill,
         target: enemyMonster,
@@ -232,9 +247,9 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
       return;
     }
 
-    // 使用可能な技を取得
+    // 使用可能な技を取得（回復技も含む）
     final usableSkills = cpuMonster.skills
-        .where((s) => cpuMonster.canUseSkill(s) && s.isAttack)
+        .where((s) => cpuMonster.canUseSkill(s))
         .toList();
 
     if (usableSkills.isEmpty) {
@@ -249,50 +264,65 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
     cpuMonster.useSkill(skill);
     _battleState!.addLog('相手の${cpuMonster.baseMonster.monsterName}の${skill.name}！');
 
-    // 命中判定
-    if (!BattleCalculationService.checkHit(skill, cpuMonster, playerMonster)) {
-      _battleState!.addLog('攻撃は外れた！');
-      emit(BattleInProgress(battleState: _battleState!, message: '攻撃は外れた！'));
-      return;
+    // 1. 攻撃処理（最優先）
+    if (skill.isAttack) {
+      // 命中判定
+      if (!BattleCalculationService.checkHit(skill, cpuMonster, playerMonster)) {
+        _battleState!.addLog('攻撃は外れた！');
+        emit(BattleInProgress(battleState: _battleState!, message: '攻撃は外れた！'));
+        return;
+      }
+
+      // ダメージ計算
+      final result = BattleCalculationService.calculateDamage(
+        attacker: cpuMonster,
+        defender: playerMonster,
+        skill: skill,
+      );
+
+      if (result.damage > 0) {
+        playerMonster.takeDamage(result.damage);
+
+        String message = '${result.damage}のダメージ！';
+        if (result.isCritical) {
+          message = '急所に当たった！$message';
+        }
+        if (result.effectivenessText.isNotEmpty) {
+          message = '${result.effectivenessText} $message';
+        }
+
+        _battleState!.addLog(message);
+
+        if (playerMonster.isFainted) {
+          _battleState!.addLog('${playerMonster.baseMonster.monsterName}は倒れた！');
+        }
+      }
     }
 
-    // ダメージ計算
-    final result = BattleCalculationService.calculateDamage(
-      attacker: cpuMonster,
-      defender: playerMonster,
-      skill: skill,
-    );
-
-    if (result.damage > 0) {
-      playerMonster.takeDamage(result.damage);
-
-      String message = '${result.damage}のダメージ！';
-      if (result.isCritical) {
-        message = '急所に当たった！$message';
-      }
-      if (result.effectivenessText.isNotEmpty) {
-        message = '${result.effectivenessText} $message';
-      }
-
-      _battleState!.addLog(message);
-
-      if (playerMonster.isFainted) {
-        _battleState!.addLog('${playerMonster.baseMonster.monsterName}は倒れた！');
-      }
-    }
-
-    // ★Week 2追加: バフ・デバフ効果を適用
-    final statChangeMessages = BattleCalculationService.applyStatChanges(
+    // 2. 回復処理（攻撃後 = ドレイン対応）
+    final healMessages = BattleCalculationService.applyHeal(
       skill: skill,
       user: cpuMonster,
       target: playerMonster,
     );
-    for (var msg in statChangeMessages) {
+    for (var msg in healMessages) {
       _battleState!.addLog(msg);
     }
 
-    // ★Week 3追加: 状態異常を付与
+    // 3. バフ・デバフ効果を適用
     if (!playerMonster.isFainted) {
+      final statChangeMessages = BattleCalculationService.applyStatChanges(
+        skill: skill,
+        user: cpuMonster,
+        target: playerMonster,
+      );
+      for (var msg in statChangeMessages) {
+        _battleState!.addLog(msg);
+      }
+    }
+
+    // 4. 状態異常を付与
+    if (skill.isAttack && !playerMonster.isFainted) {
       final statusMessages = BattleCalculationService.applyStatusAilments(
         skill: skill,
         target: playerMonster,
@@ -511,6 +541,25 @@ Future<void> _onSwitchMonster(
         _battleState!.enemyActiveMonster!,
       );
       for (var msg in statusMessages) {
+        _battleState!.addLog(msg);
+      }
+    }
+
+    // ★NEW: バフ/デバフの持続ターン減算
+    if (_battleState!.playerActiveMonster != null) {
+      final buffMessages = BattleCalculationService.decreaseStatStageTurns(
+        _battleState!.playerActiveMonster!,
+      );
+      for (var msg in buffMessages) {
+        _battleState!.addLog(msg);
+      }
+    }
+
+    if (_battleState!.enemyActiveMonster != null) {
+      final buffMessages = BattleCalculationService.decreaseStatStageTurns(
+        _battleState!.enemyActiveMonster!,
+      );
+      for (var msg in buffMessages) {
         _battleState!.addLog(msg);
       }
     }
