@@ -205,6 +205,10 @@ class DataImporter {
       
       // 技
       await importSkillMasters();
+      print('');
+      
+      // 追加技
+      await importAdditionalSkills();
       results['skills'] = await _getCollectionCount('skill_masters');
       print('');
       
@@ -302,6 +306,43 @@ class DataImporter {
     
     print('✅ $collectionName コレクション削除完了: $count 件');
   }
+  
+  /// 追加技データを投入
+Future<void> importAdditionalSkills() async {
+  try {
+    print('📦 追加技データ読み込み中...');
+    
+    final String jsonString = await rootBundle
+        .loadString('assets/data/additional_skills.json');
+    final Map<String, dynamic> data = json.decode(jsonString);
+    
+    print('✅ JSONファイル読み込み完了');
+    
+    final batch = _firestore.batch();
+    int count = 0;
+    
+    for (var skill in data['additional_skills']) {
+      final docRef = _firestore
+          .collection('skill_masters')
+          .doc(skill['skill_id'].toString());
+      
+      batch.set(docRef, {
+        ...skill,
+        'created_at': FieldValue.serverTimestamp(),
+        'updated_at': FieldValue.serverTimestamp(),
+      });
+      count++;
+    }
+    
+    await batch.commit();
+    
+    print('✅ 追加技データ投入完了: $count 件');
+  } catch (e, stackTrace) {
+    print('❌ エラー: $e');
+    print('スタックトレース: $stackTrace');
+    rethrow;
+  }
+}
   
   /// すべてのマスターデータを削除（開発用）
   Future<void> deleteAllMasterData() async {

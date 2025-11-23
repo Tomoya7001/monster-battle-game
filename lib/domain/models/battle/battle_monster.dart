@@ -46,7 +46,16 @@ class BattleMonster {
   int get attack => _applyStageMultiplier(baseMonster.lv50Attack, attackStage);
   int get defense => _applyStageMultiplier(baseMonster.lv50Defense, defenseStage);
   int get magic => _applyStageMultiplier(baseMonster.lv50Magic, magicStage);
-  int get speed => _applyStageMultiplier(baseMonster.lv50Speed, speedStage);
+  int get speed {
+    int baseSpeed = _applyStageMultiplier(baseMonster.lv50Speed, speedStage);
+    
+    // ★Week 3追加: 麻痺状態で素早さ×0.5
+    if (statusAilment == 'paralysis') {
+      baseSpeed = (baseSpeed * 0.5).round();
+    }
+    
+    return baseSpeed;
+  }
   int get maxHp => baseMonster.lv50MaxHp;
 
   /// 段階倍率適用

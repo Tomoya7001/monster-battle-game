@@ -1,0 +1,460 @@
+{
+    "additional_skills": [
+        {
+            "skill_id": "skill_816",
+            "name": "わるだくみ",
+            "name_en": "Nasty Plot",
+            "type": "buff",
+            "element": "none",
+            "cost": 2,
+            "power_multiplier": 0,
+            "accuracy": 100,
+            "target": "self",
+            "effects": {
+                "buff": {
+                    "stat": "magic",
+                    "stage": 2
+                }
+            },
+            "description": "魔力を2段階上げる",
+            "priority": 0,
+            "pp": 20,
+            "category": "buff_only"
+        },
+        {
+            "skill_id": "skill_817",
+            "name": "りゅうのまい",
+            "name_en": "Dragon Dance",
+            "type": "buff",
+            "element": "none",
+            "cost": 2,
+            "power_multiplier": 0,
+            "accuracy": 100,
+            "target": "self",
+            "effects": {
+                "buff": {
+                    "stat": "attack",
+                    "stage": 1
+                },
+                "buff2": {
+                    "stat": "speed",
+                    "stage": 1
+                }
+            },
+            "description": "攻撃と素早さを1段階ずつ上げる",
+            "priority": 0,
+            "pp": 20,
+            "category": "buff_only"
+        },
+        {
+            "skill_id": "skill_818",
+            "name": "ビルドアップ",
+            "name_en": "Bulk Up",
+            "type": "buff",
+            "element": "none",
+            "cost": 2,
+            "power_multiplier": 0,
+            "accuracy": 100,
+            "target": "self",
+            "effects": {
+                "buff": {
+                    "stat": "attack",
+                    "stage": 1
+                },
+                "buff2": {
+                    "stat": "defense",
+                    "stage": 1
+                }
+            },
+            "description": "攻撃と防御を1段階ずつ上げる",
+            "priority": 0,
+            "pp": 20,
+            "category": "buff_only"
+        },
+        {
+            "skill_id": "skill_819",
+            "name": "こわいかお",
+            "name_en": "Scary Face",
+            "type": "debuff",
+            "element": "none",
+            "cost": 1,
+            "power_multiplier": 0,
+            "accuracy": 100,
+            "target": "enemy",
+            "effects": {
+                "debuff": {
+                    "stat": "speed",
+                    "stage": -2
+                }
+            },
+            "description": "相手の素早さを2段階下げる",
+            "priority": 0,
+            "pp": 10,
+            "category": "debuff_only"
+        },
+        {
+            "skill_id": "skill_820",
+            "name": "フェザーダンス",
+            "name_en": "Feather Dance",
+            "type": "debuff",
+            "element": "none",
+            "cost": 1,
+            "power_multiplier": 0,
+            "accuracy": 100,
+            "target": "enemy",
+            "effects": {
+                "debuff": {
+                    "stat": "attack",
+                    "stage": -2
+                }
+            },
+            "description": "相手の攻撃を2段階下げる",
+            "priority": 0,
+            "pp": 15,
+            "category": "debuff_only"
+        },
+        {
+            "skill_id": "skill_821",
+            "name": "パワーアップパンチ",
+            "name_en": "Power-Up Punch",
+            "type": "physical",
+            "element": "none",
+            "cost": 2,
+            "power_multiplier": 1.2,
+            "accuracy": 100,
+            "target": "enemy",
+            "effects": {
+                "buff": {
+                    "stat": "attack",
+                    "stage": 1,
+                    "chance": 100
+                }
+            },
+            "description": "攻撃しながら自分の攻撃を1段階上げる",
+            "priority": 0,
+            "pp": 20,
+            "category": "damage_with_buff"
+        },
+        {
+            "skill_id": "skill_822",
+            "name": "アシッドボム",
+            "name_en": "Acid Spray",
+            "type": "magical",
+            "element": "none",
+            "cost": 2,
+            "power_multiplier": 1.0,
+            "accuracy": 100,
+            "target": "enemy",
+            "effects": {
+                "debuff": {
+                    "stat": "defense",
+                    "stage": -2,
+                    "chance": 100
+                }
+            },
+            "description": "攻撃しながら相手の防御を2段階下げる",
+            "priority": 0,
+            "pp": 20,
+            "category": "damage_with_debuff"
+        },
+        {
+            "skill_id": "skill_823",
+            "name": "ほのおのパンチ",
+            "name_en": "Fire Punch",
+            "type": "physical",
+            "element": "fire",
+            "cost": 2,
+            "power_multiplier": 1.5,
+            "accuracy": 100,
+            "target": "enemy",
+            "effects": {
+                "status_ailment": "burn",
+                "status_chance": 20
+            },
+            "description": "炎の拳で攻撃。20%の確率で火傷",
+            "priority": 0,
+            "pp": 15,
+            "category": "damage_with_effect"
+        },
+        {
+            "skill_id": "skill_824",
+            "name": "れいとうパンチ",
+            "name_en": "Ice Punch",
+            "type": "physical",
+            "element": "water",
+            "cost": 2,
+            "power_multiplier": 1.5,
+            "accuracy": 100,
+            "target": "enemy",
+            "effects": {
+                "status_ailment": "freeze",
+                "status_chance": 20
+            },
+            "description": "冷気の拳で攻撃。20%の確率で凍結",
+            "priority": 0,
+            "pp": 15,
+            "category": "damage_with_effect"
+        },
+        {
+            "skill_id": "skill_825",
+            "name": "かみなりパンチ",
+            "name_en": "Thunder Punch",
+            "type": "physical",
+            "element": "thunder",
+            "cost": 2,
+            "power_multiplier": 1.5,
+            "accuracy": 100,
+            "target": "enemy",
+            "effects": {
+                "status_ailment": "paralysis",
+                "status_chance": 20
+            },
+            "description": "電撃の拳で攻撃。20%の確率で麻痺",
+            "priority": 0,
+            "pp": 15,
+            "category": "damage_with_effect"
+        },
+        {
+            "skill_id": "skill_826",
+            "name": "サイコキネシス",
+            "name_en": "Psychic",
+            "type": "magical",
+            "element": "none",
+            "cost": 2,
+            "power_multiplier": 1.6,
+            "accuracy": 100,
+            "target": "enemy",
+            "effects": {
+                "debuff": {
+                    "stat": "defense",
+                    "stage": -1,
+                    "chance": 10
+                }
+            },
+            "description": "念力で攻撃。10%で防御1段階低下",
+            "priority": 0,
+            "pp": 10,
+            "category": "damage_with_effect"
+        },
+        {
+            "skill_id": "skill_827",
+            "name": "ラスターカノン",
+            "name_en": "Flash Cannon",
+            "type": "magical",
+            "element": "none",
+            "cost": 2,
+            "power_multiplier": 1.6,
+            "accuracy": 100,
+            "target": "enemy",
+            "effects": {
+                "debuff": {
+                    "stat": "defense",
+                    "stage": -1,
+                    "chance": 10
+                }
+            },
+            "description": "光の砲撃。10%で防御1段階低下",
+            "priority": 0,
+            "pp": 10,
+            "category": "damage_with_effect"
+        },
+        {
+            "skill_id": "skill_828",
+            "name": "シャドーボール",
+            "name_en": "Shadow Ball",
+            "type": "magical",
+            "element": "dark",
+            "cost": 2,
+            "power_multiplier": 1.6,
+            "accuracy": 100,
+            "target": "enemy",
+            "effects": {
+                "debuff": {
+                    "stat": "defense",
+                    "stage": -1,
+                    "chance": 20
+                }
+            },
+            "description": "影の塊で攻撃。20%で防御1段階低下",
+            "priority": 0,
+            "pp": 15,
+            "category": "damage_with_effect"
+        },
+        {
+            "skill_id": "skill_829",
+            "name": "いわなだれ",
+            "name_en": "Rock Slide",
+            "type": "physical",
+            "element": "earth",
+            "cost": 2,
+            "power_multiplier": 1.5,
+            "accuracy": 90,
+            "target": "enemy",
+            "effects": {
+                "flinch_chance": 30
+            },
+            "description": "岩を落として攻撃。30%でひるみ",
+            "priority": 0,
+            "pp": 10,
+            "category": "damage_with_effect"
+        },
+        {
+            "skill_id": "skill_830",
+            "name": "どくづき",
+            "name_en": "Poison Jab",
+            "type": "physical",
+            "element": "none",
+            "cost": 2,
+            "power_multiplier": 1.6,
+            "accuracy": 100,
+            "target": "enemy",
+            "effects": {
+                "status_ailment": "poison",
+                "status_chance": 30
+            },
+            "description": "毒を含んだ攻撃。30%の確率で毒",
+            "priority": 0,
+            "pp": 20,
+            "category": "damage_with_effect"
+        },
+        {
+            "skill_id": "skill_831",
+            "name": "からをやぶる",
+            "name_en": "Shell Smash",
+            "type": "buff",
+            "element": "none",
+            "cost": 3,
+            "power_multiplier": 0,
+            "accuracy": 100,
+            "target": "self",
+            "effects": {
+                "buff": {
+                    "stat": "attack",
+                    "stage": 2
+                },
+                "buff2": {
+                    "stat": "magic",
+                    "stage": 2
+                },
+                "buff3": {
+                    "stat": "speed",
+                    "stage": 2
+                }
+            },
+            "description": "攻撃・魔力・素早さを2段階上げる強力なバフ",
+            "priority": 0,
+            "pp": 15,
+            "category": "extreme_buff"
+        },
+        {
+            "skill_id": "skill_832",
+            "name": "ちょうのまい",
+            "name_en": "Quiver Dance",
+            "type": "buff",
+            "element": "none",
+            "cost": 2,
+            "power_multiplier": 0,
+            "accuracy": 100,
+            "target": "self",
+            "effects": {
+                "buff": {
+                    "stat": "magic",
+                    "stage": 1
+                },
+                "buff2": {
+                    "stat": "defense",
+                    "stage": 1
+                },
+                "buff3": {
+                    "stat": "speed",
+                    "stage": 1
+                }
+            },
+            "description": "魔力・防御・素早さを1段階ずつ上げる",
+            "priority": 0,
+            "pp": 20,
+            "category": "triple_buff"
+        },
+        {
+            "skill_id": "skill_833",
+            "name": "コットンガード",
+            "name_en": "Cotton Guard",
+            "type": "buff",
+            "element": "none",
+            "cost": 3,
+            "power_multiplier": 0,
+            "accuracy": 100,
+            "target": "self",
+            "effects": {
+                "buff": {
+                    "stat": "defense",
+                    "stage": 3
+                }
+            },
+            "description": "防御を3段階上げる",
+            "priority": 0,
+            "pp": 10,
+            "category": "extreme_buff"
+        },
+        {
+            "skill_id": "skill_834",
+            "name": "でんじふゆう",
+            "name_en": "Magnet Rise",
+            "type": "buff",
+            "element": "thunder",
+            "cost": 1,
+            "power_multiplier": 0,
+            "accuracy": 100,
+            "target": "self",
+            "effects": {
+                "buff": {
+                    "stat": "evasion",
+                    "stage": 1
+                }
+            },
+            "description": "回避率を1段階上げる",
+            "priority": 0,
+            "pp": 10,
+            "category": "buff_only"
+        },
+        {
+            "skill_id": "skill_835",
+            "name": "フラッシュ",
+            "name_en": "Flash",
+            "type": "debuff",
+            "element": "light",
+            "cost": 1,
+            "power_multiplier": 0,
+            "accuracy": 100,
+            "target": "enemy",
+            "effects": {
+                "debuff": {
+                    "stat": "accuracy",
+                    "stage": -1
+                }
+            },
+            "description": "相手の命中率を1段階下げる",
+            "priority": 0,
+            "pp": 20,
+            "category": "debuff_only"
+        },
+        {
+            "skill_id": "skill_836",
+            "name": "きあいだめ",
+            "name_en": "Focus Energy",
+            "type": "buff",
+            "element": "none",
+            "cost": 1,
+            "power_multiplier": 0,
+            "accuracy": 100,
+            "target": "self",
+            "effects": {
+                "high_crit": true
+            },
+            "description": "急所に当たりやすくなる（将来実装）",
+            "priority": 0,
+            "pp": 30,
+            "category": "buff_only"
+        }
+    ]
+}

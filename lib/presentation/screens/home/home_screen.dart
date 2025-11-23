@@ -197,18 +197,22 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: 16),
-
-              ElevatedButton(
-                onPressed: () async {
-                  final userId = FirebaseAuth.instance.currentUser?.uid ?? 'demo_user';
-                  final service = MonsterService();
-                  final count = await service.recalculateAllMonsterHp(userId);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('$count 体のモンスターのHPを再計算しました')),
-                  );
+            const SizedBox(height: 16),
+              
+              // ★追加: マスターデータ投入ボタン
+              ElevatedButton.icon(
+                onPressed: () {
+                  context.go('/admin/data-import');
                 },
-                child: const Text('HP再計算（デバッグ）'),
+                icon: const Icon(Icons.upload_file),
+                label: const Text('マスターデータ投入'),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 32,
+                    vertical: 16,
+                  ),
+                  backgroundColor: Colors.orange,
+                ),
               ),
             ],
           ),

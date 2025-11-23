@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../presentation/screens/admin/data_import_screen.dart';
 
 import '../../presentation/screens/splash/splash_screen.dart';
 import '../../presentation/screens/auth/login_screen.dart';
@@ -17,6 +18,7 @@ class AppRouter {
   static const String signup = '/signup';
   static const String home = '/home';
   static const String test = '/test';  // 🔥 追加
+  static const String dataImport = '/admin/data-import';
 
   /// GoRouterインスタンス
   static final GoRouter router = GoRouter(
@@ -70,6 +72,16 @@ class AppRouter {
         pageBuilder: (context, state) => MaterialPage(
           key: state.pageKey,
           child: const FirestoreTestScreen(),
+        ),
+      ),
+
+      // ★追加: マスターデータ投入画面
+      GoRoute(
+        path: dataImport,
+        name: 'data-import',
+        pageBuilder: (context, state) => MaterialPage(
+          key: state.pageKey,
+          child: const DataImportScreen(),
         ),
       ),
     ],

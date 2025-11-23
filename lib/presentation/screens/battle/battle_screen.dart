@@ -441,7 +441,12 @@ class _BattleScreenContent extends StatelessWidget {
                         if (battleState.phase == BattlePhase.selectFirstMonster) {
                         context.read<BattleBloc>().add(SelectFirstMonster(monsterId: monsterId));
                         } else {
-                        context.read<BattleBloc>().add(SwitchMonster(monsterId: monsterId));
+                        // 瀕死による交代かどうかを判定
+                        final isForcedSwitch = battleState.phase == BattlePhase.monsterFainted;
+                        context.read<BattleBloc>().add(SwitchMonster(
+                          monsterId: monsterId,
+                          isForcedSwitch: isForcedSwitch,
+                        ));
                         if (isBottomSheet) {
                             Navigator.pop(context);
                         }

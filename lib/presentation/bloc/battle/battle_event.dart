@@ -42,11 +42,15 @@ class UseSkill extends BattleEvent {
 /// モンスター交代
 class SwitchMonster extends BattleEvent {
   final String monsterId;
+  final bool isForcedSwitch; // 瀕死による強制交代かどうか
 
-  const SwitchMonster({required this.monsterId});
+  const SwitchMonster({
+    required this.monsterId,
+    this.isForcedSwitch = false, // デフォルトは自主的な交代
+  });
 
   @override
-  List<Object?> get props => [monsterId];
+  List<Object?> get props => [monsterId, isForcedSwitch];
 }
 
 /// 待機（ターンスキップ）

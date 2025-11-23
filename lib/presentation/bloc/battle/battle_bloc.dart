@@ -104,6 +104,19 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
     final enemyMonster = _battleState!.enemyActiveMonster!;
     final skill = event.skill;
 
+    // ★Week 3追加: 状態異常による行動判定
+    final actionResult = BattleCalculationService.checkStatusAction(playerMonster);
+    if (!actionResult.canAct) {
+      _battleState!.addLog(actionResult.message);
+      
+      // 行動不能でもターンは消費するのでCPU行動へ
+      if (_battleState!.enemyActiveMonster?.canAct == true) {
+        await _executeCpuAction(emit);
+      }
+      add(const ProcessTurnEnd());
+      return;
+    }
+
     // コスト確認
     if (!playerMonster.canUseSkill(skill)) {
       emit(BattleInProgress(
@@ -120,7 +133,7 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
 
     if (playerFirst) {
       // プレイヤー先制
-      await _executePlayerAction(skill, emit);
+      await _executePlayerSkill(playerMonster, enemyMonster, skill, emit);
       if (!_battleState!.isBattleEnd && enemyMonster.canAct) {
         await _executeCpuAction(emit);
       }
@@ -128,7 +141,7 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
       // CPU先制
       await _executeCpuAction(emit);
       if (!_battleState!.isBattleEnd && playerMonster.canAct) {
-        await _executePlayerAction(skill, emit);
+        await _executePlayerSkill(playerMonster, enemyMonster, skill, emit);
       }
     }
 
@@ -136,17 +149,19 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
     add(const ProcessTurnEnd());
   }
 
-  /// プレイヤーアクション実行
-  Future<void> _executePlayerAction(BattleSkill skill, Emitter<BattleState> emit) async {
-    final attacker = _battleState!.playerActiveMonster!;
-    final defender = _battleState!.enemyActiveMonster!;
-
+  /// プレイヤーの技実行
+  Future<void> _executePlayerSkill(
+    BattleMonster playerMonster,
+    BattleMonster enemyMonster,
+    BattleSkill skill,
+    Emitter<BattleState> emit,
+  ) async {
     // コスト消費
-    attacker.useSkill(skill);
-    _battleState!.addLog('${attacker.baseMonster.monsterName}の${skill.name}！');
+    playerMonster.useSkill(skill);
+    _battleState!.addLog('${playerMonster.baseMonster.monsterName}の${skill.name}！');
 
     // 命中判定
-    if (!BattleCalculationService.checkHit(skill, attacker, defender)) {
+    if (!BattleCalculationService.checkHit(skill, playerMonster, enemyMonster)) {
       _battleState!.addLog('攻撃は外れた！');
       emit(BattleInProgress(battleState: _battleState!, message: '攻撃は外れた！'));
       return;
@@ -154,13 +169,13 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
 
     // ダメージ計算
     final result = BattleCalculationService.calculateDamage(
-      attacker: attacker,
-      defender: defender,
+      attacker: playerMonster,
+      defender: enemyMonster,
       skill: skill,
     );
 
     if (result.damage > 0) {
-      defender.takeDamage(result.damage);
+      enemyMonster.takeDamage(result.damage);
 
       String message = '${result.damage}のダメージ！';
       if (result.isCritical) {
@@ -172,8 +187,29 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
 
       _battleState!.addLog(message);
 
-      if (defender.isFainted) {
-        _battleState!.addLog('${defender.baseMonster.monsterName}は倒れた！');
+      if (enemyMonster.isFainted) {
+        _battleState!.addLog('${enemyMonster.baseMonster.monsterName}は倒れた！');
+      }
+    }
+
+    // ★Week 2追加: バフ・デバフ効果を適用
+    final statChangeMessages = BattleCalculationService.applyStatChanges(
+      skill: skill,
+      user: playerMonster,
+      target: enemyMonster,
+    );
+    for (var msg in statChangeMessages) {
+      _battleState!.addLog(msg);
+    }
+
+    // ★Week 3追加: 状態異常を付与
+    if (result.damage > 0 && !enemyMonster.isFainted) {
+      final statusMessages = BattleCalculationService.applyStatusAilments(
+        skill: skill,
+        target: enemyMonster,
+      );
+      for (var msg in statusMessages) {
+        _battleState!.addLog(msg);
       }
     }
 
@@ -182,8 +218,19 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
 
   /// CPU行動実行（簡易AI）
   Future<void> _executeCpuAction(Emitter<BattleState> emit) async {
+    if (_battleState == null) return;
+    if (_battleState!.enemyActiveMonster == null) return;
+    if (_battleState!.playerActiveMonster == null) return;
+
     final cpuMonster = _battleState!.enemyActiveMonster!;
     final playerMonster = _battleState!.playerActiveMonster!;
+
+    // ★Week 3追加: 状態異常による行動判定
+    final actionResult = BattleCalculationService.checkStatusAction(cpuMonster);
+    if (!actionResult.canAct) {
+      _battleState!.addLog(actionResult.message);
+      return;
+    }
 
     // 使用可能な技を取得
     final usableSkills = cpuMonster.skills
@@ -234,10 +281,30 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
       }
     }
 
+    // ★Week 2追加: バフ・デバフ効果を適用
+    final statChangeMessages = BattleCalculationService.applyStatChanges(
+      skill: skill,
+      user: cpuMonster,
+      target: playerMonster,
+    );
+    for (var msg in statChangeMessages) {
+      _battleState!.addLog(msg);
+    }
+
+    // ★Week 3追加: 状態異常を付与
+    if (result.damage > 0 && !playerMonster.isFainted) {
+      final statusMessages = BattleCalculationService.applyStatusAilments(
+        skill: skill,
+        target: playerMonster,
+      );
+      for (var msg in statusMessages) {
+        _battleState!.addLog(msg);
+      }
+    }
+
     emit(BattleInProgress(battleState: _battleState!, message: _battleState!.lastActionMessage));
   }
 
-  /// モンスター交代
   /// モンスター交代
 Future<void> _onSwitchMonster(
   SwitchMonster event,
@@ -287,11 +354,14 @@ Future<void> _onSwitchMonster(
     message: '${newMonster.baseMonster.monsterName}に交代！',
   ));
 
-  // 少し待ってからCPU行動
-  await Future.delayed(const Duration(milliseconds: 100));
+  // 瀕死による強制交代の場合はCPU行動をスキップ
+  if (!event.isForcedSwitch) {
+    // 自主的な交代の場合のみCPU攻撃を受ける
+    await Future.delayed(const Duration(milliseconds: 100));
 
-  if (_battleState!.enemyActiveMonster?.canAct == true) {
-    await _executeCpuAction(emit);
+    if (_battleState!.enemyActiveMonster?.canAct == true) {
+      await _executeCpuAction(emit);
+    }
   }
 
   add(const ProcessTurnEnd());
@@ -380,12 +450,69 @@ Future<void> _onSwitchMonster(
     }
     }
 
-    // コスト回復（交代したターンはスキップ）
-    if (!_battleState!.playerSwitchedThisTurn) {
-      _battleState!.playerActiveMonster?.recoverCost();
+    // ★Week 3追加: ターン開始時の状態異常処理
+    if (_battleState!.playerActiveMonster != null) {
+      final statusMessages = BattleCalculationService.processStatusAilmentStart(
+        _battleState!.playerActiveMonster!,
+      );
+      for (var msg in statusMessages) {
+        _battleState!.addLog(msg);
+      }
+      
+      // 状態異常で瀕死になった場合の処理
+      if (_battleState!.playerActiveMonster!.isFainted) {
+        _battleState!.addLog('${_battleState!.playerActiveMonster!.baseMonster.monsterName}は倒れた！');
+      }
     }
-    if (!_battleState!.enemySwitchedThisTurn) {
-      _battleState!.enemyActiveMonster?.recoverCost();
+
+    if (_battleState!.enemyActiveMonster != null) {
+      final statusMessages = BattleCalculationService.processStatusAilmentStart(
+        _battleState!.enemyActiveMonster!,
+      );
+      for (var msg in statusMessages) {
+        _battleState!.addLog(msg);
+      }
+      
+      if (_battleState!.enemyActiveMonster!.isFainted) {
+        _battleState!.addLog('${_battleState!.enemyActiveMonster!.baseMonster.monsterName}は倒れた！');
+      }
+    }
+
+    // コスト回復（交代したターンはスキップ、麻痺状態は回復量-1）
+    if (!_battleState!.playerSwitchedThisTurn && _battleState!.playerActiveMonster != null) {
+      final recoveryAmount = BattleCalculationService.getCostRecoveryAmount(
+        _battleState!.playerActiveMonster!,
+      );
+      _battleState!.playerActiveMonster!.currentCost = 
+        (_battleState!.playerActiveMonster!.currentCost + recoveryAmount)
+        .clamp(0, _battleState!.playerActiveMonster!.maxCost);
+    }
+    if (!_battleState!.enemySwitchedThisTurn && _battleState!.enemyActiveMonster != null) {
+      final recoveryAmount = BattleCalculationService.getCostRecoveryAmount(
+        _battleState!.enemyActiveMonster!,
+      );
+      _battleState!.enemyActiveMonster!.currentCost = 
+        (_battleState!.enemyActiveMonster!.currentCost + recoveryAmount)
+        .clamp(0, _battleState!.enemyActiveMonster!.maxCost);
+    }
+
+    // ★Week 3追加: ターン終了時の状態異常処理（持続ターン減少）
+    if (_battleState!.playerActiveMonster != null) {
+      final statusMessages = BattleCalculationService.processStatusAilmentEnd(
+        _battleState!.playerActiveMonster!,
+      );
+      for (var msg in statusMessages) {
+        _battleState!.addLog(msg);
+      }
+    }
+
+    if (_battleState!.enemyActiveMonster != null) {
+      final statusMessages = BattleCalculationService.processStatusAilmentEnd(
+        _battleState!.enemyActiveMonster!,
+      );
+      for (var msg in statusMessages) {
+        _battleState!.addLog(msg);
+      }
     }
 
     // 交代フラグをリセット

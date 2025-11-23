@@ -104,7 +104,6 @@ bool get hasAvailableSwitchMonster {
 
   /// プレイヤーの勝利判定
   bool get isPlayerWin {
-    // 場に出した相手のモンスターが全て瀕死
     if (enemyFieldMonsterIds.isEmpty) return false;
     
     final fieldMonsters = enemyParty
@@ -112,7 +111,19 @@ bool get hasAvailableSwitchMonster {
     
     if (fieldMonsters.isEmpty) return false;
     
-    return fieldMonsters.every((m) => m.isFainted);
+    // 場に出した相手のモンスターが全て瀕死かつ、相手が交代できない
+    final allFieldMonstersFainted = fieldMonsters.every((m) => m.isFainted);
+    
+    if (!allFieldMonstersFainted) return false;
+    
+    // 相手が交代可能なモンスターを持っているか確認
+    final enemyHasAvailableMonster = enemyParty.any((m) => 
+      !m.isFainted && 
+      m.baseMonster.id != enemyActiveMonster?.baseMonster.id
+    );
+    
+    // 相手が交代できない = プレイヤー勝利
+    return !enemyHasAvailableMonster;
   }
 
   /// 相手の勝利判定
@@ -124,7 +135,13 @@ bool get hasAvailableSwitchMonster {
     
     if (fieldMonsters.isEmpty) return false;
     
-    return fieldMonsters.every((m) => m.isFainted);
+    // 場に出したモンスターが全て瀕死かつ、交代可能なモンスターがいない
+    final allFieldMonstersFainted = fieldMonsters.every((m) => m.isFainted);
+    
+    if (!allFieldMonstersFainted) return false;
+    
+    // 交代可能なモンスターがいない = 敗北
+    return !hasAvailableSwitchMonster;
   }
 
   /// バトル終了判定
