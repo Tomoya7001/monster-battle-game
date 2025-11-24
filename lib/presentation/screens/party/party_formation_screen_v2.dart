@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../domain/entities/monster.dart';
 import '../../../core/models/monster_filter.dart';
 import '../../bloc/party/party_formation_bloc_v2.dart';
+import '../battle/battle_screen.dart';
+import '../../blocs/auth/auth_bloc.dart';
 
 /// クラロワ風パーティ編成画面V3（完全版）
 class PartyFormationScreenV2 extends StatelessWidget {
@@ -47,8 +49,16 @@ class PartyFormationScreenV2 extends StatelessWidget {
   }
 
   Widget _buildTabContent(BuildContext context, String battleType) {
+    // ★追加: AuthBlocからuserIdを取得（本番対応）
+    final authState = context.read<AuthBloc>().state;
+    String userId = 'dev_user_12345'; // 開発用デフォルト値
+    
+    if (authState is Authenticated) {
+      userId = authState.userId;
+    }
+
     return BlocProvider(
-      create: (context) => PartyFormationBlocV2()
+      create: (context) => PartyFormationBlocV2(userId: userId) // ★userIdを渡す
         ..add(LoadPartyPresetsV2(battleType: battleType)),
       child: _PartyFormationContent(battleType: battleType),
     );
@@ -116,6 +126,10 @@ class _PartyFormationContent extends StatelessWidget {
         Expanded(
           child: _buildMonsterGrid(context, state),
         ),
+
+        // ★追加: バトル開始ボタン
+        if (battleType == 'pvp')
+          _buildBattleButton(context, state),
       ],
     );
   }
@@ -908,5 +922,73 @@ class _PartyFormationContent extends StatelessWidget {
       default:
         return Colors.grey;
     }
+  }
+
+  /// バトル開始ボタン
+Widget _buildBattleButton(BuildContext context, PartyFormationLoadedV2 state) {
+  final canStartBattle = state.selectedMonsters.length >= 3;
+  
+  return Container(
+    padding: const EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.1),
+          blurRadius: 4,
+          offset: const Offset(0, -2),
+        ),
+      ],
+    ),
+    child: ElevatedButton.icon(
+      onPressed: canStartBattle
+          ? () => _startBattle(context, state)
+          : null,
+      icon: const Icon(Icons.play_arrow, size: 24),
+      label: Text(
+        canStartBattle
+            ? 'バトル開始 (${state.selectedMonsters.length}体)'
+            : '最低3体選択してください',
+        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      ),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.red[600],
+        disabledBackgroundColor: Colors.grey[300],
+        minimumSize: const Size(double.infinity, 52),
+      ),
+    ),
+  );
+}
+
+  /// バトル開始処理
+  void _startBattle(BuildContext context, PartyFormationLoadedV2 state) {
+    if (state.selectedMonsters.length < 3) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('最低3体のモンスターを選択してください')),
+      );
+      return;
+    }
+
+    // PvPの場合は重複チェック
+    if (battleType == 'pvp') {
+      final monsterIds = state.selectedMonsters.map((m) => m.monsterId).toList();
+      final uniqueIds = monsterIds.toSet();
+      
+      if (monsterIds.length != uniqueIds.length) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('PvPでは同じモンスターを複数選択できません')),
+        );
+        return;
+      }
+    }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => BattleScreen(
+          playerParty: state.selectedMonsters,
+        ),
+      ),
+    );
   }
 }

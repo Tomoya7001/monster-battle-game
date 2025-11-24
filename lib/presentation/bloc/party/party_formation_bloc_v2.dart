@@ -214,7 +214,13 @@ class PartyFormationBlocV2 extends Bloc<PartyFormationEventV2, PartyFormationSta
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   late final MonsterRepositoryImpl _monsterRepository;
 
-  PartyFormationBlocV2() : super(const PartyFormationInitialV2()) {
+  // ★追加: userIdフィールド
+  final String userId;
+
+  // ★修正: コンストラクタでuserIdを受け取る（デフォルト値付き）
+  PartyFormationBlocV2({
+    this.userId = 'dev_user_12345', // 開発用デフォルト値
+  }) : super(const PartyFormationInitialV2()) {
     _monsterRepository = MonsterRepositoryImpl(_firestore);
     
     on<LoadPartyPresetsV2>(_onLoadPartyPresets);
@@ -236,7 +242,7 @@ class PartyFormationBlocV2 extends Bloc<PartyFormationEventV2, PartyFormationSta
     emit(const PartyFormationLoadingV2());
 
     try {
-      final userId = 'dev_user_12345'; // TODO: 実際のuserIdに置き換え
+      //final userId = 'dev_user_12345'; // TODO: 実際のuserIdに置き換え
 
       // 全モンスター取得
       final monsters = await _monsterRepository.getMonsters(userId);
@@ -504,18 +510,11 @@ class PartyFormationBlocV2 extends Bloc<PartyFormationEventV2, PartyFormationSta
     if (currentState.currentPresetNumber == null) return;
 
     try {
-      final userId = 'dev_user_12345'; // TODO: 実際のuserIdに置き換え
       final presetNumber = currentState.currentPresetNumber!;
-      final monsterIds =
-          currentState.selectedMonsters.map((m) => m.id).toList();
+      final monsterIds = currentState.selectedMonsters.map((m) => m.id).toList();
 
-      // 既存プリセット検索
-      final existingSnapshot = await _firestore
-          .collection('party_presets')
-          .where('user_id', isEqualTo: userId)
-          .where('battle_type', isEqualTo: currentState.battleType)
-          .where('preset_number', isEqualTo: presetNumber)
-          .get();
+      // ★修正: ドキュメントIDを予測可能にする
+      final docId = '${userId}_${currentState.battleType}_$presetNumber';
 
       final presetData = {
         'user_id': userId,
@@ -527,28 +526,22 @@ class PartyFormationBlocV2 extends Bloc<PartyFormationEventV2, PartyFormationSta
         'updated_at': FieldValue.serverTimestamp(),
       };
 
-      if (existingSnapshot.docs.isNotEmpty) {
-        // 更新
-        await _firestore
-            .collection('party_presets')
-            .doc(existingSnapshot.docs.first.id)
-            .update(presetData);
-      } else {
-        // 新規作成
-        await _firestore.collection('party_presets').add({
-          ...presetData,
-          'created_at': FieldValue.serverTimestamp(),
-        });
-      }
+      // ★修正: get()を使わずに直接set()
+      await _firestore
+          .collection('party_presets')
+          .doc(docId)
+          .set({
+            ...presetData,
+            'created_at': FieldValue.serverTimestamp(),
+          }, SetOptions(merge: true)); // mergeで既存データと統合
 
       // 他のプリセットを非アクティブに
       await _deactivateOtherPresets(
         userId: userId,
         battleType: currentState.battleType,
-        presetNumber: presetNumber,
+        currentDocId: docId,
       );
     } catch (e) {
-      // エラーは無視（バックグラウンド保存のため）
       print('Firestore保存エラー: $e');
     }
   }
@@ -556,19 +549,23 @@ class PartyFormationBlocV2 extends Bloc<PartyFormationEventV2, PartyFormationSta
   Future<void> _deactivateOtherPresets({
     required String userId,
     required String battleType,
-    required int presetNumber,
+    required String currentDocId, // ★変更: presetNumber → currentDocId
   }) async {
+    // ★修正: クエリを単純化（user_idのみ）
     final snapshot = await _firestore
         .collection('party_presets')
         .where('user_id', isEqualTo: userId)
-        .where('battle_type', isEqualTo: battleType)
         .get();
 
     final batch = _firestore.batch();
     for (var doc in snapshot.docs) {
-      final data = doc.data();
-      if (data['preset_number'] != presetNumber) {
-        batch.update(doc.reference, {'is_active': false});
+      // ★修正: 現在のドキュメントIDを除外
+      if (doc.id != currentDocId) {
+        final data = doc.data();
+        // 同じbattle_typeのみ非アクティブに
+        if (data['battle_type'] == battleType) {
+          batch.update(doc.reference, {'is_active': false});
+        }
       }
     }
     await batch.commit();
