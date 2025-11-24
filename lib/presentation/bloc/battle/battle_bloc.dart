@@ -438,6 +438,11 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
     emit(BattleInProgress(battleState: _battleState!, message: _battleState!.lastActionMessage));
   }
 
+  /// CPU行動実行（簡易AI）- ラッパーメソッド
+  Future<void> _executeCpuAction(Emitter<BattleState> emit) async {
+    await _executeCpuActionWithSkill(emit, null);
+  }
+
   /// モンスター交代
 Future<void> _onSwitchMonster(
   SwitchMonster event,

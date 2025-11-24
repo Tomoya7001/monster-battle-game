@@ -153,6 +153,24 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
               ),
+
+              // ★追加: パーティ編成ボタン
+              const SizedBox(height: 16),
+              
+              ElevatedButton.icon(
+                onPressed: () {
+                  context.push('/party-formation?battleType=pvp');
+                },
+                icon: const Icon(Icons.groups),
+                label: const Text('パーティ編成'),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 32,
+                    vertical: 16,
+                  ),
+                  backgroundColor: Colors.green,
+                ),
+              ),
               
               const SizedBox(height: 16),
               

@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../domain/entities/monster.dart';
 import '../../domain/repositories/monster_repository.dart';
-import '../models/monster_model.dart';
+import '../../core/models/monster_model.dart';
 
 class MonsterRepositoryImpl implements MonsterRepository {
   final FirebaseFirestore _firestore;
@@ -14,10 +14,9 @@ class MonsterRepositoryImpl implements MonsterRepository {
   Future<List<Monster>> getMonsters(String userId) async {
     try {
       final snapshot = await _firestore
-          .collection(_collection)
-          .where('user_id', isEqualTo: userId)
-          .orderBy('acquired_at', descending: true)
-          .get();
+        .collection(_collection)
+        .where('user_id', isEqualTo: userId)
+        .get();
 
       // モンスターIDを収集
       final monsterIds = snapshot.docs

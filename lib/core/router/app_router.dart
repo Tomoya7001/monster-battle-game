@@ -9,6 +9,8 @@ import '../../presentation/screens/auth/signup_screen.dart';
 import '../../presentation/screens/home/home_screen.dart';
 import '../../presentation/screens/test/firestore_test_screen.dart';
 import '../../presentation/blocs/auth/auth_bloc.dart';
+import '../../presentation/screens/party/party_formation_screen.dart';
+import '../../presentation/bloc/party/party_formation_bloc.dart';
 
 /// アプリケーション全体のルーティング設定
 class AppRouter {
@@ -83,6 +85,23 @@ class AppRouter {
           key: state.pageKey,
           child: const DataImportScreen(),
         ),
+      ),
+
+      // 修正後
+      GoRoute(
+        path: '/party-formation',
+        name: 'party-formation',
+        pageBuilder: (context, state) {
+          final battleType = state.uri.queryParameters['battleType'] ?? 'pvp';
+          return MaterialPage(
+            key: state.pageKey,
+            child: BlocProvider(
+              create: (context) => PartyFormationBloc()
+                ..add(LoadPartyPresets(battleType: battleType)),
+              child: PartyFormationScreen(battleType: battleType),
+            ),
+          );
+        },
       ),
     ],
 
