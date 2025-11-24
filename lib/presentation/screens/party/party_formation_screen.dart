@@ -21,6 +21,14 @@ class PartyFormationScreen extends StatelessWidget {
           title: Text(battleType == 'pvp' ? 'PvPパーティ編成' : '冒険パーティ編成'),
           actions: [
             IconButton(
+              icon: const Icon(Icons.refresh),
+              onPressed: () {
+                context.read<PartyFormationBloc>().add(
+                  LoadPartyPresets(battleType: battleType),
+                );
+              },
+            ),
+            IconButton(
               icon: const Icon(Icons.save),
               onPressed: () => _showSaveDialog(context),
             ),
@@ -71,6 +79,9 @@ class PartyFormationScreen extends StatelessWidget {
         Expanded(
           child: _buildMonsterList(context, state),
         ),
+        
+        // バトル開始ボタン
+        _buildBottomBar(context, state),
       ],
     );
   }
@@ -105,16 +116,14 @@ class PartyFormationScreen extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           SizedBox(
-            height: 100,
+            height: 140,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: 5,
               itemBuilder: (context, index) {
                 if (index < state.selectedMonsters.length) {
-                  return _buildSelectedMonsterCard(
-                    context,
-                    state.selectedMonsters[index],
-                  );
+                  final monster = state.selectedMonsters[index];
+                  return _buildSelectedMonsterCard(context, monster, state.battleType);
                 } else {
                   return _buildEmptySlot(context);
                 }
@@ -126,71 +135,68 @@ class PartyFormationScreen extends StatelessWidget {
     );
   }
 
-  /// 選択済みモンスターカード
-  Widget _buildSelectedMonsterCard(BuildContext context, Monster monster) {
+  /// 選択中のモンスターカード
+  Widget _buildSelectedMonsterCard(
+    BuildContext context,
+    Monster monster,
+    String battleType,
+  ) {
     return Container(
-      width: 80,
+      width: 100,
       margin: const EdgeInsets.only(right: 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.blue, width: 2),
-      ),
-      child: Stack(
-        children: [
-          Column(
+      child: Card(
+        child: InkWell(
+          onTap: () {
+            context.read<PartyFormationBloc>().add(RemoveMonster(monsterId: monster.id));
+          },
+          child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // モンスターアイコン（仮）
-              Container(
-                width: 50,
-                height: 50,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  shape: BoxShape.circle,
-                ),
-                child: Center(
-                  child: Text(
-                    monster.monsterName.substring(0, 1),
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+              // モンスター名（完全表示）
+              Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: Text(
+                  monster.monsterName,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
                   ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
                 ),
               ),
-              const SizedBox(height: 4),
+              // レベル
               Text(
                 'Lv${monster.level}',
                 style: const TextStyle(fontSize: 10),
               ),
+              // HP表示
+              Text(
+                'HP: ${monster.currentHp}/${_calculateMaxHp(monster)}',
+                style: const TextStyle(fontSize: 9),
+              ),
+              // 種族・属性
+              Text(
+                '種族: ${monster.species}',
+                style: const TextStyle(fontSize: 9),
+              ),
+              Text(
+                '属性: ${monster.element}',
+                style: const TextStyle(fontSize: 9),
+              ),
+              // 装備数表示
+              if (monster.equippedEquipment.isNotEmpty)
+                Text(
+                  '⚔️ ${monster.equippedEquipment.length}個',
+                  style: const TextStyle(fontSize: 9),
+                ),
+              const SizedBox(height: 4),
+              // 削除ボタン
+              const Icon(Icons.remove_circle, color: Colors.red, size: 20),
             ],
           ),
-          // 削除ボタン
-          Positioned(
-            top: 0,
-            right: 0,
-            child: GestureDetector(
-              onTap: () {
-                context.read<PartyFormationBloc>().add(
-                      RemoveMonster(monsterId: monster.id),
-                    );
-              },
-              child: Container(
-                padding: const EdgeInsets.all(2),
-                decoration: const BoxDecoration(
-                  color: Colors.red,
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.close,
-                  size: 16,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -198,18 +204,12 @@ class PartyFormationScreen extends StatelessWidget {
   /// 空きスロット
   Widget _buildEmptySlot(BuildContext context) {
     return Container(
-      width: 80,
+      width: 100,
       margin: const EdgeInsets.only(right: 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey[300]!, width: 2),
-      ),
-      child: Center(
-        child: Icon(
-          Icons.add,
-          size: 30,
-          color: Colors.grey[400],
+      child: Card(
+        color: Colors.grey[200],
+        child: const Center(
+          child: Icon(Icons.add, size: 40, color: Colors.grey),
         ),
       ),
     );
@@ -217,39 +217,33 @@ class PartyFormationScreen extends StatelessWidget {
 
   /// 手持ちモンスター一覧
   Widget _buildMonsterList(BuildContext context, PartyFormationLoaded state) {
-    // 選択済みモンスターを除外
-    final selectedIds = state.selectedMonsters.map((m) => m.id).toSet();
-    final availableMonsters = state.allMonsters
-        .where((m) => !selectedIds.contains(m.id))
-        .toList();
-
-    if (availableMonsters.isEmpty) {
-      return const Center(
-        child: Text('選択可能なモンスターがいません'),
-      );
+    if (state.allMonsters.isEmpty) {
+      return const Center(child: Text('モンスターがいません'));
     }
 
     return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: availableMonsters.length,
+      itemCount: state.allMonsters.length,
       itemBuilder: (context, index) {
-        final monster = availableMonsters[index];
-        
-        // PvPで同じモンスターIDが既に選択されているかチェック
+        final monster = state.allMonsters[index];
+        final isSelected = state.selectedMonsters.any((m) => m.id == monster.id);
+        final canSelect = !isSelected && state.selectedMonsters.length < 5;
+
+        // PvPの場合、同じmonsterIdが選択されていないかチェック
         final isDuplicate = state.battleType == 'pvp' &&
             state.selectedMonsters.any((m) => m.monsterId == monster.monsterId);
 
         return _buildMonsterListTile(
           context,
           monster,
-          isDuplicate: isDuplicate,
-          onTap: isDuplicate
-              ? null
-              : () {
-                  context.read<PartyFormationBloc>().add(
-                        SelectMonster(monster: monster),
-                      );
-                },
+          isSelected: isSelected,
+          canSelect: canSelect && !isDuplicate,
+          onTap: () {
+            if (isSelected) {
+              context.read<PartyFormationBloc>().add(RemoveMonster(monsterId: monster.id));
+            } else if (canSelect && !isDuplicate) {
+              context.read<PartyFormationBloc>().add(SelectMonster(monster: monster));
+            }
+          },
         );
       },
     );
@@ -259,37 +253,24 @@ class PartyFormationScreen extends StatelessWidget {
   Widget _buildMonsterListTile(
     BuildContext context,
     Monster monster, {
-    bool isDuplicate = false,
-    VoidCallback? onTap,
+    required bool isSelected,
+    required bool canSelect,
+    required VoidCallback onTap,
   }) {
     return Card(
-      margin: const EdgeInsets.only(bottom: 8),
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      color: isSelected ? Colors.blue[50] : null,
       child: ListTile(
-        enabled: !isDuplicate,
-        leading: Container(
-          width: 50,
-          height: 50,
-          decoration: BoxDecoration(
-            color: isDuplicate ? Colors.grey[300] : Colors.blue[100],
-            shape: BoxShape.circle,
-          ),
-          child: Center(
-            child: Text(
-              monster.monsterName.substring(0, 1),
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: isDuplicate ? Colors.grey : Colors.blue[900],
-              ),
-            ),
+        leading: CircleAvatar(
+          backgroundColor: _getElementColor(monster.element),
+          child: Text(
+            monster.monsterName.substring(0, 1),
+            style: const TextStyle(color: Colors.white),
           ),
         ),
         title: Text(
           monster.monsterName,
-          style: TextStyle(
-            color: isDuplicate ? Colors.grey : Colors.black,
-            fontWeight: FontWeight.bold,
-          ),
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -297,19 +278,91 @@ class PartyFormationScreen extends StatelessWidget {
             Text('Lv.${monster.level}'),
             Text('HP: ${monster.currentHp}/${_calculateMaxHp(monster)}'),
             Text('種族: ${monster.species} / 属性: ${monster.element}'),
+            if (monster.equippedEquipment.isNotEmpty)
+              Text('装備: ${monster.equippedEquipment.length}個'),
           ],
         ),
-        trailing: isDuplicate
-            ? const Icon(Icons.block, color: Colors.red)
-            : const Icon(Icons.add_circle, color: Colors.blue),
+        trailing: isSelected
+            ? const Icon(Icons.check_circle, color: Colors.green)
+            : canSelect
+                ? const Icon(Icons.add_circle, color: Colors.blue)
+                : const Icon(Icons.block, color: Colors.grey),
         onTap: onTap,
       ),
     );
   }
 
-  /// 最大HP計算（仮実装）
+  /// 属性カラー
+  Color _getElementColor(String element) {
+    switch (element.toLowerCase()) {
+      case 'fire':
+        return Colors.red;
+      case 'water':
+        return Colors.blue;
+      case 'thunder':
+        return Colors.yellow[700]!;
+      case 'wind':
+        return Colors.green;
+      case 'earth':
+        return Colors.brown;
+      case 'light':
+        return Colors.amber;
+      case 'dark':
+        return Colors.purple;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  /// 最大HP計算
   int _calculateMaxHp(Monster monster) {
-    return monster.baseHp + (monster.level * 2);
+    return monster.maxHp;
+  }
+
+  /// 底部バー（バトル開始ボタン）
+  Widget _buildBottomBar(BuildContext context, PartyFormationLoaded state) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            blurRadius: 4,
+            offset: const Offset(0, -2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: ElevatedButton.icon(
+              onPressed: state.selectedMonsters.isEmpty
+                  ? null
+                  : () => _navigateToBattle(context, state),
+              icon: const Icon(Icons.play_arrow),
+              label: Text(
+                state.battleType == 'pvp' ? 'マッチング開始' : '冒険に出発',
+                style: const TextStyle(fontSize: 16),
+              ),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// バトル画面への遷移
+  void _navigateToBattle(BuildContext context, PartyFormationLoaded state) {
+    // TODO: バトル画面への遷移処理を実装
+    // context.go('/battle', extra: {'monsters': state.selectedMonsters, 'battleType': state.battleType});
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('バトル画面への遷移は未実装です')),
+    );
   }
 
   /// 保存ダイアログ
@@ -319,6 +372,11 @@ class PartyFormationScreen extends StatelessWidget {
     final state = bloc.state;
 
     if (state is! PartyFormationLoaded) return;
+
+    // 現在のプリセットを編集する場合、名前を初期値に
+    if (state.currentPreset != null) {
+      nameController.text = state.currentPreset!.name;
+    }
 
     showDialog(
       context: context,
@@ -333,6 +391,7 @@ class PartyFormationScreen extends StatelessWidget {
                 labelText: 'プリセット名',
                 hintText: '例: バランス型',
               ),
+              autofocus: true,
             ),
             const SizedBox(height: 16),
             Text('選択中: ${state.selectedMonsters.length}体'),
@@ -360,6 +419,7 @@ class PartyFormationScreen extends StatelessWidget {
               }
 
               bloc.add(SavePartyPreset(
+                presetId: state.currentPreset?.id,
                 name: nameController.text,
                 isActive: true,
               ));
@@ -397,22 +457,17 @@ class PartyFormationScreen extends StatelessWidget {
 
                     return ListTile(
                       leading: Icon(
-                        isActive ? Icons.check_circle : Icons.circle_outlined,
-                        color: isActive ? Colors.blue : Colors.grey,
+                        isActive ? Icons.star : Icons.star_border,
+                        color: isActive ? Colors.amber : Colors.grey,
                       ),
-                      title: Text(
-                        preset.name,
-                        style: TextStyle(
-                          fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-                        ),
-                      ),
+                      title: Text(preset.name),
                       subtitle: Text('${preset.monsterIds.length}体'),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           if (!isActive)
                             IconButton(
-                              icon: const Icon(Icons.play_arrow, color: Colors.blue),
+                              icon: const Icon(Icons.check, color: Colors.green),
                               onPressed: () {
                                 bloc.add(ActivatePreset(presetId: preset.id));
                                 Navigator.of(dialogContext).pop();
@@ -422,13 +477,17 @@ class PartyFormationScreen extends StatelessWidget {
                           IconButton(
                             icon: const Icon(Icons.delete, color: Colors.red),
                             onPressed: () {
-                              bloc.add(DeletePartyPreset(presetId: preset.id));
+                              _confirmDeletePreset(context, bloc, preset.id);
                               Navigator.of(dialogContext).pop();
                             },
                             tooltip: '削除',
                           ),
                         ],
                       ),
+                      onTap: () {
+                        bloc.add(ActivatePreset(presetId: preset.id));
+                        Navigator.of(dialogContext).pop();
+                      },
                     );
                   },
                 ),
@@ -437,6 +496,33 @@ class PartyFormationScreen extends StatelessWidget {
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(),
             child: const Text('閉じる'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// プリセット削除確認
+  void _confirmDeletePreset(BuildContext context, PartyFormationBloc bloc, String presetId) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('プリセット削除'),
+        content: const Text('このプリセットを削除してもよろしいですか?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('キャンセル'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              bloc.add(DeletePartyPreset(presetId: presetId));
+              Navigator.of(dialogContext).pop();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+            ),
+            child: const Text('削除'),
           ),
         ],
       ),

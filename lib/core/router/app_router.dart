@@ -9,8 +9,9 @@ import '../../presentation/screens/auth/signup_screen.dart';
 import '../../presentation/screens/home/home_screen.dart';
 import '../../presentation/screens/test/firestore_test_screen.dart';
 import '../../presentation/blocs/auth/auth_bloc.dart';
-import '../../presentation/screens/party/party_formation_screen.dart';
-import '../../presentation/bloc/party/party_formation_bloc.dart';
+// ★ 修正: V2版をインポート
+import '../../presentation/screens/party/party_formation_screen_v2.dart';
+import '../../presentation/bloc/party/party_formation_bloc_v2.dart';
 
 /// アプリケーション全体のルーティング設定
 class AppRouter {
@@ -19,13 +20,13 @@ class AppRouter {
   static const String login = '/login';
   static const String signup = '/signup';
   static const String home = '/home';
-  static const String test = '/test';  // 🔥 追加
+  static const String test = '/test';
   static const String dataImport = '/admin/data-import';
 
   /// GoRouterインスタンス
   static final GoRouter router = GoRouter(
     debugLogDiagnostics: true,
-    initialLocation: AppRouter.splash,  // 🔥 テスト用に一時変更（後で splash に戻す）
+    initialLocation: AppRouter.splash,
     routes: [
       // スプラッシュ画面
       GoRoute(
@@ -67,7 +68,7 @@ class AppRouter {
         ),
       ),
 
-      // 🔥 Firestoreテスト画面（追加）
+      // Firestoreテスト画面
       GoRoute(
         path: test,
         name: 'test',
@@ -77,7 +78,7 @@ class AppRouter {
         ),
       ),
 
-      // ★追加: マスターデータ投入画面
+      // マスターデータ投入画面
       GoRoute(
         path: dataImport,
         name: 'data-import',
@@ -87,23 +88,18 @@ class AppRouter {
         ),
       ),
 
-      // 修正後
+      // ★ 修正: パーティ編成画面（V2版）
       GoRoute(
         path: '/party-formation',
         name: 'party-formation',
         pageBuilder: (context, state) {
-          final battleType = state.uri.queryParameters['battleType'] ?? 'pvp';
           return MaterialPage(
             key: state.pageKey,
-            child: BlocProvider(
-              create: (context) => PartyFormationBloc()
-                ..add(LoadPartyPresets(battleType: battleType)),
-              child: PartyFormationScreen(battleType: battleType),
-            ),
+            child: const PartyFormationScreenV2(),
           );
         },
       ),
-    ],
+    ],  // ← この閉じ括弧を追加
 
     // エラーページ
     errorPageBuilder: (context, state) => MaterialPage(

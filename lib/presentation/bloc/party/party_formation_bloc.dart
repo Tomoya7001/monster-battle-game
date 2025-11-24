@@ -33,39 +33,66 @@ class PartyFormationBloc extends Bloc<PartyFormationEvent, PartyFormationState> 
     emit(const PartyFormationLoading());
 
     try {
-      // TODO: 実際のuserIdに置き換え
+      // TODO: 実際のuserIdに置き換え（Firebase Authenticationから取得）
       final userId = 'dev_user_12345';
 
-      // 修正後（orderByを削除）
-    final presetsSnapshot = await _firestore
-        .collection('party_presets')
-        .where('user_id', isEqualTo: userId)
-        .where('battle_type', isEqualTo: event.battleType)
-        .get();
+      // プリセット取得
+      final presetsSnapshot = await _firestore
+          .collection('party_presets')
+          .where('user_id', isEqualTo: userId)
+          .where('battle_type', isEqualTo: event.battleType)
+          .get();
 
-      final presets = presetsSnapshot.docs
-          .map((doc) => PartyPreset.fromJson({...doc.data(), 'id': doc.id}))
-          .toList();
+      final presets = <PartyPreset>[];
+      for (var doc in presetsSnapshot.docs) {
+        try {
+          final data = doc.data();
+          final preset = PartyPreset.fromJson({
+            ...data,
+            'id': doc.id,
+          });
+          presets.add(preset);
+        } catch (e) {
+          print('プリセット読み込みエラー (${doc.id}): $e');
+          // 不正なプリセットは無視して続行
+          continue;
+        }
+      }
 
       // 手持ちモンスター取得（MonsterRepositoryを使用）
+      // 常に最新のモンスター情報を取得（レベルアップ・装備変更を反映）
       final monsters = await _monsterRepository.getMonsters(userId);
 
       // アクティブなプリセット取得
       PartyPreset? activePreset;
       if (presets.isNotEmpty) {
-        activePreset = presets.firstWhere(
-          (p) => p.isActive,
-          orElse: () => presets[0],
-        );
+        try {
+          activePreset = presets.firstWhere((p) => p.isActive);
+        } catch (e) {
+          // isActiveなプリセットがない場合は最初のプリセットを使用
+          activePreset = presets[0];
+        }
+      }
+
+      // アクティブプリセットのモンスターを選択状態にする
+      List<Monster> selectedMonsters = [];
+      if (activePreset != null) {
+        for (var monsterId in activePreset.monsterIds) {
+          try {
+            final monster = monsters.firstWhere((m) => m.id == monsterId);
+            selectedMonsters.add(monster);
+          } catch (e) {
+            print('モンスターが見つかりません: $monsterId');
+            // モンスターが見つからない場合は無視（削除された可能性）
+          }
+        }
       }
 
       emit(PartyFormationLoaded(
         presets: presets,
         allMonsters: monsters,
         currentPreset: activePreset,
-        selectedMonsters: activePreset != null
-            ? monsters.where((m) => activePreset!.monsterIds.contains(m.id)).toList()
-            : [],
+        selectedMonsters: selectedMonsters,
         battleType: event.battleType,
       ));
     } catch (e) {
@@ -91,7 +118,7 @@ class PartyFormationBloc extends Bloc<PartyFormationEvent, PartyFormationState> 
       return;
     }
 
-    // PvPの場合、同一モンスターチェック
+    // PvPの場合、同一モンスターID（マスターID）チェック
     if (currentState.battleType == 'pvp') {
       if (selectedMonsters.any((m) => m.monsterId == event.monster.monsterId)) {
         emit(currentState.copyWith(
@@ -99,6 +126,14 @@ class PartyFormationBloc extends Bloc<PartyFormationEvent, PartyFormationState> 
         ));
         return;
       }
+    }
+
+    // 既に選択済みかチェック
+    if (selectedMonsters.any((m) => m.id == event.monster.id)) {
+      emit(currentState.copyWith(
+        errorMessage: 'このモンスターは既に選択されています',
+      ));
+      return;
     }
 
     // モンスター追加
@@ -140,28 +175,25 @@ class PartyFormationBloc extends Bloc<PartyFormationEvent, PartyFormationState> 
       // TODO: 実際のuserIdに置き換え
       final userId = 'dev_user_12345';
 
-      final presetData = {
-        'user_id': userId,
-        'name': event.name,
-        'battle_type': currentState.battleType,
-        'monster_ids': currentState.selectedMonsters.map((m) => m.id).toList(),
-        'is_active': event.isActive,
-        'created_at': FieldValue.serverTimestamp(),
-        'updated_at': FieldValue.serverTimestamp(),
-      };
-
       if (event.presetId != null) {
-        // 更新
-        await _firestore
-            .collection('party_presets')
-            .doc(event.presetId)
-            .update({
-          ...presetData,
-          'created_at': FieldValue.serverTimestamp(), // 保持
-        });
+        // 既存プリセット更新
+        await _updatePreset(
+          userId: userId,
+          presetId: event.presetId!,
+          name: event.name,
+          battleType: currentState.battleType,
+          monsterIds: currentState.selectedMonsters.map((m) => m.id).toList(),
+          isActive: event.isActive,
+        );
       } else {
-        // 新規作成
-        await _firestore.collection('party_presets').add(presetData);
+        // 新規プリセット作成
+        await _createPreset(
+          userId: userId,
+          name: event.name,
+          battleType: currentState.battleType,
+          monsterIds: currentState.selectedMonsters.map((m) => m.id).toList(),
+          isActive: event.isActive,
+        );
       }
 
       // 再読み込み
@@ -169,6 +201,80 @@ class PartyFormationBloc extends Bloc<PartyFormationEvent, PartyFormationState> 
     } catch (e) {
       emit(PartyFormationError(message: 'プリセット保存エラー: $e'));
     }
+  }
+
+  /// プリセット作成
+  Future<void> _createPreset({
+    required String userId,
+    required String name,
+    required String battleType,
+    required List<String> monsterIds,
+    required bool isActive,
+  }) async {
+    // 新規作成時にisActiveがtrueの場合、他のプリセットを非アクティブに
+    if (isActive) {
+      await _deactivateAllPresets(userId: userId, battleType: battleType);
+    }
+
+    await _firestore.collection('party_presets').add({
+      'user_id': userId,
+      'name': name,
+      'battle_type': battleType,
+      'monster_ids': monsterIds,
+      'is_active': isActive,
+      'created_at': FieldValue.serverTimestamp(),
+      'updated_at': FieldValue.serverTimestamp(),
+    });
+  }
+
+  /// プリセット更新
+  Future<void> _updatePreset({
+    required String userId,
+    required String presetId,
+    required String name,
+    required String battleType,
+    required List<String> monsterIds,
+    required bool isActive,
+  }) async {
+    // 更新時にisActiveがtrueの場合、他のプリセットを非アクティブに
+    if (isActive) {
+      await _deactivateAllPresets(
+        userId: userId,
+        battleType: battleType,
+        excludePresetId: presetId,
+      );
+    }
+
+    await _firestore
+        .collection('party_presets')
+        .doc(presetId)
+        .update({
+      'name': name,
+      'monster_ids': monsterIds,
+      'is_active': isActive,
+      'updated_at': FieldValue.serverTimestamp(),
+    });
+  }
+
+  /// 全プリセット非アクティブ化
+  Future<void> _deactivateAllPresets({
+    required String userId,
+    required String battleType,
+    String? excludePresetId,
+  }) async {
+    final presetsSnapshot = await _firestore
+        .collection('party_presets')
+        .where('user_id', isEqualTo: userId)
+        .where('battle_type', isEqualTo: battleType)
+        .get();
+
+    final batch = _firestore.batch();
+    for (var doc in presetsSnapshot.docs) {
+      if (doc.id != excludePresetId) {
+        batch.update(doc.reference, {'is_active': false});
+      }
+    }
+    await batch.commit();
   }
 
   /// プリセット削除
@@ -203,26 +309,20 @@ class PartyFormationBloc extends Bloc<PartyFormationEvent, PartyFormationState> 
       // TODO: 実際のuserIdに置き換え
       final userId = 'dev_user_12345';
 
-      final batch = _firestore.batch();
-
       // すべてのプリセットを非アクティブに
-      final presetsSnapshot = await _firestore
-          .collection('party_presets')
-          .where('user_id', isEqualTo: userId)
-          .where('battle_type', isEqualTo: currentState.battleType)
-          .get();
-
-      for (var doc in presetsSnapshot.docs) {
-        batch.update(doc.reference, {'is_active': false});
-      }
-
-      // 指定されたプリセットをアクティブに
-      batch.update(
-        _firestore.collection('party_presets').doc(event.presetId),
-        {'is_active': true},
+      await _deactivateAllPresets(
+        userId: userId,
+        battleType: currentState.battleType,
       );
 
-      await batch.commit();
+      // 指定されたプリセットをアクティブに
+      await _firestore
+          .collection('party_presets')
+          .doc(event.presetId)
+          .update({
+        'is_active': true,
+        'updated_at': FieldValue.serverTimestamp(),
+      });
 
       // 再読み込み
       add(LoadPartyPresets(battleType: currentState.battleType));

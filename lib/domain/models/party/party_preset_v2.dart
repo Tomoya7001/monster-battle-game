@@ -1,35 +1,38 @@
 import 'package:equatable/equatable.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-/// パーティプリセット
-class PartyPreset extends Equatable {
+/// パーティプリセット v2
+/// presetNumber (1-5) 追加版
+class PartyPresetV2 extends Equatable {
   final String id;
   final String userId;
   final String name;
   final String battleType; // 'pvp' or 'adventure'
+  final int presetNumber; // 1-5
   final List<String> monsterIds; // 最大5体
   final bool isActive;
   final DateTime createdAt;
   final DateTime updatedAt;
 
-  const PartyPreset({
+  const PartyPresetV2({
     required this.id,
     required this.userId,
     required this.name,
     required this.battleType,
+    required this.presetNumber,
     required this.monsterIds,
     required this.isActive,
     required this.createdAt,
     required this.updatedAt,
   });
 
-  factory PartyPreset.fromJson(Map<String, dynamic> json) {
-    // nullチェックとデフォルト値の設定
-    return PartyPreset(
+  factory PartyPresetV2.fromJson(Map<String, dynamic> json) {
+    return PartyPresetV2(
       id: json['id'] as String? ?? '',
       userId: json['user_id'] as String? ?? '',
-      name: json['name'] as String? ?? '無名のプリセット',
+      name: json['name'] as String? ?? '無名のデッキ',
       battleType: json['battle_type'] as String? ?? 'pvp',
+      presetNumber: json['preset_number'] as int? ?? 1,
       monsterIds: _parseMonsterIds(json['monster_ids']),
       isActive: json['is_active'] as bool? ?? false,
       createdAt: _parseDateTime(json['created_at']),
@@ -37,7 +40,6 @@ class PartyPreset extends Equatable {
     );
   }
 
-  /// monster_idsのパース（配列チェック）
   static List<String> _parseMonsterIds(dynamic value) {
     if (value == null) return [];
     if (value is List) {
@@ -46,7 +48,6 @@ class PartyPreset extends Equatable {
     return [];
   }
 
-  /// DateTimeのパース（Timestamp/DateTime/null対応）
   static DateTime _parseDateTime(dynamic value) {
     if (value == null) return DateTime.now();
     if (value is Timestamp) return value.toDate();
@@ -60,6 +61,7 @@ class PartyPreset extends Equatable {
       'user_id': userId,
       'name': name,
       'battle_type': battleType,
+      'preset_number': presetNumber,
       'monster_ids': monsterIds,
       'is_active': isActive,
       'created_at': Timestamp.fromDate(createdAt),
@@ -67,21 +69,23 @@ class PartyPreset extends Equatable {
     };
   }
 
-  PartyPreset copyWith({
+  PartyPresetV2 copyWith({
     String? id,
     String? userId,
     String? name,
     String? battleType,
+    int? presetNumber,
     List<String>? monsterIds,
     bool? isActive,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
-    return PartyPreset(
+    return PartyPresetV2(
       id: id ?? this.id,
       userId: userId ?? this.userId,
       name: name ?? this.name,
       battleType: battleType ?? this.battleType,
+      presetNumber: presetNumber ?? this.presetNumber,
       monsterIds: monsterIds ?? this.monsterIds,
       isActive: isActive ?? this.isActive,
       createdAt: createdAt ?? this.createdAt,
@@ -95,6 +99,7 @@ class PartyPreset extends Equatable {
         userId,
         name,
         battleType,
+        presetNumber,
         monsterIds,
         isActive,
         createdAt,
