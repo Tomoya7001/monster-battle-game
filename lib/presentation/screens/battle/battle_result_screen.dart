@@ -217,10 +217,15 @@ class BattleResultScreen extends StatelessWidget {
   }
 
   Widget _buildRewards() {
-    return Card(
-      elevation: 2,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
+  // ★追加: PvP/CPU戦（stageDataがない）は報酬を表示しない
+  if (stageData == null) {
+    return const SizedBox.shrink();
+  }
+
+  return Card(
+    elevation: 2,
+    child: Padding(
+      padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

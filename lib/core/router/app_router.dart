@@ -118,17 +118,39 @@ class AppRouter {
 
       // ★冒険システム一時無効化
       GoRoute(
-          path: '/adventure',
-          builder: (context, state) {
-            final party = state.extra as List<Monster>?;
-            return BlocProvider(
-              create: (context) => AdventureBloc(
-                repository: AdventureRepository(),
-              )..add(const AdventureEvent.loadStages()),
-              child: const AdventureStageSelectionScreen(),
+        path: '/adventure',
+        builder: (context, state) {
+          final party = state.extra as List<Monster>?;
+          
+          if (party == null || party.isEmpty) {
+            return Scaffold(
+              appBar: AppBar(title: const Text('エラー')),
+              body: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                    const SizedBox(height: 16),
+                    const Text('パーティが選択されていません'),
+                    const SizedBox(height: 24),
+                    ElevatedButton(
+                      onPressed: () => context.go('/home'),
+                      child: const Text('ホームに戻る'),
+                    ),
+                  ],
+                ),
+              ),
             );
-          },
-        ),
+          }
+          
+          return BlocProvider(
+            create: (context) => AdventureBloc(
+              repository: AdventureRepository(),
+            )..add(const AdventureEvent.loadStages()),
+            child: AdventureStageSelectionScreen(party: party),
+          );
+        },
+      ),
     ],  // ← この閉じ括弧を追加
 
     // エラーページ

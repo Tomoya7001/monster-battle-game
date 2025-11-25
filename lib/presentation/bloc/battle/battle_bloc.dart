@@ -87,7 +87,7 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
     }
   }
 
-  /// ★NEW: ステージバトル開始
+  /// ★修正: ステージバトル開始（通常戦・ボス戦対応）
   Future<void> _onStartStageBattle(
     StartStageBattle event,
     Emitter<BattleState> emit,
@@ -102,18 +102,49 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
       final playerParty = await _convertToBattleMonsters(event.playerParty)
           .timeout(const Duration(seconds: 10));
 
-      // ステージ用の敵パーティ生成
-      final enemyParty = await _generateStageEnemyParty(event.stageData)
-          .timeout(const Duration(seconds: 10));
+      final adventureRepo = AdventureRepository();
+      List<BattleMonster> enemyParty;
+
+      // ★修正: ボス戦か通常戦かで敵の取得方法を分岐
+      if (event.stageData.stageType == 'boss') {
+        // ボス戦: 最大3体を取得
+        final bossMonsters = await adventureRepo.getBossMonsters(event.stageData.stageId);
+        
+        if (bossMonsters.isNotEmpty) {
+          enemyParty = await _convertToBattleMonsters(bossMonsters);
+          print('✅ ボスモンスター ${bossMonsters.length}体 取得成功');
+        } else {
+          // フォールバック: ダミー3体
+          print('⚠️ ボスモンスター取得失敗、ダミーを使用');
+          enemyParty = _generateDummyCpuParty();
+        }
+      } else {
+        // 通常戦: ランダム1体
+        final enemyMonster = await adventureRepo.getRandomEncounterMonster(event.stageData.stageId);
+        
+        if (enemyMonster != null) {
+          enemyParty = await _convertToBattleMonsters([enemyMonster]);
+          print('✅ エンカウントモンスター取得成功: ${enemyMonster.monsterName}');
+        } else {
+          // フォールバック: ダミー1体
+          print('⚠️ エンカウントモンスター取得失敗、ダミーを使用');
+          enemyParty = [_generateDummyCpuParty().first];
+        }
+      }
+
+      // ★修正: maxDeployableCountをボス戦は3、通常戦は1に設定
+      final maxDeployable = event.stageData.stageType == 'boss' ? 3 : 1;
 
       _battleState = BattleStateModel(
         playerParty: playerParty,
         enemyParty: enemyParty,
+        battleType: event.stageData.stageType == 'boss' ? 'boss' : 'adventure',
+        maxDeployableCount: maxDeployable,
       );
 
       _battleState!.addLog('${event.stageData.name} 開始！');
 
-      // ★追加: 冒険モードは先頭モンスターを自動選択
+      // 先頭モンスターを自動選択
       final firstMonster = playerParty[0];
       _battleState!.playerActiveMonster = firstMonster;
       _battleState!.playerFieldMonsterIds.add(firstMonster.baseMonster.id);
@@ -125,18 +156,22 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
       _battleState!.enemyActiveMonster = enemyFirstMonster;
       _battleState!.enemyFieldMonsterIds.add(enemyFirstMonster.baseMonster.id);
       enemyFirstMonster.hasParticipated = true;
-      _battleState!.addLog('相手は${enemyFirstMonster.baseMonster.monsterName}を繰り出した！');
+      
+      final enemyAppearMessage = event.stageData.stageType == 'boss'
+          ? 'ボス ${enemyFirstMonster.baseMonster.monsterName}が現れた！'
+          : '野生の${enemyFirstMonster.baseMonster.monsterName}が現れた！';
+      _battleState!.addLog(enemyAppearMessage);
 
-      // ★修正: 行動選択フェーズへ
+      // 行動選択フェーズへ
       _battleState!.phase = BattlePhase.actionSelect;
 
       emit(BattleInProgress(
         battleState: _battleState!,
-        message: '行動を選んでください', // ★修正
+        message: '行動を選んでください',
       ));
     } on FirebaseException catch (e) {
       emit(BattleNetworkError(
-        message: 'ステージデータの読み込みに失敗しました',
+        message: 'ステージデータの読み込みに失敗しました: $e',
         canRetry: true,
       ));
     } on TimeoutException {
@@ -680,14 +715,29 @@ Future<void> _onSwitchMonster(
 
     // バトル終了判定（最優先）
     if (_battleState!.isBattleEnd) {
-      _stopConnectionCheck(); // ★追加
+      _stopConnectionCheck();
       _battleState!.phase = BattlePhase.battleEnd;
       
       if (_battleState!.isPlayerWin) {
         _battleState!.addLog('プレイヤーの勝利！');
         
         try {
-          // ★修正: バトル結果を生成
+          final adventureRepo = AdventureRepository();
+          const userId = 'dev_user_12345';
+          
+          if (_currentStage != null) {
+            // ボス戦の場合は進行状況リセット
+            if (_currentStage!.stageType == 'boss' && _currentStage!.parentStageId != null) {
+              await adventureRepo.resetProgressAfterBossClear(userId, _currentStage!.parentStageId!);
+            } else {
+              // 通常戦は進行状況を更新
+              await adventureRepo.incrementEncounterCount(userId, _currentStage!.stageId);
+            }
+          }
+          
+          // 経験値を実際に付与
+          await _applyExpToMonsters();
+          
           final result = await _generateBattleResult(isWin: true);
           await _saveBattleHistory(isWin: true);
           emit(BattlePlayerWin(
@@ -695,7 +745,6 @@ Future<void> _onSwitchMonster(
             result: result,
           ));
         } catch (e) {
-          // ★追加: 保存失敗時もとりあえず勝利扱い
           print('バトル結果保存エラー: $e');
           emit(BattlePlayerWin(
             battleState: _battleState!,
@@ -729,16 +778,30 @@ Future<void> _onSwitchMonster(
             _battleState!.phase = BattlePhase.monsterFainted;
             _battleState!.addLog('次のモンスターを選んでください');
             emit(BattleInProgress(
-            battleState: _battleState!,
-            message: '次のモンスターを選んでください',
+              battleState: _battleState!,
+              message: '次のモンスターを選んでください',
             ));
             return;
         } else {
-            // 交代可能なモンスターがいない場合は敗北
+            // ★修正: 交代可能なモンスターがいない場合は敗北
+            _stopConnectionCheck();
             _battleState!.phase = BattlePhase.battleEnd;
             _battleState!.addLog('プレイヤーの敗北...');
-            await _saveBattleHistory(isWin: false);
-            emit(BattlePlayerLose(battleState: _battleState!));
+            
+            try {
+              final result = await _generateBattleResult(isWin: false);
+              await _saveBattleHistory(isWin: false);
+              emit(BattlePlayerLose(
+                battleState: _battleState!,
+                result: result,
+              ));
+            } catch (e) {
+              print('バトル結果保存エラー: $e');
+              emit(BattlePlayerLose(
+                battleState: _battleState!,
+                result: null,
+              ));
+            }
             return;
         }
     }
@@ -952,6 +1015,73 @@ Future<void> _onSwitchMonster(
       expGains: expGains,
       completedAt: DateTime.now(),
     );
+  }
+
+  /// ★NEW: 経験値を実際にFirestoreのモンスターに付与
+  Future<void> _applyExpToMonsters() async {
+    if (_battleState == null || _currentStage == null) return;
+
+    try {
+      const userId = 'dev_user_12345';
+      final expReward = _currentStage!.rewards.exp;
+      
+      // 参戦モンスターを取得
+      final participatedMonsters = _battleState!.playerParty
+          .where((m) => m.hasParticipated)
+          .toList();
+
+      if (participatedMonsters.isEmpty || expReward <= 0) return;
+
+      // 経験値を均等に分配
+      final expPerMonster = (expReward / participatedMonsters.length).round();
+
+      for (final battleMonster in participatedMonsters) {
+        final monsterId = battleMonster.baseMonster.id;
+        
+        // user_monstersコレクションから該当モンスターを取得
+        final querySnapshot = await _firestore
+            .collection('user_monsters')
+            .where('user_id', isEqualTo: userId)
+            .where('monster_id', isEqualTo: battleMonster.baseMonster.monsterId)
+            .limit(1)
+            .get();
+
+        if (querySnapshot.docs.isNotEmpty) {
+          final docRef = querySnapshot.docs.first.reference;
+          final currentData = querySnapshot.docs.first.data();
+          final currentExp = currentData['exp'] as int? ?? 0;
+          final currentLevel = currentData['level'] as int? ?? 1;
+          
+          // 新しい経験値を計算
+          final newExp = currentExp + expPerMonster;
+          
+          // レベルアップ判定（簡易版: 100 * レベル で次レベル）
+          int newLevel = currentLevel;
+          int remainingExp = newExp;
+          while (remainingExp >= _getExpForNextLevel(newLevel) && newLevel < 50) {
+            remainingExp -= _getExpForNextLevel(newLevel);
+            newLevel++;
+          }
+          
+          // Firestoreを更新
+          await docRef.update({
+            'exp': remainingExp,
+            'level': newLevel,
+            'updated_at': FieldValue.serverTimestamp(),
+          });
+          
+          print('✅ ${battleMonster.baseMonster.monsterName} に経験値 $expPerMonster 付与 (Lv$currentLevel → Lv$newLevel)');
+        }
+      }
+    } catch (e) {
+      print('❌ 経験値付与エラー: $e');
+    }
+  }
+
+  /// 次のレベルに必要な経験値
+  int _getExpForNextLevel(int currentLevel) {
+    // レベル * 100 の経験値が必要（簡易版）
+    return currentLevel * 100;
   }
 
   /// バトル履歴をFirestoreに保存

@@ -8,11 +8,11 @@
             "recommendedLevel": 5,
             "description": "冒険者たちが最初に訪れる平和な森。弱いスライムたちが生息している。",
             "encounter_monster_ids": [
-                "monster_021",
-                "monster_022",
-                "monster_023",
-                "monster_024",
-                "monster_025"
+                "21",
+                "22",
+                "23",
+                "24",
+                "25"
             ],
             "encounters_to_boss": 5,
             "boss_stage_id": "stage_001_boss",
@@ -41,9 +41,9 @@
             "description": "森の奥深くに潜むボスモンスターたち。3体連続で戦うことになる。",
             "parent_stage_id": "stage_001",
             "boss_monster_ids": [
-                "monster_011",
-                "monster_012",
-                "monster_013"
+                "11",
+                "12",
+                "13"
             ],
             "rewards": {
                 "exp": 200,
@@ -69,9 +69,9 @@
             "recommendedLevel": 10,
             "description": "灼熱の溶岩が流れる危険な洞窟。炎属性のモンスターが多く生息する。",
             "encounter_monster_ids": [
-                "monster_021",
-                "monster_029",
-                "monster_011"
+                "21",
+                "29",
+                "11"
             ],
             "encounters_to_boss": 5,
             "boss_stage_id": "stage_002_boss",
@@ -96,9 +96,9 @@
             "description": "洞窟の最奥に君臨する炎の支配者たち。強力な炎技を使ってくる。",
             "parent_stage_id": "stage_002",
             "boss_monster_ids": [
-                "monster_007",
-                "monster_011",
-                "monster_001"
+                "7",
+                "11",
+                "1"
             ],
             "rewards": {
                 "exp": 300,
