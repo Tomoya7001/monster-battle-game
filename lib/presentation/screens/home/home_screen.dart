@@ -12,6 +12,7 @@ import '../monster/monster_list_screen.dart';
 import '../../bloc/monster/monster_bloc.dart';
 import '../battle/battle_screen.dart';
 import '../battle/battle_selection_screen.dart';
+import '../battle/stage_selection_screen.dart'; // ★追加
 
 /// ホーム画面
 class HomeScreen extends StatelessWidget {
@@ -193,6 +194,49 @@ class HomeScreen extends StatelessWidget {
                     vertical: 16,
                   ),
                   backgroundColor: Colors.red,
+                ),
+              ),
+
+              const SizedBox(height: 16),
+              
+              // ステージ挑戦ボタン
+              ElevatedButton.icon(
+                onPressed: () async {
+                  // パーティを取得（簡易実装）
+                  final monsterService = MonsterService();
+                  final monsters = await monsterService.getUserMonsters(userId ?? 'dev_user_12345');
+                  
+                  if (monsters.isEmpty) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('モンスターがいません。ガチャを引いてください')),
+                      );
+                    }
+                    return;
+                  }
+
+                  // 先頭3体をパーティとして使用
+                  final party = monsters.take(3).toList();
+
+                  if (context.mounted) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => StageSelectionScreen(
+                          playerParty: party,
+                        ),
+                      ),
+                    );
+                  }
+                },
+                icon: const Icon(Icons.flag),
+                label: const Text('ステージ挑戦'),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 32,
+                    vertical: 16,
+                  ),
+                  backgroundColor: Colors.purple,
                 ),
               ),
 

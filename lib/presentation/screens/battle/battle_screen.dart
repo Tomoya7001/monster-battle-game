@@ -7,26 +7,40 @@ import '../../../domain/entities/monster.dart';
 import '../../../domain/models/battle/battle_monster.dart';
 import '../../../domain/models/battle/battle_skill.dart';
 import '../../../domain/models/battle/battle_state_model.dart';
+import '../../../domain/models/stage/stage_data.dart'; // ★追加
+import 'battle_result_screen.dart'; // ★追加
 
 class BattleScreen extends StatelessWidget {
   final List<Monster> playerParty;
+  final StageData? stageData;
 
   const BattleScreen({
     Key? key,
     required this.playerParty,
+    this.stageData,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => BattleBloc()..add(StartCpuBattle(playerParty: playerParty)),
-      child: const _BattleScreenContent(),
+      create: (context) => BattleBloc()
+        ..add(
+          stageData != null
+              ? StartStageBattle(playerParty: playerParty, stageData: stageData!)
+              : StartCpuBattle(playerParty: playerParty),
+        ),
+      child: _BattleScreenContent(stageData: stageData), // ★修正: stageDataを渡す
     );
   }
 }
 
 class _BattleScreenContent extends StatelessWidget {
-  const _BattleScreenContent({Key? key}) : super(key: key);
+  final StageData? stageData; // ★追加
+
+  const _BattleScreenContent({
+    Key? key,
+    this.stageData, // ★追加
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -84,14 +98,72 @@ class _BattleScreenContent extends StatelessWidget {
       body: BlocConsumer<BattleBloc, BattleState>(
         listener: (context, state) {
           if (state is BattlePlayerWin) {
-            _showResultDialog(context, '勝利！', Colors.green);
+            if (state.result != null) {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (ctx) => BattleResultScreen(
+                    result: state.result!,
+                    stageData: stageData, // ★修正: widget.stageData → stageData
+                  ),
+                ),
+              );
+            } else {
+              _showResultDialog(context, '勝利！', Colors.green);
+            }
           } else if (state is BattlePlayerLose) {
-            _showResultDialog(context, '敗北...', Colors.red);
+            if (state.result != null) {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (ctx) => BattleResultScreen(
+                    result: state.result!,
+                    stageData: stageData, // ★修正: widget.stageData → stageData
+                  ),
+                ),
+              );
+            } else {
+              _showResultDialog(context, '敗北...', Colors.red);
+            }
+          } else if (state is BattleNetworkError) {
+            _showErrorDialog(
+              context,
+              'ネットワークエラー',
+              state.message,
+              canRetry: state.canRetry,
+            );
+          } else if (state is BattleDataError) {
+            _showErrorDialog(
+              context,
+              'データエラー',
+              state.message,
+              canRetry: false,
+            );
           }
         },
         builder: (context, state) {
           if (state is BattleLoading) {
             return const Center(child: CircularProgressIndicator());
+          }
+
+          if (state is BattleNetworkError) {
+            return _buildErrorView(
+              context,
+              state.battleState,
+              'ネットワークエラー',
+              state.message,
+              canRetry: state.canRetry,
+            );
+          }
+
+          if (state is BattleDataError) {
+            return _buildErrorView(
+              context,
+              null,
+              'データエラー',
+              state.message,
+              canRetry: false,
+            );
           }
 
           if (state is BattleError) {
@@ -111,6 +183,117 @@ class _BattleScreenContent extends StatelessWidget {
 
           return const Center(child: Text('バトル準備中...'));
         },
+      ),
+    );
+  }
+  
+  Widget _buildErrorView(
+    BuildContext context,
+    BattleStateModel? battleState,
+    String title,
+    String message, {
+    bool canRetry = true,
+  }) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.error_outline,
+              size: 72,
+              color: Colors.red,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 16),
+            ),
+            const SizedBox(height: 24),
+            
+            if (canRetry) ...[
+              ElevatedButton.icon(
+                onPressed: () {
+                  context.read<BattleBloc>().add(const RetryAfterError());
+                },
+                icon: const Icon(Icons.refresh),
+                label: const Text('再試行'),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+            ],
+            
+            OutlinedButton.icon(
+              onPressed: () {
+                context.read<BattleBloc>().add(const ForceBattleEnd());
+                Navigator.pop(context);
+              },
+              icon: const Icon(Icons.close),
+              label: const Text('バトルを終了'),
+              style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showErrorDialog(
+    BuildContext context,
+    String title,
+    String message, {
+    bool canRetry = true,
+  }) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => AlertDialog(
+        title: Row(
+          children: [
+            const Icon(Icons.error_outline, color: Colors.red),
+            const SizedBox(width: 8),
+            Text(title),
+          ],
+        ),
+        content: Text(message),
+        actions: [
+          if (canRetry)
+            TextButton(
+              onPressed: () {
+                Navigator.pop(ctx);
+                context.read<BattleBloc>().add(const RetryAfterError());
+              },
+              child: const Text('再試行'),
+            ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              context.read<BattleBloc>().add(const ForceBattleEnd());
+              Navigator.pop(context);
+            },
+            child: const Text('終了'),
+          ),
+        ],
       ),
     );
   }

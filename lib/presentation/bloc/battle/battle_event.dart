@@ -1,6 +1,9 @@
+// 行数不明のため、完全なソース提供
+
 import 'package:equatable/equatable.dart';
 import '../../../domain/entities/monster.dart';
 import '../../../domain/models/battle/battle_skill.dart';
+import '../../../domain/models/stage/stage_data.dart'; // ★追加
 
 abstract class BattleEvent extends Equatable {
   const BattleEvent();
@@ -9,7 +12,7 @@ abstract class BattleEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-/// バトル開始（CPUバトル）
+/// CPUバトル開始
 class StartCpuBattle extends BattleEvent {
   final List<Monster> playerParty;
 
@@ -17,6 +20,20 @@ class StartCpuBattle extends BattleEvent {
 
   @override
   List<Object?> get props => [playerParty];
+}
+
+/// ★NEW: ステージバトル開始
+class StartStageBattle extends BattleEvent {
+  final List<Monster> playerParty;
+  final StageData stageData;
+
+  const StartStageBattle({
+    required this.playerParty,
+    required this.stageData,
+  });
+
+  @override
+  List<Object?> get props => [playerParty, stageData];
 }
 
 /// 初期モンスター選択
@@ -29,7 +46,7 @@ class SelectFirstMonster extends BattleEvent {
   List<Object?> get props => [monsterId];
 }
 
-/// 技を使用
+/// 技使用
 class UseSkill extends BattleEvent {
   final BattleSkill skill;
 
@@ -42,18 +59,18 @@ class UseSkill extends BattleEvent {
 /// モンスター交代
 class SwitchMonster extends BattleEvent {
   final String monsterId;
-  final bool isForcedSwitch; // 瀕死による強制交代かどうか
+  final bool isForcedSwitch;
 
   const SwitchMonster({
     required this.monsterId,
-    this.isForcedSwitch = false, // デフォルトは自主的な交代
+    this.isForcedSwitch = false,
   });
 
   @override
   List<Object?> get props => [monsterId, isForcedSwitch];
 }
 
-/// 待機（ターンスキップ）
+/// 待機
 class WaitTurn extends BattleEvent {
   const WaitTurn();
 }
@@ -66,4 +83,14 @@ class ProcessTurnEnd extends BattleEvent {
 /// バトル終了
 class EndBattle extends BattleEvent {
   const EndBattle();
+}
+
+/// ★NEW: エラーリトライ
+class RetryAfterError extends BattleEvent {
+  const RetryAfterError();
+}
+
+/// ★NEW: バトル強制終了
+class ForceBattleEnd extends BattleEvent {
+  const ForceBattleEnd();
 }

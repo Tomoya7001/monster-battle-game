@@ -190,6 +190,51 @@ class DataImporter {
       rethrow;
     }
   }
+
+  /// ステージマスターデータを投入
+  Future<void> importStageMasters() async {
+    try {
+      print('📦 ステージマスターデータ読み込み中...');
+      
+      final String jsonString = await rootBundle
+          .loadString('assets/data/stage_masters_data.json');
+      final Map<String, dynamic> data = json.decode(jsonString);
+      
+      print('✅ JSONファイル読み込み完了');
+      
+      final batch = _firestore.batch();
+      int count = 0;
+      
+      for (var stage in data['stages']) {
+        final stageMap = Map<String, dynamic>.from(stage as Map);
+        final docRef = _firestore
+            .collection('stage_masters')
+            .doc(stageMap['stage_id'].toString());
+        
+        batch.set(docRef, {
+          ...stageMap,
+          'created_at': FieldValue.serverTimestamp(),
+          'updated_at': FieldValue.serverTimestamp(),
+        });
+        count++;
+        
+        if (count % 500 == 0) {
+          await batch.commit();
+          print('✅ $count 件のステージマスターを投入');
+        }
+      }
+      
+      if (count % 500 != 0) {
+        await batch.commit();
+      }
+      
+      print('✅ ステージマスターデータ投入完了: $count 件');
+    } catch (e, stackTrace) {
+      print('❌ エラー: $e');
+      print('スタックトレース: $stackTrace');
+      rethrow;
+    }
+  }
   
   /// すべてのマスターデータを一括投入
   Future<Map<String, int>> importAllMasterData() async {
@@ -224,6 +269,11 @@ class DataImporter {
       // 特性
       await importTraitMasters();
       results['traits'] = await _getCollectionCount('trait_masters');
+      print('');
+
+      // ★追加: ステージ
+      await importStageMasters();
+      results['stages'] = await _getCollectionCount('stage_masters');
       print('');
       
       print('====================================');

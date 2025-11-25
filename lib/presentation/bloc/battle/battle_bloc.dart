@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:math';
+import 'dart:async';
 
 import 'battle_event.dart';
 import 'battle_state.dart';
@@ -8,6 +9,8 @@ import '../../../domain/entities/monster.dart';
 import '../../../domain/models/battle/battle_monster.dart';
 import '../../../domain/models/battle/battle_skill.dart';
 import '../../../domain/models/battle/battle_state_model.dart';
+import '../../../domain/models/stage/stage_data.dart'; // ★追加
+import '../../../domain/models/battle/battle_result.dart'; // ★追加
 import '../../../core/services/battle/battle_calculation_service.dart';
 import '../../../core/models/monster_model.dart';
 
@@ -16,15 +19,20 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
   final Random _random = Random();
   
   BattleStateModel? _battleState;
+  StageData? _currentStage; // ★追加
+  Timer? _connectionCheckTimer; // ★追加
 
   BattleBloc() : super(const BattleInitial()) {
     on<StartCpuBattle>(_onStartCpuBattle);
+    on<StartStageBattle>(_onStartStageBattle); // ★追加
     on<SelectFirstMonster>(_onSelectFirstMonster);
     on<UseSkill>(_onUseSkill);
     on<SwitchMonster>(_onSwitchMonster);
     on<WaitTurn>(_onWaitTurn);
     on<ProcessTurnEnd>(_onProcessTurnEnd);
     on<EndBattle>(_onEndBattle);
+    on<RetryAfterError>(_onRetryAfterError); // ★追加
+    on<ForceBattleEnd>(_onForceBattleEnd); // ★追加
   }
 
   /// CPUバトル開始
@@ -35,6 +43,9 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
     emit(const BattleLoading());
 
     try {
+      // ★追加: 接続チェック開始
+      _startConnectionCheck();
+
       // プレイヤーパーティのBattleMonster変換
       final playerParty = await _convertToBattleMonsters(event.playerParty);
       
@@ -52,8 +63,125 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
         battleState: _battleState!,
         message: '最初に出すモンスターを選んでください',
       ));
-    } catch (e) {
+    } on FirebaseException catch (e) {
+      // ★追加: Firebaseエラー
+      emit(BattleNetworkError(
+        message: 'ネットワークエラーが発生しました',
+        canRetry: true,
+      ));
+    } on TimeoutException {
+      // ★追加: タイムアウト
+      emit(const BattleNetworkError(
+        message: '接続がタイムアウトしました',
+        canRetry: true,
+      ));
+    } catch (e, stackTrace) {
+      // ★追加: 詳細エラーログ
+      print('バトル開始エラー: $e');
+      print('スタックトレース: $stackTrace');
       emit(BattleError(message: 'バトル開始エラー: $e'));
+    }
+  }
+
+  /// ★NEW: ステージバトル開始
+  Future<void> _onStartStageBattle(
+    StartStageBattle event,
+    Emitter<BattleState> emit,
+  ) async {
+    emit(const BattleLoading());
+
+    try {
+      _currentStage = event.stageData;
+      _startConnectionCheck();
+
+      // プレイヤーパーティのBattleMonster変換
+      final playerParty = await _convertToBattleMonsters(event.playerParty)
+          .timeout(const Duration(seconds: 10));
+
+      // ステージ用の敵パーティ生成
+      final enemyParty = await _generateStageEnemyParty(event.stageData)
+          .timeout(const Duration(seconds: 10));
+
+      _battleState = BattleStateModel(
+        playerParty: playerParty,
+        enemyParty: enemyParty,
+      );
+
+      _battleState!.addLog('${event.stageData.name} 開始！');
+
+      emit(BattleInProgress(
+        battleState: _battleState!,
+        message: '最初に出すモンスターを選んでください',
+      ));
+    } on FirebaseException catch (e) {
+      emit(BattleNetworkError(
+        message: 'ステージデータの読み込みに失敗しました',
+        canRetry: true,
+      ));
+    } on TimeoutException {
+      emit(const BattleNetworkError(
+        message: 'ステージの読み込みがタイムアウトしました',
+        canRetry: true,
+      ));
+    } catch (e, stackTrace) {
+      print('ステージバトル開始エラー: $e');
+      print('スタックトレース: $stackTrace');
+      emit(BattleError(message: 'ステージバトル開始エラー: $e'));
+    }
+  }
+
+  /// ★NEW: エラー後のリトライ
+  Future<void> _onRetryAfterError(
+    RetryAfterError event,
+    Emitter<BattleState> emit,
+  ) async {
+    if (_battleState != null) {
+      emit(BattleInProgress(
+        battleState: _battleState!,
+        message: '接続を再試行しています...',
+      ));
+    } else {
+      emit(const BattleInitial());
+    }
+  }
+
+  /// ★NEW: バトル強制終了
+  Future<void> _onForceBattleEnd(
+    ForceBattleEnd event,
+    Emitter<BattleState> emit,
+  ) async {
+    _stopConnectionCheck();
+    _battleState = null;
+    _currentStage = null;
+    emit(const BattleInitial());
+  }
+
+  /// ★NEW: 接続チェック開始
+  void _startConnectionCheck() {
+    _connectionCheckTimer?.cancel();
+    _connectionCheckTimer = Timer.periodic(
+      const Duration(seconds: 30),
+      (_) => _checkConnection(),
+    );
+  }
+
+  /// ★NEW: 接続チェック停止
+  void _stopConnectionCheck() {
+    _connectionCheckTimer?.cancel();
+    _connectionCheckTimer = null;
+  }
+
+  /// ★NEW: 接続確認
+  Future<void> _checkConnection() async {
+    try {
+      await _firestore
+          .collection('_health_check')
+          .doc('ping')
+          .get()
+          .timeout(const Duration(seconds: 5));
+    } catch (e) {
+      print('接続チェック失敗: $e');
+      // 必要に応じてイベント発火
     }
   }
 
@@ -531,16 +659,45 @@ Future<void> _onSwitchMonster(
 
     // バトル終了判定（最優先）
     if (_battleState!.isBattleEnd) {
+      _stopConnectionCheck(); // ★追加
       _battleState!.phase = BattlePhase.battleEnd;
       
       if (_battleState!.isPlayerWin) {
         _battleState!.addLog('プレイヤーの勝利！');
-        await _saveBattleHistory(isWin: true);
-        emit(BattlePlayerWin(battleState: _battleState!));
+        
+        try {
+          // ★修正: バトル結果を生成
+          final result = await _generateBattleResult(isWin: true);
+          await _saveBattleHistory(isWin: true);
+          emit(BattlePlayerWin(
+            battleState: _battleState!,
+            result: result,
+          ));
+        } catch (e) {
+          // ★追加: 保存失敗時もとりあえず勝利扱い
+          print('バトル結果保存エラー: $e');
+          emit(BattlePlayerWin(
+            battleState: _battleState!,
+            result: null,
+          ));
+        }
       } else {
         _battleState!.addLog('プレイヤーの敗北...');
-        await _saveBattleHistory(isWin: false);
-        emit(BattlePlayerLose(battleState: _battleState!));
+        
+        try {
+          final result = await _generateBattleResult(isWin: false);
+          await _saveBattleHistory(isWin: false);
+          emit(BattlePlayerLose(
+            battleState: _battleState!,
+            result: result,
+          ));
+        } catch (e) {
+          print('バトル結果保存エラー: $e');
+          emit(BattlePlayerLose(
+            battleState: _battleState!,
+            result: null,
+          ));
+        }
       }
       return;
     }
@@ -699,8 +856,81 @@ Future<void> _onSwitchMonster(
     EndBattle event,
     Emitter<BattleState> emit,
   ) async {
+    _stopConnectionCheck(); // ★追加
     _battleState = null;
+    _currentStage = null; // ★追加
     emit(const BattleInitial());
+  }
+
+  /// ★NEW: バトル結果を生成
+  Future<BattleResult> _generateBattleResult({required bool isWin}) async {
+    if (_battleState == null) {
+      throw Exception('バトル状態が存在しません');
+    }
+
+    // 基本報酬
+    BattleRewards rewards;
+    if (_currentStage != null) {
+      // ステージ報酬
+      rewards = BattleRewards(
+        exp: _currentStage!.rewards.exp,
+        gold: _currentStage!.rewards.gold,
+        items: [], // TODO: ドロップ抽選
+        gems: _currentStage!.rewards.gems,
+      );
+    } else {
+      // CPU戦の簡易報酬
+      rewards = const BattleRewards(
+        exp: 50,
+        gold: 100,
+        items: [],
+        gems: 0,
+      );
+    }
+
+    // 敗北時は報酬半減
+    if (!isWin) {
+      rewards = BattleRewards(
+        exp: (rewards.exp * 0.5).round(),
+        gold: (rewards.gold * 0.5).round(),
+        items: [],
+        gems: 0,
+      );
+    }
+
+    // 経験値配分（参戦モンスター全員に均等）
+    final List<MonsterExpGain> expGains = [];
+    final participatedMonsters = _battleState!.playerParty
+        .where((m) => m.hasParticipated)
+        .toList();
+
+    if (participatedMonsters.isNotEmpty && rewards.exp > 0) {
+      final expPerMonster = (rewards.exp / participatedMonsters.length).round();
+      
+      for (final monster in participatedMonsters) {
+        final levelBefore = monster.baseMonster.level;
+        // TODO: 実際のレベルアップ処理
+        final levelAfter = levelBefore; // 仮
+        
+        expGains.add(MonsterExpGain(
+          monsterId: monster.baseMonster.id,
+          monsterName: monster.baseMonster.monsterName,
+          gainedExp: expPerMonster,
+          levelBefore: levelBefore,
+          levelAfter: levelAfter,
+          didLevelUp: false,
+        ));
+      }
+    }
+
+    return BattleResult(
+      isWin: isWin,
+      turnCount: _battleState!.turnNumber,
+      usedMonsterIds: _battleState!.playerUsedMonsterIds,
+      rewards: rewards,
+      expGains: expGains,
+      completedAt: DateTime.now(),
+    );
   }
 
   /// バトル履歴をFirestoreに保存
@@ -712,7 +942,8 @@ Future<void> _onSwitchMonster(
 
       final battleData = {
         'user_id': userId,
-        'battle_type': 'cpu',
+        'battle_type': _currentStage != null ? 'stage' : 'cpu', // ★修正
+        'stage_id': _currentStage?.id, // ★追加
         'result': isWin ? 'win' : 'lose',
         'turn_count': _battleState!.turnNumber,
         'battle_log': _battleState!.battleLog,
@@ -721,7 +952,15 @@ Future<void> _onSwitchMonster(
         'created_at': FieldValue.serverTimestamp(),
       };
 
-      await _firestore.collection('battle_history').add(battleData);
+      await _firestore
+          .collection('battle_history')
+          .add(battleData)
+          .timeout(const Duration(seconds: 10)); // ★追加
+    } on FirebaseException catch (e) {
+      print('バトル履歴保存エラー (Firebase): $e');
+      // 保存失敗してもバトル終了は継続
+    } on TimeoutException {
+      print('バトル履歴保存タイムアウト');
     } catch (e) {
       print('バトル履歴保存エラー: $e');
     }
@@ -731,13 +970,24 @@ Future<void> _onSwitchMonster(
   Future<List<BattleMonster>> _convertToBattleMonsters(List<Monster> monsters) async {
     final List<BattleMonster> battleMonsters = [];
 
-    for (final monster in monsters) {
-      // 技を取得（モンスターのequippedSkillsから）
-      final skills = await _loadSkills(monster.equippedSkills);
-      battleMonsters.add(BattleMonster(
-        baseMonster: monster,
-        skills: skills,
-      ));
+    try {
+      for (final monster in monsters) {
+        // ★追加: データ検証
+        if (monster.id.isEmpty || monster.monsterName.isEmpty) {
+          throw Exception('不正なモンスターデータ: ${monster.id}');
+        }
+
+        // 技を取得（モンスターのequippedSkillsから）
+        final skills = await _loadSkills(monster.equippedSkills);
+        battleMonsters.add(BattleMonster(
+          baseMonster: monster,
+          skills: skills,
+        ));
+      }
+    } catch (e, stackTrace) {
+      print('BattleMonster変換エラー: $e');
+      print('スタックトレース: $stackTrace');
+      rethrow;
     }
 
     return battleMonsters;
@@ -753,10 +1003,27 @@ Future<void> _onSwitchMonster(
     final List<BattleSkill> skills = [];
     for (final skillId in skillIds) {
       try {
-        final doc = await _firestore.collection('skill_masters').doc(skillId).get();
+        final doc = await _firestore
+            .collection('skill_masters')
+            .doc(skillId)
+            .get()
+            .timeout(const Duration(seconds: 5)); // ★追加
+            
         if (doc.exists) {
-          skills.add(BattleSkill.fromFirestore(doc.data()!));
+          final data = doc.data();
+          if (data != null) {
+            // ★追加: データ検証
+            if (!data.containsKey('name') || !data.containsKey('cost')) {
+              print('不完全な技データ: $skillId');
+              continue;
+            }
+            skills.add(BattleSkill.fromFirestore(data));
+          }
+        } else {
+          print('技が見つかりません: $skillId');
         }
+      } on TimeoutException {
+        print('技読み込みタイムアウト: $skillId');
       } catch (e) {
         print('技読み込みエラー: $skillId - $e');
       }
@@ -830,6 +1097,43 @@ Future<void> _onSwitchMonster(
     return _generateDummyCpuParty();
   }
 
+  /// ★NEW: ステージ用の敵パーティを生成
+  Future<List<BattleMonster>> _generateStageEnemyParty(StageData stage) async {
+    try {
+      final List<BattleMonster> enemyParty = [];
+      
+      for (final monsterId in stage.enemyMonsterIds) {
+        final doc = await _firestore
+            .collection('monster_masters')
+            .doc(monsterId)
+            .get()
+            .timeout(const Duration(seconds: 5));
+            
+        if (!doc.exists) {
+          print('敵モンスターが見つかりません: $monsterId');
+          continue;
+        }
+        
+        final data = doc.data();
+        if (data == null) continue;
+        
+        // TODO: monster_masterからMonsterエンティティを生成
+        // 現在は簡易実装
+      }
+      
+      // データがない場合はダミーを返す
+      if (enemyParty.isEmpty) {
+        return _generateDummyCpuParty();
+      }
+      
+      return enemyParty;
+    } catch (e) {
+      print('ステージ敵パーティ生成エラー: $e');
+      // エラー時はダミーパーティ
+      return _generateDummyCpuParty();
+    }
+  }
+
   /// ダミーCPUパーティ
   List<BattleMonster> _generateDummyCpuParty() {
     final dummyMonsters = <Monster>[
@@ -896,5 +1200,11 @@ Future<void> _onSwitchMonster(
       baseMonster: m,
       skills: _getDefaultSkills(),
     )).toList();
+  }
+
+  @override
+  Future<void> close() {
+    _stopConnectionCheck(); // ★追加
+    return super.close();
   }
 }
