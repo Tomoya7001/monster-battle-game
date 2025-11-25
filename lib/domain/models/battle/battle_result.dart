@@ -10,8 +10,9 @@ class BattleResult with _$BattleResult {
     required bool isWin,
     required int turnCount,
     required List<String> usedMonsterIds,
+    @Default([]) List<String> defeatedEnemyIds,
     required BattleRewards rewards,
-    required List<MonsterExpGain> expGains,
+    @Default([]) List<MonsterExpGain> expGains,
     DateTime? completedAt,
   }) = _BattleResult;
 
@@ -49,15 +50,19 @@ class DropItem with _$DropItem {
 /// モンスター経験値獲得
 @freezed
 class MonsterExpGain with _$MonsterExpGain {
+  const MonsterExpGain._();
+  
   const factory MonsterExpGain({
     required String monsterId,
     required String monsterName,
     required int gainedExp,
     required int levelBefore,
     required int levelAfter,
-    @Default(false) bool didLevelUp,
   }) = _MonsterExpGain;
 
   factory MonsterExpGain.fromJson(Map<String, dynamic> json) =>
       _$MonsterExpGainFromJson(json);
+
+  /// レベルアップしたか
+  bool get didLevelUp => levelAfter > levelBefore;
 }

@@ -46,15 +46,15 @@ class BattleStateModel {
   /// プレイヤーが追加でモンスターを出せるか
   bool get canPlayerSendMore => playerFieldMonsterIds.length < maxDeployableCount;
 
-  /// 相手が追加でモンスターを出せるか
-  bool get canEnemySendMore => enemyFieldMonsterIds.length < maxDeployableCount;
+  /// 相手が追加でモンスターを出せるか（敵パーティサイズに依存）
+  bool get canEnemySendMore => enemyFieldMonsterIds.length < enemyParty.length;
 
   /// ★修正: 交代可能なモンスターが存在するか（3体制限を考慮）
   bool get hasAvailableSwitchMonster {
     return playerParty.any((m) {
       // 瀕死は交代不可
       if (m.isFainted) return false;
-      // 現在出撃中は交代不可
+      // 現在出撃中は交代先として無効
       if (m.baseMonster.id == playerActiveMonster?.baseMonster.id) return false;
       // 既に場に出したモンスターは交代可能（瀕死でなければ戻れる）
       if (playerFieldMonsterIds.contains(m.baseMonster.id)) return true;

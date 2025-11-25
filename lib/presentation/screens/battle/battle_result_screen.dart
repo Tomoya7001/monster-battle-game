@@ -351,70 +351,149 @@ class BattleResultScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             
-            ...result.expGains.map((expGain) => Padding(
-              padding: const EdgeInsets.only(bottom: 12),
+            ...result.expGains.map((expGain) => Container(
+              margin: const EdgeInsets.only(bottom: 16),
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: expGain.didLevelUp ? Colors.green.shade50 : Colors.grey.shade50,
+                borderRadius: BorderRadius.circular(12),
+                border: expGain.didLevelUp 
+                    ? Border.all(color: Colors.green, width: 2)
+                    : null,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
-                      Text(
-                        expGain.monsterName,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
+                      // モンスター名
+                      Expanded(
+                        child: Text(
+                          expGain.monsterName,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                      const Spacer(),
-                      Text(
-                        '+${expGain.gainedExp} EXP',
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.orange,
-                          fontWeight: FontWeight.bold,
+                      // 獲得経験値
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.orange.shade100,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          '+${expGain.gainedExp} EXP',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.orange.shade800,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 8),
                   
+                  // レベル表示
                   Row(
                     children: [
-                      Text(
-                        'Lv.${expGain.levelBefore}',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey.shade600,
+                      // 変更前レベル
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade200,
+                          borderRadius: BorderRadius.circular(8),
                         ),
-                      ),
-                      if (expGain.didLevelUp) ...[
-                        const SizedBox(width: 8),
-                        const Icon(
-                          Icons.arrow_forward,
-                          size: 12,
-                          color: Colors.green,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Lv.${expGain.levelAfter}',
+                        child: Text(
+                          'Lv.${expGain.levelBefore}',
                           style: const TextStyle(
-                            fontSize: 12,
-                            color: Colors.green,
+                            fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(width: 4),
-                        const Text(
-                          'レベルアップ！',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.green,
-                            fontWeight: FontWeight.bold,
+                      ),
+                      
+                      // レベルアップ演出
+                      if (expGain.didLevelUp) ...[
+                        const SizedBox(width: 12),
+                        const Icon(
+                          Icons.arrow_forward,
+                          color: Colors.green,
+                          size: 24,
+                        ),
+                        const SizedBox(width: 12),
+                        
+                        // 変更後レベル（アニメーション風）
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [Colors.green.shade400, Colors.green.shade600],
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.green.withOpacity(0.4),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Text(
+                            'Lv.${expGain.levelAfter}',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        
+                        const SizedBox(width: 8),
+                        
+                        // レベルアップバッジ
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.amber,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.stars, size: 14, color: Colors.white),
+                              SizedBox(width: 4),
+                              Text(
+                                'LEVEL UP!',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
                     ],
                   ),
+                  
+                  // ステータス上昇表示（レベルアップ時のみ）
+                  if (expGain.didLevelUp) ...[
+                    const SizedBox(height: 8),
+                    const Divider(),
+                    const SizedBox(height: 4),
+                    Text(
+                      '✨ ステータスが上昇しました！',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.green.shade700,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
                 ],
               ),
             )),

@@ -114,6 +114,10 @@ class _MonsterDetailScreenState extends State<MonsterDetailScreen>
   }
 
   Widget _buildHeader(Monster monster) {
+    // 次のレベルに必要な経験値を計算
+    final expForNextLevel = monster.level * 100;
+    final expProgress = monster.level >= 100 ? 1.0 : monster.exp / expForNextLevel;
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -149,6 +153,36 @@ class _MonsterDetailScreenState extends State<MonsterDetailScreen>
                 ]),
                 const SizedBox(height: 8),
                 Text('HP: ${monster.currentHp}/${monster.maxHp}', style: const TextStyle(color: Colors.white, fontSize: 12)),
+                
+                // ★追加: 経験値バー
+                const SizedBox(height: 8),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text('EXP', style: TextStyle(color: Colors.white70, fontSize: 10)),
+                        Text(
+                          monster.level >= 100 
+                              ? 'MAX' 
+                              : '${monster.exp}/$expForNextLevel',
+                          style: const TextStyle(color: Colors.white70, fontSize: 10),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(4),
+                      child: LinearProgressIndicator(
+                        value: expProgress,
+                        backgroundColor: Colors.white.withOpacity(0.3),
+                        valueColor: const AlwaysStoppedAnimation<Color>(Colors.amber),
+                        minHeight: 8,
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),

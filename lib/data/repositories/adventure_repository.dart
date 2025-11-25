@@ -149,40 +149,10 @@ class AdventureRepository {
 
     final randomId = monsterIds[DateTime.now().millisecondsSinceEpoch % monsterIds.length];
     
-    final doc = await _firestore
-        .collection('monster_masters')
-        .doc(randomId)
-        .get();
-
-    if (!doc.exists) return null;
-    
-    final data = doc.data()!;
-    final baseStats = data['base_stats'] as Map<String, dynamic>? ?? {};
-    final attributes = data['attributes'] as List<dynamic>? ?? [];
-
-    return Monster(
-      id: 'enemy_${DateTime.now().millisecondsSinceEpoch}',
-      userId: 'enemy',
-      monsterId: randomId,
-      monsterName: data['name'] as String? ?? 'Unknown',
-      species: data['species'] as String? ?? 'unknown',
-      element: attributes.isNotEmpty ? (attributes[0] as String).toLowerCase() : 'none',
-      rarity: data['rarity'] as int? ?? 2,
-      level: 50,
-      exp: 0,
-      currentHp: (baseStats['hp'] as num?)?.toInt() ?? 100,
-      lastHpUpdate: DateTime.now(),
-      acquiredAt: DateTime.now(),
-      baseHp: (baseStats['hp'] as num?)?.toInt() ?? 100,
-      baseAttack: (baseStats['attack'] as num?)?.toInt() ?? 50,
-      baseDefense: (baseStats['defense'] as num?)?.toInt() ?? 50,
-      baseMagic: (baseStats['magic'] as num?)?.toInt() ?? 50,
-      baseSpeed: (baseStats['speed'] as num?)?.toInt() ?? 50,
-      equippedSkills: List<String>.from(data['learnable_skills'] ?? []),
-    );
+    return await _getMonsterFromMaster(randomId, 'enemy');
   }
 
-  /// ボスモンスター取得（最大3体）
+  /// ★修正: ボスモンスター取得（最大3体）
   Future<List<Monster>> getBossMonsters(String stageId) async {
     print('🔍 getBossMonsters: stageId = $stageId');
     
@@ -203,45 +173,54 @@ class AdventureRepository {
     for (final monsterId in stage.bossMonsterIds!) {
       print('🔍 ボスモンスター取得中: $monsterId');
       
-      final doc = await _firestore
-          .collection('monster_masters')
-          .doc(monsterId)
-          .get();
-
-      if (!doc.exists) {
-        print('❌ モンスターが見つかりません: $monsterId');
-        continue;
+      final monster = await _getMonsterFromMaster(monsterId, 'boss');
+      if (monster != null) {
+        monsters.add(monster);
+        print('✅ モンスター取得: ${monster.monsterName}');
+      } else {
+        print('❌ モンスター取得失敗: $monsterId');
       }
-
-      final data = doc.data()!;
-      print('✅ モンスターデータ取得: ${data['name']}');
-      
-      final baseStats = data['base_stats'] as Map<String, dynamic>? ?? {};
-      final attributes = data['attributes'] as List<dynamic>? ?? [];
-
-      monsters.add(Monster(
-        id: 'boss_${monsterId}_${DateTime.now().millisecondsSinceEpoch}',
-        userId: 'boss',
-        monsterId: monsterId,
-        monsterName: data['name'] as String? ?? 'Unknown Boss',
-        species: data['species'] as String? ?? 'unknown',
-        element: attributes.isNotEmpty ? (attributes[0] as String).toLowerCase() : 'none',
-        rarity: data['rarity'] as int? ?? 4,
-        level: 50,
-        exp: 0,
-        currentHp: (baseStats['hp'] as num?)?.toInt() ?? 150,
-        lastHpUpdate: DateTime.now(),
-        acquiredAt: DateTime.now(),
-        baseHp: (baseStats['hp'] as num?)?.toInt() ?? 150,
-        baseAttack: (baseStats['attack'] as num?)?.toInt() ?? 80,
-        baseDefense: (baseStats['defense'] as num?)?.toInt() ?? 80,
-        baseMagic: (baseStats['magic'] as num?)?.toInt() ?? 80,
-        baseSpeed: (baseStats['speed'] as num?)?.toInt() ?? 80,
-        equippedSkills: List<String>.from(data['learnable_skills'] ?? []),
-      ));
     }
 
     print('✅ getBossMonsters 完了: ${monsters.length}体取得');
     return monsters;
+  }
+
+  /// ★共通: monster_mastersからモンスター取得
+  Future<Monster?> _getMonsterFromMaster(String monsterId, String prefix) async {
+    final doc = await _firestore
+        .collection('monster_masters')
+        .doc(monsterId)
+        .get();
+
+    if (!doc.exists) {
+      print('❌ monster_mastersにドキュメントが存在しません: $monsterId');
+      return null;
+    }
+
+    final data = doc.data()!;
+    final baseStats = data['base_stats'] as Map<String, dynamic>? ?? {};
+    final attributes = data['attributes'] as List<dynamic>? ?? [];
+
+    return Monster(
+      id: '${prefix}_${monsterId}_${DateTime.now().millisecondsSinceEpoch}',
+      userId: prefix,
+      monsterId: monsterId,
+      monsterName: data['name'] as String? ?? 'Unknown',
+      species: data['species'] as String? ?? 'unknown',
+      element: attributes.isNotEmpty ? (attributes[0] as String).toLowerCase() : 'none',
+      rarity: data['rarity'] as int? ?? 2,
+      level: 50,
+      exp: 0,
+      currentHp: (baseStats['hp'] as num?)?.toInt() ?? 100,
+      lastHpUpdate: DateTime.now(),
+      acquiredAt: DateTime.now(),
+      baseHp: (baseStats['hp'] as num?)?.toInt() ?? 100,
+      baseAttack: (baseStats['attack'] as num?)?.toInt() ?? 50,
+      baseDefense: (baseStats['defense'] as num?)?.toInt() ?? 50,
+      baseMagic: (baseStats['magic'] as num?)?.toInt() ?? 50,
+      baseSpeed: (baseStats['speed'] as num?)?.toInt() ?? 50,
+      equippedSkills: List<String>.from(data['learnable_skills'] ?? []),
+    );
   }
 }
