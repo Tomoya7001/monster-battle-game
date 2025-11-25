@@ -1,0 +1,192 @@
+{
+    "skills": [
+        {
+            "skill_id": "skill_001",
+            "name": "炎の爪",
+            "name_en": "Flame Claw",
+            "type": "physical",
+            "element": "fire",
+            "cost": 1,
+            "power_multiplier": 0.9,
+            "accuracy": 100,
+            "target": "enemy",
+            "effects": {},
+            "description": "炎を纏った爪で引っ掻く"
+        },
+        {
+            "skill_id": "skill_002",
+            "name": "火の粉",
+            "name_en": "Ember",
+            "type": "magical",
+            "element": "fire",
+            "cost": 1,
+            "power_multiplier": 0.8,
+            "accuracy": 100,
+            "target": "enemy",
+            "effects": {
+                "status_ailment": "burn",
+                "status_chance": 10
+            },
+            "description": "小さな炎を飛ばす。稀に火傷を負わせる"
+        },
+        {
+            "skill_id": "skill_003",
+            "name": "火炎放射",
+            "name_en": "Flamethrower",
+            "type": "magical",
+            "element": "fire",
+            "cost": 2,
+            "power_multiplier": 1.5,
+            "accuracy": 100,
+            "target": "enemy",
+            "effects": {
+                "status_ailment": "burn",
+                "status_chance": 20
+            },
+            "description": "激しい炎を放射する"
+        },
+        {
+            "skill_id": "skill_004",
+            "name": "炎の舞",
+            "name_en": "Fire Dance",
+            "type": "buff",
+            "element": "fire",
+            "cost": 2,
+            "power_multiplier": 0,
+            "accuracy": 100,
+            "target": "self",
+            "effects": {
+                "buff": {
+                    "stat": "attack",
+                    "stage": 1
+                }
+            },
+            "description": "炎を纏って舞い、攻撃力を上げる"
+        },
+        {
+            "skill_id": "skill_005",
+            "name": "灼熱の業火",
+            "name_en": "Inferno",
+            "type": "magical",
+            "element": "fire",
+            "cost": 3,
+            "power_multiplier": 2.0,
+            "accuracy": 95,
+            "target": "enemy",
+            "effects": {
+                "status_ailment": "burn",
+                "status_chance": 30
+            },
+            "description": "強烈な炎で敵を焼き尽くす"
+        },
+        {
+            "skill_id": "skill_013",
+            "name": "水鉄砲",
+            "name_en": "Water Gun",
+            "type": "magical",
+            "element": "water",
+            "cost": 1,
+            "power_multiplier": 0.8,
+            "accuracy": 100,
+            "target": "enemy",
+            "effects": {},
+            "description": "水を勢いよく噴射する"
+        },
+        {
+            "skill_id": "skill_014",
+            "name": "水の波動",
+            "name_en": "Water Pulse",
+            "type": "magical",
+            "element": "water",
+            "cost": 2,
+            "power_multiplier": 1.4,
+            "accuracy": 100,
+            "target": "enemy",
+            "effects": {
+                "status_ailment": "confusion",
+                "status_chance": 15
+            },
+            "description": "波動で攻撃。稀に混乱させる"
+        },
+        {
+            "skill_id": "skill_823",
+            "name": "ほのおのパンチ",
+            "name_en": "Fire Punch",
+            "type": "physical",
+            "element": "fire",
+            "cost": 2,
+            "power_multiplier": 1.5,
+            "accuracy": 100,
+            "target": "enemy",
+            "effects": {
+                "status_ailment": "burn",
+                "status_chance": 20
+            },
+            "description": "炎の拳で攻撃。20%の確率で火傷"
+        },
+        {
+            "skill_id": "skill_824",
+            "name": "れいとうパンチ",
+            "name_en": "Ice Punch",
+            "type": "physical",
+            "element": "water",
+            "cost": 2,
+            "power_multiplier": 1.5,
+            "accuracy": 100,
+            "target": "enemy",
+            "effects": {
+                "status_ailment": "freeze",
+                "status_chance": 20
+            },
+            "description": "冷気の拳で攻撃。20%の確率で凍結"
+        },
+        {
+            "skill_id": "skill_825",
+            "name": "かみなりパンチ",
+            "name_en": "Thunder Punch",
+            "type": "physical",
+            "element": "thunder",
+            "cost": 2,
+            "power_multiplier": 1.5,
+            "accuracy": 100,
+            "target": "enemy",
+            "effects": {
+                "status_ailment": "paralysis",
+                "status_chance": 20
+            },
+            "description": "電撃の拳で攻撃。20%の確率で麻痺"
+        },
+        {
+            "skill_id": "skill_830",
+            "name": "どくづき",
+            "name_en": "Poison Jab",
+            "type": "physical",
+            "element": "none",
+            "cost": 2,
+            "power_multiplier": 1.6,
+            "accuracy": 100,
+            "target": "enemy",
+            "effects": {
+                "status_ailment": "poison",
+                "status_chance": 30
+            },
+            "description": "毒を含んだ攻撃。30%の確率で毒"
+        },
+        {
+            "skill_id": "skill_841",
+            "name": "まもる",
+            "name_en": "Protect",
+            "type": "support",
+            "element": "none",
+            "cost": 2,
+            "power_multiplier": 0,
+            "accuracy": 100,
+            "target": "self",
+            "effects": {
+                "protect": true,
+                "priority": 4
+            },
+            "description": "このターン、相手の攻撃を完全に防ぐ"
+        }
+    ]
+}

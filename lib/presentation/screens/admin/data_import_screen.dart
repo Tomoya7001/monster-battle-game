@@ -130,6 +130,82 @@ class _DataImportScreenState extends State<DataImportScreen> {
                 ),
               ),
             ),
+            const SizedBox(height: 16),
+
+            // ★追加: 冒険システム用データ投入
+            ElevatedButton(
+              onPressed: () async {
+                // 確認ダイアログ
+                final confirmed = await showDialog<bool>(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('データ投入確認'),
+                    content: const Text(
+                      '以下のデータを投入します：\n'
+                      '・統一技マスタ\n'
+                      '・ステージマスタ\n\n'
+                      '既存データは上書きされます。\n'
+                      '続行しますか？'
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, false),
+                        child: const Text('キャンセル'),
+                      ),
+                      ElevatedButton(
+                        onPressed: () => Navigator.pop(context, true),
+                        child: const Text('投入'),
+                      ),
+                    ],
+                  ),
+                );
+
+                if (confirmed != true) return;
+
+                try {
+                  // ローディング表示
+                  if (context.mounted) {
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (context) => const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  }
+
+                  await DataImporter().importAllMasterDataExtended();
+
+                  if (context.mounted) {
+                    Navigator.pop(context); // ローディング閉じる
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('✅ 冒険システム用データ投入完了'),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                  }
+                } catch (e) {
+                  if (context.mounted) {
+                    Navigator.pop(context); // ローディング閉じる
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('❌ エラー: $e'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepPurple,
+                minimumSize: const Size(double.infinity, 50),
+              ),
+              child: const Text(
+                '冒険システム用データ投入',
+                style: TextStyle(fontSize: 16),
+              ),
+            ),
             const Spacer(),
             const Text(
               '投入されるデータ:\n'

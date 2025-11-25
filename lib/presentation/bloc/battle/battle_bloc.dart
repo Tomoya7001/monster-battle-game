@@ -13,6 +13,7 @@ import '../../../domain/models/stage/stage_data.dart'; // ★追加
 import '../../../domain/models/battle/battle_result.dart'; // ★追加
 import '../../../core/services/battle/battle_calculation_service.dart';
 import '../../../core/models/monster_model.dart';
+import '../../../data/repositories/adventure_repository.dart';
 
 class BattleBloc extends Bloc<BattleEvent, BattleState> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -33,6 +34,9 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
     on<EndBattle>(_onEndBattle);
     on<RetryAfterError>(_onRetryAfterError); // ★追加
     on<ForceBattleEnd>(_onForceBattleEnd); // ★追加
+    on<StartAdventureEncounter>(_onStartAdventureEncounter);
+    on<StartBossBattle>(_onStartBossBattle);
+
   }
 
   /// CPUバトル開始
@@ -109,9 +113,26 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
 
       _battleState!.addLog('${event.stageData.name} 開始！');
 
+      // ★追加: 冒険モードは先頭モンスターを自動選択
+      final firstMonster = playerParty[0];
+      _battleState!.playerActiveMonster = firstMonster;
+      _battleState!.playerFieldMonsterIds.add(firstMonster.baseMonster.id);
+      firstMonster.hasParticipated = true;
+      _battleState!.addLog('${firstMonster.baseMonster.monsterName}を繰り出した！');
+
+      // 敵も先頭モンスターを選択
+      final enemyFirstMonster = enemyParty[0];
+      _battleState!.enemyActiveMonster = enemyFirstMonster;
+      _battleState!.enemyFieldMonsterIds.add(enemyFirstMonster.baseMonster.id);
+      enemyFirstMonster.hasParticipated = true;
+      _battleState!.addLog('相手は${enemyFirstMonster.baseMonster.monsterName}を繰り出した！');
+
+      // ★修正: 行動選択フェーズへ
+      _battleState!.phase = BattlePhase.actionSelect;
+
       emit(BattleInProgress(
         battleState: _battleState!,
-        message: '最初に出すモンスターを選んでください',
+        message: '行動を選んでください', // ★修正
       ));
     } on FirebaseException catch (e) {
       emit(BattleNetworkError(
@@ -943,7 +964,7 @@ Future<void> _onSwitchMonster(
       final battleData = {
         'user_id': userId,
         'battle_type': _currentStage != null ? 'stage' : 'cpu', // ★修正
-        'stage_id': _currentStage?.id, // ★追加
+        'stage_id': _currentStage?.stageId,
         'result': isWin ? 'win' : 'lose',
         'turn_count': _battleState!.turnNumber,
         'battle_log': _battleState!.battleLog,
@@ -1102,7 +1123,7 @@ Future<void> _onSwitchMonster(
     try {
       final List<BattleMonster> enemyParty = [];
       
-      for (final monsterId in stage.enemyMonsterIds) {
+      for (final monsterId in stage.encounterMonsterIds ?? []) {
         final doc = await _firestore
             .collection('monster_masters')
             .doc(monsterId)
@@ -1200,6 +1221,76 @@ Future<void> _onSwitchMonster(
       baseMonster: m,
       skills: _getDefaultSkills(),
     )).toList();
+  }
+
+  /// 冒険エンカウントバトル開始
+  Future<void> _onStartAdventureEncounter(
+    StartAdventureEncounter event,
+    Emitter<BattleState> emit,
+  ) async {
+    try {
+      emit(const BattleLoading());
+
+      final adventureRepo = AdventureRepository();
+      final enemyMonster = await adventureRepo.getRandomEncounterMonster(event.stageId);
+      
+      if (enemyMonster == null) {
+        emit(const BattleError(message: 'エンカウントに失敗しました'));
+        return;
+      }
+
+      // BattleMonsterに変換
+      final enemyParty = await _convertToBattleMonsters([enemyMonster]);
+      final playerParty = await _convertToBattleMonsters(event.playerParty);
+
+      // バトル初期化（1vs1）
+      _battleState = BattleStateModel(
+        playerParty: playerParty,
+        enemyParty: enemyParty,
+      );
+
+      emit(BattleInProgress(
+        battleState: _battleState!,
+        message: '最初に出すモンスターを選んでください',
+      ));
+    } catch (e) {
+      emit(BattleError(message: 'バトルの開始に失敗しました: $e'));
+    }
+  }
+
+  /// ボスバトル開始
+  Future<void> _onStartBossBattle(
+    StartBossBattle event,
+    Emitter<BattleState> emit,
+  ) async {
+    try {
+      emit(const BattleLoading());
+
+      final adventureRepo = AdventureRepository();
+      final bossMonsters = await adventureRepo.getBossMonsters(event.stageId);
+      
+      if (bossMonsters.isEmpty) {
+        emit(const BattleError(message: 'ボスモンスターの取得に失敗しました'));
+        return;
+      }
+
+      // BattleMonsterに変換
+      final enemyParty = await _convertToBattleMonsters(bossMonsters);
+      final playerParty = await _convertToBattleMonsters(event.playerParty);
+
+      // バトル初期化（最大3vs3）
+      _battleState = BattleStateModel(
+        playerParty: playerParty,
+        enemyParty: enemyParty,
+      );
+
+      emit(BattleInProgress(
+        battleState: _battleState!,
+        message: '最初に出すモンスターを選んでください',
+      ));
+    } catch (e) {
+      emit(BattleError(message: 'ボスバトルの開始に失敗しました: $e'));
+    }
   }
 
   @override

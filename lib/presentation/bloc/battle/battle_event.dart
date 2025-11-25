@@ -94,3 +94,31 @@ class RetryAfterError extends BattleEvent {
 class ForceBattleEnd extends BattleEvent {
   const ForceBattleEnd();
 }
+
+/// ★追加: 冒険バトル開始（ランダムエンカウント）
+class StartAdventureEncounter extends BattleEvent {
+  final List<Monster> playerParty;
+  final String stageId;
+
+  const StartAdventureEncounter({
+    required this.playerParty,
+    required this.stageId,
+  });
+
+  @override
+  List<Object?> get props => [playerParty, stageId];
+}
+
+/// ★追加: ボスバトル開始
+class StartBossBattle extends BattleEvent {
+  final List<Monster> playerParty;
+  final String stageId;
+
+  const StartBossBattle({
+    required this.playerParty,
+    required this.stageId,
+  });
+
+  @override
+  List<Object?> get props => [playerParty, stageId];
+}

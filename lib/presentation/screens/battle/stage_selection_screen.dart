@@ -22,7 +22,7 @@ class _StageSelectionScreenState extends State<StageSelectionScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   bool _isLoading = true;
   List<StageData> _stages = [];
-  Map<String, UserStageProgress> _progressMap = {};
+  Map<String, UserAdventureProgress> _progressMap = {};
   String? _errorMessage;
 
   @override
@@ -38,28 +38,44 @@ class _StageSelectionScreenState extends State<StageSelectionScreen> {
     });
 
     try {
-      // ステージマスターデータ取得
+      // ★修正: stage_typeフィルタリング追加
       final stagesSnapshot = await _firestore
           .collection('stage_masters')
+          .where('stage_type', isEqualTo: 'normal') // 通常ステージのみ
           .orderBy('difficulty')
           .get()
           .timeout(const Duration(seconds: 10));
 
       final stages = stagesSnapshot.docs
-          .map((doc) => StageData.fromJson({...doc.data(), 'id': doc.id}))
+          .map((doc) {
+            final data = doc.data();
+            return StageData.fromJson({
+              ...data,
+              'stageId': data['stage_id'] ?? doc.id, // ★修正
+            });
+          })
           .toList();
 
-      // ユーザー進行状況取得
-      const userId = 'dev_user_12345'; // TODO: AuthBlocから取得
+      // ★修正: 進行状況コレクション名変更
+      const userId = 'dev_user_12345';
       final progressSnapshot = await _firestore
-          .collection('user_stage_progress')
-          .where('user_id', isEqualTo: userId)
+          .collection('user_adventure_progress') // ★変更
+          .where('userId', isEqualTo: userId) // ★フィールド名変更
           .get()
           .timeout(const Duration(seconds: 10));
 
-      final progressMap = <String, UserStageProgress>{};
+      final progressMap = <String, UserAdventureProgress>{};
       for (final doc in progressSnapshot.docs) {
-        final progress = UserStageProgress.fromJson({...doc.data(), 'id': doc.id});
+        final data = doc.data();
+        final progress = UserAdventureProgress(
+        userId: data['userId'] as String,
+        stageId: data['stageId'] as String,
+        encounterCount: data['encounterCount'] as int? ?? 0,
+        bossUnlocked: data['bossUnlocked'] as bool? ?? false,
+        lastUpdated: data['lastUpdated'] != null
+            ? (data['lastUpdated'] as Timestamp).toDate()
+            : DateTime.now(),
+        );
         progressMap[progress.stageId] = progress;
       }
 
@@ -171,15 +187,15 @@ class _StageSelectionScreenState extends State<StageSelectionScreen> {
       itemCount: _stages.length,
       itemBuilder: (context, index) {
         final stage = _stages[index];
-        final progress = _progressMap[stage.id];
+        final progress = _progressMap[stage.stageId];
         return _buildStageCard(stage, progress);
       },
     );
   }
 
-  Widget _buildStageCard(StageData stage, UserStageProgress? progress) {
-    final isCleared = progress?.isCleared ?? false;
-    final clearCount = progress?.clearCount ?? 0;
+  Widget _buildStageCard(StageData stage, UserAdventureProgress? progress) {
+    final bossUnlocked = progress?.bossUnlocked ?? false;
+    final encounterCount = progress?.encounterCount ?? 0;
 
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
@@ -204,7 +220,7 @@ class _StageSelectionScreenState extends State<StageSelectionScreen> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Center(
-                      child: stage.isBossStage
+                      child: stage.stageType == 'boss'
                           ? const Icon(Icons.shield, color: Colors.white, size: 28)
                           : Text(
                               '${stage.difficulty}',
@@ -233,7 +249,7 @@ class _StageSelectionScreenState extends State<StageSelectionScreen> {
                         const SizedBox(height: 4),
                         Row(
                           children: [
-                            if (isCleared) ...[
+                            if (bossUnlocked) ...[
                               const Icon(
                                 Icons.check_circle,
                                 size: 16,
@@ -241,7 +257,7 @@ class _StageSelectionScreenState extends State<StageSelectionScreen> {
                               ),
                               const SizedBox(width: 4),
                               Text(
-                                'クリア済み ($clearCount回)',
+                                'ボス解放済み ($encounterCount/5)',
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: Colors.grey.shade600,
@@ -279,7 +295,7 @@ class _StageSelectionScreenState extends State<StageSelectionScreen> {
 
               // 説明
               Text(
-                stage.description,
+                stage.description ?? '',
                 style: TextStyle(
                   fontSize: 14,
                   color: Colors.grey.shade700,

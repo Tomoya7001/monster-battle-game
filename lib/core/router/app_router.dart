@@ -3,6 +3,12 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../presentation/screens/admin/data_import_screen.dart';
 
+import '../../domain/entities/monster.dart';
+import '../../data/repositories/adventure_repository.dart';
+import '../../presentation/bloc/adventure/adventure_bloc.dart';
+import '../../presentation/bloc/adventure/adventure_event.dart';
+import '../../presentation/screens/adventure/adventure_stage_selection_screen.dart';
+
 import '../../presentation/screens/splash/splash_screen.dart';
 import '../../presentation/screens/auth/login_screen.dart';
 import '../../presentation/screens/auth/signup_screen.dart';
@@ -109,6 +115,20 @@ class AppRouter {
           child: const BattleSelectionScreen(),
         ),
       ),
+
+      // ★冒険システム一時無効化
+      GoRoute(
+          path: '/adventure',
+          builder: (context, state) {
+            final party = state.extra as List<Monster>?;
+            return BlocProvider(
+              create: (context) => AdventureBloc(
+                repository: AdventureRepository(),
+              )..add(const AdventureEvent.loadStages()),
+              child: const AdventureStageSelectionScreen(),
+            );
+          },
+        ),
     ],  // ← この閉じ括弧を追加
 
     // エラーページ

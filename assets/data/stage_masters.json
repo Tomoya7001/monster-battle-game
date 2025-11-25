@@ -1,0 +1,120 @@
+{
+    "stages": [
+        {
+            "stage_id": "stage_001",
+            "name": "初心者の森",
+            "stage_type": "normal",
+            "difficulty": 1,
+            "recommendedLevel": 5,
+            "description": "冒険者たちが最初に訪れる平和な森。弱いスライムたちが生息している。",
+            "encounter_monster_ids": [
+                "monster_021",
+                "monster_022",
+                "monster_023",
+                "monster_024",
+                "monster_025"
+            ],
+            "encounters_to_boss": 5,
+            "boss_stage_id": "stage_001_boss",
+            "rewards": {
+                "exp": 30,
+                "gold": 50,
+                "gems": 0,
+                "drop_items": [
+                    {
+                        "item_id": "slime_gel",
+                        "drop_rate": 30
+                    },
+                    {
+                        "item_id": "common_ore",
+                        "drop_rate": 10
+                    }
+                ]
+            }
+        },
+        {
+            "stage_id": "stage_001_boss",
+            "name": "初心者の森ボス",
+            "stage_type": "boss",
+            "difficulty": 2,
+            "recommendedLevel": 8,
+            "description": "森の奥深くに潜むボスモンスターたち。3体連続で戦うことになる。",
+            "parent_stage_id": "stage_001",
+            "boss_monster_ids": [
+                "monster_011",
+                "monster_012",
+                "monster_013"
+            ],
+            "rewards": {
+                "exp": 200,
+                "gold": 500,
+                "gems": 10,
+                "drop_items": [
+                    {
+                        "item_id": "forest_gem",
+                        "drop_rate": 50
+                    },
+                    {
+                        "item_id": "forest_sword",
+                        "drop_rate": 20
+                    }
+                ]
+            }
+        },
+        {
+            "stage_id": "stage_002",
+            "name": "炎の洞窟",
+            "stage_type": "normal",
+            "difficulty": 2,
+            "recommendedLevel": 10,
+            "description": "灼熱の溶岩が流れる危険な洞窟。炎属性のモンスターが多く生息する。",
+            "encounter_monster_ids": [
+                "monster_021",
+                "monster_029",
+                "monster_011"
+            ],
+            "encounters_to_boss": 5,
+            "boss_stage_id": "stage_002_boss",
+            "rewards": {
+                "exp": 50,
+                "gold": 80,
+                "gems": 0,
+                "drop_items": [
+                    {
+                        "item_id": "fire_crystal",
+                        "drop_rate": 25
+                    }
+                ]
+            }
+        },
+        {
+            "stage_id": "stage_002_boss",
+            "name": "炎の洞窟ボス",
+            "stage_type": "boss",
+            "difficulty": 3,
+            "recommendedLevel": 15,
+            "description": "洞窟の最奥に君臨する炎の支配者たち。強力な炎技を使ってくる。",
+            "parent_stage_id": "stage_002",
+            "boss_monster_ids": [
+                "monster_007",
+                "monster_011",
+                "monster_001"
+            ],
+            "rewards": {
+                "exp": 300,
+                "gold": 800,
+                "gems": 15,
+                "drop_items": [
+                    {
+                        "item_id": "dragon_scale",
+                        "drop_rate": 40
+                    },
+                    {
+                        "item_id": "flame_armor",
+                        "drop_rate": 15
+                    }
+                ]
+            }
+        }
+    ]
+}

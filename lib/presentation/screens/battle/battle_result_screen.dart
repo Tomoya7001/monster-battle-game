@@ -139,7 +139,7 @@ class BattleResultScreen extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              stageData!.description,
+              stageData!.description ?? '',
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.grey.shade600,

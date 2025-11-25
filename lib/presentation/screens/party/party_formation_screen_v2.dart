@@ -5,6 +5,7 @@ import '../../../core/models/monster_filter.dart';
 import '../../bloc/party/party_formation_bloc_v2.dart';
 import '../battle/battle_screen.dart';
 import '../../blocs/auth/auth_bloc.dart';
+import '../battle/stage_selection_screen.dart';
 
 /// クラロワ風パーティ編成画面V3（完全版）
 class PartyFormationScreenV2 extends StatelessWidget {
@@ -106,33 +107,32 @@ class _PartyFormationContent extends StatelessWidget {
   }
 
   Widget _buildContent(BuildContext context, PartyFormationLoadedV2 state) {
-    return Column(
-      children: [
-        // アクティブプリセット表示
-        _buildActivePresetBanner(context, state),
+  return Column(
+    children: [
+      // アクティブプリセット表示
+      _buildActivePresetBanner(context, state),
 
-        // プリセット番号選択（1-5）
-        _buildPresetSelector(context, state),
+      // プリセット番号選択（1-5）
+      _buildPresetSelector(context, state),
 
-        // 選択中モンスター表示（5体固定・ドラッグ&ドロップ対応）
-        _buildSelectedMonsters(context, state),
+      // 選択中モンスター表示（5体固定・ドラッグ&ドロップ対応）
+      _buildSelectedMonsters(context, state),
 
-        // ツールバー（ソート・フィルター・グリッドサイズ）
-        _buildToolbar(context, state),
+      // ツールバー（ソート・フィルター・グリッドサイズ）
+      _buildToolbar(context, state),
 
-        const Divider(height: 1),
+      const Divider(height: 1),
 
-        // モンスター一覧
-        Expanded(
-          child: _buildMonsterGrid(context, state),
-        ),
+      // モンスター一覧
+      Expanded(
+        child: _buildMonsterGrid(context, state),
+      ),
 
-        // ★追加: バトル開始ボタン
-        if (battleType == 'pvp')
-          _buildBattleButton(context, state),
-      ],
-    );
-  }
+      // ★修正: バトル開始ボタン（PvPとAdventure両方に表示）
+      _buildBattleButton(context, state),
+    ],
+  );
+}
 
   /// アクティブプリセットバナー
   Widget _buildActivePresetBanner(BuildContext context, PartyFormationLoadedV2 state) {
@@ -925,40 +925,85 @@ class _PartyFormationContent extends StatelessWidget {
   }
 
   /// バトル開始ボタン
-Widget _buildBattleButton(BuildContext context, PartyFormationLoadedV2 state) {
-  final canStartBattle = state.selectedMonsters.length >= 3;
-  
-  return Container(
-    padding: const EdgeInsets.all(16),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.1),
-          blurRadius: 4,
-          offset: const Offset(0, -2),
+  Widget _buildBattleButton(BuildContext context, PartyFormationLoadedV2 state) {
+    final canStartBattle = state.selectedMonsters.length >= 3;
+    
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 4,
+            offset: const Offset(0, -2),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          // ★PvP用バトルボタン
+          if (battleType == 'pvp')
+            ElevatedButton.icon(
+              onPressed: canStartBattle
+                  ? () => _startBattle(context, state)
+                  : null,
+              icon: const Icon(Icons.sports_kabaddi, size: 24),
+              label: Text(
+                canStartBattle
+                    ? 'CPUバトル (${state.selectedMonsters.length}体)'
+                    : '最低3体選択してください',
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red[600],
+                disabledBackgroundColor: Colors.grey[300],
+                minimumSize: const Size(double.infinity, 52),
+              ),
+            ),
+          
+          // ★Adventure用ステージ挑戦ボタン
+          if (battleType == 'adventure')
+            ElevatedButton.icon(
+              onPressed: canStartBattle
+                  ? () => _startStageChallenge(context, state)
+                  : null,
+              icon: const Icon(Icons.flag, size: 24),
+              label: Text(
+                canStartBattle
+                    ? 'ステージ挑戦 (${state.selectedMonsters.length}体)'
+                    : '最低3体選択してください',
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green[600],
+                disabledBackgroundColor: Colors.grey[300],
+                minimumSize: const Size(double.infinity, 52),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  /// ステージ挑戦処理
+  void _startStageChallenge(BuildContext context, PartyFormationLoadedV2 state) {
+    if (state.selectedMonsters.length < 3) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('最低3体のモンスターを選択してください')),
+      );
+      return;
+    }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => StageSelectionScreen(
+          playerParty: state.selectedMonsters,
         ),
-      ],
-    ),
-    child: ElevatedButton.icon(
-      onPressed: canStartBattle
-          ? () => _startBattle(context, state)
-          : null,
-      icon: const Icon(Icons.play_arrow, size: 24),
-      label: Text(
-        canStartBattle
-            ? 'バトル開始 (${state.selectedMonsters.length}体)'
-            : '最低3体選択してください',
-        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.red[600],
-        disabledBackgroundColor: Colors.grey[300],
-        minimumSize: const Size(double.infinity, 52),
-      ),
-    ),
-  );
-}
+    );
+  }
 
   /// バトル開始処理
   void _startBattle(BuildContext context, PartyFormationLoadedV2 state) {

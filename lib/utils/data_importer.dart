@@ -190,51 +190,6 @@ class DataImporter {
       rethrow;
     }
   }
-
-  /// ステージマスターデータを投入
-  Future<void> importStageMasters() async {
-    try {
-      print('📦 ステージマスターデータ読み込み中...');
-      
-      final String jsonString = await rootBundle
-          .loadString('assets/data/stage_masters_data.json');
-      final Map<String, dynamic> data = json.decode(jsonString);
-      
-      print('✅ JSONファイル読み込み完了');
-      
-      final batch = _firestore.batch();
-      int count = 0;
-      
-      for (var stage in data['stages']) {
-        final stageMap = Map<String, dynamic>.from(stage as Map);
-        final docRef = _firestore
-            .collection('stage_masters')
-            .doc(stageMap['stage_id'].toString());
-        
-        batch.set(docRef, {
-          ...stageMap,
-          'created_at': FieldValue.serverTimestamp(),
-          'updated_at': FieldValue.serverTimestamp(),
-        });
-        count++;
-        
-        if (count % 500 == 0) {
-          await batch.commit();
-          print('✅ $count 件のステージマスターを投入');
-        }
-      }
-      
-      if (count % 500 != 0) {
-        await batch.commit();
-      }
-      
-      print('✅ ステージマスターデータ投入完了: $count 件');
-    } catch (e, stackTrace) {
-      print('❌ エラー: $e');
-      print('スタックトレース: $stackTrace');
-      rethrow;
-    }
-  }
   
   /// すべてのマスターデータを一括投入
   Future<Map<String, int>> importAllMasterData() async {
@@ -398,6 +353,102 @@ Future<void> importAdditionalSkills() async {
     rethrow;
   }
 }
+
+/// 統一技マスタデータを投入
+  Future<void> importUnifiedSkillMasters() async {
+    try {
+      print('🔥 統一技マスタデータ読み込み中...');
+      
+      final jsonString = await rootBundle.loadString('assets/data/skill_masters_unified.json');
+      final data = json.decode(jsonString) as Map<String, dynamic>;
+      final skills = data['skills'] as List<dynamic>;
+
+      print('📊 ${skills.length}件の技データを投入します...');
+
+      final batch = _firestore.batch();
+      int count = 0;
+
+      for (var skillData in skills) {
+        final docRef = _firestore
+            .collection('skill_masters')
+            .doc(skillData['skill_id']);
+        
+        batch.set(docRef, skillData, SetOptions(merge: true));
+        count++;
+      }
+
+      await batch.commit();
+      print('✅ 技マスタデータ投入完了: $count件');
+    } catch (e) {
+      print('❌ 技マスタデータ投入エラー: $e');
+      rethrow;
+    }
+  }
+
+  /// 冒険システム用マスタデータ一括投入
+  Future<void> importAdventureSystemData() async {
+    try {
+      print('🚀 冒険システム用マスタデータ投入開始...');
+      print('');
+      
+      await importUnifiedSkillMasters();
+      print('');
+      
+      await importStageMasters();
+      print('');
+      
+      print('✅ 冒険システム用マスタデータ投入完了！');
+    } catch (e) {
+      print('❌ マスタデータ投入失敗: $e');
+      rethrow;
+    }
+  }
+
+  /// ステージマスタデータを投入
+  Future<void> importStageMasters() async {
+    try {
+      print('🗺️ ステージマスタデータ読み込み中...');
+      
+      final jsonString = await rootBundle.loadString('assets/data/stage_masters.json');
+      final data = json.decode(jsonString) as Map<String, dynamic>;
+      final stages = data['stages'] as List<dynamic>;
+
+      print('📊 ${stages.length}件のステージデータを投入します...');
+
+      final batch = _firestore.batch();
+      int count = 0;
+
+      for (var stageData in stages) {
+        final docRef = _firestore
+            .collection('stage_masters')
+            .doc(stageData['stage_id']);
+        
+        batch.set(docRef, stageData);
+        count++;
+      }
+
+      await batch.commit();
+      print('✅ ステージマスタデータ投入完了: $count件');
+    } catch (e) {
+      print('❌ ステージマスタデータ投入エラー: $e');
+      rethrow;
+    }
+  }
+
+  /// 全マスタデータ投入（拡張版）
+  Future<void> importAllMasterDataExtended() async {
+    try {
+      print('🚀 全マスタデータ投入開始...');
+      
+      await importUnifiedSkillMasters();
+      await importStageMasters();
+      
+      print('✅ 全マスタデータ投入完了！');
+    } catch (e) {
+      print('❌ マスタデータ投入失敗: $e');
+      rethrow;
+    }
+  }
   
   /// すべてのマスターデータを削除（開発用）
   Future<void> deleteAllMasterData() async {

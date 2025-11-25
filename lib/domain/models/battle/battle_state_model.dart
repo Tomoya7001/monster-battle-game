@@ -3,6 +3,8 @@ import 'battle_skill.dart';
 
 /// バトル全体の状態
 class BattleStateModel {
+  final String battleType; // 'cpu', 'pvp', 'adventure', 'boss'
+  final int maxDeployableCount; // 最大出撃数（通常3、冒険エンカウント1）
   // プレイヤー側
   final List<BattleMonster> playerParty; // 手持ち5体
   final Set<String> playerFieldMonsterIds; // 場に出したモンスターID（瀕死含む、最大3体）
@@ -27,6 +29,8 @@ class BattleStateModel {
   BattleStateModel({
     required this.playerParty,
     required this.enemyParty,
+    this.battleType = 'cpu', // ★追加
+    this.maxDeployableCount = 3, // ★追加
   })  : playerFieldMonsterIds = {},
         enemyFieldMonsterIds = {},
         playerActiveMonster = null,
@@ -40,7 +44,7 @@ class BattleStateModel {
         battleLog = [];
 
   /// プレイヤーが追加でモンスターを出せるか
-  bool get canPlayerSendMore => playerFieldMonsterIds.length < 3;
+  bool get canPlayerSendMore => playerFieldMonsterIds.length < maxDeployableCount; // ★修正
 
   /// 相手が追加でモンスターを出せるか
   bool get canEnemySendMore => enemyFieldMonsterIds.length < 3;
