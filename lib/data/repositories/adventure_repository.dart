@@ -186,6 +186,77 @@ class AdventureRepository {
     return monsters;
   }
 
+  /// ★追加: バトル勝利時のドロップ計算
+  Future<Map<String, int>> calculateBattleDrops(
+    String stageId, {
+    bool isBoss = false,
+  }) async {
+    final drops = <String, int>{};
+    
+    try {
+      final itemSnapshot = await _firestore.collection('item_masters').get();
+      
+      for (final doc in itemSnapshot.docs) {
+        final data = doc.data();
+        final dropStages = List<String>.from(data['drop_stages'] ?? []);
+        
+        if (!dropStages.contains(stageId)) continue;
+        
+        final dropRate = data['drop_rate'] as int? ?? 0;
+        final roll = DateTime.now().microsecondsSinceEpoch % 100;
+        
+        var effectiveRate = dropRate;
+        if (isBoss) effectiveRate = (effectiveRate * 1.5).round();
+        
+        if (roll < effectiveRate) {
+          final rarity = data['rarity'] as int? ?? 1;
+          final qty = rarity >= 3 ? 1 : (1 + (roll % 2));
+          drops[doc.id] = qty;
+        }
+      }
+      
+      if (isBoss) {
+        drops['boss_proof'] = 1;
+      }
+    } catch (e) {
+      print('❌ ドロップ計算エラー: $e');
+    }
+    
+    return drops;
+  }
+
+  /// ★追加: ドロップアイテムをユーザーに付与
+  Future<void> grantDropItems(String userId, Map<String, int> drops) async {
+    if (drops.isEmpty) return;
+    
+    final batch = _firestore.batch();
+    
+    for (final entry in drops.entries) {
+      final docId = '${userId}_${entry.key}';
+      final docRef = _firestore.collection('user_items').doc(docId);
+      
+      final doc = await docRef.get();
+      
+      if (doc.exists) {
+        final currentQty = doc.data()!['quantity'] as int? ?? 0;
+        batch.update(docRef, {
+          'quantity': currentQty + entry.value,
+          'updated_at': FieldValue.serverTimestamp(),
+        });
+      } else {
+        batch.set(docRef, {
+          'user_id': userId,
+          'item_id': entry.key,
+          'quantity': entry.value,
+          'acquired_at': FieldValue.serverTimestamp(),
+          'updated_at': FieldValue.serverTimestamp(),
+        });
+      }
+    }
+    
+    await batch.commit();
+  }
+
   /// ★共通: monster_mastersからモンスター取得
   Future<Monster?> _getMonsterFromMaster(String monsterId, String prefix) async {
     final doc = await _firestore

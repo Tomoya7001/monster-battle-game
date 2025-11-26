@@ -16,6 +16,9 @@ import '../battle/battle_selection_screen.dart';
 import '../battle/stage_selection_screen.dart'; // ★追加
 import '../../../data/repositories/party_preset_repository.dart';
 import '../../../domain/entities/monster.dart';
+import '../item/item_screen.dart';
+import '../../bloc/item/item_bloc.dart';
+import '../../bloc/item/item_event.dart';
 
 
 /// ホーム画面
@@ -352,6 +355,33 @@ class HomeScreen extends StatelessWidget {
                     vertical: 16,
                   ),
                   backgroundColor: Colors.purple,
+                ),
+              ),
+
+              const SizedBox(height: 16),
+              
+              // アイテムボタン
+              ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => BlocProvider(
+                        create: (context) => ItemBloc()
+                          ..add(LoadItems(userId: userId ?? 'dev_user_12345')),
+                        child: ItemScreen(userId: userId ?? 'dev_user_12345'),
+                      ),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.inventory_2),
+                label: const Text('アイテム'),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 32,
+                    vertical: 16,
+                  ),
+                  backgroundColor: Colors.teal,
                 ),
               ),
 

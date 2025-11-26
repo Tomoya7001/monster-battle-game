@@ -190,6 +190,51 @@ class DataImporter {
       rethrow;
     }
   }
+
+  /// アイテムマスターデータを投入
+  Future<void> importItemMasters() async {
+    try {
+      print('📦 アイテムマスターデータ読み込み中...');
+      
+      final String jsonString = await rootBundle
+          .loadString('assets/data/item_masters_data.json');
+      final Map<String, dynamic> data = json.decode(jsonString);
+      
+      print('✅ JSONファイル読み込み完了');
+      
+      final batch = _firestore.batch();
+      int count = 0;
+      
+      for (var item in data['items']) {
+        final itemMap = Map<String, dynamic>.from(item as Map);
+        final docRef = _firestore
+            .collection('item_masters')
+            .doc(itemMap['item_id'].toString());
+        
+        batch.set(docRef, {
+          ...itemMap,
+          'created_at': FieldValue.serverTimestamp(),
+          'updated_at': FieldValue.serverTimestamp(),
+        });
+        count++;
+        
+        if (count % 500 == 0) {
+          await batch.commit();
+          print('✅ $count 件のアイテムマスターを投入');
+        }
+      }
+      
+      if (count % 500 != 0) {
+        await batch.commit();
+      }
+      
+      print('✅ アイテムマスターデータ投入完了: $count 件');
+    } catch (e, stackTrace) {
+      print('❌ エラー: $e');
+      print('スタックトレース: $stackTrace');
+      rethrow;
+    }
+  }
   
   /// すべてのマスターデータを一括投入
   Future<Map<String, int>> importAllMasterData() async {
@@ -230,6 +275,11 @@ class DataImporter {
       await importStageMasters();
       results['stages'] = await _getCollectionCount('stage_masters');
       print('');
+
+      // アイテム
+      await importItemMasters();
+      results['items'] = await _getCollectionCount('item_masters');
+      print('');
       
       print('====================================');
       print('🎉 すべてのマスターデータ投入完了！');
@@ -269,6 +319,9 @@ class DataImporter {
       
       results['traits'] = await _getCollectionCount('trait_masters');
       print('✅ 特性数: ${results['traits']} / 56 (目標)');
+
+      results['items'] = await _getCollectionCount('item_masters');
+      print('✅ アイテム数: ${results['items']} / 20 (目標)');
       
       print('');
       print('====================================');
