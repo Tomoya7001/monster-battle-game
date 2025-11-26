@@ -281,6 +281,19 @@ class AdventureStageSelectionScreen extends StatelessWidget {
   }
 
   void _startNormalBattle(BuildContext context, StageData stage) {
+    // ★HPチェック: 戦えるモンスターがいるか確認
+    final availableMonsters = party.where((m) => m.currentHp > 0).toList();
+    
+    if (availableMonsters.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('戦えるモンスターがいません。回復アイテムを使用してください。'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+    
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -299,6 +312,19 @@ class AdventureStageSelectionScreen extends StatelessWidget {
 
   /// ★実装: ボスバトル開始
   void _startBossBattle(BuildContext context, StageData stage) async {
+    // ★HPチェック: 戦えるモンスターがいるか確認
+    final availableMonsters = party.where((m) => m.currentHp > 0).toList();
+    
+    if (availableMonsters.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('戦えるモンスターがいません。回復アイテムを使用してください。'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+    
     final bossStageId = stage.bossStageId;
     if (bossStageId == null) {
       ScaffoldMessenger.of(context).showSnackBar(

@@ -53,8 +53,19 @@ class MonsterModel {
     final lvBonus = (level > 1) ? growthHpInt * (level - 1) : 0;
 
     // current_hp が無い場合は、baseHp + ivHp + pointHp + lvBonus で補完
-    final currentHp = (data['current_hp'] as int?) ??
+    final storedHp = (data['current_hp'] as int?) ??
         (baseHp + ivHp + pointHp + lvBonus);
+    
+    // 最大HP計算（簡易版）
+    final calculatedMaxHp = baseHp + ivHp + pointHp + lvBonus;
+    
+    // HP自動回復計算（5分ごとに+5）
+    final lastHpUpdateTime = (data['last_hp_update'] as Timestamp?)?.toDate() ?? DateTime.now();
+    final currentHp = _calculateRecoveredHp(
+      storedHp: storedHp,
+      maxHp: calculatedMaxHp,
+      lastUpdate: lastHpUpdateTime,
+    );
 
     return Monster(
       id: snapshot.id,
@@ -140,5 +151,22 @@ class MonsterModel {
       return value.map((e) => e.toString()).toList();
     }
     return [];
+  }
+
+  /// HP自動回復計算（5分ごとに+5、瀕死からも回復）
+  static int _calculateRecoveredHp({
+    required int storedHp,
+    required int maxHp,
+    required DateTime lastUpdate,
+  }) {
+    final now = DateTime.now();
+    final elapsedMinutes = now.difference(lastUpdate).inMinutes;
+    
+    // 5分ごとに+5回復
+    final recoveryIntervals = elapsedMinutes ~/ 5;
+    final recoveredAmount = recoveryIntervals * 5;
+    
+    // 最大HPを超えない、最低0
+    return (storedHp + recoveredAmount).clamp(0, maxHp);
   }
 }

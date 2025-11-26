@@ -36,14 +36,12 @@ class DataImporter {
         });
         count++;
         
-        // Firestoreのバッチ制限は500件
         if (count % 500 == 0) {
           await batch.commit();
           print('✅ $count 件のモンスターマスターを投入');
         }
       }
       
-      // 残りをコミット
       if (count % 500 != 0) {
         await batch.commit();
       }
@@ -247,36 +245,29 @@ class DataImporter {
     final Map<String, int> results = {};
     
     try {
-      // モンスター
       await importMonsterMasters();
       results['monsters'] = await _getCollectionCount('monster_masters');
       print('');
       
-      // 技
       await importSkillMasters();
       print('');
       
-      // 追加技
       await importAdditionalSkills();
       results['skills'] = await _getCollectionCount('skill_masters');
       print('');
       
-      // 装備
       await importEquipmentMasters();
       results['equipment'] = await _getCollectionCount('equipment_masters');
       print('');
       
-      // 特性
       await importTraitMasters();
       results['traits'] = await _getCollectionCount('trait_masters');
       print('');
 
-      // ★追加: ステージ
       await importStageMasters();
       results['stages'] = await _getCollectionCount('stage_masters');
       print('');
 
-      // アイテム
       await importItemMasters();
       results['items'] = await _getCollectionCount('item_masters');
       print('');
@@ -370,44 +361,44 @@ class DataImporter {
   }
   
   /// 追加技データを投入
-Future<void> importAdditionalSkills() async {
-  try {
-    print('📦 追加技データ読み込み中...');
-    
-    final String jsonString = await rootBundle
-        .loadString('assets/data/additional_skills.json');
-    final Map<String, dynamic> data = json.decode(jsonString);
-    
-    print('✅ JSONファイル読み込み完了');
-    
-    final batch = _firestore.batch();
-    int count = 0;
-    
-    for (var skill in data['additional_skills']) {
-      final skillMap = Map<String, dynamic>.from(skill as Map);
-      final docRef = _firestore
-          .collection('skill_masters')
-          .doc(skillMap['skill_id'].toString());
+  Future<void> importAdditionalSkills() async {
+    try {
+      print('📦 追加技データ読み込み中...');
       
-      batch.set(docRef, {
-        ...skillMap,
-        'created_at': FieldValue.serverTimestamp(),
-        'updated_at': FieldValue.serverTimestamp(),
-      });
-      count++;
+      final String jsonString = await rootBundle
+          .loadString('assets/data/additional_skills.json');
+      final Map<String, dynamic> data = json.decode(jsonString);
+      
+      print('✅ JSONファイル読み込み完了');
+      
+      final batch = _firestore.batch();
+      int count = 0;
+      
+      for (var skill in data['additional_skills']) {
+        final skillMap = Map<String, dynamic>.from(skill as Map);
+        final docRef = _firestore
+            .collection('skill_masters')
+            .doc(skillMap['skill_id'].toString());
+        
+        batch.set(docRef, {
+          ...skillMap,
+          'created_at': FieldValue.serverTimestamp(),
+          'updated_at': FieldValue.serverTimestamp(),
+        });
+        count++;
+      }
+      
+      await batch.commit();
+      
+      print('✅ 追加技データ投入完了: $count 件');
+    } catch (e, stackTrace) {
+      print('❌ エラー: $e');
+      print('スタックトレース: $stackTrace');
+      rethrow;
     }
-    
-    await batch.commit();
-    
-    print('✅ 追加技データ投入完了: $count 件');
-  } catch (e, stackTrace) {
-    print('❌ エラー: $e');
-    print('スタックトレース: $stackTrace');
-    rethrow;
   }
-}
 
-/// 統一技マスタデータを投入
+  /// 統一技マスタデータを投入
   Future<void> importUnifiedSkillMasters() async {
     try {
       print('🔥 統一技マスタデータ読み込み中...');
@@ -521,191 +512,201 @@ Future<void> importAdditionalSkills() async {
     print('✅ すべてのマスターデータ削除完了');
     print('====================================');
   }
-}
 
+  // ============================================================
+  // 開発用ユーザーデータ付与機能
+  // ============================================================
 
-/*
-// lib/utils/data_importer.dart
-import 'dart:convert';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/services.dart';
-
-class DataImporter {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
-  /// モンスターマスターデータを投入
-  Future<void> importMonsters({
-    Function(int current, int total)? onProgress,
+  /// 開発ユーザーにアイテムを付与
+  Future<void> grantItemsToUser({
+    required String userId,
+    required Map<String, int> items,
   }) async {
-    final jsonString = await rootBundle.loadString('assets/data/monster_masters_data.json');
-    final jsonData = Map<String, dynamic>.from(json.decode(jsonString) as Map);
-    final List<dynamic> data = List<dynamic>.from(jsonData['monsters'] as List);
-    
-    final batch = _firestore.batch();
-    int count = 0;
-    
-    for (var item in data) {
-      final itemMap = Map<String, dynamic>.from(item as Map);
-      final docRef = _firestore.collection('monster_masters').doc(itemMap['monster_id'].toString());
-      batch.set(docRef, {
-        ...itemMap,
-        'createdAt': FieldValue.serverTimestamp(),
-        'updatedAt': FieldValue.serverTimestamp(),
-      });
+    if (items.isEmpty) return;
+
+    try {
+      print('🎁 アイテム付与開始: $userId');
       
-      count++;
-      if (count % 500 == 0) {
-        await batch.commit();
-        onProgress?.call(count, data.length);
-      }
-    }
-    
-    if (count % 500 != 0) {
-      await batch.commit();
-    }
-    
-    onProgress?.call(data.length, data.length);
-  }
-
-  /// 技マスターデータを投入
-  Future<void> importSkills({
-    Function(int current, int total)? onProgress,
-  }) async {
-    final jsonString = await rootBundle.loadString('assets/data/skill_masters_data.json');
-    final jsonData = Map<String, dynamic>.from(json.decode(jsonString) as Map);
-    final List<dynamic> data = List<dynamic>.from(jsonData['skills'] as List);
-    
-    final batch = _firestore.batch();
-    int count = 0;
-    
-    for (var item in data) {
-      final itemMap = Map<String, dynamic>.from(item as Map);
-      final docRef = _firestore.collection('skill_masters').doc(itemMap['skill_id'].toString());
-      batch.set(docRef, {
-        ...itemMap,
-        'createdAt': FieldValue.serverTimestamp(),
-        'updatedAt': FieldValue.serverTimestamp(),
-      });
-      
-      count++;
-      if (count % 500 == 0) {
-        await batch.commit();
-        onProgress?.call(count, data.length);
-      }
-    }
-    
-    if (count % 500 != 0) {
-      await batch.commit();
-    }
-    
-    onProgress?.call(data.length, data.length);
-  }
-
-  /// 装備マスターデータを投入
-  Future<void> importEquipment({
-    Function(int current, int total)? onProgress,
-  }) async {
-    final jsonString = await rootBundle.loadString('assets/data/equipment_masters_data.json');
-    final jsonData = Map<String, dynamic>.from(json.decode(jsonString) as Map);
-    final List<dynamic> data = List<dynamic>.from(jsonData['equipment'] as List);
-    
-    final batch = _firestore.batch();
-    int count = 0;
-    
-    for (var item in data) {
-      final itemMap = Map<String, dynamic>.from(item as Map);
-      final docRef = _firestore.collection('equipment_masters').doc(itemMap['equipment_id'].toString());
-      batch.set(docRef, {
-        ...itemMap,
-        'createdAt': FieldValue.serverTimestamp(),
-        'updatedAt': FieldValue.serverTimestamp(),
-      });
-      
-      count++;
-      if (count % 500 == 0) {
-        await batch.commit();
-        onProgress?.call(count, data.length);
-      }
-    }
-    
-    if (count % 500 != 0) {
-      await batch.commit();
-    }
-    
-    onProgress?.call(data.length, data.length);
-  }
-
-  /// 特性マスターデータを投入
-  Future<void> importTraits({
-    Function(int current, int total)? onProgress,
-  }) async {
-    final jsonString = await rootBundle.loadString('assets/data/trait_masters_data.json');
-    final jsonData = Map<String, dynamic>.from(json.decode(jsonString) as Map);
-    final List<dynamic> data = List<dynamic>.from(jsonData['traits'] as List);
-    
-    final batch = _firestore.batch();
-    int count = 0;
-    
-    for (var item in data) {
-      final itemMap = Map<String, dynamic>.from(item as Map);
-      final docRef = _firestore.collection('trait_masters').doc(itemMap['trait_id'].toString());
-      batch.set(docRef, {
-        ...itemMap,
-        'createdAt': FieldValue.serverTimestamp(),
-        'updatedAt': FieldValue.serverTimestamp(),
-      });
-      
-      count++;
-      if (count % 500 == 0) {
-        await batch.commit();
-        onProgress?.call(count, data.length);
-      }
-    }
-    
-    if (count % 500 != 0) {
-      await batch.commit();
-    }
-    
-    onProgress?.call(data.length, data.length);
-  }
-
-  /// 全データを一括投入
-  Future<void> importAll({
-    Function(String task, int current, int total)? onProgress,
-  }) async {
-    await importMonsters(
-      onProgress: (c, t) => onProgress?.call('モンスター', c, t),
-    );
-    await importSkills(
-      onProgress: (c, t) => onProgress?.call('技', c, t),
-    );
-    await importEquipment(
-      onProgress: (c, t) => onProgress?.call('装備', c, t),
-    );
-    await importTraits(
-      onProgress: (c, t) => onProgress?.call('特性', c, t),
-    );
-  }
-
-  /// データ削除（開発用）
-  Future<void> deleteAll() async {
-    final collections = [
-      'monster_masters',
-      'skill_masters',
-      'equipment_masters',
-      'trait_masters',
-    ];
-
-    for (var collection in collections) {
-      final snapshot = await _firestore.collection(collection).get();
       final batch = _firestore.batch();
       
-      for (var doc in snapshot.docs) {
-        batch.delete(doc.reference);
+      for (final entry in items.entries) {
+        final docId = '${userId}_${entry.key}';
+        final docRef = _firestore.collection('user_items').doc(docId);
+        
+        final doc = await docRef.get();
+        
+        if (doc.exists) {
+          final currentQty = doc.data()!['quantity'] as int? ?? 0;
+          batch.update(docRef, {
+            'quantity': currentQty + entry.value,
+            'updated_at': FieldValue.serverTimestamp(),
+          });
+          print('  📦 ${entry.key}: +${entry.value} (合計: ${currentQty + entry.value})');
+        } else {
+          batch.set(docRef, {
+            'user_id': userId,
+            'item_id': entry.key,
+            'quantity': entry.value,
+            'acquired_at': FieldValue.serverTimestamp(),
+            'updated_at': FieldValue.serverTimestamp(),
+          });
+          print('  📦 ${entry.key}: +${entry.value} (新規)');
+        }
       }
       
       await batch.commit();
+      print('✅ アイテム付与完了: ${items.length}種類');
+    } catch (e) {
+      print('❌ アイテム付与エラー: $e');
+      rethrow;
     }
   }
+
+  /// 開発ユーザーに通貨を付与
+  Future<void> grantCurrencyToUser({
+    required String userId,
+    int coin = 0,
+    int stone = 0,
+    int gem = 0,
+  }) async {
+    try {
+      print('💰 通貨付与開始: $userId');
+      
+      final userDoc = _firestore.collection('users').doc(userId);
+      final doc = await userDoc.get();
+      
+      if (doc.exists) {
+        final data = doc.data()!;
+        final updates = <String, dynamic>{
+          'updated_at': FieldValue.serverTimestamp(),
+        };
+        
+        if (coin > 0) {
+          final currentCoin = data['coin'] as int? ?? 0;
+          updates['coin'] = currentCoin + coin;
+          print('  🪙 コイン: +$coin (合計: ${currentCoin + coin})');
+        }
+        if (stone > 0) {
+          final currentStone = data['stone'] as int? ?? 0;
+          updates['stone'] = currentStone + stone;
+          print('  💎 石: +$stone (合計: ${currentStone + stone})');
+        }
+        if (gem > 0) {
+          final currentGem = data['gem'] as int? ?? 0;
+          updates['gem'] = currentGem + gem;
+          print('  💠 ジェム: +$gem (合計: ${currentGem + gem})');
+        }
+        
+        await userDoc.update(updates);
+      } else {
+        await userDoc.set({
+          'user_id': userId,
+          'coin': coin,
+          'stone': stone,
+          'gem': gem,
+          'created_at': FieldValue.serverTimestamp(),
+          'updated_at': FieldValue.serverTimestamp(),
+        });
+        print('  🪙 コイン: $coin');
+        print('  💎 石: $stone');
+        print('  💠 ジェム: $gem');
+      }
+      
+      print('✅ 通貨付与完了');
+    } catch (e) {
+      print('❌ 通貨付与エラー: $e');
+      rethrow;
+    }
+  }
+
+  /// 開発ユーザーのモンスターHP全回復
+  Future<void> healAllMonsters(String userId) async {
+    try {
+      print('💚 モンスターHP全回復開始: $userId');
+      
+      final snapshot = await _firestore
+          .collection('user_monsters')
+          .where('user_id', isEqualTo: userId)
+          .get();
+      
+      if (snapshot.docs.isEmpty) {
+        print('⚠️ モンスターが見つかりません');
+        return;
+      }
+      
+      final batch = _firestore.batch();
+      int count = 0;
+      
+      for (final doc in snapshot.docs) {
+        final data = doc.data();
+        final baseHp = data['base_hp'] as int? ?? 100;
+        final ivHp = data['iv_hp'] as int? ?? 0;
+        final pointHp = data['point_hp'] as int? ?? 0;
+        final level = data['level'] as int? ?? 1;
+        final maxHp = baseHp + ivHp + pointHp + (level * 2);
+        
+        batch.update(doc.reference, {
+          'current_hp': maxHp,
+          'last_hp_update': FieldValue.serverTimestamp(),
+        });
+        count++;
+      }
+      
+      await batch.commit();
+      print('✅ HP全回復完了: $count体');
+    } catch (e) {
+      print('❌ HP全回復エラー: $e');
+      rethrow;
+    }
+  }
+
+  /// 開発用：初期アイテムセット付与
+  Future<void> grantDevStarterPack(String userId) async {
+    print('');
+    print('====================================');
+    print('🎁 開発用スターターパック付与開始');
+    print('====================================');
+    print('');
+    
+    await grantItemsToUser(
+      userId: userId,
+      items: {
+        'potion_small': 99,
+        'potion_medium': 50,
+        'potion_large': 20,
+        'revive_half': 30,
+        'revive_full': 10,
+        'status_heal': 30,
+        'exp_candy_s': 50,
+        'exp_candy_m': 30,
+        'exp_candy_l': 10,
+        'intimacy_treat': 30,
+        'reset_points': 5,
+        'trait_stone': 3,
+        'fire_fragment': 50,
+        'water_fragment': 50,
+        'thunder_fragment': 50,
+        'iron_ore': 50,
+        'magic_ore': 30,
+      },
+    );
+    
+    print('');
+    
+    await grantCurrencyToUser(
+      userId: userId,
+      coin: 100000,
+      stone: 1000,
+      gem: 500,
+    );
+    
+    print('');
+    
+    await healAllMonsters(userId);
+    
+    print('');
+    print('====================================');
+    print('🎉 スターターパック付与完了！');
+    print('====================================');
+  }
 }
-*/

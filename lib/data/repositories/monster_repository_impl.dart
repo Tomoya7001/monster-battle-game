@@ -304,4 +304,44 @@ class MonsterRepositoryImpl implements MonsterRepository {
       throw Exception('Failed to update equipped equipment: $e');
     }
   }
+
+  /// モンスターのHPを更新
+  @override
+  Future<void> updateMonsterHp(String monsterId, int currentHp) async {
+    try {
+      await _firestore
+          .collection(_collection)
+          .doc(monsterId)
+          .update({
+        'current_hp': currentHp,
+        'last_hp_update': FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      throw Exception('Failed to update monster HP: $e');
+    }
+  }
+
+  /// 複数モンスターのHPを一括更新
+  @override
+  Future<void> updateMonstersHp(Map<String, int> monsterHpMap) async {
+    if (monsterHpMap.isEmpty) return;
+    
+    try {
+      final batch = _firestore.batch();
+      
+      for (final entry in monsterHpMap.entries) {
+        final docRef = _firestore.collection(_collection).doc(entry.key);
+        batch.update(docRef, {
+          'current_hp': entry.value,
+          'last_hp_update': FieldValue.serverTimestamp(),
+        });
+      }
+      
+      await batch.commit();
+      print('✅ ${monsterHpMap.length}体のモンスターHP更新完了');
+    } catch (e) {
+      print('❌ HP一括更新エラー: $e');
+      throw Exception('Failed to update monsters HP: $e');
+    }
+  }
 }

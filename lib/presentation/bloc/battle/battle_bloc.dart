@@ -13,6 +13,7 @@ import '../../../domain/models/stage/stage_data.dart';
 import '../../../domain/models/battle/battle_result.dart';
 import '../../../core/services/battle/battle_calculation_service.dart';
 import '../../../data/repositories/adventure_repository.dart';
+import '../../../data/repositories/monster_repository_impl.dart';
 
 class BattleBloc extends Bloc<BattleEvent, BattleState> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -47,7 +48,8 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
     try {
       _startConnectionCheck();
 
-      final playerParty = await _convertToBattleMonsters(event.playerParty);
+      // CPU戦: フルHP（useCurrentHp: false）
+      final playerParty = await _convertToBattleMonsters(event.playerParty, useCurrentHp: false);
       final enemyParty = await _generateCpuParty();
 
       _battleState = BattleStateModel(
@@ -89,7 +91,8 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
       _currentStage = event.stageData;
       _startConnectionCheck();
 
-      final playerParty = await _convertToBattleMonsters(event.playerParty)
+      // 冒険/ボス戦: 現在HP使用
+      final playerParty = await _convertToBattleMonsters(event.playerParty, useCurrentHp: true)
           .timeout(const Duration(seconds: 10));
 
       final adventureRepo = AdventureRepository();
@@ -669,6 +672,9 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
             await _applyGoldToUser();
           }
           
+          // ★ HP永続化
+          await _saveMonsterHpAfterBattle();
+
           final expGains = await _applyExpToMonsters();
           final result = await _generateBattleResult(isWin: true, expGains: expGains);
           await _saveBattleHistory(isWin: true);
@@ -687,6 +693,9 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
       } else {
         _battleState!.addLog('プレイヤーの敗北...');
         
+        // ★ HP永続化（敗北時も保存）
+        await _saveMonsterHpAfterBattle();
+
         try {
           final result = await _generateBattleResult(isWin: false, expGains: []);
           await _saveBattleHistory(isWin: false);
@@ -719,6 +728,9 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
         _stopConnectionCheck();
         _battleState!.phase = BattlePhase.battleEnd;
         _battleState!.addLog('プレイヤーの敗北...');
+
+        // ★ HP永続化（敗北時も保存）
+        await _saveMonsterHpAfterBattle();
         
         try {
           final result = await _generateBattleResult(isWin: false, expGains: []);
@@ -989,6 +1001,50 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
     }
   }
 
+  /// バトル終了後のHP永続化（冒険/ボス戦のみ）
+  Future<void> _saveMonsterHpAfterBattle() async {
+    if (_battleState == null) return;
+    
+    // ★ 冒険/ボス戦以外ではHP保存しない（PvP/CPUは元のHPに戻す）
+    final battleType = _battleState!.battleType;
+    if (battleType != 'adventure' && battleType != 'boss') {
+      print('📊 HP保存スキップ（バトルタイプ: $battleType - HP変更なし）');
+      return;
+    }
+
+    try {
+      final monsterHpMap = <String, int>{};
+
+      for (final battleMonster in _battleState!.playerParty) {
+        if (battleMonster.hasParticipated) {
+          final monsterId = battleMonster.baseMonster.id;
+          
+          // ★ 敵モンスター（cpu_, enemy_, boss_で始まるID）は保存しない
+          if (monsterId.startsWith('cpu_') || 
+              monsterId.startsWith('enemy_') || 
+              monsterId.startsWith('boss_')) {
+            continue;
+          }
+          
+          // HP割合を計算して実際のHPに変換
+          final battleHpRatio = battleMonster.currentHp / battleMonster.maxHp;
+          final actualHp = (battleMonster.baseMonster.maxHp * battleHpRatio).round();
+          
+          monsterHpMap[monsterId] = actualHp;
+          print('📊 ${battleMonster.baseMonster.monsterName}: バトルHP ${battleMonster.currentHp}/${battleMonster.maxHp} → 実際HP $actualHp/${battleMonster.baseMonster.maxHp}');
+        }
+      }
+
+      if (monsterHpMap.isNotEmpty) {
+        final monsterRepo = MonsterRepositoryImpl(_firestore);
+        await monsterRepo.updateMonstersHp(monsterHpMap);
+        print('✅ バトル後HP保存完了: ${monsterHpMap.length}体');
+      }
+    } catch (e) {
+      print('❌ HP保存エラー: $e');
+    }
+  }
+
   /// 次のレベルに必要な経験値
   int _getExpForNextLevel(int currentLevel) {
     return currentLevel * 100;
@@ -1027,7 +1083,11 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
   }
 
   /// MonsterリストをBattleMonsterに変換
-  Future<List<BattleMonster>> _convertToBattleMonsters(List<Monster> monsters) async {
+  /// [useCurrentHp] - trueの場合は現在HPを使用（冒険/ボス戦）、falseはフルHP（PvP/CPU）
+  Future<List<BattleMonster>> _convertToBattleMonsters(
+    List<Monster> monsters, {
+    bool useCurrentHp = false,
+  }) async {
     final List<BattleMonster> battleMonsters = [];
 
     try {
@@ -1037,9 +1097,22 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
         }
 
         final skills = await _loadSkills(monster.equippedSkills);
+        
+        int initialHp;
+        if (useCurrentHp) {
+          // 冒険/ボス戦: 現在HP割合をLv50用HPに変換（瀕死は0のまま）
+          final hpRatio = monster.hpPercentage;
+          initialHp = (monster.lv50MaxHp * hpRatio).round();
+          print('📊 ${monster.monsterName}: HP ${monster.currentHp}/${monster.maxHp} (${(hpRatio * 100).toInt()}%) → バトルHP $initialHp/${monster.lv50MaxHp}');
+        } else {
+          // PvP/CPU: フルHP
+          initialHp = monster.lv50MaxHp;
+        }
+        
         battleMonsters.add(BattleMonster(
           baseMonster: monster,
           skills: skills,
+          initialHp: initialHp,
         ));
       }
     } catch (e, stackTrace) {
@@ -1236,7 +1309,8 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
       }
 
       final enemyParty = await _convertToBattleMonsters([enemyMonster]);
-      final playerParty = await _convertToBattleMonsters(event.playerParty);
+      // 冒険: 現在HP使用
+      final playerParty = await _convertToBattleMonsters(event.playerParty, useCurrentHp: true);
 
       _battleState = BattleStateModel(
         playerParty: playerParty,
@@ -1269,7 +1343,8 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
       }
 
       final enemyParty = await _convertToBattleMonsters(bossMonsters);
-      final playerParty = await _convertToBattleMonsters(event.playerParty);
+      // ボス戦: 現在HP使用
+      final playerParty = await _convertToBattleMonsters(event.playerParty, useCurrentHp: true);
 
       _battleState = BattleStateModel(
         playerParty: playerParty,

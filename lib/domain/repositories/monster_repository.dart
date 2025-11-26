@@ -25,4 +25,10 @@ abstract class MonsterRepository {
   
   // ★ 追加：装備更新
   Future<void> updateEquippedEquipment(String monsterId, List<String> equipmentIds);
+
+  // ★ 追加：HP更新
+  Future<void> updateMonsterHp(String monsterId, int currentHp);
+  
+  // ★ 追加：複数モンスターHP一括更新
+  Future<void> updateMonstersHp(Map<String, int> monsterHpMap);
 }
