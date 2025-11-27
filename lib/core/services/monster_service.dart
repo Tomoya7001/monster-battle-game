@@ -505,6 +505,12 @@ Future<int> recalculateAllMonsterHp(String userId) async {
       });
     }
 
+    Future<void> updateEquippedEquipment(String monsterId, List<String> equipmentIds) async {
+      await _firestore.collection('user_monsters').doc(monsterId).update({
+        'equipped_equipment': equipmentIds,
+      });
+    }
+
     Future<List<Map<String, dynamic>>> getAvailableSkills() async {
       final snapshot = await _firestore.collection('skill_masters').get();
       return snapshot.docs.map((doc) => {...doc.data(), 'id': doc.id}).toList();

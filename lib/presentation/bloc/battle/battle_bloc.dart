@@ -14,6 +14,8 @@ import '../../../domain/models/battle/battle_result.dart';
 import '../../../core/services/battle/battle_calculation_service.dart';
 import '../../../data/repositories/adventure_repository.dart';
 import '../../../data/repositories/monster_repository_impl.dart';
+import '../../../data/repositories/equipment_repository.dart';
+import '../../../domain/entities/equipment_master.dart';
 
 class BattleBloc extends Bloc<BattleEvent, BattleState> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -21,6 +23,7 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
   
   BattleStateModel? _battleState;
   StageData? _currentStage;
+  final EquipmentRepository _equipmentRepository = EquipmentRepository();
   Timer? _connectionCheckTimer;
 
   BattleBloc() : super(const BattleInitial()) {
@@ -357,6 +360,16 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
         damageDealt = result.damage;
         enemyMonster.takeDamage(result.damage);
 
+        // ★追加: ダメージ反射
+        final reflectPercentage = enemyMonster.reflectDamagePercentage;
+        if (reflectPercentage > 0 && result.damage > 0) {
+          final reflectDamage = (result.damage * reflectPercentage).round();
+          if (reflectDamage > 0) {
+            playerMonster.takeDamage(reflectDamage);
+            _battleState!.addLog('${playerMonster.baseMonster.monsterName}は反射ダメージを${reflectDamage}受けた！');
+          }
+        }
+
         String message = '${result.damage}のダメージ！';
         if (result.isCritical) {
           message = '急所に当たった！$message';
@@ -489,6 +502,16 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
       if (result.damage > 0) {
         damageDealt = result.damage;
         playerMonster.takeDamage(result.damage);
+
+        // ★追加: ダメージ反射
+        final reflectPercentage = playerMonster.reflectDamagePercentage;
+        if (reflectPercentage > 0 && result.damage > 0) {
+          final reflectDamage = (result.damage * reflectPercentage).round();
+          if (reflectDamage > 0) {
+            cpuMonster.takeDamage(reflectDamage);
+            _battleState!.addLog('${cpuMonster.baseMonster.monsterName}は反射ダメージを${reflectDamage}受けた！');
+          }
+        }
 
         String message = '${result.damage}のダメージ！';
         if (result.isCritical) {
@@ -816,6 +839,20 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
         .clamp(0, _battleState!.enemyActiveMonster!.maxCost);
     }
 
+    // ★追加: 装備効果（毎ターンHP回復など）
+    if (_battleState!.playerActiveMonster != null) {
+      final equipMessages = _battleState!.playerActiveMonster!.processEquipmentTurnEnd();
+      for (var msg in equipMessages) {
+        _battleState!.addLog(msg);
+      }
+    }
+    if (_battleState!.enemyActiveMonster != null) {
+      final equipMessages = _battleState!.enemyActiveMonster!.processEquipmentTurnEnd();
+      for (var msg in equipMessages) {
+        _battleState!.addLog(msg);
+      }
+    }
+
     // ターン終了時の状態異常処理
     if (_battleState!.playerActiveMonster != null) {
       final statusMessages = BattleCalculationService.processStatusAilmentEnd(
@@ -1090,6 +1127,9 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
   }) async {
     final List<BattleMonster> battleMonsters = [];
 
+    // ★追加: 装備マスターデータを取得
+    final equipmentMap = await _equipmentRepository.getEquipmentMasters();
+
     try {
       for (final monster in monsters) {
         if (monster.id.isEmpty || monster.monsterName.isEmpty) {
@@ -1097,6 +1137,16 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
         }
 
         final skills = await _loadSkills(monster.equippedSkills);
+        
+        // ★追加: 装備を取得
+        final List<EquipmentMaster> monsterEquipments = [];
+        for (final equipId in monster.equippedEquipment) {
+          final equipment = equipmentMap[equipId];
+          if (equipment != null) {
+            monsterEquipments.add(equipment);
+            print('🛡️ ${monster.monsterName}: 装備「${equipment.name}」を適用');
+          }
+        }
         
         int initialHp;
         if (useCurrentHp) {
@@ -1112,6 +1162,7 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
         battleMonsters.add(BattleMonster(
           baseMonster: monster,
           skills: skills,
+          equipments: monsterEquipments, // ★追加
           initialHp: initialHp,
         ));
       }
@@ -1289,6 +1340,7 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
     return dummyMonsters.map((m) => BattleMonster(
       baseMonster: m,
       skills: _getDefaultSkills(),
+      equipments: const [], // ★追加: CPUは装備なし
     )).toList();
   }
 

@@ -35,9 +35,15 @@ class BattleCalculationService {
     final attackStat = skill.type == 'physical' ? attacker.attack : attacker.magic;
     double baseDamage = attackStat * skill.powerMultiplier;
 
-    // ★追加: 火傷状態で物理技の威力半減
+    // ★火傷状態で物理技の威力半減
     if (attacker.statusAilment == 'burn' && skill.type == 'physical') {
       baseDamage *= 0.5;
+    }
+
+    // ★追加: 装備効果 - 属性技威力ブースト
+    final attributeBoost = attacker.getAttributeBoost(skill.element);
+    if (attributeBoost > 0) {
+      baseDamage *= (1.0 + attributeBoost);
     }
 
     // 2. 属性相性補正
@@ -57,8 +63,9 @@ class BattleCalculationService {
     final randomMultiplier = 0.85 + _random.nextDouble() * 0.15;
     damage *= randomMultiplier;
 
-    // 5. クリティカル判定（6%）
-    bool isCritical = _random.nextDouble() < 0.06;
+    // 5. クリティカル判定（6% + 装備ブースト）
+    double criticalChance = 0.06 + attacker.criticalRateBoost;
+    bool isCritical = _random.nextDouble() < criticalChance;
     if (isCritical) {
       damage *= 1.5;
     }
@@ -77,16 +84,19 @@ class BattleCalculationService {
   /// 命中判定
   static bool checkHit(BattleSkill skill, BattleMonster attacker, BattleMonster defender) {
     // 基本命中率
-    int hitChance = skill.accuracy;
+    double hitChance = skill.accuracy.toDouble();
 
     // 命中率ステージ補正
-    hitChance = (hitChance * _getAccuracyMultiplier(attacker.accuracyStage)).round();
+    hitChance *= _getAccuracyMultiplier(attacker.accuracyStage);
+
+    // ★追加: 装備効果 - 命中率ブースト
+    hitChance *= (1.0 + attacker.accuracyBoost);
 
     // 回避率ステージ補正
-    hitChance = (hitChance / _getEvasionMultiplier(defender.evasionStage)).round();
+    hitChance /= _getEvasionMultiplier(defender.evasionStage);
 
     // 最終判定
-    return _random.nextInt(100) < hitChance.clamp(1, 100);
+    return _random.nextInt(100) < hitChance.round().clamp(1, 100);
   }
 
   static double _getAccuracyMultiplier(int stage) {

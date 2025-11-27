@@ -32,6 +32,7 @@ class MonsterBloc extends Bloc<MonsterEvent, MonsterState> {
     on<AllocatePoints>(_onAllocatePoints);
     on<ResetPoints>(_onResetPoints);
     on<UpdateEquippedSkills>(_onUpdateEquippedSkills);
+    on<UpdateEquippedEquipment>(_onUpdateEquippedEquipment);
   }
 
   /// ユーザーのモンスター一覧を読み込む
@@ -399,6 +400,21 @@ class MonsterBloc extends Bloc<MonsterEvent, MonsterState> {
       }
     } catch (e) {
       emit(MonsterError(message: '技の更新に失敗しました: $e'));
+    }
+  }
+
+  Future<void> _onUpdateEquippedEquipment(
+    UpdateEquippedEquipment event,
+    Emitter<MonsterState> emit,
+  ) async {
+    try {
+      await _monsterService.updateEquippedEquipment(event.monsterId, event.equipmentIds);
+      final monster = await _monsterService.getMonsterById(event.monsterId);
+      if (monster != null) {
+        emit(MonsterUpdated(monster: monster, message: '装備を更新しました'));
+      }
+    } catch (e) {
+      emit(MonsterError(message: '装備の更新に失敗しました: $e'));
     }
   }
 }

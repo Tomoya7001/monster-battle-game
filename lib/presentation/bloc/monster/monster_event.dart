@@ -176,3 +176,17 @@ class UpdateEquippedSkills extends MonsterEvent {
   @override
   List<Object?> get props => [monsterId, skillIds];
 }
+
+/// 装備を更新
+class UpdateEquippedEquipment extends MonsterEvent {
+  final String monsterId;
+  final List<String> equipmentIds;
+
+  const UpdateEquippedEquipment({
+    required this.monsterId,
+    required this.equipmentIds,
+  });
+
+  @override
+  List<Object?> get props => [monsterId, equipmentIds];
+}
