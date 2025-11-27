@@ -9,7 +9,7 @@ import 'dispatch_monster_select_dialog.dart';
 class DispatchLocationSelectDialog extends StatefulWidget {
   final List<DispatchLocation> unlockedLocations;
   final List<Monster> availableMonsters;
-  final Map<String, mat.Material> materialMasters;
+  final Map<String, mat.MaterialMaster> materialMasters;
   final void Function(String locationId, int durationHours, List<String> monsterIds) onConfirm;
 
   const DispatchLocationSelectDialog({

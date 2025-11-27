@@ -1,9 +1,7 @@
-// lib/presentation/screens/monster/monster_list_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/models/monster_filter.dart';
 import '../../../domain/entities/monster.dart';
 import '../../bloc/monster/monster_bloc.dart';
@@ -14,14 +12,12 @@ import 'widgets/monster_filter_dialog.dart';
 import 'widgets/monster_sort_dialog.dart';
 import 'monster_detail_screen.dart';
 import '../../blocs/auth/auth_bloc.dart';
-import '../../../core/services/master_data_service.dart';
-import '../../../core/services/monster_service.dart';
 
 /// グリッド表示タイプ
 enum GridViewType {
-  large, // 2列表示
-  medium, // 4列表示
-  small, // 6列表示
+  large,  // 2列表示
+  medium, // 4列表示（デフォルト）
+  small,  // 6列表示
 }
 
 class MonsterListScreen extends StatefulWidget {
@@ -32,62 +28,113 @@ class MonsterListScreen extends StatefulWidget {
 }
 
 class _MonsterListScreenState extends State<MonsterListScreen> {
-  GridViewType _gridViewType = GridViewType.large;
+  // SharedPreferencesのキー
+  static const String _gridViewTypeKey = 'monster_list_grid_view_type';
   
-  // ✅ 追加: 最後に読み込んだモンスターリストを保持
+  // デフォルトは4列
+  GridViewType _gridViewType = GridViewType.medium;
+  bool _isInitialized = false;
+  
   List<Monster> _cachedMonsters = [];
   MonsterFilter? _cachedFilter;
   MonsterSortType _cachedSortType = MonsterSortType.levelDesc;
   int _cachedTotalCount = 100;
-  
-  final MonsterService _monsterService = MonsterService();
 
   String get _userId {
-    // Firebase Auth を優先
     final firebaseUid = FirebaseAuth.instance.currentUser?.uid;
     if (firebaseUid != null && firebaseUid.isNotEmpty) {
       return firebaseUid;
     }
     
-    // AuthBloc から取得
     try {
       final authState = context.read<AuthBloc>().state;
       if (authState is Authenticated) {
         return authState.userId;
       }
     } catch (e) {
-      print('AuthBloc取得エラー: $e');
+      debugPrint('AuthBloc取得エラー: $e');
     }
     
-    return 'demo_user';
+    return 'dev_user_12345';
   }
 
   @override
   void initState() {
     super.initState();
+    _loadGridViewType();
     context.read<MonsterBloc>().add(LoadUserMonsters(userId: _userId));
+  }
+
+  /// 保存された列数設定を読み込み
+  Future<void> _loadGridViewType() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final savedType = prefs.getString(_gridViewTypeKey);
+      
+      if (savedType != null && mounted) {
+        setState(() {
+          _gridViewType = _stringToGridViewType(savedType);
+          _isInitialized = true;
+        });
+      } else {
+        setState(() {
+          _isInitialized = true;
+        });
+      }
+    } catch (e) {
+      debugPrint('列数設定読み込みエラー: $e');
+      setState(() {
+        _isInitialized = true;
+      });
+    }
+  }
+
+  /// 列数設定を保存
+  Future<void> _saveGridViewType(GridViewType type) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_gridViewTypeKey, _gridViewTypeToString(type));
+    } catch (e) {
+      debugPrint('列数設定保存エラー: $e');
+    }
+  }
+
+  /// GridViewType → String
+  String _gridViewTypeToString(GridViewType type) {
+    switch (type) {
+      case GridViewType.large:
+        return 'large';
+      case GridViewType.medium:
+        return 'medium';
+      case GridViewType.small:
+        return 'small';
+    }
+  }
+
+  /// String → GridViewType
+  GridViewType _stringToGridViewType(String value) {
+    switch (value) {
+      case 'large':
+        return GridViewType.large;
+      case 'medium':
+        return GridViewType.medium;
+      case 'small':
+        return GridViewType.small;
+      default:
+        return GridViewType.medium;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('モンスター一覧'),
+        title: const Text('預かり所'),
         actions: [
-          // ✅ デバッグ用（後で削除）
-          IconButton(
-            icon: const Icon(Icons.bug_report),
-            onPressed: () => _debugPrintFirestoreData(),
-            tooltip: 'デバッグ',
-          ),
           _buildGridToggleButton(),
-          // ✅ 修正: キャッシュを使用して常にアイコンを表示
           IconButton(
             icon: const Icon(Icons.search),
-            onPressed: () {
-              final filter = _cachedFilter ?? const MonsterFilter();
-              _showSearchDialog(context, filter);
-            },
+            onPressed: () => _showSearchDialog(context, _cachedFilter ?? const MonsterFilter()),
             tooltip: '検索',
           ),
           IconButton(
@@ -109,10 +156,7 @@ class _MonsterListScreenState extends State<MonsterListScreen> {
                   ),
               ],
             ),
-            onPressed: () => _showFilterDialog(
-              context,
-              _cachedFilter ?? const MonsterFilter(),
-            ),
+            onPressed: () => _showFilterDialog(context, _cachedFilter ?? const MonsterFilter()),
             tooltip: 'フィルター',
           ),
           IconButton(
@@ -126,14 +170,10 @@ class _MonsterListScreenState extends State<MonsterListScreen> {
         listener: (context, state) {
           if (state is MonsterError) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: Colors.red,
-              ),
+              SnackBar(content: Text(state.message), backgroundColor: Colors.red),
             );
           }
           if (state is MonsterUpdated) {
-            // ✅ 修正: キャッシュを更新
             _updateCachedMonster(state.monster);
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -144,7 +184,6 @@ class _MonsterListScreenState extends State<MonsterListScreen> {
             );
           }
           if (state is MonsterListLoaded) {
-            // ✅ 修正: キャッシュを更新
             _cachedMonsters = state.monsters;
             _cachedFilter = state.filter;
             _cachedSortType = state.sortType;
@@ -152,6 +191,11 @@ class _MonsterListScreenState extends State<MonsterListScreen> {
           }
         },
         builder: (context, state) {
+          // 初期化完了待ち
+          if (!_isInitialized) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
           if (state is MonsterLoading) {
             return const Center(child: CircularProgressIndicator());
           }
@@ -163,7 +207,6 @@ class _MonsterListScreenState extends State<MonsterListScreen> {
             return _buildMonsterGrid(context, state.monsters);
           }
 
-          // ✅ 修正: MonsterUpdated時もキャッシュを使用して表示を維持
           if (state is MonsterUpdated || state is MonsterError) {
             if (_cachedMonsters.isNotEmpty) {
               return _buildMonsterGrid(context, _cachedMonsters);
@@ -180,7 +223,6 @@ class _MonsterListScreenState extends State<MonsterListScreen> {
     );
   }
 
-  // ✅ 追加: キャッシュ内のモンスターを更新
   void _updateCachedMonster(Monster updatedMonster) {
     final index = _cachedMonsters.indexWhere((m) => m.id == updatedMonster.id);
     if (index != -1) {
@@ -196,72 +238,40 @@ class _MonsterListScreenState extends State<MonsterListScreen> {
       icon: Icon(_getGridIcon()),
       tooltip: '表示切替',
       onSelected: (type) {
-        setState(() {
-          _gridViewType = type;
-        });
+        setState(() => _gridViewType = type);
+        _saveGridViewType(type); // 設定を保存
       },
       itemBuilder: (context) => [
+        _buildGridMenuItem(GridViewType.large, Icons.grid_view, '大（2列）'),
+        _buildGridMenuItem(GridViewType.medium, Icons.grid_on, '中（4列）'),
+        _buildGridMenuItem(GridViewType.small, Icons.apps, '小（6列）'),
+        const PopupMenuDivider(),
         PopupMenuItem(
-          value: GridViewType.large,
-          child: Row(
-            children: [
-              Icon(
-                Icons.grid_view,
-                color: _gridViewType == GridViewType.large
-                    ? Theme.of(context).primaryColor
-                    : null,
-              ),
-              const SizedBox(width: 8),
-              const Text('大（2列）'),
-              if (_gridViewType == GridViewType.large)
-                const Padding(
-                  padding: EdgeInsets.only(left: 8),
-                  child: Icon(Icons.check, size: 16),
-                ),
-            ],
-          ),
-        ),
-        PopupMenuItem(
-          value: GridViewType.medium,
-          child: Row(
-            children: [
-              Icon(
-                Icons.grid_on,
-                color: _gridViewType == GridViewType.medium
-                    ? Theme.of(context).primaryColor
-                    : null,
-              ),
-              const SizedBox(width: 8),
-              const Text('中（4列）'),
-              if (_gridViewType == GridViewType.medium)
-                const Padding(
-                  padding: EdgeInsets.only(left: 8),
-                  child: Icon(Icons.check, size: 16),
-                ),
-            ],
-          ),
-        ),
-        PopupMenuItem(
-          value: GridViewType.small,
-          child: Row(
-            children: [
-              Icon(
-                Icons.apps,
-                color: _gridViewType == GridViewType.small
-                    ? Theme.of(context).primaryColor
-                    : null,
-              ),
-              const SizedBox(width: 8),
-              const Text('小（6列）'),
-              if (_gridViewType == GridViewType.small)
-                const Padding(
-                  padding: EdgeInsets.only(left: 8),
-                  child: Icon(Icons.check, size: 16),
-                ),
-            ],
+          enabled: false,
+          child: Text(
+            '※ 設定は自動保存されます',
+            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
           ),
         ),
       ],
+    );
+  }
+
+  PopupMenuItem<GridViewType> _buildGridMenuItem(GridViewType type, IconData icon, String label) {
+    return PopupMenuItem(
+      value: type,
+      child: Row(
+        children: [
+          Icon(icon, color: _gridViewType == type ? Theme.of(context).primaryColor : null),
+          const SizedBox(width: 8),
+          Text(label),
+          if (_gridViewType == type)
+            const Padding(
+              padding: EdgeInsets.only(left: 8),
+              child: Icon(Icons.check, size: 16),
+            ),
+        ],
+      ),
     );
   }
 
@@ -290,11 +300,11 @@ class _MonsterListScreenState extends State<MonsterListScreen> {
   double _getGridChildAspectRatio() {
     switch (_gridViewType) {
       case GridViewType.large:
-        return 0.75;
+        return 0.72;
       case GridViewType.medium:
-        return 0.65; // ✅ 修正: オーバーフロー対策で調整
+        return 0.62;
       case GridViewType.small:
-        return 0.6; // ✅ 修正: オーバーフロー対策で調整
+        return 0.58;
     }
   }
 
@@ -303,27 +313,11 @@ class _MonsterListScreenState extends State<MonsterListScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.catching_pokemon,
-            size: 64,
-            color: Colors.grey[400],
-          ),
+          Icon(Icons.catching_pokemon, size: 64, color: Colors.grey[400]),
           const SizedBox(height: 16),
-          Text(
-            'モンスターがいません',
-            style: TextStyle(
-              fontSize: 18,
-              color: Colors.grey[600],
-            ),
-          ),
+          Text('モンスターがいません', style: TextStyle(fontSize: 18, color: Colors.grey[600])),
           const SizedBox(height: 8),
-          Text(
-            'ガチャでモンスターを手に入れましょう！',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[500],
-            ),
-          ),
+          Text('ガチャでモンスターを手に入れましょう！', style: TextStyle(fontSize: 14, color: Colors.grey[500])),
         ],
       ),
     );
@@ -334,33 +328,14 @@ class _MonsterListScreenState extends State<MonsterListScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
-            Icons.error_outline,
-            size: 64,
-            color: Colors.red,
-          ),
+          const Icon(Icons.error_outline, size: 64, color: Colors.red),
           const SizedBox(height: 16),
-          Text(
-            'エラーが発生しました',
-            style: TextStyle(
-              fontSize: 18,
-              color: Colors.grey[600],
-            ),
-          ),
+          Text('エラーが発生しました', style: TextStyle(fontSize: 18, color: Colors.grey[600])),
           const SizedBox(height: 8),
-          Text(
-            message,
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[500],
-            ),
-            textAlign: TextAlign.center,
-          ),
+          Text(message, style: TextStyle(fontSize: 14, color: Colors.grey[500]), textAlign: TextAlign.center),
           const SizedBox(height: 16),
           ElevatedButton(
-            onPressed: () {
-              context.read<MonsterBloc>().add(LoadUserMonsters(userId: _userId));
-            },
+            onPressed: () => context.read<MonsterBloc>().add(LoadUserMonsters(userId: _userId)),
             child: const Text('再読み込み'),
           ),
         ],
@@ -368,7 +343,6 @@ class _MonsterListScreenState extends State<MonsterListScreen> {
     );
   }
 
-  // ✅ 修正: MonsterListLoadedではなくList<Monster>を受け取る
   Widget _buildMonsterGrid(BuildContext context, List<Monster> monsters) {
     return Column(
       children: [
@@ -378,18 +352,12 @@ class _MonsterListScreenState extends State<MonsterListScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '${monsters.length} / 100 体',
-                style: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 14,
-                ),
+                '${monsters.length} / $_cachedTotalCount 体',
+                style: TextStyle(color: Colors.grey[600], fontSize: 14),
               ),
               Text(
                 _getGridTypeLabel(),
-                style: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 12,
-                ),
+                style: TextStyle(color: Colors.grey[600], fontSize: 12),
               ),
             ],
           ),
@@ -400,32 +368,22 @@ class _MonsterListScreenState extends State<MonsterListScreen> {
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: _getGridCrossAxisCount(),
               childAspectRatio: _getGridChildAspectRatio(),
-              crossAxisSpacing: 8,
-              mainAxisSpacing: 8,
+              crossAxisSpacing: 6,
+              mainAxisSpacing: 6,
             ),
             itemCount: monsters.length,
             itemBuilder: (context, index) {
               final monster = monsters[index];
               return MonsterCard(
                 monster: monster,
-                isCompact: _gridViewType != GridViewType.large, // ✅ 修正: 中・小表示時はコンパクト
+                isCompact: _gridViewType != GridViewType.large,
                 onTap: () => _navigateToDetail(context, monster),
-                onFavoriteToggle: (isFavorite) {
-                  context.read<MonsterBloc>().add(
-                        ToggleFavorite(
-                          monsterId: monster.id,
-                          isFavorite: isFavorite,
-                        ),
-                      );
-                },
-                onLockToggle: (isLocked) {
-                  context.read<MonsterBloc>().add(
-                        ToggleLock(
-                          monsterId: monster.id,
-                          isLocked: isLocked,
-                        ),
-                      );
-                },
+                // お気に入りの表示のみ（タップ不可）
+                showFavoriteIcon: true,
+                onFavoriteToggle: null,
+                // 鍵マークは一覧で非表示
+                showLockIcon: false,
+                onLockToggle: null,
               );
             },
           ),
@@ -446,7 +404,6 @@ class _MonsterListScreenState extends State<MonsterListScreen> {
   }
 
   void _navigateToDetail(BuildContext context, Monster monster) {
-    // ✅ 修正: BlocProviderを引き継ぐ
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -463,9 +420,7 @@ class _MonsterListScreenState extends State<MonsterListScreen> {
       context: context,
       builder: (dialogContext) => MonsterFilterDialog(
         currentFilter: currentFilter,
-        onApply: (filter) {
-          context.read<MonsterBloc>().add(ApplyFilter(filter));
-        },
+        onApply: (filter) => context.read<MonsterBloc>().add(ApplyFilter(filter)),
       ),
     );
   }
@@ -475,140 +430,48 @@ class _MonsterListScreenState extends State<MonsterListScreen> {
       context: context,
       builder: (dialogContext) => MonsterSortDialog(
         currentSort: currentSort,
-        onSelect: (sortType) {
-          context.read<MonsterBloc>().add(ApplySort(sortType));
-        },
+        onSelect: (sortType) => context.read<MonsterBloc>().add(ApplySort(sortType)),
       ),
     );
   }
 
   void _showSearchDialog(BuildContext context, MonsterFilter currentFilter) {
+    final controller = TextEditingController(text: currentFilter.searchKeyword ?? '');
     showDialog(
       context: context,
-      builder: (dialogContext) {
-        final controller = TextEditingController(
-          text: currentFilter.searchKeyword ?? '',
-        );
-        return AlertDialog(
-          title: const Text('モンスター検索'),
-          content: TextField(
-            controller: controller,
-            decoration: const InputDecoration(
-              hintText: 'モンスター名を入力',
-              prefixIcon: Icon(Icons.search),
-            ),
-            autofocus: true,
-            onSubmitted: (value) {
-              Navigator.pop(dialogContext);
-              context.read<MonsterBloc>().add(
-                    ApplyFilter(
-                      currentFilter.copyWith(searchKeyword: value),
-                    ),
-                  );
-            },
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('モンスター検索'),
+        content: TextField(
+          controller: controller,
+          decoration: const InputDecoration(
+            hintText: 'モンスター名を入力',
+            prefixIcon: Icon(Icons.search),
           ),
-          actions: [
+          autofocus: true,
+          onSubmitted: (value) {
+            Navigator.pop(dialogContext);
+            context.read<MonsterBloc>().add(ApplyFilter(currentFilter.copyWith(searchKeyword: value)));
+          },
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(dialogContext), child: const Text('キャンセル')),
+          if (currentFilter.searchKeyword?.isNotEmpty == true)
             TextButton(
-              onPressed: () => Navigator.pop(dialogContext),
-              child: const Text('キャンセル'),
-            ),
-            if (currentFilter.searchKeyword?.isNotEmpty == true)
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(dialogContext);
-                  context.read<MonsterBloc>().add(
-                        ApplyFilter(
-                          currentFilter.copyWith(
-                            searchKeyword: '',
-                            clearKeyword: true,
-                          ),
-                        ),
-                      );
-                },
-                child: const Text('クリア'),
-              ),
-            ElevatedButton(
               onPressed: () {
                 Navigator.pop(dialogContext);
-                context.read<MonsterBloc>().add(
-                      ApplyFilter(
-                        currentFilter.copyWith(
-                          searchKeyword: controller.text,
-                        ),
-                      ),
-                    );
+                context.read<MonsterBloc>().add(ApplyFilter(currentFilter.copyWith(searchKeyword: '', clearKeyword: true)));
               },
-              child: const Text('検索'),
+              child: const Text('クリア'),
             ),
-          ],
-        );
-      },
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(dialogContext);
+              context.read<MonsterBloc>().add(ApplyFilter(currentFilter.copyWith(searchKeyword: controller.text)));
+            },
+            child: const Text('検索'),
+          ),
+        ],
+      ),
     );
-  }
-
-  // ✅ デバッグ用（後で削除）
-  Future<void> _debugPrintFirestoreData() async {
-    final firestore = FirebaseFirestore.instance;
-    final userId = _userId;
-    // ↓すでに投入済み
-    // final masterDataService = MasterDataService();
-    // await masterDataService.insertDummySkillData();
-    // ポイント再計算（1回実行）
-    final updatedCount = await _monsterService.recalculateRemainingPoints(userId);
-    print('ポイント再計算完了: $updatedCount体');
-
-
-    // await masterDataService.insertDummyTraitData();
-    print('ダミーデータ投入完了');
-    
-    print('========================================');
-    print('デバッグ情報');
-    print('========================================');
-    print('現在のユーザーID: $userId');
-    
-    // user_monstersの全データを取得
-    final allMonsters = await firestore.collection('user_monsters').get();
-    print('user_monsters 総数: ${allMonsters.docs.length}');
-    
-    // 現在のユーザーのモンスター
-    final userMonsters = await firestore
-        .collection('user_monsters')
-        .where('user_id', isEqualTo: userId)
-        .get();
-    print('ユーザーのモンスター数: ${userMonsters.docs.length}');
-    
-    print('--- 最新5件のモンスター ---');
-    final recentMonsters = userMonsters.docs.take(5);
-    for (var doc in recentMonsters) {
-      final data = doc.data();
-      print('ID: ${doc.id}');
-      print('  monster_id: ${data['monster_id']}');
-      print('  level: ${data['level']}');
-      print('  iv_hp: ${data['iv_hp']}');
-      print('  current_hp: ${data['current_hp']}');
-      print('  acquired_at: ${data['acquired_at']}');
-      print('');
-    }
-    
-    // 全ユーザーIDを確認
-    final uniqueUserIds = allMonsters.docs
-        .map((doc) => doc.data()['user_id'] as String?)
-        .toSet()
-        .toList();
-    print('--- 全ユーザーID ---');
-    for (var id in uniqueUserIds) {
-      print('  $id');
-    }
-    print('========================================');
-    
-    // UIにも表示
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('デバッグ情報をコンソールに出力しました\nユーザーID: $userId\nモンスター数: ${userMonsters.docs.length}'),
-          duration: const Duration(seconds: 5),
-        ),
-      );
-    }
   }
 }

@@ -47,7 +47,7 @@ class ItemService {
         return ItemUseResult(success: false, message: 'アイテムを持っていません');
       }
 
-      // モンスター取得
+      // モンスター取得（user_monstersとmonster_mastersを結合）
       final monsterDoc = await _firestore
           .collection('user_monsters')
           .doc(targetMonsterId)
@@ -58,6 +58,20 @@ class ItemService {
       }
 
       final monsterData = monsterDoc.data()!;
+      
+      // マスターデータも取得（baseHp計算に必要）
+      final masterMonsterId = monsterData['monster_id'] as String?;
+      Map<String, dynamic>? masterData;
+      if (masterMonsterId != null) {
+        final masterDoc = await _firestore
+            .collection('monster_masters')
+            .doc(masterMonsterId)
+            .get();
+        if (masterDoc.exists) {
+          masterData = masterDoc.data();
+        }
+      }
+      
       final effect = item.effect;
       
       if (effect == null) {
@@ -70,6 +84,7 @@ class ItemService {
         itemId: itemId,
         monsterId: targetMonsterId,
         monsterData: monsterData,
+        masterData: masterData,
         effect: effect,
         item: item,
       );
@@ -91,6 +106,7 @@ class ItemService {
     required String itemId,
     required String monsterId,
     required Map<String, dynamic> monsterData,
+    Map<String, dynamic>? masterData,
     required Map<String, dynamic> effect,
     required Item item,
   }) async {
@@ -99,13 +115,13 @@ class ItemService {
 
     switch (effectType) {
       case 'heal_hp':
-        return await _healHp(monsterId, monsterData, value.toInt());
+        return await _healHp(monsterId, monsterData, masterData, value.toInt());
       
       case 'heal_hp_full':
-        return await _healHpFull(monsterId, monsterData);
+        return await _healHpFull(monsterId, monsterData, masterData);
       
       case 'revive':
-        return await _revive(monsterId, monsterData, value.toInt());
+        return await _revive(monsterId, monsterData, masterData, value.toInt());
       
       case 'cure_status':
         return await _cureStatus(monsterId, monsterData);
@@ -131,25 +147,86 @@ class ItemService {
     }
   }
 
+  /// ★ Monster.maxHp と同じ計算式でmaxHPを計算
+  /// 計算式: base * (1 + (level - 1) * 0.05) + iv + diminishingReturn(point)
+  int _calculateMaxHp(Map<String, dynamic> monsterData, Map<String, dynamic>? masterData) {
+    // base_statsから取得、なければmonster_mastersから
+    final baseStats = masterData?['base_stats'] as Map<String, dynamic>? ?? {};
+    final baseHp = (baseStats['hp'] as num?)?.toInt() ?? 
+                   (masterData?['baseHp'] as num?)?.toInt() ?? 
+                   100;
+    
+    final level = (monsterData['level'] as num?)?.toInt() ?? 1;
+    final ivHp = (monsterData['iv_hp'] as num?)?.toInt() ?? 0;
+    final pointHp = (monsterData['point_hp'] as num?)?.toInt() ?? 0;
+
+    // 基礎値 * レベル倍率（1レベルごとに+5%）
+    final double baseStat = baseHp * (1.0 + (level - 1) * 0.05);
+    
+    // 個体値を加算
+    final double withIv = baseStat + ivHp;
+    
+    // ポイント振り分けによる追加（収穫逓減の法則）
+    final double pointBonus = _calculateDiminishingReturn(pointHp);
+    
+    return (withIv + pointBonus).round();
+  }
+
+  /// 収穫逓減の法則によるポイント計算
+  double _calculateDiminishingReturn(int points) {
+    if (points <= 0) return 0.0;
+
+    double total = 0.0;
+
+    // 0-50: +1.0
+    if (points > 0) {
+      final int range1 = points.clamp(0, 50);
+      total += range1 * 1.0;
+    }
+
+    // 51-100: +0.8
+    if (points > 50) {
+      final int range2 = (points - 50).clamp(0, 50);
+      total += range2 * 0.8;
+    }
+
+    // 101-150: +0.6
+    if (points > 100) {
+      final int range3 = (points - 100).clamp(0, 50);
+      total += range3 * 0.6;
+    }
+
+    // 151-200: +0.4
+    if (points > 150) {
+      final int range4 = (points - 150).clamp(0, 50);
+      total += range4 * 0.4;
+    }
+
+    // 201以上: +0.2
+    if (points > 200) {
+      final int range5 = points - 200;
+      total += range5 * 0.2;
+    }
+
+    return total;
+  }
+
   /// HP回復
   Future<ItemUseResult> _healHp(
     String monsterId,
     Map<String, dynamic> data,
+    Map<String, dynamic>? masterData,
     int healAmount,
   ) async {
-    final currentHp = data['current_hp'] as int? ?? 0;
+    final currentHp = (data['current_hp'] as num?)?.toInt() ?? 0;
     
     // 瀕死チェック
     if (currentHp <= 0) {
       return ItemUseResult(success: false, message: '瀕死のモンスターには使用できません');
     }
 
-    // 最大HP計算（簡易版）
-    final baseHp = data['base_hp'] as int? ?? 100;
-    final ivHp = data['iv_hp'] as int? ?? 0;
-    final pointHp = data['point_hp'] as int? ?? 0;
-    final level = data['level'] as int? ?? 1;
-    final maxHp = baseHp + ivHp + pointHp + (level * 2);
+    // ★ 修正: Monster.maxHpと同じ計算式
+    final maxHp = _calculateMaxHp(data, masterData);
 
     if (currentHp >= maxHp) {
       return ItemUseResult(success: false, message: 'HPは既に最大です');
@@ -166,7 +243,7 @@ class ItemService {
     return ItemUseResult(
       success: true,
       message: 'HPを$healedAmount回復しました',
-      data: {'healed': healedAmount, 'newHp': newHp},
+      data: {'healed': healedAmount, 'newHp': newHp, 'maxHp': maxHp},
     );
   }
 
@@ -174,18 +251,16 @@ class ItemService {
   Future<ItemUseResult> _healHpFull(
     String monsterId,
     Map<String, dynamic> data,
+    Map<String, dynamic>? masterData,
   ) async {
-    final currentHp = data['current_hp'] as int? ?? 0;
+    final currentHp = (data['current_hp'] as num?)?.toInt() ?? 0;
     
     if (currentHp <= 0) {
       return ItemUseResult(success: false, message: '瀕死のモンスターには使用できません');
     }
 
-    final baseHp = data['base_hp'] as int? ?? 100;
-    final ivHp = data['iv_hp'] as int? ?? 0;
-    final pointHp = data['point_hp'] as int? ?? 0;
-    final level = data['level'] as int? ?? 1;
-    final maxHp = baseHp + ivHp + pointHp + (level * 2);
+    // ★ 修正: Monster.maxHpと同じ計算式
+    final maxHp = _calculateMaxHp(data, masterData);
 
     if (currentHp >= maxHp) {
       return ItemUseResult(success: false, message: 'HPは既に最大です');
@@ -199,7 +274,7 @@ class ItemService {
     return ItemUseResult(
       success: true,
       message: 'HPを全回復しました',
-      data: {'healed': maxHp - currentHp, 'newHp': maxHp},
+      data: {'healed': maxHp - currentHp, 'newHp': maxHp, 'maxHp': maxHp},
     );
   }
 
@@ -207,19 +282,17 @@ class ItemService {
   Future<ItemUseResult> _revive(
     String monsterId,
     Map<String, dynamic> data,
+    Map<String, dynamic>? masterData,
     int percentHp,
   ) async {
-    final currentHp = data['current_hp'] as int? ?? 0;
+    final currentHp = (data['current_hp'] as num?)?.toInt() ?? 0;
     
     if (currentHp > 0) {
       return ItemUseResult(success: false, message: '瀕死でないモンスターには使用できません');
     }
 
-    final baseHp = data['base_hp'] as int? ?? 100;
-    final ivHp = data['iv_hp'] as int? ?? 0;
-    final pointHp = data['point_hp'] as int? ?? 0;
-    final level = data['level'] as int? ?? 1;
-    final maxHp = baseHp + ivHp + pointHp + (level * 2);
+    // ★ 修正: Monster.maxHpと同じ計算式
+    final maxHp = _calculateMaxHp(data, masterData);
     final newHp = (maxHp * percentHp / 100).round();
 
     await _firestore.collection('user_monsters').doc(monsterId).update({
@@ -230,7 +303,7 @@ class ItemService {
     return ItemUseResult(
       success: true,
       message: 'HP$percentHp%で復活しました',
-      data: {'newHp': newHp},
+      data: {'newHp': newHp, 'maxHp': maxHp},
     );
   }
 
@@ -253,8 +326,8 @@ class ItemService {
     Map<String, dynamic> data,
     int expAmount,
   ) async {
-    final currentExp = data['exp'] as int? ?? 0;
-    final level = data['level'] as int? ?? 1;
+    final currentExp = (data['exp'] as num?)?.toInt() ?? 0;
+    final level = (data['level'] as num?)?.toInt() ?? 1;
     
     if (level >= 100) {
       return ItemUseResult(success: false, message: '既に最大レベルです');
@@ -262,7 +335,7 @@ class ItemService {
 
     final newExp = currentExp + expAmount;
     
-    // レベルアップ計算（簡易版）
+    // レベルアップ計算
     int newLevel = level;
     int remainingExp = newExp;
     while (newLevel < 100 && remainingExp >= _expToNextLevel(newLevel)) {
@@ -272,13 +345,14 @@ class ItemService {
 
     final updates = <String, dynamic>{
       'exp': remainingExp,
+      'updated_at': FieldValue.serverTimestamp(),
     };
     
     if (newLevel > level) {
       updates['level'] = newLevel;
       // レベルアップ時のポイント付与（4ポイント/Lv）
       final pointGain = (newLevel - level) * 4;
-      final currentPoints = data['remaining_points'] as int? ?? 0;
+      final currentPoints = (data['remaining_points'] as num?)?.toInt() ?? 0;
       updates['remaining_points'] = currentPoints + pointGain;
     }
 
@@ -288,18 +362,18 @@ class ItemService {
       return ItemUseResult(
         success: true,
         message: '経験値$expAmountを獲得！レベル$newLevelになりました',
-        data: {'expGained': expAmount, 'newLevel': newLevel},
+        data: {'expGained': expAmount, 'levelBefore': level, 'newLevel': newLevel},
       );
     }
     
     return ItemUseResult(
       success: true,
       message: '経験値$expAmountを獲得しました',
-      data: {'expGained': expAmount},
+      data: {'expGained': expAmount, 'currentLevel': level},
     );
   }
 
-  int _expToNextLevel(int level) => 100 + (level * 50);
+  int _expToNextLevel(int level) => level * 100;
 
   /// 親密度追加
   Future<ItemUseResult> _addIntimacy(
@@ -307,8 +381,8 @@ class ItemService {
     Map<String, dynamic> data,
     int amount,
   ) async {
-    final currentIntimacy = data['intimacy_exp'] as int? ?? 0;
-    final intimacyLevel = data['intimacy_level'] as int? ?? 1;
+    final currentIntimacy = (data['intimacy_exp'] as num?)?.toInt() ?? 0;
+    final intimacyLevel = (data['intimacy_level'] as num?)?.toInt() ?? 1;
     
     if (intimacyLevel >= 10) {
       return ItemUseResult(success: false, message: '親密度は既に最大です');
@@ -327,6 +401,7 @@ class ItemService {
     await _firestore.collection('user_monsters').doc(monsterId).update({
       'intimacy_exp': remainingIntimacy,
       'intimacy_level': newLevel,
+      'updated_at': FieldValue.serverTimestamp(),
     });
 
     if (newLevel > intimacyLevel) {
@@ -350,7 +425,7 @@ class ItemService {
     String monsterId,
     Map<String, dynamic> data,
   ) async {
-    final level = data['level'] as int? ?? 1;
+    final level = (data['level'] as num?)?.toInt() ?? 1;
     final totalPoints = (level - 1) * 4;
 
     await _firestore.collection('user_monsters').doc(monsterId).update({
@@ -360,6 +435,7 @@ class ItemService {
       'point_magic': 0,
       'point_speed': 0,
       'remaining_points': totalPoints,
+      'updated_at': FieldValue.serverTimestamp(),
     });
 
     return ItemUseResult(
@@ -380,7 +456,7 @@ class ItemService {
     }
 
     final key = 'iv_$stat';
-    final currentIv = data[key] as int? ?? 0;
+    final currentIv = (data[key] as num?)?.toInt() ?? 0;
     
     if (currentIv >= 10) {
       return ItemUseResult(success: false, message: '既に最大値です');
@@ -388,6 +464,7 @@ class ItemService {
 
     await _firestore.collection('user_monsters').doc(monsterId).update({
       key: 10,
+      'updated_at': FieldValue.serverTimestamp(),
     });
 
     return ItemUseResult(

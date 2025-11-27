@@ -12,7 +12,7 @@ class DispatchSlotCard extends StatelessWidget {
   final bool isUnlocked;
   final List<DispatchLocation> unlockedLocations;
   final List<Monster> availableMonsters;
-  final Map<String, mat.Material> materialMasters;
+  final Map<String, mat.MaterialMaster> materialMasters;
   final void Function(String locationId, int durationHours, List<String> monsterIds) onStart;
   final void Function(String dispatchId) onClaim;
   final void Function(String dispatchId) onCancel;

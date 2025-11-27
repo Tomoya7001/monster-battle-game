@@ -31,7 +31,7 @@ class DispatchLoaded extends DispatchState {
   final List<DispatchLocation> allLocations;
   final List<Monster> availableMonsters;
   final Set<String> dispatchedMonsterIds;
-  final Map<String, Material> materialMasters;
+  final Map<String, MaterialMaster> materialMasters;
 
   const DispatchLoaded({
     required this.userId,
@@ -93,7 +93,7 @@ class DispatchLoaded extends DispatchState {
     List<DispatchLocation>? allLocations,
     List<Monster>? availableMonsters,
     Set<String>? dispatchedMonsterIds,
-    Map<String, Material>? materialMasters,
+    Map<String, MaterialMaster>? materialMasters,
   }) {
     return DispatchLoaded(
       userId: userId ?? this.userId,
@@ -112,7 +112,7 @@ class DispatchLoaded extends DispatchState {
 class DispatchRewardClaimed extends DispatchState {
   final List<DispatchRewardResult> rewards;
   final int expGained;
-  final Map<String, Material> materialMasters;
+  final Map<String, MaterialMaster> materialMasters;
 
   const DispatchRewardClaimed({
     required this.rewards,

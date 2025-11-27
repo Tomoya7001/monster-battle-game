@@ -35,35 +35,35 @@ class MonsterModel {
     // レベル / 個体値 / 努力値 の取得
     final level = (data['level'] as int?) ?? (data['lv'] as int?) ?? 1;
     final ivHp = (data['iv_hp'] as int?) ?? 0;
+    final ivAttack = (data['iv_attack'] as int?) ?? 0;
+    final ivDefense = (data['iv_defense'] as int?) ?? 0;
+    final ivMagic = (data['iv_magic'] as int?) ?? 0;
+    final ivSpeed = (data['iv_speed'] as int?) ?? 0;
     final pointHp = (data['point_hp'] as int?) ?? 0;
+    final pointAttack = (data['point_attack'] as int?) ?? 0;
+    final pointDefense = (data['point_defense'] as int?) ?? 0;
+    final pointMagic = (data['point_magic'] as int?) ?? 0;
+    final pointSpeed = (data['point_speed'] as int?) ?? 0;
 
-    // マスターに growth 情報があれば取得（なければ 0）
+    // growth fields（互換性のため残すが、計算では使用しない）
     final growthData = masterData?['growth'] as Map<String, dynamic>? ?? {};
-    final growthHpInt = (growthData['hp'] as num?)?.toInt()
-        ?? (masterData?['growthHp'] as num?)?.toInt()
-        ?? 0;
-    // growth fields を double で Monster に渡す（既存コードに合わせる）
-    final growthHpDouble = growthHpInt.toDouble() == 0.0 ? 1.0 : growthHpInt.toDouble();
+    final growthHpDouble = (growthData['hp'] as num?)?.toDouble() ?? 1.0;
     final growthAttackDouble = (growthData['attack'] as num?)?.toDouble() ?? 1.0;
     final growthDefenseDouble = (growthData['defense'] as num?)?.toDouble() ?? 1.0;
     final growthMagicDouble = (growthData['magic'] as num?)?.toDouble() ?? 1.0;
     final growthSpeedDouble = (growthData['speed'] as num?)?.toDouble() ?? 1.0;
 
-    // レベルボーナス（簡易）
-    final lvBonus = (level > 1) ? growthHpInt * (level - 1) : 0;
-
-    // current_hp が無い場合は、baseHp + ivHp + pointHp + lvBonus で補完
-    final storedHp = (data['current_hp'] as int?) ??
-        (baseHp + ivHp + pointHp + lvBonus);
+    // ★ Monster.maxHp と同じ計算式を使用して最大HPを計算
+    final maxHp = _calculateStat(baseHp, ivHp, pointHp, level);
     
-    // 最大HP計算（簡易版）
-    final calculatedMaxHp = baseHp + ivHp + pointHp + lvBonus;
+    // current_hp が無い場合は maxHp で補完
+    final storedHp = (data['current_hp'] as int?) ?? maxHp;
     
-    // HP自動回復計算（5分ごとに+5）
+    // ★ HP自動回復計算（5分ごとに最大HPの5%回復、小数点切り上げ）
     final lastHpUpdateTime = (data['last_hp_update'] as Timestamp?)?.toDate() ?? DateTime.now();
     final currentHp = _calculateRecoveredHp(
       storedHp: storedHp,
-      maxHp: calculatedMaxHp,
+      maxHp: maxHp,
       lastUpdate: lastHpUpdateTime,
     );
 
@@ -78,19 +78,19 @@ class MonsterModel {
       level: level,
       exp: data['exp'] as int? ?? 0,
       currentHp: currentHp,
-      lastHpUpdate: (data['last_hp_update'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      lastHpUpdate: lastHpUpdateTime,
       intimacyLevel: data['intimacy_level'] as int? ?? 1,
       intimacyExp: data['intimacy_exp'] as int? ?? 0,
       ivHp: ivHp,
-      ivAttack: data['iv_attack'] as int? ?? 0,
-      ivDefense: data['iv_defense'] as int? ?? 0,
-      ivMagic: data['iv_magic'] as int? ?? 0,
-      ivSpeed: data['iv_speed'] as int? ?? 0,
+      ivAttack: ivAttack,
+      ivDefense: ivDefense,
+      ivMagic: ivMagic,
+      ivSpeed: ivSpeed,
       pointHp: pointHp,
-      pointAttack: data['point_attack'] as int? ?? 0,
-      pointDefense: data['point_defense'] as int? ?? 0,
-      pointMagic: data['point_magic'] as int? ?? 0,
-      pointSpeed: data['point_speed'] as int? ?? 0,
+      pointAttack: pointAttack,
+      pointDefense: pointDefense,
+      pointMagic: pointMagic,
+      pointSpeed: pointSpeed,
       remainingPoints: data['remaining_points'] as int? ?? 0,
       mainTraitId: data['main_trait_id'] as String?,
       equippedSkills: _parseStringList(data['equipped_skills']),
@@ -153,20 +153,86 @@ class MonsterModel {
     return [];
   }
 
-  /// HP自動回復計算（5分ごとに+5、瀕死からも回復）
+  /// ★ Monster.maxHp と同じ計算式
+  /// 計算式: base * (1 + (level - 1) * 0.05) + iv + diminishingReturn(point)
+  static int _calculateStat(int base, int iv, int allocatedPoints, int level) {
+    // 基礎値 * レベル倍率（1レベルごとに+5%）
+    final double baseStat = base * (1.0 + (level - 1) * 0.05);
+    
+    // 個体値を加算
+    final double withIv = baseStat + iv;
+    
+    // ポイント振り分けによる追加（収穫逓減の法則）
+    final double pointBonus = _calculateDiminishingReturn(allocatedPoints);
+    
+    return (withIv + pointBonus).round();
+  }
+
+  /// 収穫逓減の法則によるポイント計算
+  static double _calculateDiminishingReturn(int points) {
+    if (points <= 0) return 0.0;
+
+    double total = 0.0;
+
+    // 0-50: +1.0
+    if (points > 0) {
+      final int range1 = points.clamp(0, 50);
+      total += range1 * 1.0;
+    }
+
+    // 51-100: +0.8
+    if (points > 50) {
+      final int range2 = (points - 50).clamp(0, 50);
+      total += range2 * 0.8;
+    }
+
+    // 101-150: +0.6
+    if (points > 100) {
+      final int range3 = (points - 100).clamp(0, 50);
+      total += range3 * 0.6;
+    }
+
+    // 151-200: +0.4
+    if (points > 150) {
+      final int range4 = (points - 150).clamp(0, 50);
+      total += range4 * 0.4;
+    }
+
+    // 201以上: +0.2
+    if (points > 200) {
+      final int range5 = points - 200;
+      total += range5 * 0.2;
+    }
+
+    return total;
+  }
+
+  /// ★ HP自動回復計算（5分ごとに最大HPの5%回復、小数点切り上げ）
+  /// 仕様: 5分ごとに最大HPの5%回復
   static int _calculateRecoveredHp({
     required int storedHp,
     required int maxHp,
     required DateTime lastUpdate,
   }) {
+    if (maxHp <= 0) return 0;
+    
     final now = DateTime.now();
     final elapsedMinutes = now.difference(lastUpdate).inMinutes;
     
-    // 5分ごとに+5回復
+    // 5分ごとの回復回数
     final recoveryIntervals = elapsedMinutes ~/ 5;
-    final recoveredAmount = recoveryIntervals * 5;
     
-    // 最大HPを超えない、最低0
-    return (storedHp + recoveredAmount).clamp(0, maxHp);
+    if (recoveryIntervals <= 0) {
+      return storedHp.clamp(0, maxHp);
+    }
+    
+    // 1回あたりの回復量 = 最大HPの5%（小数点切り上げ）
+    final recoveryPerInterval = (maxHp * 0.05).ceil();
+    
+    // 総回復量
+    final totalRecovery = recoveryIntervals * recoveryPerInterval;
+    
+    // 最大HPを超えない
+    return (storedHp + totalRecovery).clamp(0, maxHp);
   }
 }

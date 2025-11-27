@@ -19,6 +19,7 @@ import '../../../domain/entities/monster.dart';
 import '../item/item_screen.dart';
 import '../../bloc/item/item_bloc.dart';
 import '../../bloc/item/item_event.dart';
+import '../../../data/repositories/monster_repository_impl.dart';
 
 
 /// ホーム画面
@@ -235,102 +236,30 @@ class HomeScreen extends StatelessWidget {
                       return;
                     }
 
-                    // モンスターデータ取得
+                    // ★修正: MonsterRepositoryImplを使用してモンスター取得
+                    // （MonsterModel.fromFirestoreで時間ベース回復が適用される）
                     final firestore = FirebaseFirestore.instance;
-                    final adventureParty = <Monster>[];
-                    
-                    try {
-                      for (final monsterId in preset.monsterIds) {
-                        final userMonsterDoc = await firestore.collection('user_monsters').doc(monsterId).get();
-                        
-                        if (!userMonsterDoc.exists || userMonsterDoc.data() == null) {
-                          continue;
-                        }
-                        
-                        final userData = userMonsterDoc.data()!;
-                        final monsterMasterId = userData['monster_id'];
-                        
-                        if (monsterMasterId == null) continue;
-                        
-                        final masterDoc = await firestore
-                            .collection('monster_masters')
-                            .doc(monsterMasterId as String)
-                            .get();
-                        
-                        if (!masterDoc.exists) continue;
-                        
-                        final masterData = masterDoc.data();
-                        if (masterData == null) continue;
-                        
-                        // ===== データ構造確認 =====
-                        print('📊 base_statsの型: ${masterData['base_stats'].runtimeType}');
-                        print('📊 base_statsの内容: ${masterData['base_stats']}');
-                        print('📊 attributesの型: ${masterData['attributes'].runtimeType}');
-                        print('📊 attributesの内容: ${masterData['attributes']}');
-                        // ========================
-                        
-                        // base_statsとattributesを取得
-                        final baseStats = masterData['base_stats'] as Map<String, dynamic>? ?? {};
-                        final attributes = masterData['attributes'] as List<dynamic>? ?? [];
-                        
-                        adventureParty.add(Monster(
-                          id: userMonsterDoc.id,
-                          userId: userData['user_id'] as String? ?? 'dev_user_12345',
-                          monsterId: monsterMasterId as String,
-                          monsterName: masterData['name'] as String? ?? '名前不明',
-                          species: masterData['species'] as String? ?? 'spirit',
-                          element: attributes.isNotEmpty ? (attributes[0] as String).toLowerCase() : 'none',
-                          rarity: masterData['rarity'] as int? ?? 2,
-                          level: userData['level'] as int? ?? 1,
-                          exp: userData['exp'] as int? ?? 0,
-                          currentHp: userData['current_hp'] as int? ?? 100,
-                          lastHpUpdate: (userData['last_hp_update'] as Timestamp?)?.toDate() ?? DateTime.now(),
-                          intimacyLevel: userData['intimacy_level'] as int? ?? 1,
-                          intimacyExp: userData['intimacy_exp'] as int? ?? 0,
-                          ivHp: userData['iv_hp'] as int? ?? 0,
-                          ivAttack: userData['iv_attack'] as int? ?? 0,
-                          ivDefense: userData['iv_defense'] as int? ?? 0,
-                          ivMagic: userData['iv_magic'] as int? ?? 0,
-                          ivSpeed: userData['iv_speed'] as int? ?? 0,
-                          pointHp: userData['point_hp'] as int? ?? 0,
-                          pointAttack: userData['point_attack'] as int? ?? 0,
-                          pointDefense: userData['point_defense'] as int? ?? 0,
-                          pointMagic: userData['point_magic'] as int? ?? 0,
-                          pointSpeed: userData['point_speed'] as int? ?? 0,
-                          remainingPoints: userData['remaining_points'] as int? ?? 0,
-                          mainTraitId: userData['main_trait_id'] as String?,
-                          equippedSkills: List<String>.from(userData['equipped_skills'] ?? []),
-                          equippedEquipment: List<String>.from(userData['equipped_equipment'] ?? []),
-                          skinId: userData['skin_id'] as int? ?? 1,
-                          isFavorite: userData['is_favorite'] as bool? ?? false,
-                          isLocked: userData['is_locked'] as bool? ?? false,
-                          acquiredAt: (userData['acquired_at'] as Timestamp?)?.toDate() ?? DateTime.now(),
-                          lastUsedAt: userData['last_used_at'] != null 
-                              ? (userData['last_used_at'] as Timestamp).toDate() 
-                              : null,
-                          baseHp: (baseStats['hp'] as num?)?.toInt() ?? 50,
-                          baseAttack: (baseStats['attack'] as num?)?.toInt() ?? 30,
-                          baseDefense: (baseStats['defense'] as num?)?.toInt() ?? 30,
-                          baseMagic: (baseStats['magic'] as num?)?.toInt() ?? 30,
-                          baseSpeed: (baseStats['speed'] as num?)?.toInt() ?? 30,
-                        ));
-                      }
-                    } catch (e, stackTrace) {
-                      print('❌ エラー: $e');
-                      print('$stackTrace');
-                      
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('エラー: $e')),
-                        );
-                      }
-                      return;
-                    }
+                    final monsterRepo = MonsterRepositoryImpl(firestore);
+                    final adventureParty = await monsterRepo.getMonstersByIds(preset.monsterIds);
 
                     if (adventureParty.isEmpty) {
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('パーティのモンスターが見つかりません')),
+                        );
+                      }
+                      return;
+                    }
+
+                    // ★追加: HP0のモンスターがいないかチェック
+                    final availableMonsters = adventureParty.where((m) => m.currentHp > 0).toList();
+                    if (availableMonsters.isEmpty) {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('戦えるモンスターがいません。回復してください。'),
+                            backgroundColor: Colors.red,
+                          ),
                         );
                       }
                       return;
@@ -359,7 +288,7 @@ class HomeScreen extends StatelessWidget {
               ),
               
               const SizedBox(height: 16),
-              
+
               // 探索ボタン追加
               ElevatedButton.icon(
                 onPressed: () => context.push('/dispatch'),
@@ -397,6 +326,23 @@ class HomeScreen extends StatelessWidget {
                   backgroundColor: Colors.teal,
                 ),
               ),
+
+            const SizedBox(height: 16),
+
+            ElevatedButton.icon(
+              onPressed: () {
+                context.push('/crafting');
+              },
+              icon: const Icon(Icons.auto_fix_high),
+              label: const Text('錬成'),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: 16,
+                ),
+                backgroundColor: Colors.orange,
+              ),
+            ),
 
             const SizedBox(height: 16),
               

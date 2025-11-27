@@ -20,6 +20,7 @@ import '../../presentation/screens/party/party_formation_screen_v2.dart';
 import '../../presentation/bloc/party/party_formation_bloc_v2.dart';
 import '../../presentation/screens/battle/battle_selection_screen.dart';
 import '../../presentation/screens/dispatch/dispatch_screen.dart';
+import '../../presentation/screens/crafting/crafting_screen.dart';
 
 /// アプリケーション全体のルーティング設定
 class AppRouter {
@@ -122,6 +123,12 @@ class AppRouter {
           key: state.pageKey,
           child: const BattleSelectionScreen(),
         ),
+      ),
+
+      GoRoute(
+        path: '/crafting',
+        name: 'crafting',
+        builder: (context, state) => const CraftingScreen(),
       ),
 
       // ★冒険システム一時無効化

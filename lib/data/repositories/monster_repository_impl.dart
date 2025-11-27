@@ -305,6 +305,49 @@ class MonsterRepositoryImpl implements MonsterRepository {
     }
   }
 
+  /// 複数のモンスターをIDで取得（MonsterModel.fromFirestoreを使用）
+    Future<List<Monster>> getMonstersByIds(List<String> monsterIds) async {
+      if (monsterIds.isEmpty) return [];
+      
+      try {
+        final List<Monster> monsters = [];
+        final Map<String, Map<String, dynamic>> masterDataMap = {};
+        
+        // ユーザーモンスターのドキュメントを取得
+        final List<DocumentSnapshot<Map<String, dynamic>>> userMonsterDocs = [];
+        final Set<String> masterMonsterIds = {};
+        
+        for (final monsterId in monsterIds) {
+          final doc = await _firestore.collection(_collection).doc(monsterId).get();
+          if (doc.exists && doc.data() != null) {
+            userMonsterDocs.add(doc);
+            final masterMonsterId = doc.data()!['monster_id'] as String?;
+            if (masterMonsterId != null) {
+              masterMonsterIds.add(masterMonsterId);
+            }
+          }
+        }
+        
+        // マスターデータを一括取得
+        if (masterMonsterIds.isNotEmpty) {
+          final masterMap = await _getMonsterMasterData(masterMonsterIds.toList());
+          masterDataMap.addAll(masterMap);
+        }
+        
+        // MonsterModel.fromFirestoreを使用して変換（時間ベース回復が適用される）
+        for (final doc in userMonsterDocs) {
+          final masterMonsterId = doc.data()!['monster_id'] as String?;
+          final masterData = masterDataMap[masterMonsterId];
+          monsters.add(MonsterModel.fromFirestore(doc, masterData));
+        }
+        
+        return monsters;
+      } catch (e) {
+        print('Error getting monsters by ids: $e');
+        throw Exception('Failed to get monsters by ids: $e');
+      }
+    }
+
   /// モンスターのHPを更新
   @override
   Future<void> updateMonsterHp(String monsterId, int currentHp) async {

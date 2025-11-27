@@ -1,200 +1,213 @@
 // lib/data/repositories/material_repository.dart
+//
+// 既存の lib/domain/entities/material.dart の MaterialMaster を使用
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../domain/entities/material.dart';
 
-/// 素材リポジトリ
 class MaterialRepository {
   final FirebaseFirestore _firestore;
-  Map<String, Material>? _materialMasterCache;
+  Map<String, MaterialMaster>? _masterCache;
 
   MaterialRepository({FirebaseFirestore? firestore})
       : _firestore = firestore ?? FirebaseFirestore.instance;
 
-  // ========== マスターデータ ==========
+  /// 素材マスター全取得（item_mastersからmaterialカテゴリを取得）
+  Future<Map<String, MaterialMaster>> getMaterialMasters() async {
+    if (_masterCache != null) return _masterCache!;
 
-  /// 素材マスター全取得（キャッシュ付き）
-  Future<Map<String, Material>> getMaterialMasters() async {
-    if (_materialMasterCache != null) return _materialMasterCache!;
-
-    final snapshot = await _firestore.collection('material_masters').get();
-
-    _materialMasterCache = {};
-    for (final doc in snapshot.docs) {
-      final data = doc.data();
-      data['material_id'] = doc.id;
-      _materialMasterCache![doc.id] = Material.fromJson(data);
+    try {
+      final snapshot = await _firestore
+          .collection('item_masters')
+          .where('category', isEqualTo: 'material')
+          .get();
+      
+      _masterCache = {};
+      for (final doc in snapshot.docs) {
+        final data = doc.data();
+        final materialId = data['item_id']?.toString() ?? doc.id;
+        _masterCache![materialId] = MaterialMaster.fromJson(data);
+      }
+      
+      return _masterCache!;
+    } catch (e) {
+      print('Error getting material masters: $e');
+      return {};
     }
-
-    return _materialMasterCache!;
   }
 
   /// 素材マスター単体取得
-  Future<Material?> getMaterialMaster(String materialId) async {
+  Future<MaterialMaster?> getMaterialMaster(String materialId) async {
     final masters = await getMaterialMasters();
     return masters[materialId];
   }
 
-  /// カテゴリ別素材マスター取得
-  Future<List<Material>> getMaterialMastersByCategory(String category) async {
+  /// カテゴリ別素材取得
+  Future<List<MaterialMaster>> getMaterialsByCategory(String category) async {
     final masters = await getMaterialMasters();
     return masters.values
-        .where((material) => material.category == category && material.isActive)
+        .where((m) => m.subCategory == category || m.category == category)
         .toList()
-      ..sort((a, b) => a.displayOrder.compareTo(b.displayOrder));
+      ..sort((a, b) => a.rarity.compareTo(b.rarity));
   }
 
-  // ========== ユーザー所持素材 ==========
+  /// ユーザー所持素材取得
+  Future<Map<String, int>> getUserMaterials(String userId) async {
+    try {
+      // user_itemsからmaterialカテゴリのアイテムを取得
+      final snapshot = await _firestore
+          .collection('users')
+          .doc(userId)
+          .collection('user_items')
+          .get();
 
-  /// ユーザー所持素材全取得
-  Future<List<UserMaterial>> getUserMaterials(String userId) async {
-    final snapshot = await _firestore
-        .collection('user_materials')
-        .where('user_id', isEqualTo: userId)
-        .get();
-
-    return snapshot.docs
-        .map((doc) => UserMaterial.fromJson(doc.data(), doc.id))
-        .where((material) => material.quantity > 0)
-        .toList();
-  }
-
-  /// ユーザー所持素材取得（単体）
-  Future<UserMaterial?> getUserMaterial(String userId, String materialId) async {
-    final docId = '${userId}_$materialId';
-    final doc = await _firestore.collection('user_materials').doc(docId).get();
-
-    if (!doc.exists) return null;
-    return UserMaterial.fromJson(doc.data()!, doc.id);
-  }
-
-  /// 素材追加
-  Future<void> addMaterial(String userId, String materialId, int quantity) async {
-    final docId = '${userId}_$materialId';
-    final docRef = _firestore.collection('user_materials').doc(docId);
-
-    final doc = await docRef.get();
-
-    if (doc.exists) {
-      final currentQty = doc.data()!['quantity'] as int? ?? 0;
-      await docRef.update({
-        'quantity': currentQty + quantity,
-        'updated_at': FieldValue.serverTimestamp(),
-      });
-    } else {
-      await docRef.set({
-        'user_id': userId,
-        'material_id': materialId,
-        'quantity': quantity,
-        'acquired_at': FieldValue.serverTimestamp(),
-        'updated_at': FieldValue.serverTimestamp(),
-      });
+      final masters = await getMaterialMasters();
+      final materials = <String, int>{};
+      
+      for (final doc in snapshot.docs) {
+        final data = doc.data();
+        final itemId = data['item_id'] as String? ?? doc.id;
+        final quantity = data['quantity'] as int? ?? 0;
+        
+        // 素材マスターに存在するものだけ取得
+        if (masters.containsKey(itemId) && quantity > 0) {
+          materials[itemId] = quantity;
+        }
+      }
+      
+      return materials;
+    } catch (e) {
+      print('Error getting user materials: $e');
+      return {};
     }
+  }
+
+  /// ユーザー所持素材詳細取得（マスター情報込み）
+  Future<List<UserMaterialWithMaster>> getUserMaterialsWithMaster(String userId) async {
+    final masters = await getMaterialMasters();
+    final userMaterials = await getUserMaterials(userId);
+    
+    final result = <UserMaterialWithMaster>[];
+    
+    for (final entry in userMaterials.entries) {
+      final master = masters[entry.key];
+      if (master != null) {
+        result.add(UserMaterialWithMaster(
+          materialId: entry.key,
+          quantity: entry.value,
+          master: master,
+        ));
+      }
+    }
+    
+    // レアリティ順でソート
+    result.sort((a, b) => b.master.rarity.compareTo(a.master.rarity));
+    
+    return result;
   }
 
   /// 素材消費
-  Future<bool> consumeMaterial(String userId, String materialId, int quantity) async {
-    final docId = '${userId}_$materialId';
-    final docRef = _firestore.collection('user_materials').doc(docId);
-
-    final doc = await docRef.get();
-    if (!doc.exists) return false;
-
-    final currentQty = doc.data()!['quantity'] as int? ?? 0;
-    if (currentQty < quantity) return false;
-
-    final newQty = currentQty - quantity;
-    if (newQty <= 0) {
-      await docRef.delete();
-    } else {
-      await docRef.update({
-        'quantity': newQty,
-        'updated_at': FieldValue.serverTimestamp(),
-      });
-    }
-
-    return true;
-  }
-
-  /// 複数素材一括追加
-  Future<void> addMaterials(String userId, Map<String, int> materials) async {
-    if (materials.isEmpty) return;
-
-    final batch = _firestore.batch();
-
-    for (final entry in materials.entries) {
-      final docId = '${userId}_${entry.key}';
-      final docRef = _firestore.collection('user_materials').doc(docId);
-
-      final doc = await docRef.get();
-
-      if (doc.exists) {
-        final currentQty = doc.data()!['quantity'] as int? ?? 0;
-        batch.update(docRef, {
-          'quantity': currentQty + entry.value,
-          'updated_at': FieldValue.serverTimestamp(),
-        });
-      } else {
-        batch.set(docRef, {
-          'user_id': userId,
-          'material_id': entry.key,
-          'quantity': entry.value,
-          'acquired_at': FieldValue.serverTimestamp(),
-          'updated_at': FieldValue.serverTimestamp(),
-        });
-      }
-    }
-
-    await batch.commit();
-  }
-
-  /// 素材が十分にあるか確認
-  Future<bool> hasSufficientMaterials(
+  Future<bool> consumeMaterials(
     String userId,
-    Map<String, int> required,
+    Map<String, int> materials,
   ) async {
-    for (final entry in required.entries) {
-      final userMaterial = await getUserMaterial(userId, entry.key);
-      if (userMaterial == null || userMaterial.quantity < entry.value) {
-        return false;
+    try {
+      final batch = _firestore.batch();
+      
+      for (final entry in materials.entries) {
+        final materialId = entry.key;
+        final consumeQuantity = entry.value;
+        
+        // 現在の所持数を取得
+        final docRef = _firestore
+            .collection('users')
+            .doc(userId)
+            .collection('user_items')
+            .doc(materialId);
+        
+        final doc = await docRef.get();
+        if (!doc.exists) {
+          throw Exception('素材が見つかりません: $materialId');
+        }
+        
+        final currentQuantity = doc.data()?['quantity'] as int? ?? 0;
+        if (currentQuantity < consumeQuantity) {
+          throw Exception('素材が不足しています: $materialId');
+        }
+        
+        final newQuantity = currentQuantity - consumeQuantity;
+        batch.update(docRef, {
+          'quantity': newQuantity,
+          'updated_at': FieldValue.serverTimestamp(),
+        });
       }
-    }
-    return true;
-  }
-
-  /// 複数素材一括消費
-  Future<bool> consumeMaterials(String userId, Map<String, int> materials) async {
-    // 先に全ての素材が足りるか確認
-    if (!await hasSufficientMaterials(userId, materials)) {
+      
+      await batch.commit();
+      return true;
+    } catch (e) {
+      print('Error consuming materials: $e');
       return false;
     }
+  }
 
-    final batch = _firestore.batch();
-
-    for (final entry in materials.entries) {
-      final docId = '${userId}_${entry.key}';
-      final docRef = _firestore.collection('user_materials').doc(docId);
-
-      final doc = await docRef.get();
-      final currentQty = doc.data()!['quantity'] as int? ?? 0;
-      final newQty = currentQty - entry.value;
-
-      if (newQty <= 0) {
-        batch.delete(docRef);
-      } else {
-        batch.update(docRef, {
-          'quantity': newQty,
-          'updated_at': FieldValue.serverTimestamp(),
-        });
+  /// 素材追加（ドロップ時など）
+  Future<bool> addMaterials(
+    String userId,
+    Map<String, int> materials,
+  ) async {
+    try {
+      final batch = _firestore.batch();
+      
+      for (final entry in materials.entries) {
+        final materialId = entry.key;
+        final addQuantity = entry.value;
+        
+        final docRef = _firestore
+            .collection('users')
+            .doc(userId)
+            .collection('user_items')
+            .doc(materialId);
+        
+        final doc = await docRef.get();
+        if (doc.exists) {
+          final currentQuantity = doc.data()?['quantity'] as int? ?? 0;
+          batch.update(docRef, {
+            'quantity': currentQuantity + addQuantity,
+            'updated_at': FieldValue.serverTimestamp(),
+          });
+        } else {
+          batch.set(docRef, {
+            'item_id': materialId,
+            'quantity': addQuantity,
+            'created_at': FieldValue.serverTimestamp(),
+            'updated_at': FieldValue.serverTimestamp(),
+          });
+        }
       }
+      
+      await batch.commit();
+      return true;
+    } catch (e) {
+      print('Error adding materials: $e');
+      return false;
     }
-
-    await batch.commit();
-    return true;
   }
 
   /// キャッシュクリア
   void clearCache() {
-    _materialMasterCache = null;
+    _masterCache = null;
   }
+}
+
+/// ユーザー所持素材（マスター情報付き）
+class UserMaterialWithMaster {
+  final String materialId;
+  final int quantity;
+  final MaterialMaster master;
+
+  const UserMaterialWithMaster({
+    required this.materialId,
+    required this.quantity,
+    required this.master,
+  });
 }

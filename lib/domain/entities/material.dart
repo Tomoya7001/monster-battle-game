@@ -1,55 +1,51 @@
 // lib/domain/entities/material.dart
 
-/// 素材カテゴリ
-enum MaterialCategory {
-  common,   // 汎用素材
-  element,  // 属性素材
-  species,  // 種族素材
-  area,     // エリア素材
-  boss,     // ボス素材
-}
+import 'package:flutter/material.dart';
 
-/// 素材エンティティ
-class Material {
+/// 素材マスターエンティティ
+class MaterialMaster {
   final String materialId;
   final String name;
-  final String? nameEn;
-  final String category;
+  final String nameEn;
+  final String category; // common, element, species, boss
+  final String subCategory;
   final int rarity;
   final String description;
-  final String? icon;
+  final String icon;
   final int sellPrice;
-  final int maxStack;
-  final int displayOrder;
-  final bool isActive;
+  final List<String> dropStages;
+  final int dropRate;
 
-  Material({
+  const MaterialMaster({
     required this.materialId,
     required this.name,
-    this.nameEn,
+    this.nameEn = '',
     required this.category,
+    this.subCategory = '',
     required this.rarity,
-    required this.description,
-    this.icon,
+    this.description = '',
+    this.icon = '',
     this.sellPrice = 0,
-    this.maxStack = 999,
-    this.displayOrder = 0,
-    this.isActive = true,
+    this.dropStages = const [],
+    this.dropRate = 0,
   });
 
-  factory Material.fromJson(Map<String, dynamic> json) {
-    return Material(
-      materialId: json['material_id'] as String? ?? json['materialId'] as String? ?? '',
+  factory MaterialMaster.fromJson(Map<String, dynamic> json) {
+    return MaterialMaster(
+      materialId: json['item_id']?.toString() ?? json['material_id']?.toString() ?? '',
       name: json['name'] as String? ?? '',
-      nameEn: json['name_en'] as String? ?? json['nameEn'] as String?,
+      nameEn: json['name_en'] as String? ?? '',
       category: json['category'] as String? ?? 'common',
+      subCategory: json['sub_category'] as String? ?? '',
       rarity: json['rarity'] as int? ?? 1,
       description: json['description'] as String? ?? '',
-      icon: json['icon'] as String?,
-      sellPrice: json['sell_price'] as int? ?? json['sellPrice'] as int? ?? 0,
-      maxStack: json['max_stack'] as int? ?? json['maxStack'] as int? ?? 999,
-      displayOrder: json['display_order'] as int? ?? json['displayOrder'] as int? ?? 0,
-      isActive: json['is_active'] as bool? ?? json['isActive'] as bool? ?? true,
+      icon: json['icon'] as String? ?? '',
+      sellPrice: json['sell_price'] as int? ?? 0,
+      dropStages: (json['drop_stages'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          [],
+      dropRate: json['drop_rate'] as int? ?? 0,
     );
   }
 
@@ -59,40 +55,61 @@ class Material {
       'name': name,
       'name_en': nameEn,
       'category': category,
+      'sub_category': subCategory,
       'rarity': rarity,
       'description': description,
       'icon': icon,
       'sell_price': sellPrice,
-      'max_stack': maxStack,
-      'display_order': displayOrder,
-      'is_active': isActive,
+      'drop_stages': dropStages,
+      'drop_rate': dropRate,
     };
   }
 
-  /// レアリティに応じた色
-  int get rarityColor {
+  Color get rarityColor {
     switch (rarity) {
-      case 1: return 0xFF9E9E9E; // グレー
-      case 2: return 0xFF4CAF50; // 緑
-      case 3: return 0xFF2196F3; // 青
-      case 4: return 0xFF9C27B0; // 紫
-      case 5: return 0xFFFF9800; // オレンジ
-      default: return 0xFF9E9E9E;
+      case 5:
+        return const Color(0xFFFFD700); // Gold
+      case 4:
+        return const Color(0xFF9B59B6); // Purple
+      case 3:
+        return const Color(0xFF3498DB); // Blue
+      case 2:
+        return const Color(0xFF27AE60); // Green
+      case 1:
+      default:
+        return const Color(0xFF95A5A6); // Gray
     }
   }
 
-  /// レアリティの星表示
   String get rarityStars => '★' * rarity;
 
-  /// カテゴリ表示名
-  String get categoryDisplayName {
+  String get categoryName {
     switch (category) {
-      case 'common': return '汎用';
-      case 'element': return '属性';
-      case 'species': return '種族';
-      case 'area': return 'エリア';
-      case 'boss': return 'ボス';
-      default: return category;
+      case 'common':
+        return '汎用素材';
+      case 'element':
+        return '属性素材';
+      case 'species':
+        return '種族素材';
+      case 'boss':
+        return 'ボス素材';
+      default:
+        return '素材';
+    }
+  }
+
+  IconData get categoryIcon {
+    switch (category) {
+      case 'common':
+        return Icons.inventory_2;
+      case 'element':
+        return Icons.auto_awesome;
+      case 'species':
+        return Icons.pets;
+      case 'boss':
+        return Icons.emoji_events;
+      default:
+        return Icons.help_outline;
     }
   }
 }
@@ -103,30 +120,25 @@ class UserMaterial {
   final String userId;
   final String materialId;
   final int quantity;
-  final DateTime acquiredAt;
-  final DateTime updatedAt;
+  final DateTime? updatedAt;
 
-  UserMaterial({
+  const UserMaterial({
     required this.id,
     required this.userId,
     required this.materialId,
     required this.quantity,
-    required this.acquiredAt,
-    required this.updatedAt,
+    this.updatedAt,
   });
 
-  factory UserMaterial.fromJson(Map<String, dynamic> json, String docId) {
+  factory UserMaterial.fromFirestore(String docId, Map<String, dynamic> data) {
     return UserMaterial(
       id: docId,
-      userId: json['user_id'] as String? ?? '',
-      materialId: json['material_id'] as String? ?? '',
-      quantity: json['quantity'] as int? ?? 0,
-      acquiredAt: json['acquired_at'] != null
-          ? (json['acquired_at'] as dynamic).toDate()
-          : DateTime.now(),
-      updatedAt: json['updated_at'] != null
-          ? (json['updated_at'] as dynamic).toDate()
-          : DateTime.now(),
+      userId: data['user_id'] as String? ?? '',
+      materialId: data['material_id'] as String? ?? data['item_id'] as String? ?? '',
+      quantity: data['quantity'] as int? ?? 0,
+      updatedAt: data['updated_at'] != null
+          ? (data['updated_at'] as dynamic).toDate()
+          : null,
     );
   }
 
@@ -135,8 +147,7 @@ class UserMaterial {
       'user_id': userId,
       'material_id': materialId,
       'quantity': quantity,
-      'acquired_at': acquiredAt,
-      'updated_at': updatedAt,
+      'updated_at': DateTime.now(),
     };
   }
 
@@ -145,7 +156,6 @@ class UserMaterial {
     String? userId,
     String? materialId,
     int? quantity,
-    DateTime? acquiredAt,
     DateTime? updatedAt,
   }) {
     return UserMaterial(
@@ -153,8 +163,60 @@ class UserMaterial {
       userId: userId ?? this.userId,
       materialId: materialId ?? this.materialId,
       quantity: quantity ?? this.quantity,
-      acquiredAt: acquiredAt ?? this.acquiredAt,
       updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+}
+
+/// 錬成に必要な素材情報
+class CraftingMaterial {
+  final String materialId;
+  final int requiredQuantity;
+  final int currentQuantity;
+  final MaterialMaster? master;
+
+  const CraftingMaterial({
+    required this.materialId,
+    required this.requiredQuantity,
+    this.currentQuantity = 0,
+    this.master,
+  });
+
+  bool get isEnough => currentQuantity >= requiredQuantity;
+
+  int get shortage => requiredQuantity - currentQuantity;
+}
+
+/// 錬成レシピ
+class CraftingRecipe {
+  final int commonMaterials;
+  final int monsterMaterials;
+  final int gold;
+  final List<CraftingMaterial> specificMaterials;
+
+  const CraftingRecipe({
+    this.commonMaterials = 0,
+    this.monsterMaterials = 0,
+    this.gold = 0,
+    this.specificMaterials = const [],
+  });
+
+  factory CraftingRecipe.fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return const CraftingRecipe();
+    }
+    
+    return CraftingRecipe(
+      commonMaterials: json['common_materials'] as int? ?? 0,
+      monsterMaterials: json['monster_materials'] as int? ?? 0,
+      gold: json['gold'] as int? ?? 0,
+      specificMaterials: (json['specific_materials'] as List<dynamic>?)
+              ?.map((e) => CraftingMaterial(
+                    materialId: e['material_id'] as String? ?? '',
+                    requiredQuantity: e['quantity'] as int? ?? 0,
+                  ))
+              .toList() ??
+          [],
     );
   }
 }

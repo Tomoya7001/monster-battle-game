@@ -7,7 +7,7 @@ import '../../../../domain/entities/material.dart' as mat;
 class DispatchRewardDialog extends StatelessWidget {
   final List<DispatchRewardResult> rewards;
   final int expGained;
-  final Map<String, mat.Material> materialMasters;
+  final Map<String, mat.MaterialMaster> materialMasters;
 
   const DispatchRewardDialog({
     Key? key,
