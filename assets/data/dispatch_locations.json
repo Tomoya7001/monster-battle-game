@@ -1,0 +1,280 @@
+{
+    "dispatch_locations": [
+        {
+            "location_id": "dispatch_001",
+            "name": "初心者の森・深部",
+            "name_en": "Beginner Forest Depths",
+            "description": "森の奥深くに広がる未開拓地帯。基礎素材が豊富に眠っている。",
+            "unlock_condition": {
+                "type": "boss_clear",
+                "stage_id": "stage_001"
+            },
+            "dispatch_options": [
+                {
+                    "duration_hours": 6,
+                    "base_exp": 100,
+                    "rewards": [
+                        {
+                            "material_id": "iron_ore",
+                            "min_qty": 3,
+                            "max_qty": 6,
+                            "rate": 100
+                        },
+                        {
+                            "material_id": "forest_moss",
+                            "min_qty": 2,
+                            "max_qty": 5,
+                            "rate": 80
+                        },
+                        {
+                            "material_id": "forest_wood",
+                            "min_qty": 2,
+                            "max_qty": 4,
+                            "rate": 70
+                        },
+                        {
+                            "material_id": "magic_ore",
+                            "min_qty": 1,
+                            "max_qty": 2,
+                            "rate": 30
+                        }
+                    ]
+                },
+                {
+                    "duration_hours": 12,
+                    "base_exp": 250,
+                    "rewards": [
+                        {
+                            "material_id": "iron_ore",
+                            "min_qty": 6,
+                            "max_qty": 12,
+                            "rate": 100
+                        },
+                        {
+                            "material_id": "forest_moss",
+                            "min_qty": 4,
+                            "max_qty": 8,
+                            "rate": 90
+                        },
+                        {
+                            "material_id": "forest_wood",
+                            "min_qty": 4,
+                            "max_qty": 7,
+                            "rate": 80
+                        },
+                        {
+                            "material_id": "magic_ore",
+                            "min_qty": 2,
+                            "max_qty": 4,
+                            "rate": 50
+                        },
+                        {
+                            "material_id": "mithril_ore",
+                            "min_qty": 1,
+                            "max_qty": 2,
+                            "rate": 15
+                        }
+                    ]
+                }
+            ],
+            "required_monster_count": 1,
+            "max_monster_count": 3,
+            "recommended_level": 10,
+            "icon": "forest_icon",
+            "background_image": "forest_bg",
+            "display_order": 1,
+            "is_active": true
+        },
+        {
+            "location_id": "dispatch_002",
+            "name": "炎の洞窟・採掘場",
+            "name_en": "Fire Cave Mining Site",
+            "description": "溶岩の熱で形成された鉱脈。炎属性の素材と希少な鉱石が採れる。",
+            "unlock_condition": {
+                "type": "boss_clear",
+                "stage_id": "stage_002"
+            },
+            "dispatch_options": [
+                {
+                    "duration_hours": 6,
+                    "base_exp": 150,
+                    "rewards": [
+                        {
+                            "material_id": "fire_fragment",
+                            "min_qty": 2,
+                            "max_qty": 5,
+                            "rate": 100
+                        },
+                        {
+                            "material_id": "fire_crystal",
+                            "min_qty": 2,
+                            "max_qty": 4,
+                            "rate": 80
+                        },
+                        {
+                            "material_id": "lava_stone",
+                            "min_qty": 1,
+                            "max_qty": 3,
+                            "rate": 70
+                        },
+                        {
+                            "material_id": "magic_ore",
+                            "min_qty": 2,
+                            "max_qty": 4,
+                            "rate": 60
+                        },
+                        {
+                            "material_id": "dragon_scale",
+                            "min_qty": 1,
+                            "max_qty": 1,
+                            "rate": 20
+                        }
+                    ]
+                },
+                {
+                    "duration_hours": 12,
+                    "base_exp": 350,
+                    "rewards": [
+                        {
+                            "material_id": "fire_fragment",
+                            "min_qty": 5,
+                            "max_qty": 10,
+                            "rate": 100
+                        },
+                        {
+                            "material_id": "fire_crystal",
+                            "min_qty": 4,
+                            "max_qty": 8,
+                            "rate": 90
+                        },
+                        {
+                            "material_id": "lava_stone",
+                            "min_qty": 3,
+                            "max_qty": 6,
+                            "rate": 80
+                        },
+                        {
+                            "material_id": "magic_ore",
+                            "min_qty": 4,
+                            "max_qty": 7,
+                            "rate": 70
+                        },
+                        {
+                            "material_id": "mithril_ore",
+                            "min_qty": 1,
+                            "max_qty": 3,
+                            "rate": 40
+                        },
+                        {
+                            "material_id": "dragon_scale",
+                            "min_qty": 1,
+                            "max_qty": 2,
+                            "rate": 35
+                        }
+                    ]
+                }
+            ],
+            "required_monster_count": 1,
+            "max_monster_count": 3,
+            "recommended_level": 20,
+            "icon": "cave_icon",
+            "background_image": "cave_bg",
+            "display_order": 2,
+            "is_active": true
+        },
+        {
+            "location_id": "dispatch_003",
+            "name": "雷鳴の峡谷・奥地",
+            "name_en": "Thunder Valley Depths",
+            "description": "常に雷雲が立ち込める危険な峡谷。雷属性の素材と希少鉱石が眠る。",
+            "unlock_condition": {
+                "type": "boss_clear",
+                "stage_id": "stage_003"
+            },
+            "dispatch_options": [
+                {
+                    "duration_hours": 6,
+                    "base_exp": 200,
+                    "rewards": [
+                        {
+                            "material_id": "thunder_fragment",
+                            "min_qty": 2,
+                            "max_qty": 5,
+                            "rate": 100
+                        },
+                        {
+                            "material_id": "magic_ore",
+                            "min_qty": 3,
+                            "max_qty": 5,
+                            "rate": 80
+                        },
+                        {
+                            "material_id": "mithril_ore",
+                            "min_qty": 1,
+                            "max_qty": 3,
+                            "rate": 50
+                        },
+                        {
+                            "material_id": "mecha_part",
+                            "min_qty": 1,
+                            "max_qty": 2,
+                            "rate": 30
+                        }
+                    ]
+                },
+                {
+                    "duration_hours": 12,
+                    "base_exp": 450,
+                    "rewards": [
+                        {
+                            "material_id": "thunder_fragment",
+                            "min_qty": 5,
+                            "max_qty": 10,
+                            "rate": 100
+                        },
+                        {
+                            "material_id": "magic_ore",
+                            "min_qty": 5,
+                            "max_qty": 9,
+                            "rate": 90
+                        },
+                        {
+                            "material_id": "mithril_ore",
+                            "min_qty": 3,
+                            "max_qty": 6,
+                            "rate": 70
+                        },
+                        {
+                            "material_id": "mecha_part",
+                            "min_qty": 2,
+                            "max_qty": 4,
+                            "rate": 50
+                        },
+                        {
+                            "material_id": "boss_proof",
+                            "min_qty": 1,
+                            "max_qty": 1,
+                            "rate": 20
+                        }
+                    ]
+                }
+            ],
+            "required_monster_count": 1,
+            "max_monster_count": 3,
+            "recommended_level": 30,
+            "icon": "valley_icon",
+            "background_image": "valley_bg",
+            "display_order": 3,
+            "is_active": true
+        }
+    ],
+    "slot_unlock_cost": {
+        "slot_2": 500,
+        "slot_3": 500
+    },
+    "metadata": {
+        "total_locations": 3,
+        "version": "1.0.0",
+        "last_updated": "2025-11-27"
+    }
+}

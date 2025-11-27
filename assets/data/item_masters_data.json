@@ -18,9 +18,8 @@
             "max_stack": 99,
             "is_usable_in_battle": false,
             "drop_stages": [
-                "stage_1-1",
-                "stage_1-2",
-                "stage_1-3"
+                "stage_001",
+                "stage_002"
             ],
             "drop_rate": 30,
             "display_order": 1,
@@ -44,9 +43,7 @@
             "max_stack": 99,
             "is_usable_in_battle": false,
             "drop_stages": [
-                "stage_2-1",
-                "stage_2-2",
-                "stage_2-3"
+                "stage_002"
             ],
             "drop_rate": 20,
             "display_order": 2,
@@ -69,11 +66,7 @@
             "buy_price": 1500,
             "max_stack": 99,
             "is_usable_in_battle": false,
-            "drop_stages": [
-                "stage_3-1",
-                "stage_3-2",
-                "stage_3-3"
-            ],
+            "drop_stages": [],
             "drop_rate": 10,
             "display_order": 3,
             "is_active": true
@@ -96,9 +89,7 @@
             "max_stack": 99,
             "is_usable_in_battle": false,
             "drop_stages": [
-                "stage_2-3",
-                "stage_3-1",
-                "stage_3-2"
+                "stage_002"
             ],
             "drop_rate": 8,
             "display_order": 4,
@@ -121,9 +112,7 @@
             "buy_price": 3000,
             "max_stack": 99,
             "is_usable_in_battle": false,
-            "drop_stages": [
-                "stage_3-3"
-            ],
+            "drop_stages": [],
             "drop_rate": 5,
             "display_order": 5,
             "is_active": true
@@ -146,9 +135,8 @@
             "max_stack": 99,
             "is_usable_in_battle": false,
             "drop_stages": [
-                "stage_1-3",
-                "stage_2-1",
-                "stage_2-2"
+                "stage_001",
+                "stage_002"
             ],
             "drop_rate": 15,
             "display_order": 6,
@@ -172,8 +160,7 @@
             "max_stack": 999,
             "is_usable_in_battle": false,
             "drop_stages": [
-                "stage_1-1",
-                "stage_1-2"
+                "stage_001"
             ],
             "drop_rate": 40,
             "display_order": 10,
@@ -197,9 +184,7 @@
             "max_stack": 999,
             "is_usable_in_battle": false,
             "drop_stages": [
-                "stage_2-1",
-                "stage_2-2",
-                "stage_2-3"
+                "stage_002"
             ],
             "drop_rate": 25,
             "display_order": 11,
@@ -222,11 +207,7 @@
             "buy_price": 0,
             "max_stack": 999,
             "is_usable_in_battle": false,
-            "drop_stages": [
-                "stage_3-1",
-                "stage_3-2",
-                "stage_3-3"
-            ],
+            "drop_stages": [],
             "drop_rate": 12,
             "display_order": 12,
             "is_active": true
@@ -249,8 +230,7 @@
             "max_stack": 99,
             "is_usable_in_battle": false,
             "drop_stages": [
-                "stage_1-3",
-                "stage_2-2"
+                "stage_001"
             ],
             "drop_rate": 15,
             "display_order": 20,
@@ -298,160 +278,6 @@
             "drop_stages": [],
             "drop_rate": 0,
             "display_order": 31,
-            "is_active": true
-        },
-        {
-            "item_id": "fire_fragment",
-            "name": "炎の欠片",
-            "name_en": "Fire Fragment",
-            "category": "material",
-            "sub_category": "element",
-            "rarity": 2,
-            "description": "炎属性の力を宿した結晶の欠片",
-            "effect": null,
-            "icon": "fire_fragment",
-            "sell_price": 50,
-            "buy_price": 0,
-            "max_stack": 999,
-            "is_usable_in_battle": false,
-            "drop_stages": [
-                "stage_2-1",
-                "stage_2-3"
-            ],
-            "drop_rate": 35,
-            "display_order": 100,
-            "is_active": true
-        },
-        {
-            "item_id": "water_fragment",
-            "name": "水の欠片",
-            "name_en": "Water Fragment",
-            "category": "material",
-            "sub_category": "element",
-            "rarity": 2,
-            "description": "水属性の力を宿した結晶の欠片",
-            "effect": null,
-            "icon": "water_fragment",
-            "sell_price": 50,
-            "buy_price": 0,
-            "max_stack": 999,
-            "is_usable_in_battle": false,
-            "drop_stages": [
-                "stage_1-2",
-                "stage_1-3"
-            ],
-            "drop_rate": 35,
-            "display_order": 101,
-            "is_active": true
-        },
-        {
-            "item_id": "thunder_fragment",
-            "name": "雷の欠片",
-            "name_en": "Thunder Fragment",
-            "category": "material",
-            "sub_category": "element",
-            "rarity": 2,
-            "description": "雷属性の力を宿した結晶の欠片",
-            "effect": null,
-            "icon": "thunder_fragment",
-            "sell_price": 50,
-            "buy_price": 0,
-            "max_stack": 999,
-            "is_usable_in_battle": false,
-            "drop_stages": [
-                "stage_3-1",
-                "stage_3-2"
-            ],
-            "drop_rate": 35,
-            "display_order": 102,
-            "is_active": true
-        },
-        {
-            "item_id": "iron_ore",
-            "name": "鉄鉱石",
-            "name_en": "Iron Ore",
-            "category": "material",
-            "sub_category": "common",
-            "rarity": 1,
-            "description": "様々な装備の素材となる鉱石",
-            "effect": null,
-            "icon": "iron_ore",
-            "sell_price": 30,
-            "buy_price": 0,
-            "max_stack": 999,
-            "is_usable_in_battle": false,
-            "drop_stages": [
-                "stage_1-1",
-                "stage_1-2",
-                "stage_1-3",
-                "stage_2-1"
-            ],
-            "drop_rate": 50,
-            "display_order": 110,
-            "is_active": true
-        },
-        {
-            "item_id": "magic_ore",
-            "name": "魔法の鉱石",
-            "name_en": "Magic Ore",
-            "category": "material",
-            "sub_category": "common",
-            "rarity": 2,
-            "description": "魔力を帯びた希少な鉱石",
-            "effect": null,
-            "icon": "magic_ore",
-            "sell_price": 80,
-            "buy_price": 0,
-            "max_stack": 999,
-            "is_usable_in_battle": false,
-            "drop_stages": [
-                "stage_2-2",
-                "stage_2-3",
-                "stage_3-1"
-            ],
-            "drop_rate": 30,
-            "display_order": 111,
-            "is_active": true
-        },
-        {
-            "item_id": "dragon_scale",
-            "name": "ドラゴンの鱗",
-            "name_en": "Dragon Scale",
-            "category": "material",
-            "sub_category": "species",
-            "rarity": 3,
-            "description": "ドラゴン種族から稀に入手できる鱗",
-            "effect": null,
-            "icon": "dragon_scale",
-            "sell_price": 200,
-            "buy_price": 0,
-            "max_stack": 999,
-            "is_usable_in_battle": false,
-            "drop_stages": [
-                "stage_3-2",
-                "stage_3-3"
-            ],
-            "drop_rate": 15,
-            "display_order": 120,
-            "is_active": true
-        },
-        {
-            "item_id": "boss_proof",
-            "name": "ボスの証",
-            "name_en": "Boss Proof",
-            "category": "material",
-            "sub_category": "boss",
-            "rarity": 4,
-            "description": "ボスを倒した証。高レア装備の素材",
-            "effect": null,
-            "icon": "boss_proof",
-            "sell_price": 500,
-            "buy_price": 0,
-            "max_stack": 999,
-            "is_usable_in_battle": false,
-            "drop_stages": [],
-            "drop_rate": 0,
-            "display_order": 130,
             "is_active": true
         }
     ]

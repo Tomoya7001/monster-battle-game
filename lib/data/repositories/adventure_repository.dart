@@ -1,3 +1,5 @@
+// lib/data/repositories/adventure_repository.dart
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../domain/models/stage/stage_data.dart';
 import '../../domain/entities/monster.dart';
@@ -111,6 +113,7 @@ class AdventureRepository {
         'stage_id': stageId,
         'encounter_count': newCount,
         'boss_unlocked': bossUnlocked,
+        'boss_defeated': data['boss_defeated'] ?? false, // 既存の値を保持
         'last_updated': FieldValue.serverTimestamp(),
       });
     } else {
@@ -119,12 +122,13 @@ class AdventureRepository {
         'stage_id': stageId,
         'encounter_count': 1,
         'boss_unlocked': false,
+        'boss_defeated': false,
         'last_updated': FieldValue.serverTimestamp(),
       });
     }
   }
 
-  /// ★追加: ボスクリア時に進行状況リセット
+  /// ★追加: ボスクリア時に進行状況リセット＆boss_defeatedをtrueに
   Future<void> resetProgressAfterBossClear(String userId, String stageId) async {
     final docRef = _firestore
         .collection('user_adventure_progress')
@@ -135,8 +139,33 @@ class AdventureRepository {
       'stage_id': stageId,
       'encounter_count': 0,
       'boss_unlocked': false,
+      'boss_defeated': true, // ★追加: ボス撃破済みフラグ
       'last_updated': FieldValue.serverTimestamp(),
     });
+  }
+
+  /// ★追加: ボス撃破済みか確認
+  Future<bool> isBossDefeated(String userId, String stageId) async {
+    final doc = await _firestore
+        .collection('user_adventure_progress')
+        .doc('${userId}_$stageId')
+        .get();
+
+    if (!doc.exists) return false;
+    return doc.data()!['boss_defeated'] as bool? ?? false;
+  }
+
+  /// ★追加: 撃破済みボス一覧取得
+  Future<List<String>> getDefeatedBossStageIds(String userId) async {
+    final snapshot = await _firestore
+        .collection('user_adventure_progress')
+        .where('user_id', isEqualTo: userId)
+        .where('boss_defeated', isEqualTo: true)
+        .get();
+
+    return snapshot.docs
+        .map((doc) => doc.data()['stage_id'] as String)
+        .toList();
   }
 
   /// ランダムエンカウントモンスター取得

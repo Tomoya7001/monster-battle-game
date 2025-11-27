@@ -233,6 +233,82 @@ class DataImporter {
       rethrow;
     }
   }
+
+  /// ★追加: 素材マスターデータを投入
+  Future<void> importMaterialMasters() async {
+    try {
+      print('📦 素材マスターデータ読み込み中...');
+      
+      final String jsonString = await rootBundle
+          .loadString('assets/data/material_masters_data.json');
+      final Map<String, dynamic> data = json.decode(jsonString);
+      
+      print('✅ JSONファイル読み込み完了');
+      
+      final batch = _firestore.batch();
+      int count = 0;
+      
+      for (var material in data['materials']) {
+        final materialMap = Map<String, dynamic>.from(material as Map);
+        final docRef = _firestore
+            .collection('material_masters')
+            .doc(materialMap['material_id'].toString());
+        
+        batch.set(docRef, {
+          ...materialMap,
+          'created_at': FieldValue.serverTimestamp(),
+          'updated_at': FieldValue.serverTimestamp(),
+        });
+        count++;
+      }
+      
+      await batch.commit();
+      
+      print('✅ 素材マスターデータ投入完了: $count 件');
+    } catch (e, stackTrace) {
+      print('❌ エラー: $e');
+      print('スタックトレース: $stackTrace');
+      rethrow;
+    }
+  }
+
+  /// ★追加: 探索先マスターデータを投入
+  Future<void> importDispatchLocations() async {
+    try {
+      print('📦 探索先マスターデータ読み込み中...');
+      
+      final String jsonString = await rootBundle
+          .loadString('assets/data/dispatch_locations.json');
+      final Map<String, dynamic> data = json.decode(jsonString);
+      
+      print('✅ JSONファイル読み込み完了');
+      
+      final batch = _firestore.batch();
+      int count = 0;
+      
+      for (var location in data['dispatch_locations']) {
+        final locationMap = Map<String, dynamic>.from(location as Map);
+        final docRef = _firestore
+            .collection('dispatch_locations')
+            .doc(locationMap['location_id'].toString());
+        
+        batch.set(docRef, {
+          ...locationMap,
+          'created_at': FieldValue.serverTimestamp(),
+          'updated_at': FieldValue.serverTimestamp(),
+        });
+        count++;
+      }
+      
+      await batch.commit();
+      
+      print('✅ 探索先マスターデータ投入完了: $count 件');
+    } catch (e, stackTrace) {
+      print('❌ エラー: $e');
+      print('スタックトレース: $stackTrace');
+      rethrow;
+    }
+  }
   
   /// すべてのマスターデータを一括投入
   Future<Map<String, int>> importAllMasterData() async {
@@ -270,6 +346,14 @@ class DataImporter {
 
       await importItemMasters();
       results['items'] = await _getCollectionCount('item_masters');
+      print('');
+
+      await importMaterialMasters();
+      results['materials'] = await _getCollectionCount('material_masters');
+      print('');
+
+      await importDispatchLocations();
+      results['dispatch_locations'] = await _getCollectionCount('dispatch_locations');
       print('');
       
       print('====================================');
@@ -312,7 +396,13 @@ class DataImporter {
       print('✅ 特性数: ${results['traits']} / 56 (目標)');
 
       results['items'] = await _getCollectionCount('item_masters');
-      print('✅ アイテム数: ${results['items']} / 20 (目標)');
+      print('✅ アイテム数: ${results['items']} / 12 (目標)');
+
+      results['materials'] = await _getCollectionCount('material_masters');
+      print('✅ 素材数: ${results['materials']} / 21 (目標)');
+
+      results['dispatch_locations'] = await _getCollectionCount('dispatch_locations');
+      print('✅ 探索先数: ${results['dispatch_locations']} / 3 (目標)');
       
       print('');
       print('====================================');
@@ -486,8 +576,29 @@ class DataImporter {
       
       await importUnifiedSkillMasters();
       await importStageMasters();
+      await importMaterialMasters();
+      await importDispatchLocations();
       
       print('✅ 全マスタデータ投入完了！');
+    } catch (e) {
+      print('❌ マスタデータ投入失敗: $e');
+      rethrow;
+    }
+  }
+
+  /// ★追加: 探索システム用データのみ投入
+  Future<void> importDispatchSystemData() async {
+    try {
+      print('🚀 探索システム用マスタデータ投入開始...');
+      print('');
+      
+      await importMaterialMasters();
+      print('');
+      
+      await importDispatchLocations();
+      print('');
+      
+      print('✅ 探索システム用マスタデータ投入完了！');
     } catch (e) {
       print('❌ マスタデータ投入失敗: $e');
       rethrow;
@@ -506,6 +617,8 @@ class DataImporter {
     await deleteCollection('skill_masters');
     await deleteCollection('equipment_masters');
     await deleteCollection('trait_masters');
+    await deleteCollection('material_masters');
+    await deleteCollection('dispatch_locations');
     
     print('');
     print('====================================');
@@ -558,6 +671,51 @@ class DataImporter {
       print('✅ アイテム付与完了: ${items.length}種類');
     } catch (e) {
       print('❌ アイテム付与エラー: $e');
+      rethrow;
+    }
+  }
+
+  /// ★追加: 開発ユーザーに素材を付与
+  Future<void> grantMaterialsToUser({
+    required String userId,
+    required Map<String, int> materials,
+  }) async {
+    if (materials.isEmpty) return;
+
+    try {
+      print('🎁 素材付与開始: $userId');
+      
+      final batch = _firestore.batch();
+      
+      for (final entry in materials.entries) {
+        final docId = '${userId}_${entry.key}';
+        final docRef = _firestore.collection('user_materials').doc(docId);
+        
+        final doc = await docRef.get();
+        
+        if (doc.exists) {
+          final currentQty = doc.data()!['quantity'] as int? ?? 0;
+          batch.update(docRef, {
+            'quantity': currentQty + entry.value,
+            'updated_at': FieldValue.serverTimestamp(),
+          });
+          print('  🧱 ${entry.key}: +${entry.value} (合計: ${currentQty + entry.value})');
+        } else {
+          batch.set(docRef, {
+            'user_id': userId,
+            'material_id': entry.key,
+            'quantity': entry.value,
+            'acquired_at': FieldValue.serverTimestamp(),
+            'updated_at': FieldValue.serverTimestamp(),
+          });
+          print('  🧱 ${entry.key}: +${entry.value} (新規)');
+        }
+      }
+      
+      await batch.commit();
+      print('✅ 素材付与完了: ${materials.length}種類');
+    } catch (e) {
+      print('❌ 素材付与エラー: $e');
       rethrow;
     }
   }
@@ -660,6 +818,40 @@ class DataImporter {
     }
   }
 
+  /// ★追加: ボス撃破済みフラグを設定（探索先解放用）
+  Future<void> setBossDefeated(String userId, String stageId) async {
+    try {
+      print('🏆 ボス撃破済み設定: $userId - $stageId');
+      
+      final docRef = _firestore
+          .collection('user_adventure_progress')
+          .doc('${userId}_$stageId');
+      
+      final doc = await docRef.get();
+      
+      if (doc.exists) {
+        await docRef.update({
+          'boss_defeated': true,
+          'last_updated': FieldValue.serverTimestamp(),
+        });
+      } else {
+        await docRef.set({
+          'user_id': userId,
+          'stage_id': stageId,
+          'encounter_count': 0,
+          'boss_unlocked': false,
+          'boss_defeated': true,
+          'last_updated': FieldValue.serverTimestamp(),
+        });
+      }
+      
+      print('✅ ボス撃破済み設定完了');
+    } catch (e) {
+      print('❌ ボス撃破済み設定エラー: $e');
+      rethrow;
+    }
+  }
+
   /// 開発用：初期アイテムセット付与
   Future<void> grantDevStarterPack(String userId) async {
     print('');
@@ -677,17 +869,32 @@ class DataImporter {
         'revive_half': 30,
         'revive_full': 10,
         'status_heal': 30,
-        'exp_candy_s': 50,
-        'exp_candy_m': 30,
-        'exp_candy_l': 10,
+        'exp_small': 50,
+        'exp_medium': 30,
+        'exp_large': 10,
         'intimacy_treat': 30,
         'reset_points': 5,
         'trait_stone': 3,
+      },
+    );
+    
+    print('');
+    
+    await grantMaterialsToUser(
+      userId: userId,
+      materials: {
+        'iron_ore': 100,
+        'magic_ore': 50,
+        'mithril_ore': 20,
         'fire_fragment': 50,
         'water_fragment': 50,
         'thunder_fragment': 50,
-        'iron_ore': 50,
-        'magic_ore': 30,
+        'forest_moss': 50,
+        'forest_wood': 50,
+        'fire_crystal': 30,
+        'lava_stone': 30,
+        'dragon_scale': 10,
+        'boss_proof': 5,
       },
     );
     
@@ -703,6 +910,12 @@ class DataImporter {
     print('');
     
     await healAllMonsters(userId);
+    
+    print('');
+    
+    // 探索先解放のためにボス撃破済みを設定
+    await setBossDefeated(userId, 'stage_001');
+    await setBossDefeated(userId, 'stage_002');
     
     print('');
     print('====================================');

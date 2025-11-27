@@ -357,6 +357,19 @@ class HomeScreen extends StatelessWidget {
                   backgroundColor: Colors.purple,
                 ),
               ),
+              
+              const SizedBox(height: 16),
+              
+              // 探索ボタン追加
+              ElevatedButton.icon(
+                onPressed: () => context.push('/dispatch'),
+                icon: const Icon(Icons.explore),
+                label: const Text('探索'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.teal,
+                  padding: const EdgeInsets.all(16),
+                ),
+              ),
 
               const SizedBox(height: 16),
               
