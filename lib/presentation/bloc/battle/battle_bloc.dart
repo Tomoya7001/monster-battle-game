@@ -17,6 +17,17 @@ import '../../../data/repositories/monster_repository_impl.dart';
 import '../../../data/repositories/equipment_repository.dart';
 import '../../../domain/entities/equipment_master.dart';
 
+/// バトル設定クラス（BattleBlocの外部に配置）
+class BattleSettings {
+  /// 交代時に相手の攻撃を受ける仕様を有効にする
+  /// true: ポケモン式（交代時に攻撃を受ける）
+  /// false: 通常（交代後に相手ターン）
+  static bool enablePursuitOnSwitch = true;
+  
+  /// 追い打ち技（交代時に威力2倍になる技）を有効にする
+  static bool enablePursuitSkills = true;
+}
+
 class BattleBloc extends Bloc<BattleEvent, BattleState> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final Random _random = Random();
@@ -29,9 +40,10 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
   BattleBloc() : super(const BattleInitial()) {
     on<StartCpuBattle>(_onStartCpuBattle);
     on<StartStageBattle>(_onStartStageBattle);
+    on<StartDraftBattle>(_onStartDraftBattle);
     on<SelectFirstMonster>(_onSelectFirstMonster);
     on<UseSkill>(_onUseSkill);
-    on<SwitchMonster>(_onSwitchMonster);
+    on<SwitchMonster>(_onSwitchMonster); // ★ 内部で設定に応じて分岐
     on<WaitTurn>(_onWaitTurn);
     on<ProcessTurnEnd>(_onProcessTurnEnd);
     on<EndBattle>(_onEndBattle);
@@ -58,6 +70,7 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
       _battleState = BattleStateModel(
         playerParty: playerParty,
         enemyParty: enemyParty,
+        battleType: 'cpu',
       );
 
       _battleState!.addLog('バトル開始！');
@@ -124,12 +137,11 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
         }
       }
 
-      // ★修正: プレイヤーは常に3体まで出撃可能（敵の数とは別）
       _battleState = BattleStateModel(
         playerParty: playerParty,
         enemyParty: enemyParty,
         battleType: event.stageData.stageType == 'boss' ? 'boss' : 'adventure',
-        maxDeployableCount: 3, // プレイヤーは常に3体
+        maxDeployableCount: 3,
       );
 
       _battleState!.addLog('${event.stageData.name} 開始！');
@@ -170,6 +182,50 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
       print('ステージバトル開始エラー: $e');
       print('スタックトレース: $stackTrace');
       emit(BattleError(message: 'ステージバトル開始エラー: $e'));
+    }
+  }
+
+  /// ドラフトバトル開始
+  Future<void> _onStartDraftBattle(
+    StartDraftBattle event,
+    Emitter<BattleState> emit,
+  ) async {
+    emit(const BattleLoading());
+
+    try {
+      _startConnectionCheck();
+
+      // ドラフト戦: フルHP、Lv50固定
+      final playerParty = await _convertToBattleMonsters(event.playerParty, useCurrentHp: false);
+      final enemyParty = await _convertToBattleMonsters(event.enemyParty, useCurrentHp: false);
+
+      _battleState = BattleStateModel(
+        playerParty: playerParty,
+        enemyParty: enemyParty,
+        battleType: 'draft',
+        maxDeployableCount: 3,
+      );
+
+      _battleState!.addLog('ドラフトバトル開始！');
+
+      emit(BattleInProgress(
+        battleState: _battleState!,
+        message: '最初に出すモンスターを選んでください',
+      ));
+    } on FirebaseException catch (e) {
+      emit(BattleNetworkError(
+        message: 'ネットワークエラーが発生しました: $e',
+        canRetry: true,
+      ));
+    } on TimeoutException {
+      emit(const BattleNetworkError(
+        message: '接続がタイムアウトしました',
+        canRetry: true,
+      ));
+    } catch (e, stackTrace) {
+      print('ドラフトバトル開始エラー: $e');
+      print('スタックトレース: $stackTrace');
+      emit(BattleError(message: 'ドラフトバトル開始エラー: $e'));
     }
   }
 
@@ -360,7 +416,7 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
         damageDealt = result.damage;
         enemyMonster.takeDamage(result.damage);
 
-        // ★追加: ダメージ反射
+        // ダメージ反射
         final reflectPercentage = enemyMonster.reflectDamagePercentage;
         if (reflectPercentage > 0 && result.damage > 0) {
           final reflectDamage = (result.damage * reflectPercentage).round();
@@ -503,7 +559,7 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
         damageDealt = result.damage;
         playerMonster.takeDamage(result.damage);
 
-        // ★追加: ダメージ反射
+        // ダメージ反射
         final reflectPercentage = playerMonster.reflectDamagePercentage;
         if (reflectPercentage > 0 && result.damage > 0) {
           final reflectDamage = (result.damage * reflectPercentage).round();
@@ -593,8 +649,20 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
     await _executeCpuActionWithSkill(emit, null);
   }
 
-  /// モンスター交代
+  /// モンスター交代（設定に応じて分岐）
   Future<void> _onSwitchMonster(
+    SwitchMonster event,
+    Emitter<BattleState> emit,
+  ) async {
+    if (BattleSettings.enablePursuitOnSwitch) {
+      await _onSwitchMonsterWithPursuit(event, emit);
+    } else {
+      await _onSwitchMonsterNormal(event, emit);
+    }
+  }
+
+  /// モンスター交代（通常版 - 交代後に相手ターン）
+  Future<void> _onSwitchMonsterNormal(
     SwitchMonster event,
     Emitter<BattleState> emit,
   ) async {
@@ -634,6 +702,8 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
     newMonster.resetCost();
     _battleState!.playerSwitchedThisTurn = true;
 
+    _battleState!.addLog('${newMonster.baseMonster.monsterName}を繰り出した！');
+
     emit(BattleInProgress(
       battleState: _battleState!,
       message: '${newMonster.baseMonster.monsterName}に交代！',
@@ -648,6 +718,211 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
     }
 
     add(const ProcessTurnEnd());
+  }
+
+  /// モンスター交代（交代時に攻撃を受ける仕様）
+  Future<void> _onSwitchMonsterWithPursuit(
+    SwitchMonster event,
+    Emitter<BattleState> emit,
+  ) async {
+    if (_battleState == null) return;
+
+    if (!_battleState!.canSwitchTo(event.monsterId)) {
+      String message = 'このモンスターには交代できません';
+      
+      final monster = _battleState!.playerParty
+          .firstWhere((m) => m.baseMonster.id == event.monsterId);
+      
+      if (monster.isFainted) {
+        message = 'このモンスターは瀕死です';
+      } else if (_battleState!.playerActiveMonster?.baseMonster.id == event.monsterId) {
+        message = 'このモンスターは既に場に出ています';
+      } else if (!_battleState!.canPlayerSendMore) {
+        message = 'これ以上モンスターを出せません（3体制限）';
+      }
+      
+      emit(BattleInProgress(
+        battleState: _battleState!,
+        message: message,
+      ));
+      return;
+    }
+
+    // 交代宣言ログ
+    final currentMonster = _battleState!.playerActiveMonster;
+    final newMonster = _battleState!.playerParty
+        .firstWhere((m) => m.baseMonster.id == event.monsterId);
+    
+    _battleState!.addLog('${currentMonster?.baseMonster.monsterName}を${newMonster.baseMonster.monsterName}に交代！');
+
+    // 瀕死による強制交代でなければ、相手の攻撃を受ける
+    if (!event.isForcedSwitch && currentMonster != null && !currentMonster.isFainted) {
+      emit(BattleInProgress(
+        battleState: _battleState!,
+        message: '交代中...',
+      ));
+
+      // 相手の攻撃を受ける（交代前のモンスターが対象）
+      if (_battleState!.enemyActiveMonster?.canAct == true) {
+        await _executeCpuAttackOnSwitch(emit, currentMonster);
+      }
+
+      // 交代前のモンスターが倒れた場合
+      if (currentMonster.isFainted) {
+        _battleState!.addLog('${currentMonster.baseMonster.monsterName}は倒れた！');
+      }
+    }
+
+    // 交代実行
+    if (!_battleState!.playerFieldMonsterIds.contains(event.monsterId)) {
+      _battleState!.playerFieldMonsterIds.add(event.monsterId);
+    }
+
+    // 前のモンスターのステータスリセット
+    currentMonster?.resetStages();
+    
+    // 新しいモンスターをアクティブに
+    _battleState!.playerActiveMonster = newMonster;
+    newMonster.hasParticipated = true;
+    newMonster.resetCost();
+    _battleState!.playerSwitchedThisTurn = true;
+
+    _battleState!.addLog('${newMonster.baseMonster.monsterName}を繰り出した！');
+
+    emit(BattleInProgress(
+      battleState: _battleState!,
+      message: '${newMonster.baseMonster.monsterName}に交代！',
+    ));
+
+    // 交代完了後はターン終了（相手は既に攻撃済み）
+    add(const ProcessTurnEnd());
+  }
+
+  /// 交代時の相手攻撃（交代するモンスターに攻撃）
+  Future<void> _executeCpuAttackOnSwitch(
+    Emitter<BattleState> emit,
+    BattleMonster switchingMonster,
+  ) async {
+    if (_battleState == null) return;
+    if (_battleState!.enemyActiveMonster == null) return;
+
+    final cpuMonster = _battleState!.enemyActiveMonster!;
+
+    // CPUの行動チェック
+    final actionResult = BattleCalculationService.checkStatusAction(cpuMonster);
+    if (!actionResult.canAct) {
+      _battleState!.addLog(actionResult.message);
+      return;
+    }
+
+    // 使用可能な技からランダム選択（追い打ち技があれば優先）
+    final usableSkills = cpuMonster.skills
+        .where((s) => cpuMonster.canUseSkill(s))
+        .toList();
+
+    if (usableSkills.isEmpty) {
+      _battleState!.addLog('相手の${cpuMonster.baseMonster.monsterName}は様子を見ている');
+      return;
+    }
+
+    // 追い打ち技を探す
+    BattleSkill skill;
+    final pursuitSkills = usableSkills.where((s) => _isPursuitSkill(s)).toList();
+    if (BattleSettings.enablePursuitSkills && pursuitSkills.isNotEmpty) {
+      skill = pursuitSkills[_random.nextInt(pursuitSkills.length)];
+    } else {
+      skill = usableSkills[_random.nextInt(usableSkills.length)];
+    }
+
+    // 技使用
+    cpuMonster.useSkill(skill);
+    _battleState!.addLog('相手の${cpuMonster.baseMonster.monsterName}の${skill.name}！');
+
+    if (skill.isAttack) {
+      // まもる状態チェック
+      if (switchingMonster.isProtecting) {
+        _battleState!.addLog('${switchingMonster.baseMonster.monsterName}は攻撃を防いだ！');
+        return;
+      }
+
+      // 命中判定
+      if (!BattleCalculationService.checkHit(skill, cpuMonster, switchingMonster)) {
+        _battleState!.addLog('攻撃は外れた！');
+        return;
+      }
+
+      // ダメージ計算（追い打ち技なら威力2倍）
+      final pursuitMultiplier = _getPursuitMultiplier(skill);
+      final result = BattleCalculationService.calculateDamage(
+        attacker: cpuMonster,
+        defender: switchingMonster,
+        skill: skill,
+      );
+
+      if (result.damage > 0) {
+        final finalDamage = (result.damage * pursuitMultiplier).round();
+        switchingMonster.takeDamage(finalDamage);
+
+        String message = '${finalDamage}のダメージ！';
+        if (pursuitMultiplier > 1.0) {
+          message = '交代先への攻撃！$message';
+        }
+        if (result.isCritical) {
+          message = '急所に当たった！$message';
+        }
+        if (result.effectivenessText.isNotEmpty) {
+          message = '${result.effectivenessText} $message';
+        }
+
+        _battleState!.addLog(message);
+      }
+    }
+
+    // 状態異常・バフ/デバフ適用
+    if (!switchingMonster.isFainted) {
+      final statChangeMessages = BattleCalculationService.applyStatChanges(
+        skill: skill,
+        user: cpuMonster,
+        target: switchingMonster,
+      );
+      for (var msg in statChangeMessages) {
+        _battleState!.addLog(msg);
+      }
+
+      if (skill.isAttack) {
+        final statusMessages = BattleCalculationService.applyStatusAilments(
+          skill: skill,
+          target: switchingMonster,
+        );
+        for (var msg in statusMessages) {
+          _battleState!.addLog(msg);
+        }
+      }
+    }
+
+    emit(BattleInProgress(
+      battleState: _battleState!,
+      message: _battleState!.lastActionMessage,
+    ));
+
+    // 少し待機（演出のため）
+    await Future.delayed(const Duration(milliseconds: 500));
+  }
+
+  /// 追い打ち技かどうかを判定
+  bool _isPursuitSkill(BattleSkill skill) {
+    return skill.effects.containsKey('pursuit');
+  }
+
+  /// 追い打ち技の威力倍率を取得
+  double _getPursuitMultiplier(BattleSkill skill) {
+    if (!_isPursuitSkill(skill)) return 1.0;
+    
+    final pursuit = skill.effects['pursuit'];
+    if (pursuit is Map<String, dynamic>) {
+      return (pursuit['damage_multiplier'] as num?)?.toDouble() ?? 2.0;
+    }
+    return 2.0;
   }
 
   /// 待機
@@ -695,7 +970,7 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
             await _applyGoldToUser();
           }
           
-          // ★ HP永続化
+          // HP永続化
           await _saveMonsterHpAfterBattle();
 
           final expGains = await _applyExpToMonsters();
@@ -716,7 +991,7 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
       } else {
         _battleState!.addLog('プレイヤーの敗北...');
         
-        // ★ HP永続化（敗北時も保存）
+        // HP永続化（敗北時も保存）
         await _saveMonsterHpAfterBattle();
 
         try {
@@ -752,7 +1027,7 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
         _battleState!.phase = BattlePhase.battleEnd;
         _battleState!.addLog('プレイヤーの敗北...');
 
-        // ★ HP永続化（敗北時も保存）
+        // HP永続化（敗北時も保存）
         await _saveMonsterHpAfterBattle();
         
         try {
@@ -839,7 +1114,7 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
         .clamp(0, _battleState!.enemyActiveMonster!.maxCost);
     }
 
-    // ★追加: 装備効果（毎ターンHP回復など）
+    // 装備効果（毎ターンHP回復など）
     if (_battleState!.playerActiveMonster != null) {
       final equipMessages = _battleState!.playerActiveMonster!.processEquipmentTurnEnd();
       for (var msg in equipMessages) {
@@ -1042,7 +1317,7 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
   Future<void> _saveMonsterHpAfterBattle() async {
     if (_battleState == null) return;
     
-    // ★ 冒険/ボス戦以外ではHP保存しない（PvP/CPUは元のHPに戻す）
+    // 冒険/ボス戦以外ではHP保存しない（PvP/CPU/ドラフトは元のHPに戻す）
     final battleType = _battleState!.battleType;
     if (battleType != 'adventure' && battleType != 'boss') {
       print('📊 HP保存スキップ（バトルタイプ: $battleType - HP変更なし）');
@@ -1056,7 +1331,7 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
         if (battleMonster.hasParticipated) {
           final monsterId = battleMonster.baseMonster.id;
           
-          // ★ 敵モンスター（cpu_, enemy_, boss_で始まるID）は保存しない
+          // 敵モンスター（cpu_, enemy_, boss_で始まるID）は保存しない
           if (monsterId.startsWith('cpu_') || 
               monsterId.startsWith('enemy_') || 
               monsterId.startsWith('boss_')) {
@@ -1096,7 +1371,7 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
 
       final battleData = {
         'user_id': userId,
-        'battle_type': _currentStage != null ? 'stage' : 'cpu',
+        'battle_type': _currentStage != null ? 'stage' : _battleState!.battleType,
         'stage_id': _currentStage?.stageId,
         'result': isWin ? 'win' : 'lose',
         'turn_count': _battleState!.turnNumber,
@@ -1120,14 +1395,14 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
   }
 
   /// MonsterリストをBattleMonsterに変換
-  /// [useCurrentHp] - trueの場合は現在HPを使用（冒険/ボス戦）、falseはフルHP（PvP/CPU）
+  /// [useCurrentHp] - trueの場合は現在HPを使用（冒険/ボス戦）、falseはフルHP（PvP/CPU/ドラフト）
   Future<List<BattleMonster>> _convertToBattleMonsters(
     List<Monster> monsters, {
     bool useCurrentHp = false,
   }) async {
     final List<BattleMonster> battleMonsters = [];
 
-    // ★追加: 装備マスターデータを取得
+    // 装備マスターデータを取得
     final equipmentMap = await _equipmentRepository.getEquipmentMasters();
 
     try {
@@ -1138,7 +1413,7 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
 
         final skills = await _loadSkills(monster.equippedSkills);
         
-        // ★追加: 装備を取得
+        // 装備を取得
         final List<EquipmentMaster> monsterEquipments = [];
         for (final equipId in monster.equippedEquipment) {
           final equipment = equipmentMap[equipId];
@@ -1155,14 +1430,14 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
           initialHp = (monster.lv50MaxHp * hpRatio).round();
           print('📊 ${monster.monsterName}: HP ${monster.currentHp}/${monster.maxHp} (${(hpRatio * 100).toInt()}%) → バトルHP $initialHp/${monster.lv50MaxHp}');
         } else {
-          // PvP/CPU: フルHP
+          // PvP/CPU/ドラフト: フルHP
           initialHp = monster.lv50MaxHp;
         }
         
         battleMonsters.add(BattleMonster(
           baseMonster: monster,
           skills: skills,
-          equipments: monsterEquipments, // ★追加
+          equipments: monsterEquipments,
           initialHp: initialHp,
         ));
       }
@@ -1340,7 +1615,7 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
     return dummyMonsters.map((m) => BattleMonster(
       baseMonster: m,
       skills: _getDefaultSkills(),
-      equipments: const [], // ★追加: CPUは装備なし
+      equipments: const [],
     )).toList();
   }
 
@@ -1367,6 +1642,7 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
       _battleState = BattleStateModel(
         playerParty: playerParty,
         enemyParty: enemyParty,
+        battleType: 'adventure',
       );
 
       emit(BattleInProgress(
@@ -1401,6 +1677,7 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
       _battleState = BattleStateModel(
         playerParty: playerParty,
         enemyParty: enemyParty,
+        battleType: 'boss',
       );
 
       emit(BattleInProgress(

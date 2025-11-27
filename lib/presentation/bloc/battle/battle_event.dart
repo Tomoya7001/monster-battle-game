@@ -1,15 +1,10 @@
-// 行数不明のため、完全なソース提供
-
-import 'package:equatable/equatable.dart';
-import '../../../domain/entities/monster.dart';
 import '../../../domain/models/battle/battle_skill.dart';
-import '../../../domain/models/stage/stage_data.dart'; // ★追加
+import '../../../domain/entities/monster.dart';
+import '../../../domain/models/stage/stage_data.dart';
 
-abstract class BattleEvent extends Equatable {
+/// バトルイベント
+abstract class BattleEvent {
   const BattleEvent();
-
-  @override
-  List<Object?> get props => [];
 }
 
 /// CPUバトル開始
@@ -17,12 +12,9 @@ class StartCpuBattle extends BattleEvent {
   final List<Monster> playerParty;
 
   const StartCpuBattle({required this.playerParty});
-
-  @override
-  List<Object?> get props => [playerParty];
 }
 
-/// ★NEW: ステージバトル開始
+/// ステージバトル開始
 class StartStageBattle extends BattleEvent {
   final List<Monster> playerParty;
   final StageData stageData;
@@ -31,19 +23,28 @@ class StartStageBattle extends BattleEvent {
     required this.playerParty,
     required this.stageData,
   });
-
-  @override
-  List<Object?> get props => [playerParty, stageData];
 }
 
-/// 初期モンスター選択
+/// ドラフトバトル開始
+class StartDraftBattle extends BattleEvent {
+  final List<Monster> playerParty;
+  final List<Monster> enemyParty;
+  final String battleId;
+  final bool isCpuOpponent;
+
+  const StartDraftBattle({
+    required this.playerParty,
+    required this.enemyParty,
+    required this.battleId,
+    this.isCpuOpponent = false,
+  });
+}
+
+/// 最初のモンスター選択
 class SelectFirstMonster extends BattleEvent {
   final String monsterId;
 
   const SelectFirstMonster({required this.monsterId});
-
-  @override
-  List<Object?> get props => [monsterId];
 }
 
 /// 技使用
@@ -51,23 +52,17 @@ class UseSkill extends BattleEvent {
   final BattleSkill skill;
 
   const UseSkill({required this.skill});
-
-  @override
-  List<Object?> get props => [skill];
 }
 
 /// モンスター交代
 class SwitchMonster extends BattleEvent {
   final String monsterId;
-  final bool isForcedSwitch;
+  final bool isForcedSwitch; // 瀕死による強制交代かどうか
 
   const SwitchMonster({
     required this.monsterId,
     this.isForcedSwitch = false,
   });
-
-  @override
-  List<Object?> get props => [monsterId, isForcedSwitch];
 }
 
 /// 待機
@@ -85,40 +80,34 @@ class EndBattle extends BattleEvent {
   const EndBattle();
 }
 
-/// ★NEW: エラーリトライ
+/// エラー後リトライ
 class RetryAfterError extends BattleEvent {
   const RetryAfterError();
 }
 
-/// ★NEW: バトル強制終了
+/// バトル強制終了
 class ForceBattleEnd extends BattleEvent {
   const ForceBattleEnd();
 }
 
-/// ★追加: 冒険バトル開始（ランダムエンカウント）
+/// 冒険エンカウントバトル開始
 class StartAdventureEncounter extends BattleEvent {
-  final List<Monster> playerParty;
   final String stageId;
+  final List<Monster> playerParty;
 
   const StartAdventureEncounter({
-    required this.playerParty,
     required this.stageId,
+    required this.playerParty,
   });
-
-  @override
-  List<Object?> get props => [playerParty, stageId];
 }
 
-/// ★追加: ボスバトル開始
+/// ボスバトル開始
 class StartBossBattle extends BattleEvent {
-  final List<Monster> playerParty;
   final String stageId;
+  final List<Monster> playerParty;
 
   const StartBossBattle({
-    required this.playerParty,
     required this.stageId,
+    required this.playerParty,
   });
-
-  @override
-  List<Object?> get props => [playerParty, stageId];
 }

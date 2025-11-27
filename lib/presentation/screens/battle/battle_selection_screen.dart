@@ -7,6 +7,7 @@ import '../../../domain/models/party/party_preset_v2.dart';
 import '../../../core/services/monster_service.dart';
 import '../../../domain/entities/monster.dart';
 import 'battle_screen.dart';
+import '../draft/draft_selection_screen.dart';
 
 /// バトル選択画面
 class BattleSelectionScreen extends StatefulWidget {
@@ -71,6 +72,39 @@ class _BattleSelectionScreenState extends State<BattleSelectionScreen> {
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 backgroundColor: Colors.red,
               ),
+            ),
+
+            const SizedBox(height: 16),
+            
+            // ★ドラフトバトルボタン追加
+            OutlinedButton.icon(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const DraftSelectionScreen(),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.shuffle, size: 28),
+              label: const Text(
+                'ドラフトバトル',
+                style: TextStyle(fontSize: 16),
+              ),
+              style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                foregroundColor: Colors.purple,
+                side: const BorderSide(color: Colors.purple, width: 2),
+              ),
+            ),
+            
+            const SizedBox(height: 8),
+            
+            // 説明テキスト
+            const Text(
+              '25体のモンスターから5体を選んで対戦！',
+              style: TextStyle(fontSize: 12, color: Colors.grey),
+              textAlign: TextAlign.center,
             ),
           ],
         ),
