@@ -48,3 +48,33 @@ class UseItem extends ItemEvent {
 class ClearUseResult extends ItemEvent {
   const ClearUseResult();
 }
+
+/// 装備をモンスターに装着
+class EquipToMonster extends ItemEvent {
+  final String monsterId;
+  final String equipmentId;
+  final int slot;
+  
+  const EquipToMonster({
+    required this.monsterId,
+    required this.equipmentId,
+    this.slot = 0,
+  });
+  
+  @override
+  List<Object?> get props => [monsterId, equipmentId, slot];
+}
+
+/// 装備を外す
+class UnequipFromMonster extends ItemEvent {
+  final String monsterId;
+  final String equipmentId;
+  
+  const UnequipFromMonster({
+    required this.monsterId,
+    required this.equipmentId,
+  });
+  
+  @override
+  List<Object?> get props => [monsterId, equipmentId];
+}
