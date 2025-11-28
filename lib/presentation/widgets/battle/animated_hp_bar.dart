@@ -4,15 +4,19 @@ import 'package:flutter/material.dart';
 class AnimatedHpBar extends StatefulWidget {
   final int currentHp;
   final int maxHp;
+  final int? previousHp;
+  final double height;
   final Duration animationDuration;
-  final bool showDamageFlash;
+  final VoidCallback? onAnimationComplete;
 
   const AnimatedHpBar({
     Key? key,
     required this.currentHp,
     required this.maxHp,
+    this.previousHp,
+    this.height = 16,
     this.animationDuration = const Duration(milliseconds: 500),
-    this.showDamageFlash = false,
+    this.onAnimationComplete,
   }) : super(key: key);
 
   @override
@@ -20,401 +24,258 @@ class AnimatedHpBar extends StatefulWidget {
 }
 
 class _AnimatedHpBarState extends State<AnimatedHpBar>
-    with TickerProviderStateMixin {
-  late AnimationController _hpController;
-  late AnimationController _flashController;
-  late Animation<double> _hpAnimation;
-  late Animation<Color?> _flashAnimation;
-
-  double _previousHpPercentage = 1.0;
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+  late double _startRatio;
+  late double _endRatio;
 
   @override
   void initState() {
     super.initState();
-
-    _hpController = AnimationController(
+    _controller = AnimationController(
       duration: widget.animationDuration,
       vsync: this,
     );
 
-    _flashController = AnimationController(
-      duration: const Duration(milliseconds: 200),
-      vsync: this,
-    );
+    _startRatio = (widget.previousHp ?? widget.currentHp) / widget.maxHp;
+    _endRatio = widget.currentHp / widget.maxHp;
 
-    _hpAnimation = Tween<double>(
-      begin: 1.0,
-      end: widget.currentHp / widget.maxHp,
+    _animation = Tween<double>(
+      begin: _startRatio,
+      end: _endRatio,
     ).animate(CurvedAnimation(
-      parent: _hpController,
-      curve: Curves.easeOutCubic,
+      parent: _controller,
+      curve: Curves.easeOutQuart,
     ));
 
-    _flashAnimation = ColorTween(
-      begin: Colors.transparent,
-      end: Colors.red.withOpacity(0.5),
-    ).animate(CurvedAnimation(
-      parent: _flashController,
-      curve: Curves.easeInOut,
-    ));
-
-    _previousHpPercentage = widget.currentHp / widget.maxHp;
+    if (widget.previousHp != null && widget.previousHp != widget.currentHp) {
+      _controller.forward().then((_) {
+        widget.onAnimationComplete?.call();
+      });
+    }
   }
 
   @override
   void didUpdateWidget(AnimatedHpBar oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    final newPercentage = widget.currentHp / widget.maxHp;
-    final oldPercentage = oldWidget.currentHp / oldWidget.maxHp;
+    if (oldWidget.currentHp != widget.currentHp) {
+      _startRatio = oldWidget.currentHp / widget.maxHp;
+      _endRatio = widget.currentHp / widget.maxHp;
 
-    if (newPercentage != oldPercentage) {
-      _hpAnimation = Tween<double>(
-        begin: _previousHpPercentage,
-        end: newPercentage,
+      _animation = Tween<double>(
+        begin: _startRatio,
+        end: _endRatio,
       ).animate(CurvedAnimation(
-        parent: _hpController,
-        curve: Curves.easeOutCubic,
+        parent: _controller,
+        curve: Curves.easeOutQuart,
       ));
 
-      _hpController.reset();
-      _hpController.forward();
-
-      // ダメージを受けた場合、フラッシュ
-      if (newPercentage < oldPercentage && widget.showDamageFlash) {
-        _flashController.forward().then((_) {
-          _flashController.reverse();
-        });
-      }
-
-      _previousHpPercentage = newPercentage;
+      _controller.reset();
+      _controller.forward().then((_) {
+        widget.onAnimationComplete?.call();
+      });
     }
   }
 
   @override
   void dispose() {
-    _hpController.dispose();
-    _flashController.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: Listenable.merge([_hpAnimation, _flashAnimation]),
+      animation: _animation,
       builder: (context, child) {
-        final percentage = _hpAnimation.value;
-        final hpColor = _getHpColor(percentage);
+        final ratio = _animation.value.clamp(0.0, 1.0);
 
-        return Stack(
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // HPバー背景
-            Container(
-              height: 12,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade300,
-                borderRadius: BorderRadius.circular(6),
-              ),
-            ),
-
-            // HPバー本体（アニメーション）
-            FractionallySizedBox(
-              widthFactor: percentage.clamp(0.0, 1.0),
-              child: Container(
-                height: 12,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      hpColor,
-                      hpColor.withOpacity(0.8),
-                    ],
+            // HP数値
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'HP',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey.shade700,
                   ),
-                  borderRadius: BorderRadius.circular(6),
-                  boxShadow: [
-                    BoxShadow(
-                      color: hpColor.withOpacity(0.5),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
                 ),
-              ),
+                Text(
+                  '${(widget.maxHp * ratio).round()} / ${widget.maxHp}',
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
-
-            // ダメージフラッシュ
-            if (_flashAnimation.value != Colors.transparent)
-              Container(
-                height: 12,
-                decoration: BoxDecoration(
-                  color: _flashAnimation.value,
-                  borderRadius: BorderRadius.circular(6),
+            const SizedBox(height: 4),
+            // バー本体
+            Stack(
+              children: [
+                // 背景
+                Container(
+                  height: widget.height,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(widget.height / 2),
+                  ),
                 ),
-              ),
+                // 遅延バー（ダメージ表示用）
+                if (_startRatio > _endRatio)
+                  FractionallySizedBox(
+                    widthFactor: _startRatio,
+                    child: Container(
+                      height: widget.height,
+                      decoration: BoxDecoration(
+                        color: Colors.red.shade200,
+                        borderRadius: BorderRadius.circular(widget.height / 2),
+                      ),
+                    ),
+                  ),
+                // メインバー
+                FractionallySizedBox(
+                  widthFactor: ratio,
+                  child: Container(
+                    height: widget.height,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: _getGradientColors(ratio),
+                      ),
+                      borderRadius: BorderRadius.circular(widget.height / 2),
+                      boxShadow: [
+                        BoxShadow(
+                          color: _getHpColor(ratio).withOpacity(0.4),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                // 光沢
+                Positioned.fill(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(widget.height / 2),
+                    child: FractionallySizedBox(
+                      widthFactor: ratio,
+                      alignment: Alignment.centerLeft,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.white.withOpacity(0.3),
+                              Colors.transparent,
+                            ],
+                            stops: const [0.0, 0.5],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ],
         );
       },
     );
   }
 
-  Color _getHpColor(double percentage) {
-    if (percentage > 0.5) {
-      return Colors.green;
-    } else if (percentage > 0.25) {
-      return Colors.orange;
+  Color _getHpColor(double ratio) {
+    if (ratio > 0.5) return Colors.green;
+    if (ratio > 0.25) return Colors.orange;
+    return Colors.red;
+  }
+
+  List<Color> _getGradientColors(double ratio) {
+    if (ratio > 0.5) {
+      return [Colors.green.shade400, Colors.green.shade600];
+    } else if (ratio > 0.25) {
+      return [Colors.orange.shade400, Colors.orange.shade600];
     } else {
-      return Colors.red;
+      return [Colors.red.shade400, Colors.red.shade600];
     }
   }
 }
 
-/// ダメージ数値表示（フェードイン/アウト）
-class DamageText extends StatefulWidget {
-  final int damage;
-  final bool isCritical;
-  final String? effectivenessText;
-  final VoidCallback? onAnimationComplete;
+/// コストゲージ（アニメーション付き）
+class AnimatedCostGauge extends StatelessWidget {
+  final int currentCost;
+  final int maxCost;
+  final Color color;
 
-  const DamageText({
+  const AnimatedCostGauge({
     Key? key,
-    required this.damage,
-    this.isCritical = false,
-    this.effectivenessText,
-    this.onAnimationComplete,
+    required this.currentCost,
+    required this.maxCost,
+    this.color = Colors.blue,
   }) : super(key: key);
 
   @override
-  State<DamageText> createState() => _DamageTextState();
-}
-
-class _DamageTextState extends State<DamageText>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _opacityAnimation;
-  late Animation<double> _scaleAnimation;
-  late Animation<Offset> _positionAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 1200),
-      vsync: this,
-    );
-
-    _opacityAnimation = TweenSequence<double>([
-      TweenSequenceItem(
-        tween: Tween(begin: 0.0, end: 1.0),
-        weight: 20,
-      ),
-      TweenSequenceItem(
-        tween: Tween(begin: 1.0, end: 1.0),
-        weight: 60,
-      ),
-      TweenSequenceItem(
-        tween: Tween(begin: 1.0, end: 0.0),
-        weight: 20,
-      ),
-    ]).animate(_controller);
-
-    _scaleAnimation = TweenSequence<double>([
-      TweenSequenceItem(
-        tween: Tween(begin: 0.5, end: 1.2)
-            .chain(CurveTween(curve: Curves.easeOut)),
-        weight: 20,
-      ),
-      TweenSequenceItem(
-        tween: Tween(begin: 1.2, end: 1.0)
-            .chain(CurveTween(curve: Curves.elasticOut)),
-        weight: 30,
-      ),
-      TweenSequenceItem(
-        tween: Tween(begin: 1.0, end: 1.0),
-        weight: 50,
-      ),
-    ]).animate(_controller);
-
-    _positionAnimation = Tween<Offset>(
-      begin: Offset.zero,
-      end: const Offset(0, -30),
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeOut,
-    ));
-
-    _controller.forward().whenComplete(() {
-      widget.onAnimationComplete?.call();
-    });
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _controller,
-      builder: (context, child) {
-        return Transform.translate(
-          offset: _positionAnimation.value,
-          child: Opacity(
-            opacity: _opacityAnimation.value,
-            child: Transform.scale(
-              scale: _scaleAnimation.value,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // 効果テキスト
-                  if (widget.effectivenessText != null)
-                    Text(
-                      widget.effectivenessText!,
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: _getEffectivenessColor(widget.effectivenessText!),
-                      ),
-                    ),
-
-                  // クリティカル表示
-                  if (widget.isCritical)
-                    const Text(
-                      '急所！',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.orange,
-                      ),
-                    ),
-
-                  // ダメージ数値
-                  Text(
-                    '${widget.damage}',
-                    style: TextStyle(
-                      fontSize: widget.isCritical ? 32 : 24,
-                      fontWeight: FontWeight.bold,
-                      color: widget.isCritical ? Colors.orange : Colors.red,
-                      shadows: [
-                        Shadow(
-                          color: Colors.black.withOpacity(0.5),
-                          offset: const Offset(2, 2),
-                          blurRadius: 4,
-                        ),
-                      ],
-                    ),
+    return Row(
+      children: [
+        const Text(
+          'コスト: ',
+          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+        ),
+        ...List.generate(maxCost, (index) {
+          final isFilled = index < currentCost;
+          return TweenAnimationBuilder<double>(
+            tween: Tween(begin: 0.0, end: isFilled ? 1.0 : 0.0),
+            duration: Duration(milliseconds: 200 + index * 50),
+            curve: Curves.easeOutBack,
+            builder: (context, value, child) {
+              return Transform.scale(
+                scale: 0.8 + value * 0.2,
+                child: Container(
+                  width: 18,
+                  height: 18,
+                  margin: const EdgeInsets.only(right: 4),
+                  decoration: BoxDecoration(
+                    color: isFilled ? color : Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(4),
+                    boxShadow: isFilled
+                        ? [
+                            BoxShadow(
+                              color: color.withOpacity(0.4),
+                              blurRadius: 4,
+                              spreadRadius: 1,
+                            ),
+                          ]
+                        : null,
                   ),
-                ],
-              ),
-            ),
+                  child: isFilled
+                      ? Icon(
+                          Icons.flash_on,
+                          size: 12,
+                          color: Colors.white.withOpacity(value),
+                        )
+                      : null,
+                ),
+              );
+            },
+          );
+        }),
+        const SizedBox(width: 8),
+        Text(
+          '$currentCost/$maxCost',
+          style: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
           ),
-        );
-      },
-    );
-  }
-
-  Color _getEffectivenessColor(String text) {
-    if (text.contains('効果抜群')) {
-      return Colors.green;
-    } else if (text.contains('いまひとつ')) {
-      return Colors.grey;
-    }
-    return Colors.white;
-  }
-}
-
-/// 回復数値表示
-class HealText extends StatefulWidget {
-  final int amount;
-  final VoidCallback? onAnimationComplete;
-
-  const HealText({
-    Key? key,
-    required this.amount,
-    this.onAnimationComplete,
-  }) : super(key: key);
-
-  @override
-  State<HealText> createState() => _HealTextState();
-}
-
-class _HealTextState extends State<HealText>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _opacityAnimation;
-  late Animation<Offset> _positionAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 1000),
-      vsync: this,
-    );
-
-    _opacityAnimation = TweenSequence<double>([
-      TweenSequenceItem(
-        tween: Tween(begin: 0.0, end: 1.0),
-        weight: 20,
-      ),
-      TweenSequenceItem(
-        tween: Tween(begin: 1.0, end: 1.0),
-        weight: 60,
-      ),
-      TweenSequenceItem(
-        tween: Tween(begin: 1.0, end: 0.0),
-        weight: 20,
-      ),
-    ]).animate(_controller);
-
-    _positionAnimation = Tween<Offset>(
-      begin: Offset.zero,
-      end: const Offset(0, -20),
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeOut,
-    ));
-
-    _controller.forward().whenComplete(() {
-      widget.onAnimationComplete?.call();
-    });
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _controller,
-      builder: (context, child) {
-        return Transform.translate(
-          offset: _positionAnimation.value,
-          child: Opacity(
-            opacity: _opacityAnimation.value,
-            child: Text(
-              '+${widget.amount}',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.green,
-                shadows: [
-                  Shadow(
-                    color: Colors.black.withOpacity(0.5),
-                    offset: const Offset(1, 1),
-                    blurRadius: 2,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
+        ),
+      ],
     );
   }
 }

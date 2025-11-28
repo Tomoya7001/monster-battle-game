@@ -4,7 +4,6 @@ import 'package:equatable/equatable.dart';
 // BLoC States
 // ============================================
 
-/// ドラフトBLoCの状態基底クラス
 abstract class DraftBlocState extends Equatable {
   const DraftBlocState();
 
@@ -12,12 +11,10 @@ abstract class DraftBlocState extends Equatable {
   List<Object?> get props => [];
 }
 
-/// 初期状態
 class DraftInitial extends DraftBlocState {
   const DraftInitial();
 }
 
-/// マッチング中
 class DraftMatching extends DraftBlocState {
   final int waitSeconds;
   final bool isCpuFallback;
@@ -31,7 +28,6 @@ class DraftMatching extends DraftBlocState {
   List<Object?> get props => [waitSeconds, isCpuFallback];
 }
 
-/// モンスター選択中
 class DraftSelecting extends DraftBlocState {
   final DraftStateModel draftState;
 
@@ -41,7 +37,6 @@ class DraftSelecting extends DraftBlocState {
   List<Object?> get props => [draftState];
 }
 
-/// 相手待機中
 class DraftWaitingOpponent extends DraftBlocState {
   final DraftStateModel draftState;
 
@@ -51,7 +46,6 @@ class DraftWaitingOpponent extends DraftBlocState {
   List<Object?> get props => [draftState];
 }
 
-/// バトル準備完了
 class DraftReady extends DraftBlocState {
   final DraftStateModel draftState;
   final String battleId;
@@ -67,12 +61,10 @@ class DraftReady extends DraftBlocState {
   List<Object?> get props => [draftState, battleId, isCpuOpponent];
 }
 
-/// キャンセル
 class DraftCancelled extends DraftBlocState {
   const DraftCancelled();
 }
 
-/// エラー
 class DraftErrorState extends DraftBlocState {
   final String message;
 
@@ -86,7 +78,6 @@ class DraftErrorState extends DraftBlocState {
 // Domain Models
 // ============================================
 
-/// ドラフトバトルの状態管理モデル
 class DraftStateModel {
   final List<DraftMonster> pool;
   final List<DraftMonster> selectedMonsters;
@@ -127,7 +118,6 @@ class DraftStateModel {
   Set<String> get selectedIds => selectedMonsters.map((m) => m.monsterId).toSet();
 }
 
-/// ドラフト用モンスターデータ
 class DraftMonster {
   final String monsterId;
   final String name;
@@ -210,7 +200,6 @@ class DraftMonster {
   int get lv50Speed => (speed * 2.0).round();
 }
 
-/// 技プレビュー
 class DraftSkillPreview {
   final String skillId;
   final String name;
@@ -225,7 +214,6 @@ class DraftSkillPreview {
   });
 }
 
-/// ドラフトフェーズ
 enum DraftPhase {
   waiting,
   selecting,

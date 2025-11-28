@@ -25,8 +25,6 @@ class DraftBloc extends Bloc<DraftEvent, DraftBlocState> {
     'かぜのたびびと', 'やみのきし', 'ひかりのてんし',
     'いかずちのせんし', 'だいちのまもりて', 'ふぶきのおうじ',
     'ドラゴンマスター', 'フレイムソード', 'アクアウィザード',
-    'ストームライダー', 'シャドウナイト', 'ホーリーエンジェル',
-    'サンダーファイター', 'アースガード', 'ブリザードプリンス',
   ];
 
   DraftBloc() : super(const DraftInitial()) {
@@ -85,7 +83,7 @@ class DraftBloc extends Bloc<DraftEvent, DraftBlocState> {
     _matchingTimer?.cancel();
 
     if (_isCpuOpponent) {
-      final additionalWait = 2 + _random.nextInt(3);
+      final additionalWait = 1 + _random.nextInt(2);
       emit(const DraftMatching(waitSeconds: 10, isCpuFallback: true));
       await Future.delayed(Duration(seconds: additionalWait));
     }
@@ -172,7 +170,7 @@ class DraftBloc extends Bloc<DraftEvent, DraftBlocState> {
     emit(DraftWaitingOpponent(draftState: _draftState));
 
     if (_isCpuOpponent) {
-      final thinkTime = 2 + _random.nextInt(4);
+      final thinkTime = 2 + _random.nextInt(3);
       _cpuThinkingTimer = Timer(Duration(seconds: thinkTime), () {
         _cpuSelection = _generateCpuSelection();
         add(const OpponentConfirmed());
@@ -206,7 +204,7 @@ class DraftBloc extends Bloc<DraftEvent, DraftBlocState> {
 
     if (_isCpuOpponent) {
       _cpuSelection = _generateCpuSelection();
-      await Future.delayed(const Duration(seconds: 2));
+      await Future.delayed(const Duration(seconds: 1));
       add(const OpponentConfirmed());
     }
   }
@@ -230,9 +228,7 @@ class DraftBloc extends Bloc<DraftEvent, DraftBlocState> {
   Future<void> _onStartBattle(
     DraftBattleStart event,
     Emitter<DraftBlocState> emit,
-  ) async {
-    // UI側で処理
-  }
+  ) async {}
 
   Future<void> _onCancel(
     CancelDraftMatching event,

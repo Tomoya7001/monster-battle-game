@@ -40,7 +40,6 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
   BattleBloc() : super(const BattleInitial()) {
     on<StartCpuBattle>(_onStartCpuBattle);
     on<StartStageBattle>(_onStartStageBattle);
-    on<StartDraftBattle>(_onStartDraftBattle);
     on<SelectFirstMonster>(_onSelectFirstMonster);
     on<UseSkill>(_onUseSkill);
     on<SwitchMonster>(_onSwitchMonster); // ★ 内部で設定に応じて分岐
@@ -51,6 +50,7 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
     on<ForceBattleEnd>(_onForceBattleEnd);
     on<StartAdventureEncounter>(_onStartAdventureEncounter);
     on<StartBossBattle>(_onStartBossBattle);
+    on<StartDraftBattle>(_onStartDraftBattle);
   }
 
   /// CPUバトル開始
@@ -182,50 +182,6 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
       print('ステージバトル開始エラー: $e');
       print('スタックトレース: $stackTrace');
       emit(BattleError(message: 'ステージバトル開始エラー: $e'));
-    }
-  }
-
-  /// ドラフトバトル開始
-  Future<void> _onStartDraftBattle(
-    StartDraftBattle event,
-    Emitter<BattleState> emit,
-  ) async {
-    emit(const BattleLoading());
-
-    try {
-      _startConnectionCheck();
-
-      // ドラフト戦: フルHP、Lv50固定
-      final playerParty = await _convertToBattleMonsters(event.playerParty, useCurrentHp: false);
-      final enemyParty = await _convertToBattleMonsters(event.enemyParty, useCurrentHp: false);
-
-      _battleState = BattleStateModel(
-        playerParty: playerParty,
-        enemyParty: enemyParty,
-        battleType: 'draft',
-        maxDeployableCount: 3,
-      );
-
-      _battleState!.addLog('ドラフトバトル開始！');
-
-      emit(BattleInProgress(
-        battleState: _battleState!,
-        message: '最初に出すモンスターを選んでください',
-      ));
-    } on FirebaseException catch (e) {
-      emit(BattleNetworkError(
-        message: 'ネットワークエラーが発生しました: $e',
-        canRetry: true,
-      ));
-    } on TimeoutException {
-      emit(const BattleNetworkError(
-        message: '接続がタイムアウトしました',
-        canRetry: true,
-      ));
-    } catch (e, stackTrace) {
-      print('ドラフトバトル開始エラー: $e');
-      print('スタックトレース: $stackTrace');
-      emit(BattleError(message: 'ドラフトバトル開始エラー: $e'));
     }
   }
 
@@ -1686,6 +1642,43 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
       ));
     } catch (e) {
       emit(BattleError(message: 'ボスバトルの開始に失敗しました: $e'));
+    }
+  }
+
+  /// ドラフトバトル開始
+  Future<void> _onStartDraftBattle(
+    StartDraftBattle event,
+    Emitter<BattleState> emit,
+  ) async {
+    emit(const BattleLoading());
+
+    try {
+      // ドラフト: フルHP、Lv50固定
+      final playerParty = await _convertToBattleMonsters(
+        event.playerParty, 
+        useCurrentHp: false,
+      ).timeout(const Duration(seconds: 10));
+
+      final enemyParty = await _convertToBattleMonsters(
+        event.enemyParty,
+        useCurrentHp: false,
+      ).timeout(const Duration(seconds: 10));
+
+      _battleState = BattleStateModel(
+        playerParty: playerParty,
+        enemyParty: enemyParty,
+        battleType: 'draft',
+        maxDeployableCount: 3,
+      );
+
+      _battleState!.addLog('ドラフトバトル開始！');
+
+      emit(BattleInProgress(
+        battleState: _battleState!,
+        message: '最初に出すモンスターを選んでください',
+      ));
+    } catch (e) {
+      emit(BattleError(message: 'ドラフトバトル開始エラー: $e'));
     }
   }
 

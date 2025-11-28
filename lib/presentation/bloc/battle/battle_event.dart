@@ -25,6 +25,7 @@ class StartStageBattle extends BattleEvent {
   });
 }
 
+/*
 /// ドラフトバトル開始
 class StartDraftBattle extends BattleEvent {
   final List<Monster> playerParty;
@@ -39,6 +40,7 @@ class StartDraftBattle extends BattleEvent {
     this.isCpuOpponent = false,
   });
 }
+*/
 
 /// 最初のモンスター選択
 class SelectFirstMonster extends BattleEvent {
@@ -111,3 +113,22 @@ class StartBossBattle extends BattleEvent {
     required this.playerParty,
   });
 }
+
+  /// ドラフトバトル開始
+class StartDraftBattle extends BattleEvent {
+  final List<Monster> playerParty;
+  final List<Monster> enemyParty;
+  final String battleId;
+  final bool isCpuOpponent;
+
+  const StartDraftBattle({
+    required this.playerParty,
+    required this.enemyParty,
+    required this.battleId,
+    required this.isCpuOpponent,
+  });
+
+  @override
+  List<Object?> get props => [playerParty, enemyParty, battleId, isCpuOpponent];
+}
+

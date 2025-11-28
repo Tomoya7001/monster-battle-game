@@ -1,18 +1,16 @@
-import 'package:flutter/material.dart';
 import 'dart:math';
+import 'package:flutter/material.dart';
 
-/// 技エフェクト表示ウィジェット
+/// 技エフェクトウィジェット
 class SkillEffectWidget extends StatefulWidget {
   final String element;
-  final String skillType; // physical, special
-  final bool isPlayerAttack;
+  final String skillType; // physical, magical, buff, debuff, heal
   final VoidCallback? onComplete;
 
   const SkillEffectWidget({
     Key? key,
     required this.element,
-    required this.skillType,
-    required this.isPlayerAttack,
+    this.skillType = 'physical',
     this.onComplete,
   }) : super(key: key);
 
@@ -21,54 +19,36 @@ class SkillEffectWidget extends StatefulWidget {
 }
 
 class _SkillEffectWidgetState extends State<SkillEffectWidget>
-    with TickerProviderStateMixin {
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  late Animation<double> _scaleAnimation;
-  late Animation<double> _opacityAnimation;
+  late Animation<double> _animation;
   final List<_Particle> _particles = [];
   final Random _random = Random();
 
   @override
   void initState() {
     super.initState();
-
     _controller = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this,
     );
+    _animation = CurvedAnimation(parent: _controller, curve: Curves.easeOut);
 
-    _scaleAnimation = Tween<double>(begin: 0.0, end: 1.5).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
-    );
-
-    _opacityAnimation = TweenSequence<double>([
-      TweenSequenceItem(tween: Tween(begin: 0.0, end: 1.0), weight: 30),
-      TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.0), weight: 40),
-      TweenSequenceItem(tween: Tween(begin: 1.0, end: 0.0), weight: 30),
-    ]).animate(_controller);
-
-    // パーティクル生成
     _generateParticles();
 
-    _controller.forward().whenComplete(() {
+    _controller.forward().then((_) {
       widget.onComplete?.call();
     });
   }
 
   void _generateParticles() {
-    final color = _getElementColor(widget.element);
-    final particleCount = widget.skillType == 'physical' ? 8 : 12;
-
-    for (int i = 0; i < particleCount; i++) {
-      final angle = (2 * pi * i) / particleCount + _random.nextDouble() * 0.5;
-      final distance = 50.0 + _random.nextDouble() * 30;
-
+    final count = widget.skillType == 'heal' ? 15 : 25;
+    for (int i = 0; i < count; i++) {
       _particles.add(_Particle(
-        color: color,
-        angle: angle,
-        distance: distance,
-        size: 6.0 + _random.nextDouble() * 8,
-        delay: _random.nextDouble() * 0.2,
+        angle: _random.nextDouble() * 2 * pi,
+        distance: 30 + _random.nextDouble() * 80,
+        size: 4 + _random.nextDouble() * 8,
+        delay: _random.nextDouble() * 0.3,
       ));
     }
   }
@@ -82,54 +62,29 @@ class _SkillEffectWidgetState extends State<SkillEffectWidget>
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: _controller,
+      animation: _animation,
       builder: (context, child) {
         return CustomPaint(
-          size: const Size(200, 200),
-          painter: _SkillEffectPainter(
+          painter: _EffectPainter(
             element: widget.element,
             skillType: widget.skillType,
-            progress: _controller.value,
-            scale: _scaleAnimation.value,
-            opacity: _opacityAnimation.value,
+            progress: _animation.value,
             particles: _particles,
           ),
+          size: const Size(200, 200),
         );
       },
     );
   }
-
-  Color _getElementColor(String element) {
-    switch (element.toLowerCase()) {
-      case 'fire':
-        return Colors.deepOrange;
-      case 'water':
-        return Colors.blue;
-      case 'thunder':
-        return Colors.yellow;
-      case 'wind':
-        return Colors.green;
-      case 'earth':
-        return Colors.brown;
-      case 'light':
-        return Colors.amber;
-      case 'dark':
-        return Colors.purple;
-      default:
-        return Colors.grey;
-    }
-  }
 }
 
 class _Particle {
-  final Color color;
   final double angle;
   final double distance;
   final double size;
   final double delay;
 
   _Particle({
-    required this.color,
     required this.angle,
     required this.distance,
     required this.size,
@@ -137,290 +92,129 @@ class _Particle {
   });
 }
 
-class _SkillEffectPainter extends CustomPainter {
+class _EffectPainter extends CustomPainter {
   final String element;
   final String skillType;
   final double progress;
-  final double scale;
-  final double opacity;
   final List<_Particle> particles;
 
-  _SkillEffectPainter({
+  _EffectPainter({
     required this.element,
     required this.skillType,
     required this.progress,
-    required this.scale,
-    required this.opacity,
     required this.particles,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
-
-    // メインエフェクト
-    _drawMainEffect(canvas, center);
-
-    // パーティクル
-    _drawParticles(canvas, center);
-  }
-
-  void _drawMainEffect(Canvas canvas, Offset center) {
     final color = _getElementColor(element);
-    final paint = Paint()
-      ..color = color.withOpacity(opacity * 0.6)
-      ..style = PaintingStyle.fill;
 
-    // 属性別エフェクト
-    switch (element.toLowerCase()) {
-      case 'fire':
-        _drawFireEffect(canvas, center, paint);
-        break;
-      case 'water':
-        _drawWaterEffect(canvas, center, paint);
-        break;
-      case 'thunder':
-        _drawThunderEffect(canvas, center, paint);
-        break;
-      case 'wind':
-        _drawWindEffect(canvas, center, paint);
-        break;
-      case 'earth':
-        _drawEarthEffect(canvas, center, paint);
-        break;
-      case 'light':
-        _drawLightEffect(canvas, center, paint);
-        break;
-      case 'dark':
-        _drawDarkEffect(canvas, center, paint);
-        break;
-      default:
-        _drawDefaultEffect(canvas, center, paint);
+    if (skillType == 'heal') {
+      _drawHealEffect(canvas, center, color);
+    } else if (skillType == 'buff' || skillType == 'debuff') {
+      _drawStatusEffect(canvas, center, color, skillType == 'buff');
+    } else {
+      _drawAttackEffect(canvas, center, color);
     }
   }
 
-  void _drawFireEffect(Canvas canvas, Offset center, Paint paint) {
-    // 炎のような形状
-    final path = Path();
-    final radius = 40 * scale;
+  void _drawAttackEffect(Canvas canvas, Offset center, Color color) {
+    for (final particle in particles) {
+      final adjustedProgress = ((progress - particle.delay) / (1 - particle.delay)).clamp(0.0, 1.0);
+      if (adjustedProgress <= 0) continue;
 
-    for (int i = 0; i < 8; i++) {
-      final angle = (2 * pi * i) / 8;
-      final innerRadius = radius * 0.5;
-      final outerRadius = radius * (0.8 + 0.4 * sin(progress * pi * 4 + i));
+      final distance = particle.distance * adjustedProgress;
+      final x = center.dx + cos(particle.angle) * distance;
+      final y = center.dy + sin(particle.angle) * distance;
+      final opacity = (1 - adjustedProgress).clamp(0.0, 1.0);
+      final currentSize = particle.size * (1 - adjustedProgress * 0.5);
 
-      if (i == 0) {
-        path.moveTo(
-          center.dx + cos(angle) * outerRadius,
-          center.dy + sin(angle) * outerRadius,
-        );
-      }
+      final paint = Paint()
+        ..color = color.withOpacity(opacity * 0.8)
+        ..style = PaintingStyle.fill;
 
-      final midAngle = angle + pi / 8;
-      path.quadraticBezierTo(
-        center.dx + cos(midAngle) * innerRadius,
-        center.dy + sin(midAngle) * innerRadius,
-        center.dx + cos(angle + pi / 4) * (radius * (0.8 + 0.4 * sin(progress * pi * 4 + i + 1))),
-        center.dy + sin(angle + pi / 4) * (radius * (0.8 + 0.4 * sin(progress * pi * 4 + i + 1))),
-      );
+      canvas.drawCircle(Offset(x, y), currentSize, paint);
+
+      // グロー効果
+      final glowPaint = Paint()
+        ..color = color.withOpacity(opacity * 0.3)
+        ..style = PaintingStyle.fill
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4);
+      canvas.drawCircle(Offset(x, y), currentSize * 1.5, glowPaint);
     }
 
-    path.close();
-    canvas.drawPath(path, paint);
-
-    // グロー効果
-    paint
-      ..color = Colors.yellow.withOpacity(opacity * 0.4)
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10);
-    canvas.drawCircle(center, radius * 0.6, paint);
+    // 中心のフラッシュ
+    if (progress < 0.3) {
+      final flashOpacity = (1 - progress / 0.3).clamp(0.0, 1.0);
+      final flashPaint = Paint()
+        ..color = Colors.white.withOpacity(flashOpacity * 0.8)
+        ..style = PaintingStyle.fill
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10);
+      canvas.drawCircle(center, 30 * (1 - progress / 0.3), flashPaint);
+    }
   }
 
-  void _drawWaterEffect(Canvas canvas, Offset center, Paint paint) {
-    // 水の波紋
-    for (int i = 3; i >= 0; i--) {
-      final ringProgress = (progress + i * 0.1).clamp(0.0, 1.0);
-      final radius = 50 * ringProgress * scale;
-      final ringOpacity = (1 - ringProgress) * opacity;
+  void _drawHealEffect(Canvas canvas, Offset center, Color color) {
+    // 上昇するパーティクル
+    for (final particle in particles) {
+      final adjustedProgress = ((progress - particle.delay) / (1 - particle.delay)).clamp(0.0, 1.0);
+      if (adjustedProgress <= 0) continue;
 
-      paint
-        ..color = Colors.blue.withOpacity(ringOpacity * 0.5)
+      final x = center.dx + cos(particle.angle) * 30;
+      final y = center.dy - particle.distance * adjustedProgress;
+      final opacity = (1 - adjustedProgress).clamp(0.0, 1.0);
+
+      final paint = Paint()
+        ..color = Colors.green.withOpacity(opacity * 0.8)
+        ..style = PaintingStyle.fill;
+
+      // プラスマーク
+      final path = Path();
+      final s = particle.size;
+      path.moveTo(x - s / 4, y);
+      path.lineTo(x + s / 4, y);
+      path.moveTo(x, y - s / 4);
+      path.lineTo(x, y + s / 4);
+
+      final strokePaint = Paint()
+        ..color = Colors.green.withOpacity(opacity * 0.8)
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 3;
+        ..strokeWidth = 2;
 
-      canvas.drawCircle(center, radius, paint);
+      canvas.drawPath(path, strokePaint);
     }
   }
 
-  void _drawThunderEffect(Canvas canvas, Offset center, Paint paint) {
-    // 雷のジグザグ
-    paint
-      ..color = Colors.yellow.withOpacity(opacity)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 4
-      ..strokeCap = StrokeCap.round;
-
-    final random = Random(42);
-    for (int i = 0; i < 3; i++) {
-      final path = Path();
-      final startAngle = (2 * pi * i) / 3;
-      var currentPos = center;
-      path.moveTo(currentPos.dx, currentPos.dy);
-
-      for (int j = 0; j < 4; j++) {
-        final nextPos = Offset(
-          currentPos.dx + cos(startAngle) * 15 * scale + (random.nextDouble() - 0.5) * 20,
-          currentPos.dy + sin(startAngle) * 15 * scale + (random.nextDouble() - 0.5) * 20,
-        );
-        path.lineTo(nextPos.dx, nextPos.dy);
-        currentPos = nextPos;
-      }
-
-      canvas.drawPath(path, paint);
-    }
-
-    // グロー
-    paint
-      ..color = Colors.white.withOpacity(opacity * 0.6)
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
-    canvas.drawCircle(center, 20 * scale, paint);
-  }
-
-  void _drawWindEffect(Canvas canvas, Offset center, Paint paint) {
-    // 風の渦巻き
-    paint
-      ..color = Colors.green.withOpacity(opacity * 0.7)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2;
-
-    for (int i = 0; i < 3; i++) {
-      final path = Path();
-      final startAngle = progress * pi * 2 + (2 * pi * i) / 3;
-      
-      for (double t = 0; t < pi * 2; t += 0.1) {
-        final radius = (10 + t * 8) * scale;
-        final angle = startAngle + t;
-        final x = center.dx + cos(angle) * radius;
-        final y = center.dy + sin(angle) * radius;
-
-        if (t == 0) {
-          path.moveTo(x, y);
-        } else {
-          path.lineTo(x, y);
-        }
-      }
-
-      canvas.drawPath(path, paint);
-    }
-  }
-
-  void _drawEarthEffect(Canvas canvas, Offset center, Paint paint) {
-    // 岩のような破片
-    final random = Random(42);
-    paint
-      ..color = Colors.brown.withOpacity(opacity * 0.8)
-      ..style = PaintingStyle.fill;
-
-    for (int i = 0; i < 6; i++) {
-      final angle = (2 * pi * i) / 6 + progress * pi / 4;
-      final distance = (20 + random.nextDouble() * 20) * scale;
-      final size = (8 + random.nextDouble() * 8) * scale;
-
-      final rect = Rect.fromCenter(
-        center: Offset(
-          center.dx + cos(angle) * distance,
-          center.dy + sin(angle) * distance,
-        ),
-        width: size,
-        height: size,
-      );
-
-      canvas.save();
-      canvas.translate(rect.center.dx, rect.center.dy);
-      canvas.rotate(angle + progress * pi);
-      canvas.drawRect(
-        Rect.fromCenter(center: Offset.zero, width: size, height: size),
-        paint,
-      );
-      canvas.restore();
-    }
-  }
-
-  void _drawLightEffect(Canvas canvas, Offset center, Paint paint) {
-    // 光の放射
-    paint
-      ..color = Colors.amber.withOpacity(opacity * 0.8)
+  void _drawStatusEffect(Canvas canvas, Offset center, Color color, bool isBuff) {
+    // 回転するリング
+    final ringPaint = Paint()
+      ..color = color.withOpacity((1 - progress) * 0.6)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 3;
 
-    for (int i = 0; i < 8; i++) {
-      final angle = (2 * pi * i) / 8 + progress * pi / 4;
-      final length = 40 * scale;
+    final radius = 40 + progress * 30;
+    canvas.drawCircle(center, radius, ringPaint);
 
-      canvas.drawLine(
-        center,
-        Offset(
-          center.dx + cos(angle) * length,
-          center.dy + sin(angle) * length,
-        ),
-        paint,
-      );
-    }
-
-    // 中心グロー
-    paint
-      ..color = Colors.white.withOpacity(opacity * 0.8)
-      ..style = PaintingStyle.fill
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 15);
-    canvas.drawCircle(center, 15 * scale, paint);
-  }
-
-  void _drawDarkEffect(Canvas canvas, Offset center, Paint paint) {
-    // 闇の渦
+    // 矢印（バフは上、デバフは下）
     for (int i = 0; i < 4; i++) {
-      final ringOpacity = (1 - i * 0.2) * opacity;
-      paint
-        ..color = Colors.purple.withOpacity(ringOpacity * 0.5)
+      final angle = progress * pi + i * pi / 2;
+      final x = center.dx + cos(angle) * radius;
+      final y = center.dy + sin(angle) * radius;
+      final opacity = (1 - progress).clamp(0.0, 1.0);
+
+      final arrowPaint = Paint()
+        ..color = color.withOpacity(opacity * 0.8)
         ..style = PaintingStyle.fill;
 
-      final radius = (50 - i * 10) * scale * (0.5 + 0.5 * progress);
-      canvas.drawCircle(center, radius, paint);
-    }
+      final path = Path();
+      final direction = isBuff ? -1 : 1;
+      path.moveTo(x, y + direction * 8);
+      path.lineTo(x - 4, y - direction * 4);
+      path.lineTo(x + 4, y - direction * 4);
+      path.close();
 
-    // 中心の暗い核
-    paint
-      ..color = Colors.black.withOpacity(opacity * 0.8)
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5);
-    canvas.drawCircle(center, 10 * scale, paint);
-  }
-
-  void _drawDefaultEffect(Canvas canvas, Offset center, Paint paint) {
-    // デフォルトの衝撃波
-    paint
-      ..color = Colors.grey.withOpacity(opacity * 0.6)
-      ..style = PaintingStyle.fill;
-
-    canvas.drawCircle(center, 30 * scale, paint);
-  }
-
-  void _drawParticles(Canvas canvas, Offset center) {
-    for (final particle in particles) {
-      final particleProgress = (progress - particle.delay).clamp(0.0, 1.0);
-      if (particleProgress <= 0) continue;
-
-      final distance = particle.distance * particleProgress * scale;
-      final particleOpacity = (1 - particleProgress) * opacity;
-      final particleSize = particle.size * (1 - particleProgress * 0.5);
-
-      final paint = Paint()
-        ..color = particle.color.withOpacity(particleOpacity)
-        ..style = PaintingStyle.fill;
-
-      final pos = Offset(
-        center.dx + cos(particle.angle) * distance,
-        center.dy + sin(particle.angle) * distance,
-      );
-
-      canvas.drawCircle(pos, particleSize, paint);
+      canvas.drawPath(path, arrowPaint);
     }
   }
 
@@ -431,13 +225,13 @@ class _SkillEffectPainter extends CustomPainter {
       case 'water':
         return Colors.blue;
       case 'thunder':
-        return Colors.yellow;
+        return Colors.amber;
       case 'wind':
         return Colors.green;
       case 'earth':
         return Colors.brown;
       case 'light':
-        return Colors.amber;
+        return Colors.yellow;
       case 'dark':
         return Colors.purple;
       default:
@@ -446,62 +240,66 @@ class _SkillEffectPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant _SkillEffectPainter oldDelegate) {
-    return oldDelegate.progress != progress ||
-        oldDelegate.opacity != opacity ||
-        oldDelegate.scale != scale;
+  bool shouldRepaint(covariant _EffectPainter oldDelegate) {
+    return oldDelegate.progress != progress;
   }
 }
 
-/// ヒットエフェクト（被ダメージ時の白フラッシュ）
-class HitFlashWidget extends StatefulWidget {
-  final Widget child;
-  final bool isHit;
+/// ダメージ数値表示ウィジェット
+class DamageNumberWidget extends StatefulWidget {
+  final int damage;
+  final bool isCritical;
+  final bool isHealing;
+  final double effectiveness; // 1.0=普通, 1.5=効果抜群, 0.5=効果いまひとつ
   final VoidCallback? onComplete;
 
-  const HitFlashWidget({
+  const DamageNumberWidget({
     Key? key,
-    required this.child,
-    required this.isHit,
+    required this.damage,
+    this.isCritical = false,
+    this.isHealing = false,
+    this.effectiveness = 1.0,
     this.onComplete,
   }) : super(key: key);
 
   @override
-  State<HitFlashWidget> createState() => _HitFlashWidgetState();
+  State<DamageNumberWidget> createState() => _DamageNumberWidgetState();
 }
 
-class _HitFlashWidgetState extends State<HitFlashWidget>
+class _DamageNumberWidgetState extends State<DamageNumberWidget>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  late Animation<double> _flashAnimation;
+  late Animation<double> _scaleAnimation;
+  late Animation<double> _fadeAnimation;
+  late Animation<double> _moveAnimation;
 
   @override
   void initState() {
     super.initState();
-
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 800),
       vsync: this,
     );
 
-    _flashAnimation = TweenSequence<double>([
-      TweenSequenceItem(tween: Tween(begin: 0.0, end: 1.0), weight: 30),
-      TweenSequenceItem(tween: Tween(begin: 1.0, end: 0.0), weight: 30),
-      TweenSequenceItem(tween: Tween(begin: 0.0, end: 0.7), weight: 20),
-      TweenSequenceItem(tween: Tween(begin: 0.7, end: 0.0), weight: 20),
+    _scaleAnimation = TweenSequence<double>([
+      TweenSequenceItem(tween: Tween(begin: 0.5, end: 1.2), weight: 20),
+      TweenSequenceItem(tween: Tween(begin: 1.2, end: 1.0), weight: 20),
+      TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.0), weight: 60),
     ]).animate(_controller);
-  }
 
-  @override
-  void didUpdateWidget(HitFlashWidget oldWidget) {
-    super.didUpdateWidget(oldWidget);
+    _fadeAnimation = TweenSequence<double>([
+      TweenSequenceItem(tween: Tween(begin: 0.0, end: 1.0), weight: 10),
+      TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.0), weight: 60),
+      TweenSequenceItem(tween: Tween(begin: 1.0, end: 0.0), weight: 30),
+    ]).animate(_controller);
 
-    if (widget.isHit && !oldWidget.isHit) {
-      _controller.reset();
-      _controller.forward().whenComplete(() {
-        widget.onComplete?.call();
-      });
-    }
+    _moveAnimation = Tween<double>(begin: 0, end: -30).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
+    );
+
+    _controller.forward().then((_) {
+      widget.onComplete?.call();
+    });
   }
 
   @override
@@ -513,14 +311,136 @@ class _HitFlashWidgetState extends State<HitFlashWidget>
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: _flashAnimation,
+      animation: _controller,
       builder: (context, child) {
-        return ColorFiltered(
-          colorFilter: ColorFilter.mode(
-            Colors.white.withOpacity(_flashAnimation.value),
-            BlendMode.srcATop,
+        return Transform.translate(
+          offset: Offset(0, _moveAnimation.value),
+          child: Opacity(
+            opacity: _fadeAnimation.value,
+            child: Transform.scale(
+              scale: _scaleAnimation.value,
+              child: _buildDamageText(),
+            ),
           ),
-          child: widget.child,
+        );
+      },
+    );
+  }
+
+  Widget _buildDamageText() {
+    Color color;
+    String prefix = '';
+    double fontSize = 28;
+
+    if (widget.isHealing) {
+      color = Colors.green;
+      prefix = '+';
+    } else if (widget.isCritical) {
+      color = Colors.red;
+      fontSize = 34;
+    } else if (widget.effectiveness > 1.0) {
+      color = Colors.orange;
+    } else if (widget.effectiveness < 1.0) {
+      color = Colors.grey;
+      fontSize = 24;
+    } else {
+      color = Colors.white;
+    }
+
+    return Stack(
+      children: [
+        // 影
+        Text(
+          '$prefix${widget.damage}',
+          style: TextStyle(
+            fontSize: fontSize,
+            fontWeight: FontWeight.bold,
+            foreground: Paint()
+              ..style = PaintingStyle.stroke
+              ..strokeWidth = 3
+              ..color = Colors.black,
+          ),
+        ),
+        // 本体
+        Text(
+          '$prefix${widget.damage}',
+          style: TextStyle(
+            fontSize: fontSize,
+            fontWeight: FontWeight.bold,
+            color: color,
+          ),
+        ),
+        // クリティカル表示
+        if (widget.isCritical)
+          Positioned(
+            top: -10,
+            right: -10,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+              decoration: BoxDecoration(
+                color: Colors.red,
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: const Text(
+                'CRITICAL!',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 8,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+/// ヒットエフェクト（被ダメージ時の点滅）
+class HitFlashOverlay extends StatefulWidget {
+  final VoidCallback? onComplete;
+
+  const HitFlashOverlay({Key? key, this.onComplete}) : super(key: key);
+
+  @override
+  State<HitFlashOverlay> createState() => _HitFlashOverlayState();
+}
+
+class _HitFlashOverlayState extends State<HitFlashOverlay>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 200),
+      vsync: this,
+    );
+    _animation = TweenSequence<double>([
+      TweenSequenceItem(tween: Tween(begin: 0.0, end: 0.5), weight: 50),
+      TweenSequenceItem(tween: Tween(begin: 0.5, end: 0.0), weight: 50),
+    ]).animate(_controller);
+
+    _controller.forward().then((_) {
+      widget.onComplete?.call();
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _animation,
+      builder: (context, child) {
+        return Container(
+          color: Colors.red.withOpacity(_animation.value),
         );
       },
     );
