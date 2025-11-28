@@ -100,3 +100,25 @@ class BattleError extends BattleState {
   @override
   List<Object?> get props => [message];
 }
+
+class DamageInfo {
+  final int damage;
+  final String skillType;  // 'physical', 'magical', 'heal'
+  final String element;
+  final bool isCritical;
+  final bool isEffective;
+  final bool isResisted;
+  final bool isHeal;
+  final bool targetIsPlayer;  // true = プレイヤーがダメージを受けた
+
+  DamageInfo({
+    required this.damage,
+    required this.skillType,
+    required this.element,
+    this.isCritical = false,
+    this.isEffective = false,
+    this.isResisted = false,
+    this.isHeal = false,
+    required this.targetIsPlayer,
+  });
+}

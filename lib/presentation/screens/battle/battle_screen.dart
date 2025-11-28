@@ -7,8 +7,9 @@ import '../../../domain/entities/monster.dart';
 import '../../../domain/models/battle/battle_monster.dart';
 import '../../../domain/models/battle/battle_skill.dart';
 import '../../../domain/models/battle/battle_state_model.dart';
-import '../../../domain/models/stage/stage_data.dart'; // ★追加
-import 'battle_result_screen.dart'; // ★追加
+import '../../../domain/models/stage/stage_data.dart';
+import 'battle_result_screen.dart';
+import 'battle_result_screen_enhanced.dart'; // ★追加: 強化版結果画面
 import '../../widgets/battle/battle_effect_widgets.dart';
 
 class BattleScreen extends StatelessWidget {
@@ -30,160 +31,212 @@ class BattleScreen extends StatelessWidget {
               ? StartStageBattle(playerParty: playerParty, stageData: stageData!)
               : StartCpuBattle(playerParty: playerParty),
         ),
-      child: _BattleScreenContent(stageData: stageData), // ★修正: stageDataを渡す
+      child: _BattleScreenContent(stageData: stageData),
     );
   }
 }
 
-class _BattleScreenContent extends StatelessWidget {
-  final StageData? stageData; // ★追加
+// ★修正: StatefulWidget に変更（エフェクトコントローラー用）
+class _BattleScreenContent extends StatefulWidget {
+  final StageData? stageData;
 
   const _BattleScreenContent({
     Key? key,
-    this.stageData, // ★追加
+    this.stageData,
   }) : super(key: key);
 
   @override
+  State<_BattleScreenContent> createState() => _BattleScreenContentState();
+}
+
+class _BattleScreenContentState extends State<_BattleScreenContent> {
+  // ★追加: エフェクトコントローラー
+  final BattleEffectController _effectController = BattleEffectController();
+
+  @override
+  void dispose() {
+    _effectController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('バトル'),
-        leading: IconButton(
-          icon: const Icon(Icons.close),
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (ctx) => AlertDialog(
-                title: const Text('バトル終了'),
-                content: const Text('バトルを終了しますか？'),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(ctx),
-                    child: const Text('キャンセル'),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(ctx);
-                      Navigator.pop(context);
-                    },
-                    child: const Text('終了'),
-                  ),
-                ],
-              ),
-            );
-          },
-        ),
-        actions: [
-          // バトルログボタン
-          BlocBuilder<BattleBloc, BattleState>(
-            builder: (context, state) {
-              if (state is BattleInProgress || 
-                  state is BattlePlayerWin || 
-                  state is BattlePlayerLose) {
-                final battleState = state is BattleInProgress
-                    ? state.battleState
-                    : state is BattlePlayerWin
-                        ? state.battleState
-                        : (state as BattlePlayerLose).battleState;
-                        
-                return IconButton(
-                  icon: const Icon(Icons.list),
-                  onPressed: () => _showBattleLog(context, battleState),
-                );
-              }
-              return const SizedBox.shrink();
+    // ★修正: BattleEffectOverlay でラップ
+    return BattleEffectOverlay(
+      controller: _effectController,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('バトル'),
+          leading: IconButton(
+            icon: const Icon(Icons.close),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (ctx) => AlertDialog(
+                  title: const Text('バトル終了'),
+                  content: const Text('バトルを終了しますか？'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(ctx),
+                      child: const Text('キャンセル'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(ctx);
+                        Navigator.pop(context);
+                      },
+                      child: const Text('終了'),
+                    ),
+                  ],
+                ),
+              );
             },
           ),
-        ],
-      ),
-      body: BlocConsumer<BattleBloc, BattleState>(
-        listener: (context, state) {
-          if (state is BattlePlayerWin) {
-            if (state.result != null) {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (ctx) => BattleResultScreen(
-                    result: state.result!,
-                    stageData: stageData, // ★修正: widget.stageData → stageData
-                  ),
-                ),
-              );
-            } else {
-              _showResultDialog(context, '勝利！', Colors.green);
+          actions: [
+            BlocBuilder<BattleBloc, BattleState>(
+              builder: (context, state) {
+                if (state is BattleInProgress || 
+                    state is BattlePlayerWin || 
+                    state is BattlePlayerLose) {
+                  final battleState = state is BattleInProgress
+                      ? state.battleState
+                      : state is BattlePlayerWin
+                          ? state.battleState
+                          : (state as BattlePlayerLose).battleState;
+                          
+                  return IconButton(
+                    icon: const Icon(Icons.list),
+                    onPressed: () => _showBattleLog(context, battleState),
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+            ),
+          ],
+        ),
+        body: BlocConsumer<BattleBloc, BattleState>(
+          listener: (context, state) {
+            // ★追加: ダメージエフェクトのトリガー
+            if (state is BattleInProgress) {
+              final damageInfo = state.battleState.lastDamageInfo;
+              if (damageInfo != null) {
+                // 技エフェクト表示
+                _effectController.triggerSkillEffect(
+                  skillType: damageInfo.skillType,
+                  element: damageInfo.element,
+                  targetIsPlayer: damageInfo.targetIsPlayer,
+                );
+                
+                // ダメージ数値表示（少し遅延）
+                Future.delayed(const Duration(milliseconds: 300), () {
+                  if (mounted) {
+                    _effectController.triggerDamage(
+                      damage: damageInfo.damage,
+                      isCritical: damageInfo.isCritical,
+                      isEffective: damageInfo.isEffective,
+                      isResisted: damageInfo.isResisted,
+                      isHeal: damageInfo.isHeal,
+                      targetIsPlayer: damageInfo.targetIsPlayer,
+                    );
+                  }
+                });
+              }
             }
-          } else if (state is BattlePlayerLose) {
-            if (state.result != null) {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (ctx) => BattleResultScreen(
-                    result: state.result!,
-                    stageData: stageData, // ★修正: widget.stageData → stageData
+
+            // 勝利時
+            if (state is BattlePlayerWin) {
+              if (state.result != null) {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (ctx) => BattleResultScreenEnhanced( // ★修正: 強化版に変更
+                      result: state.result!,
+                      stageData: widget.stageData,
+                    ),
                   ),
-                ),
+                );
+              } else {
+                _showResultDialog(context, '勝利！', Colors.green);
+              }
+            } 
+            // 敗北時
+            else if (state is BattlePlayerLose) {
+              if (state.result != null) {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (ctx) => BattleResultScreenEnhanced( // ★修正: 強化版に変更
+                      result: state.result!,
+                      stageData: widget.stageData,
+                    ),
+                  ),
+                );
+              } else {
+                _showResultDialog(context, '敗北...', Colors.red);
+              }
+            } 
+            // ネットワークエラー
+            else if (state is BattleNetworkError) {
+              _showErrorDialog(
+                context,
+                'ネットワークエラー',
+                state.message,
+                canRetry: state.canRetry,
               );
-            } else {
-              _showResultDialog(context, '敗北...', Colors.red);
+            } 
+            // データエラー
+            else if (state is BattleDataError) {
+              _showErrorDialog(
+                context,
+                'データエラー',
+                state.message,
+                canRetry: false,
+              );
             }
-          } else if (state is BattleNetworkError) {
-            _showErrorDialog(
-              context,
-              'ネットワークエラー',
-              state.message,
-              canRetry: state.canRetry,
-            );
-          } else if (state is BattleDataError) {
-            _showErrorDialog(
-              context,
-              'データエラー',
-              state.message,
-              canRetry: false,
-            );
-          }
-        },
-        builder: (context, state) {
-          if (state is BattleLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
+          },
+          builder: (context, state) {
+            if (state is BattleLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-          if (state is BattleNetworkError) {
-            return _buildErrorView(
-              context,
-              state.battleState,
-              'ネットワークエラー',
-              state.message,
-              canRetry: state.canRetry,
-            );
-          }
+            if (state is BattleNetworkError) {
+              return _buildErrorView(
+                context,
+                state.battleState,
+                'ネットワークエラー',
+                state.message,
+                canRetry: state.canRetry,
+              );
+            }
 
-          if (state is BattleDataError) {
-            return _buildErrorView(
-              context,
-              null,
-              'データエラー',
-              state.message,
-              canRetry: false,
-            );
-          }
+            if (state is BattleDataError) {
+              return _buildErrorView(
+                context,
+                null,
+                'データエラー',
+                state.message,
+                canRetry: false,
+              );
+            }
 
-          if (state is BattleError) {
-            return Center(child: Text('エラー: ${state.message}'));
-          }
+            if (state is BattleError) {
+              return Center(child: Text('エラー: ${state.message}'));
+            }
 
-          if (state is BattleInProgress) {
-            return _buildBattleUI(context, state.battleState, state.message);
-          }
+            if (state is BattleInProgress) {
+              return _buildBattleUI(context, state.battleState, state.message);
+            }
 
-          if (state is BattlePlayerWin || state is BattlePlayerLose) {
-            final battleState = state is BattlePlayerWin
-                ? state.battleState
-                : (state as BattlePlayerLose).battleState;
-            return _buildBattleUI(context, battleState, null);
-          }
+            if (state is BattlePlayerWin || state is BattlePlayerLose) {
+              final battleState = state is BattlePlayerWin
+                  ? state.battleState
+                  : (state as BattlePlayerLose).battleState;
+              return _buildBattleUI(context, battleState, null);
+            }
 
-          return const Center(child: Text('バトル準備中...'));
-        },
+            return const Center(child: Text('バトル準備中...'));
+          },
+        ),
       ),
     );
   }
@@ -354,13 +407,6 @@ class _BattleScreenContent extends StatelessWidget {
   }
 
   Widget _buildMonsterInfo(BattleMonster monster, {required bool isEnemy}) {
-    final hpPercentage = monster.hpPercentage;
-    final hpColor = hpPercentage > 0.5
-        ? Colors.green
-        : hpPercentage > 0.25
-            ? Colors.orange
-            : Colors.red;
-
     return Container(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         padding: const EdgeInsets.all(12),
@@ -394,33 +440,26 @@ class _BattleScreenContent extends StatelessWidget {
             
             const SizedBox(height: 8),
 
-            // HP情報
+            // HP情報（アニメーション付き）
             Row(
-            children: [
+              children: [
                 const Text('HP: ', style: TextStyle(fontWeight: FontWeight.bold)),
                 Expanded(
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                    Text('${monster.currentHp} / ${monster.maxHp}'),
-                    const SizedBox(height: 4),
-                    AnimatedHpBar(
-                        currentHp: monster.currentHp,
-                        maxHp: monster.maxHp,
-                        height: 10,
-                        showValue: false,
-                      ),
-                    ],
+                  child: AnimatedHpBar(
+                    currentHp: monster.currentHp,
+                    maxHp: monster.maxHp,
+                    height: 12,
+                    showValue: true,
+                  ),
                 ),
-                ),
-            ],
+              ],
             ),
 
             const SizedBox(height: 8),
 
-            // コストゲージ
+            // コストゲージ（アニメーション付き）
             Row(
-            children: [
+              children: [
                 const Text('コスト: ', style: TextStyle(fontWeight: FontWeight.bold)),
                 AnimatedCostGauge(
                   currentCost: monster.currentCost,
@@ -429,16 +468,16 @@ class _BattleScreenContent extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text('${monster.currentCost}/${monster.maxCost}'),
-            ],
+              ],
             ),
 
-            // ★NEW: 状態異常表示
+            // 状態異常表示
             if (monster.statusAilment != null) ...[
             const SizedBox(height: 8),
             _buildStatusAilmentDisplay(monster.statusAilment!, monster.statusTurns),
             ],
 
-            // ★NEW: バフ/デバフ表示
+            // バフ/デバフ表示
             if (_hasStatChanges(monster)) ...[
             const SizedBox(height: 8),
             _buildStatChangesDisplay(monster),
@@ -446,10 +485,9 @@ class _BattleScreenContent extends StatelessWidget {
         ],
         ),
     );
-    }
+  }
 
-    // ★NEW: 状態異常表示ウィジェット
-    Widget _buildStatusAilmentDisplay(String ailment, int turns) {
+  Widget _buildStatusAilmentDisplay(String ailment, int turns) {
     final statusData = _getStatusAilmentData(ailment);
     
     return Container(
@@ -474,10 +512,9 @@ class _BattleScreenContent extends StatelessWidget {
         ],
         ),
     );
-    }
+  }
 
-    // ★NEW: 状態異常のデータ取得
-    Map<String, dynamic> _getStatusAilmentData(String ailment) {
+  Map<String, dynamic> _getStatusAilmentData(String ailment) {
     switch (ailment) {
         case 'burn':
         return {
@@ -522,96 +559,91 @@ class _BattleScreenContent extends StatelessWidget {
             'color': Colors.grey.shade600,
         };
     }
-    }
+  }
 
-    // ★NEW: ステータス変化があるかチェック
-    bool _hasStatChanges(BattleMonster monster) {
+  bool _hasStatChanges(BattleMonster monster) {
     return monster.attackStage != 0 ||
         monster.defenseStage != 0 ||
         monster.magicStage != 0 ||
         monster.speedStage != 0 ||
         monster.accuracyStage != 0 ||
         monster.evasionStage != 0;
-    }
+  }
 
-    // ★NEW: バフ/デバフ表示ウィジェット
-    Widget _buildStatChangesDisplay(BattleMonster monster) {
-      final List<Widget> statChips = [];
+  Widget _buildStatChangesDisplay(BattleMonster monster) {
+    final List<Widget> statChips = [];
 
-      final statChanges = {
-        '攻': monster.attackStage,
-        '防': monster.defenseStage,
-        '魔': monster.magicStage,
-        '速': monster.speedStage,
-        '命': monster.accuracyStage,
-        '回': monster.evasionStage,
-      };
+    final statChanges = {
+      '攻': monster.attackStage,
+      '防': monster.defenseStage,
+      '魔': monster.magicStage,
+      '速': monster.speedStage,
+      '命': monster.accuracyStage,
+      '回': monster.evasionStage,
+    };
 
-      statChanges.forEach((stat, stage) {
-        if (stage != 0) {
-          statChips.add(_buildStatChip(stat, stage, monster)); // ★monster引数を追加
-        }
-      });
-
-      return Wrap(
-        spacing: 4,
-        runSpacing: 4,
-        children: statChips,
-      );
-    }
-
-    // ★NEW: ステータス変化チップ（残りターン数付き）
-    Widget _buildStatChip(String statName, int stage, BattleMonster monster) { // ★monster引数を追加
-      final isPositive = stage > 0;
-      final absStage = stage.abs();
-      final arrow = isPositive ? '↑' : '↓';
-      final arrowText = arrow * absStage.clamp(1, 3);
-      
-      // ★NEW: 残りターン数を取得
-      int turnsRemaining = 0;
-      switch (statName) {
-        case '攻':
-          turnsRemaining = monster.attackStageTurns;
-          break;
-        case '防':
-          turnsRemaining = monster.defenseStageTurns;
-          break;
-        case '魔':
-          turnsRemaining = monster.magicStageTurns;
-          break;
-        case '速':
-          turnsRemaining = monster.speedStageTurns;
-          break;
-        case '命':
-          turnsRemaining = monster.accuracyStageTurns;
-          break;
-        case '回':
-          turnsRemaining = monster.evasionStageTurns;
-          break;
+    statChanges.forEach((stat, stage) {
+      if (stage != 0) {
+        statChips.add(_buildStatChip(stat, stage, monster));
       }
-      
-      return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-        decoration: BoxDecoration(
-          color: isPositive ? Colors.green.shade100 : Colors.red.shade100,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: isPositive ? Colors.green.shade300 : Colors.red.shade300,
-          ),
-        ),
-        child: Text(
-          turnsRemaining > 0 ? '$statName$arrowText(${turnsRemaining}T)' : '$statName$arrowText',
-          style: TextStyle(
-            fontSize: 11,
-            fontWeight: FontWeight.bold,
-            color: isPositive ? Colors.green.shade700 : Colors.red.shade700,
-          ),
-        ),
-      );
-    }
+    });
 
-    // ★NEW: 属性バッジ
-    Widget _buildElementBadge(String element) {
+    return Wrap(
+      spacing: 4,
+      runSpacing: 4,
+      children: statChips,
+    );
+  }
+
+  Widget _buildStatChip(String statName, int stage, BattleMonster monster) {
+    final isPositive = stage > 0;
+    final absStage = stage.abs();
+    final arrow = isPositive ? '↑' : '↓';
+    final arrowText = arrow * absStage.clamp(1, 3);
+    
+    int turnsRemaining = 0;
+    switch (statName) {
+      case '攻':
+        turnsRemaining = monster.attackStageTurns;
+        break;
+      case '防':
+        turnsRemaining = monster.defenseStageTurns;
+        break;
+      case '魔':
+        turnsRemaining = monster.magicStageTurns;
+        break;
+      case '速':
+        turnsRemaining = monster.speedStageTurns;
+        break;
+      case '命':
+        turnsRemaining = monster.accuracyStageTurns;
+        break;
+      case '回':
+        turnsRemaining = monster.evasionStageTurns;
+        break;
+    }
+    
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: isPositive ? Colors.green.shade100 : Colors.red.shade100,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: isPositive ? Colors.green.shade300 : Colors.red.shade300,
+        ),
+      ),
+      child: Text(
+        turnsRemaining > 0 ? '$statName$arrowText(${turnsRemaining}T)' : '$statName$arrowText',
+        style: TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.bold,
+          color: isPositive ? Colors.green.shade700 : Colors.red.shade700,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildElementBadge(String element) {
     final elementColors = {
         'fire': Colors.orange,
         'water': Colors.blue,
@@ -649,266 +681,255 @@ class _BattleScreenContent extends StatelessWidget {
         ),
         ),
     );
-    }
+  }
 
   Widget _buildActionButtons(BuildContext context, BattleStateModel battleState) {
-  final activeMonster = battleState.playerActiveMonster;
-  if (activeMonster == null) return const SizedBox.shrink();
+    final activeMonster = battleState.playerActiveMonster;
+    if (activeMonster == null) return const SizedBox.shrink();
 
-  return Container(
-    padding: const EdgeInsets.all(16),
-    child: Column(
-      children: [
-        // 技ボタン（2x2グリッド）
-        GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            childAspectRatio: 2.0,  // ★修正: 高さを確保
-            crossAxisSpacing: 8,
-            mainAxisSpacing: 8,
-          ),
-          itemCount: activeMonster.skills.length,
-          itemBuilder: (context, index) {
-            final skill = activeMonster.skills[index];
-            final canUse = activeMonster.canUseSkill(skill);
+    return Container(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          // 技ボタン（2x2グリッド）
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 2.0,
+              crossAxisSpacing: 8,
+              mainAxisSpacing: 8,
+            ),
+            itemCount: activeMonster.skills.length,
+            itemBuilder: (context, index) {
+              final skill = activeMonster.skills[index];
+              final canUse = activeMonster.canUseSkill(skill);
 
-            // 属性別の色
-            final elementColor = _getElementColor(skill.element);
+              final elementColor = _getElementColor(skill.element);
 
-            return ElevatedButton(
-              onPressed: canUse
-                  ? () => context.read<BattleBloc>().add(UseSkill(skill: skill))
-                  : null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: canUse ? elementColor : Colors.grey.shade400,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.all(8),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // 技名
-                  Text(
-                    skill.name,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+              return ElevatedButton(
+                onPressed: canUse
+                    ? () => context.read<BattleBloc>().add(UseSkill(skill: skill))
+                    : null,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: canUse ? elementColor : Colors.grey.shade400,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.all(8),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  const SizedBox(height: 2),
-                  
-                  // コストと威力
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // コスト表示
-                      Row(
-                        children: [
-                          const Icon(Icons.flash_on, size: 12),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      skill.name,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 2),
+                    
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            const Icon(Icons.flash_on, size: 12),
+                            Text(
+                              '${skill.cost}',
+                              style: const TextStyle(fontSize: 11),
+                            ),
+                          ],
+                        ),
+                        if (skill.powerMultiplier > 0)
                           Text(
-                            '${skill.cost}',
+                            '${(skill.powerMultiplier * 100).toInt()}',
                             style: const TextStyle(fontSize: 11),
                           ),
-                        ],
-                      ),
-                      // 威力表示
-                      if (skill.powerMultiplier > 0)
-                        Text(
-                          '${(skill.powerMultiplier * 100).toInt()}',
-                          style: const TextStyle(fontSize: 11),
+                        Row(
+                          children: [
+                            const Icon(Icons.gps_fixed, size: 10),
+                            Text(
+                              '${skill.accuracy}%',
+                              style: const TextStyle(fontSize: 10),
+                            ),
+                          ],
                         ),
-                      // 命中率表示
-                      Row(
-                        children: [
-                          const Icon(Icons.gps_fixed, size: 10),
-                          Text(
-                            '${skill.accuracy}%',
-                            style: const TextStyle(fontSize: 10),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  
-                  // 特殊効果アイコン
-                  if (skill.effects.isNotEmpty)
-                    const SizedBox(height: 2),
-                  if (skill.effects.isNotEmpty)
-                    Row(
-                      children: [
-                        if (skill.effects.containsKey('status_ailment'))
-                          const Icon(Icons.warning_amber, size: 11),
-                        if (skill.effects.containsKey('buff') || skill.effects.containsKey('debuff'))
-                          const Icon(Icons.trending_up, size: 11),
                       ],
                     ),
-                ],
-              ),
-            );
-          },
-        ),
+                    
+                    if (skill.effects.isNotEmpty)
+                      const SizedBox(height: 2),
+                    if (skill.effects.isNotEmpty)
+                      Row(
+                        children: [
+                          if (skill.effects.containsKey('status_ailment'))
+                            const Icon(Icons.warning_amber, size: 11),
+                          if (skill.effects.containsKey('buff') || skill.effects.containsKey('debuff'))
+                            const Icon(Icons.trending_up, size: 11),
+                        ],
+                      ),
+                  ],
+                ),
+              );
+            },
+          ),
 
-        const SizedBox(height: 12),
+          const SizedBox(height: 12),
 
-        // 交代・待機ボタン
-        Row(
-          children: [
-            Expanded(
-              child: ElevatedButton.icon(
-                onPressed: battleState.hasAvailableSwitchMonster
-                    ? () => _showSwitchDialog(context, battleState)
-                    : null,
-                icon: const Icon(Icons.swap_horiz),
-                label: const Text('交代'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange,
+          // 交代・待機ボタン
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: battleState.hasAvailableSwitchMonster
+                      ? () => _showSwitchDialog(context, battleState)
+                      : null,
+                  icon: const Icon(Icons.swap_horiz),
+                  label: const Text('交代'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.orange,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: ElevatedButton.icon(
-                onPressed: () => context.read<BattleBloc>().add(const WaitTurn()),
-                icon: const Icon(Icons.hourglass_empty),
-                label: const Text('待機'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.grey,
+              const SizedBox(width: 8),
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: () => context.read<BattleBloc>().add(const WaitTurn()),
+                  icon: const Icon(Icons.hourglass_empty),
+                  label: const Text('待機'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.grey,
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
-      ],
-    ),
-  );
-}
-
-// ★NEW: 属性別の色を取得
-Color _getElementColor(String element) {
-  switch (element.toLowerCase()) {
-    case 'fire':
-      return Colors.deepOrange;
-    case 'water':
-      return Colors.blue;
-    case 'thunder':
-      return Colors.amber.shade700;
-    case 'wind':
-      return Colors.green;
-    case 'earth':
-      return Colors.brown;
-    case 'light':
-      return Colors.yellow.shade700;
-    case 'dark':
-      return Colors.purple.shade700;
-    default:
-      return Colors.blueGrey;
+            ],
+          ),
+        ],
+      ),
+    );
   }
-}
+
+  Color _getElementColor(String element) {
+    switch (element.toLowerCase()) {
+      case 'fire':
+        return Colors.deepOrange;
+      case 'water':
+        return Colors.blue;
+      case 'thunder':
+        return Colors.amber.shade700;
+      case 'wind':
+        return Colors.green;
+      case 'earth':
+        return Colors.brown;
+      case 'light':
+        return Colors.yellow.shade700;
+      case 'dark':
+        return Colors.purple.shade700;
+      default:
+        return Colors.blueGrey;
+    }
+  }
 
   Widget _buildMonsterSelection(BuildContext context, BattleStateModel battleState, {bool isBottomSheet = false}) {
-  return Container(
-    padding: const EdgeInsets.all(16),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'モンスターを選択: (${battleState.playerFieldMonsterIds.length}/3体使用中)',
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 8),
-        ...battleState.playerParty.map((monster) {
-            final monsterId = monster.baseMonster.id;
-            final isActive = battleState.playerActiveMonster?.baseMonster.id == monsterId;
-            final isFainted = monster.isFainted;
-            final isFieldMonster = battleState.playerFieldMonsterIds.contains(monsterId);
-            
-            // ★修正: シンプルに判定
-            final canSwitch = battleState.canSwitchTo(monsterId);
+    return Container(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'モンスターを選択: (${battleState.playerFieldMonsterIds.length}/3体使用中)',
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 8),
+          ...battleState.playerParty.map((monster) {
+              final monsterId = monster.baseMonster.id;
+              final isActive = battleState.playerActiveMonster?.baseMonster.id == monsterId;
+              final isFainted = monster.isFainted;
+              final isFieldMonster = battleState.playerFieldMonsterIds.contains(monsterId);
+              
+              final canSwitch = battleState.canSwitchTo(monsterId);
 
-            // 表示テキスト
-            String subtitle;
-            Color backgroundColor;
-            IconData icon;
-            
-            if (isActive) {
-                subtitle = '出撃中';
-                backgroundColor = Colors.blue;
-                icon = Icons.check_circle;
-            } else if (isFainted) {
-                subtitle = '瀕死';
-                backgroundColor = Colors.red;
-                icon = Icons.cancel;
-            } else if (isFieldMonster) {
-                subtitle = 'HP: ${monster.currentHp}/${monster.maxHp} (戻せます)';
-                backgroundColor = Colors.orange;
-                icon = Icons.arrow_back;
-            } else if (!battleState.canPlayerSendMore) {
-                subtitle = 'HP: ${monster.currentHp}/${monster.maxHp} (3体制限)';
-                backgroundColor = Colors.grey;
-                icon = Icons.block;
-            } else {
-                subtitle = 'HP: ${monster.currentHp}/${monster.maxHp}';
-                backgroundColor = Colors.green;
-                icon = Icons.arrow_forward_ios;
-            }
+              String subtitle;
+              Color backgroundColor;
+              IconData icon;
+              
+              if (isActive) {
+                  subtitle = '出撃中';
+                  backgroundColor = Colors.blue;
+                  icon = Icons.check_circle;
+              } else if (isFainted) {
+                  subtitle = '瀕死';
+                  backgroundColor = Colors.red;
+                  icon = Icons.cancel;
+              } else if (isFieldMonster) {
+                  subtitle = 'HP: ${monster.currentHp}/${monster.maxHp} (戻せます)';
+                  backgroundColor = Colors.orange;
+                  icon = Icons.arrow_back;
+              } else if (!battleState.canPlayerSendMore) {
+                  subtitle = 'HP: ${monster.currentHp}/${monster.maxHp} (3体制限)';
+                  backgroundColor = Colors.grey;
+                  icon = Icons.block;
+              } else {
+                  subtitle = 'HP: ${monster.currentHp}/${monster.maxHp}';
+                  backgroundColor = Colors.green;
+                  icon = Icons.arrow_forward_ios;
+              }
 
-            return ListTile(
-                enabled: canSwitch,
-                leading: CircleAvatar(
-                backgroundColor: canSwitch ? backgroundColor : Colors.grey,
-                child: Text(
-                    monster.baseMonster.monsterName.substring(0, 1),
-                    style: const TextStyle(color: Colors.white),
-                ),
-                ),
-                title: Text(
-                monster.baseMonster.monsterName,
-                style: TextStyle(
-                    color: canSwitch ? Colors.black : Colors.grey,
-                ),
-                ),
-                subtitle: Text(
-                subtitle,
-                style: TextStyle(
-                    color: canSwitch ? Colors.black87 : Colors.grey,
-                    fontSize: 12,
-                ),
-                ),
-                trailing: Icon(
-                icon,
-                color: canSwitch ? backgroundColor : Colors.grey,
-                ),
-                onTap: canSwitch
-                    ? () {
-                        if (battleState.phase == BattlePhase.selectFirstMonster) {
-                        context.read<BattleBloc>().add(SelectFirstMonster(monsterId: monsterId));
-                        } else {
-                        // 瀕死による交代かどうかを判定
-                        final isForcedSwitch = battleState.phase == BattlePhase.monsterFainted;
-                        context.read<BattleBloc>().add(SwitchMonster(
-                          monsterId: monsterId,
-                          isForcedSwitch: isForcedSwitch,
-                        ));
-                        if (isBottomSheet) {
-                            Navigator.pop(context);
-                        }
-                        }
-                    }
-                    : null,
-            );
-        }).toList(),
-      ],
-    ),
-  );
-}
+              return ListTile(
+                  enabled: canSwitch,
+                  leading: CircleAvatar(
+                  backgroundColor: canSwitch ? backgroundColor : Colors.grey,
+                  child: Text(
+                      monster.baseMonster.monsterName.substring(0, 1),
+                      style: const TextStyle(color: Colors.white),
+                  ),
+                  ),
+                  title: Text(
+                  monster.baseMonster.monsterName,
+                  style: TextStyle(
+                      color: canSwitch ? Colors.black : Colors.grey,
+                  ),
+                  ),
+                  subtitle: Text(
+                  subtitle,
+                  style: TextStyle(
+                      color: canSwitch ? Colors.black87 : Colors.grey,
+                      fontSize: 12,
+                  ),
+                  ),
+                  trailing: Icon(
+                  icon,
+                  color: canSwitch ? backgroundColor : Colors.grey,
+                  ),
+                  onTap: canSwitch
+                      ? () {
+                          if (battleState.phase == BattlePhase.selectFirstMonster) {
+                          context.read<BattleBloc>().add(SelectFirstMonster(monsterId: monsterId));
+                          } else {
+                          final isForcedSwitch = battleState.phase == BattlePhase.monsterFainted;
+                          context.read<BattleBloc>().add(SwitchMonster(
+                            monsterId: monsterId,
+                            isForcedSwitch: isForcedSwitch,
+                          ));
+                          if (isBottomSheet) {
+                              Navigator.pop(context);
+                          }
+                          }
+                      }
+                      : null,
+              );
+          }).toList(),
+        ],
+      ),
+    );
+  }
 
   void _showSwitchDialog(BuildContext context, BattleStateModel battleState) {
     showModalBottomSheet(
@@ -930,7 +951,6 @@ Color _getElementColor(String element) {
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
-              // タイトル
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -946,7 +966,6 @@ Color _getElementColor(String element) {
               ),
               const Divider(),
               
-              // ログリスト（スクロール可能）
               Expanded(
                 child: battleState.battleLog.isEmpty
                     ? const Center(
@@ -970,9 +989,7 @@ Color _getElementColor(String element) {
     );
   }
 
-  // ★NEW: ログアイテムのビルド（色分け・アイコン付き）
   Widget _buildLogItem(String log) {
-    // ログの種類を判定
     LogType logType = _detectLogType(log);
     
     return Container(
@@ -986,7 +1003,6 @@ Color _getElementColor(String element) {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // アイコン
           Icon(
             logType.icon,
             size: 16,
@@ -994,7 +1010,6 @@ Color _getElementColor(String element) {
           ),
           const SizedBox(width: 8),
           
-          // テキスト
           Expanded(
             child: Text(
               log,
@@ -1010,9 +1025,7 @@ Color _getElementColor(String element) {
     );
   }
 
-  // ★NEW: ログの種類を検出
   LogType _detectLogType(String log) {
-    // ダメージ系
     if (log.contains('ダメージ') || log.contains('攻撃')) {
       return LogType(
         icon: Icons.flash_on,
@@ -1023,7 +1036,6 @@ Color _getElementColor(String element) {
       );
     }
     
-    // 回復系
     if (log.contains('回復')) {
       return LogType(
         icon: Icons.favorite,
@@ -1034,7 +1046,6 @@ Color _getElementColor(String element) {
       );
     }
     
-    // 状態異常系
     if (log.contains('やけど') || log.contains('どく') || log.contains('まひ') ||
         log.contains('ねむり') || log.contains('こおり') || log.contains('こんらん')) {
       return LogType(
@@ -1046,7 +1057,6 @@ Color _getElementColor(String element) {
       );
     }
     
-    // バフ/デバフ系
     if (log.contains('上がった') || log.contains('下がった') || log.contains('元に戻った')) {
       return LogType(
         icon: Icons.trending_up,
@@ -1057,7 +1067,6 @@ Color _getElementColor(String element) {
       );
     }
     
-    // 交代系
     if (log.contains('繰り出した') || log.contains('交代')) {
       return LogType(
         icon: Icons.swap_horiz,
@@ -1068,7 +1077,6 @@ Color _getElementColor(String element) {
       );
     }
     
-    // 倒れた
     if (log.contains('倒れた')) {
       return LogType(
         icon: Icons.cancel,
@@ -1079,7 +1087,6 @@ Color _getElementColor(String element) {
       );
     }
     
-    // その他（デフォルト）
     return LogType(
       icon: Icons.info_outline,
       iconColor: Colors.grey.shade600,
@@ -1114,7 +1121,6 @@ Color _getElementColor(String element) {
   }
 }
 
-// ★NEW: ログタイプのデータクラス
 class LogType {
   final IconData icon;
   final Color iconColor;

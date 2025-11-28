@@ -407,6 +407,16 @@ Future<void> _onUseSkill(
 
       if (result.damage > 0) {
         damageDealt = result.damage;
+        // ★追加: エフェクト用のダメージ情報を設定
+        _battleState!.setLastDamage(DamageInfo(
+          damage: result.damage,
+          skillType: skill.type,
+          element: skill.element,
+          isCritical: result.isCritical,
+          isEffective: result.effectivenessMultiplier > 1.0,
+          isResisted: result.effectivenessMultiplier < 1.0,
+          targetIsPlayer: false, // 敵がダメージを受けた
+        ));
         enemyMonster.takeDamage(result.damage);
 
         // ダメージ反射
@@ -550,6 +560,16 @@ Future<void> _onUseSkill(
 
       if (result.damage > 0) {
         damageDealt = result.damage;
+        // ★追加: エフェクト用のダメージ情報を設定
+        _battleState!.setLastDamage(DamageInfo(
+          damage: result.damage,
+          skillType: skill.type,
+          element: skill.element,
+          isCritical: result.isCritical,
+          isEffective: result.effectivenessMultiplier > 1.0,
+          isResisted: result.effectivenessMultiplier < 1.0,
+          targetIsPlayer: true, // プレイヤーがダメージを受けた
+        ));
         playerMonster.takeDamage(result.damage);
 
         // ダメージ反射
@@ -939,6 +959,9 @@ Future<void> _onUseSkill(
     ProcessTurnEnd event,
     Emitter<BattleState> emit,
   ) async {
+    // ★追加: エフェクト情報をクリア
+    _battleState?.clearLastDamage();
+    
     if (_battleState == null) return;
 
     // バトル終了判定（最優先）

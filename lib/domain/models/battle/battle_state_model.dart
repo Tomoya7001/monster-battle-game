@@ -1,5 +1,6 @@
 import 'battle_monster.dart';
 import 'battle_skill.dart';
+import '../../../presentation/bloc/battle/battle_state.dart'; // DamageInfo用
 
 /// バトル全体の状態
 class BattleStateModel {
@@ -25,6 +26,9 @@ class BattleStateModel {
   BattlePhase phase;
   String? lastActionMessage;
   List<String> battleLog;
+
+  // ★追加: エフェクト用のダメージ情報
+  DamageInfo? lastDamageInfo;
 
   BattleStateModel({
     required this.playerParty,
@@ -151,6 +155,16 @@ class BattleStateModel {
   void addLog(String message) {
     battleLog.add('[$turnNumber] $message');
     lastActionMessage = message;
+  }
+
+  /// ★追加: ダメージ情報を設定
+  void setLastDamage(DamageInfo info) {
+    lastDamageInfo = info;
+  }
+
+  /// ★追加: ダメージ情報をクリア
+  void clearLastDamage() {
+    lastDamageInfo = null;
   }
 }
 
