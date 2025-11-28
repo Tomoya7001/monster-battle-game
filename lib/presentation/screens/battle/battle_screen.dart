@@ -9,6 +9,7 @@ import '../../../domain/models/battle/battle_skill.dart';
 import '../../../domain/models/battle/battle_state_model.dart';
 import '../../../domain/models/stage/stage_data.dart'; // ★追加
 import 'battle_result_screen.dart'; // ★追加
+import '../../widgets/battle/battle_effect_widgets.dart';
 
 class BattleScreen extends StatelessWidget {
   final List<Monster> playerParty;
@@ -403,15 +404,12 @@ class _BattleScreenContent extends StatelessWidget {
                     children: [
                     Text('${monster.currentHp} / ${monster.maxHp}'),
                     const SizedBox(height: 4),
-                    ClipRRect(
-                        borderRadius: BorderRadius.circular(4),
-                        child: LinearProgressIndicator(
-                        value: hpPercentage,
-                        minHeight: 8,
-                        backgroundColor: Colors.grey.shade300,
-                        valueColor: AlwaysStoppedAnimation<Color>(hpColor),
-                        ),
-                    ),
+                    AnimatedHpBar(
+                        currentHp: monster.currentHp,
+                        maxHp: monster.maxHp,
+                        height: 10,
+                        showValue: false,
+                      ),
                     ],
                 ),
                 ),
@@ -424,19 +422,11 @@ class _BattleScreenContent extends StatelessWidget {
             Row(
             children: [
                 const Text('コスト: ', style: TextStyle(fontWeight: FontWeight.bold)),
-                ...List.generate(monster.maxCost, (index) {
-                return Container(
-                    margin: const EdgeInsets.only(right: 4),
-                    width: 16,
-                    height: 16,
-                    decoration: BoxDecoration(
-                    color: index < monster.currentCost
-                        ? (isEnemy ? Colors.red : Colors.blue)
-                        : Colors.grey.shade300,
-                    borderRadius: BorderRadius.circular(4),
-                    ),
-                );
-                }),
+                AnimatedCostGauge(
+                  currentCost: monster.currentCost,
+                  maxCost: monster.maxCost,
+                  activeColor: isEnemy ? Colors.red : Colors.blue,
+                ),
                 const SizedBox(width: 8),
                 Text('${monster.currentCost}/${monster.maxCost}'),
             ],

@@ -271,72 +271,109 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
   }
 
   /// 技使用
-  Future<void> _onUseSkill(
-    UseSkill event,
-    Emitter<BattleState> emit,
-  ) async {
-    if (_battleState == null) return;
-    if (_battleState!.playerActiveMonster == null) return;
-    if (_battleState!.enemyActiveMonster == null) return;
+Future<void> _onUseSkill(
+  UseSkill event,
+  Emitter<BattleState> emit,
+) async {
+  if (_battleState == null) return;
+  if (_battleState!.playerActiveMonster == null) return;
+  if (_battleState!.enemyActiveMonster == null) return;
 
-    final playerMonster = _battleState!.playerActiveMonster!;
-    final enemyMonster = _battleState!.enemyActiveMonster!;
-    final skill = event.skill;
+  final playerMonster = _battleState!.playerActiveMonster!;
+  final enemyMonster = _battleState!.enemyActiveMonster!;
+  final skill = event.skill;
 
-    final actionResult = BattleCalculationService.checkStatusAction(playerMonster);
-    if (!actionResult.canAct) {
-      _battleState!.addLog(actionResult.message);
-      
-      if (_battleState!.enemyActiveMonster?.canAct == true) {
-        await _executeCpuAction(emit);
-      }
-      add(const ProcessTurnEnd());
-      return;
+  // 状態異常による行動可否チェック
+  final actionResult = BattleCalculationService.checkStatusAction(playerMonster);
+  if (!actionResult.canAct) {
+    _battleState!.addLog(actionResult.message);
+    
+    if (_battleState!.enemyActiveMonster?.canAct == true) {
+      await _executeCpuAction(emit);
     }
+    add(const ProcessTurnEnd());
+    return;
+  }
 
-    if (!playerMonster.canUseSkill(skill)) {
+  // コストチェック
+  if (!playerMonster.canUseSkill(skill)) {
+    emit(BattleInProgress(
+      battleState: _battleState!,
+      message: 'コストが足りません',
+    ));
+    return;
+  }
+
+  _battleState!.phase = BattlePhase.executing;
+
+  // プレイヤーの技の優先度
+  final playerPriority = BattleCalculationService.getPriority(skill);
+  
+  // CPUの技を選択
+  final cpuSkills = enemyMonster.skills.where((s) => enemyMonster.canUseSkill(s)).toList();
+  BattleSkill? cpuSkill;
+  int cpuPriority = 0;
+  
+  if (cpuSkills.isNotEmpty) {
+    cpuSkill = cpuSkills[_random.nextInt(cpuSkills.length)];
+    cpuPriority = BattleCalculationService.getPriority(cpuSkill);
+  }
+
+  // ★修正: 先行・後攻を判定して値を代入
+  final bool playerFirst = (playerPriority != cpuPriority)
+      ? playerPriority > cpuPriority
+      : BattleCalculationService.isPlayerFirst(playerMonster, enemyMonster);
+
+  if (playerFirst) {
+    // ★先行（プレイヤー）の攻撃
+    await _executePlayerSkill(playerMonster, enemyMonster, skill, emit);
+    
+    // ★UI更新を明示的に発行
+    emit(BattleInProgress(
+      battleState: _battleState!,
+      message: _battleState!.lastActionMessage,
+    ));
+    
+    // ★演出待機（HPバーアニメーション用）
+    await Future.delayed(const Duration(milliseconds: 800));
+    
+    // ★後攻（CPU）の攻撃
+    if (!_battleState!.isBattleEnd && enemyMonster.canAct) {
+      await _executeCpuActionWithSkill(emit, cpuSkill);
+      
       emit(BattleInProgress(
         battleState: _battleState!,
-        message: 'コストが足りません',
+        message: _battleState!.lastActionMessage,
       ));
-      return;
+      
+      await Future.delayed(const Duration(milliseconds: 500));
     }
-
-    _battleState!.phase = BattlePhase.executing;
-
-    final playerPriority = BattleCalculationService.getPriority(skill);
+  } else {
+    // ★先行（CPU）の攻撃
+    await _executeCpuActionWithSkill(emit, cpuSkill);
     
-    final cpuSkills = enemyMonster.skills.where((s) => enemyMonster.canUseSkill(s)).toList();
-    BattleSkill? cpuSkill;
-    int cpuPriority = 0;
+    emit(BattleInProgress(
+      battleState: _battleState!,
+      message: _battleState!.lastActionMessage,
+    ));
     
-    if (cpuSkills.isNotEmpty) {
-      cpuSkill = cpuSkills[_random.nextInt(cpuSkills.length)];
-      cpuPriority = BattleCalculationService.getPriority(cpuSkill);
-    }
-
-    bool playerFirst;
+    await Future.delayed(const Duration(milliseconds: 800));
     
-    if (playerPriority != cpuPriority) {
-      playerFirst = playerPriority > cpuPriority;
-    } else {
-      playerFirst = BattleCalculationService.isPlayerFirst(playerMonster, enemyMonster);
-    }
-
-    if (playerFirst) {
+    // ★後攻（プレイヤー）の攻撃
+    if (!_battleState!.isBattleEnd && playerMonster.canAct) {
       await _executePlayerSkill(playerMonster, enemyMonster, skill, emit);
-      if (!_battleState!.isBattleEnd && enemyMonster.canAct) {
-        await _executeCpuActionWithSkill(emit, cpuSkill);
-      }
-    } else {
-      await _executeCpuActionWithSkill(emit, cpuSkill);
-      if (!_battleState!.isBattleEnd && playerMonster.canAct) {
-        await _executePlayerSkill(playerMonster, enemyMonster, skill, emit);
-      }
+      
+      emit(BattleInProgress(
+        battleState: _battleState!,
+        message: _battleState!.lastActionMessage,
+      ));
+      
+      await Future.delayed(const Duration(milliseconds: 500));
     }
-
-    add(const ProcessTurnEnd());
   }
+
+  add(const ProcessTurnEnd());
+}
 
   /// プレイヤーの技実行
   Future<void> _executePlayerSkill(
