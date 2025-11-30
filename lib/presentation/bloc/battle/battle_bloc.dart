@@ -36,6 +36,12 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
   StageData? _currentStage;
   final EquipmentRepository _equipmentRepository = EquipmentRepository();
   Timer? _connectionCheckTimer;
+  bool _isAutoMode = false;
+  bool get isAutoMode => _isAutoMode;
+  int _autoSpeed = 1;  // ★追加: AUTO速度（1, 2, 4）
+  int get autoSpeed => _autoSpeed;  // ★追加
+  int _currentLoop = 0;
+  int _totalLoop = 0;
 
   BattleBloc() : super(const BattleInitial()) {
     on<StartCpuBattle>(_onStartCpuBattle);
@@ -51,6 +57,10 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
     on<StartAdventureEncounter>(_onStartAdventureEncounter);
     on<StartBossBattle>(_onStartBossBattle);
     on<StartDraftBattle>(_onStartDraftBattle);
+    on<ToggleAutoMode>(_onToggleAutoMode);
+    on<ExecuteAutoAction>(_onExecuteAutoAction);
+    on<ExecuteAutoSwitch>(_onExecuteAutoSwitch);
+    on<ChangeAutoSpeed>(_onChangeAutoSpeed);
   }
 
   /// CPUバトル開始
@@ -98,13 +108,17 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
 
   /// ステージバトル開始（通常戦・ボス戦対応）
   Future<void> _onStartStageBattle(
-    StartStageBattle event,
-    Emitter<BattleState> emit,
-  ) async {
-    emit(const BattleLoading());
+  StartStageBattle event,
+  Emitter<BattleState> emit,
+) async {
+  emit(const BattleLoading());
+  // ★追加: AUTOモード設定
+  _isAutoMode = event.isAutoMode;
+  _currentLoop = event.currentLoop;   // ★追加
+  _totalLoop = event.totalLoop;       // ★追加
 
-    try {
-      _currentStage = event.stageData;
+  try {
+    _currentStage = event.stageData;
       _startConnectionCheck();
 
       // 冒険/ボス戦: 現在HP使用
@@ -146,7 +160,10 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
 
       _battleState!.addLog('${event.stageData.name} 開始！');
 
-      final firstMonster = playerParty[0];
+      final firstMonster = playerParty.firstWhere(
+        (m) => !m.isFainted,
+        orElse: () => playerParty[0], // 全員瀕死の場合はフォールバック
+      );
       _battleState!.playerActiveMonster = firstMonster;
       _battleState!.playerFieldMonsterIds.add(firstMonster.baseMonster.id);
       firstMonster.hasParticipated = true;
@@ -167,7 +184,13 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
       emit(BattleInProgress(
         battleState: _battleState!,
         message: '行動を選んでください',
+        isAutoMode: _isAutoMode, currentLoop: _currentLoop, totalLoop: _totalLoop, autoSpeed: _autoSpeed
       ));
+      // ★追加: AUTOモードなら自動行動開始
+      if (_isAutoMode && _battleState!.phase == BattlePhase.actionSelect) {
+        await Future.delayed(Duration(milliseconds: _getAutoDelayMs()));
+        add(const ExecuteAutoAction());
+      }
     } on FirebaseException catch (e) {
       emit(BattleNetworkError(
         message: 'ステージデータの読み込みに失敗しました: $e',
@@ -267,7 +290,14 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
     emit(BattleInProgress(
       battleState: _battleState!,
       message: '行動を選んでください',
+      isAutoMode: _isAutoMode, currentLoop: _currentLoop, totalLoop: _totalLoop, autoSpeed: _autoSpeed
     ));
+
+    // ★追加: AUTOモードなら自動行動開始
+    if (_isAutoMode && _battleState!.phase == BattlePhase.actionSelect) {
+      await Future.delayed(Duration(milliseconds: _getAutoDelayMs()));
+      add(const ExecuteAutoAction());
+    }
   }
 
   /// 技使用
@@ -300,6 +330,7 @@ Future<void> _onUseSkill(
     emit(BattleInProgress(
       battleState: _battleState!,
       message: 'コストが足りません',
+      isAutoMode: _isAutoMode, currentLoop: _currentLoop, totalLoop: _totalLoop, autoSpeed: _autoSpeed
     ));
     return;
   }
@@ -332,6 +363,7 @@ Future<void> _onUseSkill(
     emit(BattleInProgress(
       battleState: _battleState!,
       message: _battleState!.lastActionMessage,
+      isAutoMode: _isAutoMode, currentLoop: _currentLoop, totalLoop: _totalLoop, autoSpeed: _autoSpeed
     ));
     
     // ★演出待機（HPバーアニメーション用）
@@ -344,6 +376,7 @@ Future<void> _onUseSkill(
       emit(BattleInProgress(
         battleState: _battleState!,
         message: _battleState!.lastActionMessage,
+        isAutoMode: _isAutoMode, currentLoop: _currentLoop, totalLoop: _totalLoop, autoSpeed: _autoSpeed
       ));
       
       await Future.delayed(const Duration(milliseconds: 500));
@@ -355,6 +388,7 @@ Future<void> _onUseSkill(
     emit(BattleInProgress(
       battleState: _battleState!,
       message: _battleState!.lastActionMessage,
+      isAutoMode: _isAutoMode, currentLoop: _currentLoop, totalLoop: _totalLoop, autoSpeed: _autoSpeed
     ));
     
     await Future.delayed(const Duration(milliseconds: 800));
@@ -366,6 +400,7 @@ Future<void> _onUseSkill(
       emit(BattleInProgress(
         battleState: _battleState!,
         message: _battleState!.lastActionMessage,
+        isAutoMode: _isAutoMode, currentLoop: _currentLoop, totalLoop: _totalLoop, autoSpeed: _autoSpeed
       ));
       
       await Future.delayed(const Duration(milliseconds: 500));
@@ -389,13 +424,13 @@ Future<void> _onUseSkill(
     if (skill.isAttack) {
       if (enemyMonster.isProtecting) {
         _battleState!.addLog('${enemyMonster.baseMonster.monsterName}は攻撃を防いだ！');
-        emit(BattleInProgress(battleState: _battleState!, message: '攻撃を防いだ！'));
+        emit(BattleInProgress(battleState: _battleState!, message: '攻撃を防いだ！',isAutoMode: _isAutoMode, currentLoop: _currentLoop, totalLoop: _totalLoop, autoSpeed: _autoSpeed));
         return;
       }
       
       if (!BattleCalculationService.checkHit(skill, playerMonster, enemyMonster)) {
         _battleState!.addLog('攻撃は外れた！');
-        emit(BattleInProgress(battleState: _battleState!, message: '攻撃は外れた！'));
+        emit(BattleInProgress(battleState: _battleState!, message: '攻撃は外れた！',isAutoMode: _isAutoMode, currentLoop: _currentLoop, totalLoop: _totalLoop, autoSpeed: _autoSpeed));
         return;
       }
 
@@ -501,7 +536,7 @@ Future<void> _onUseSkill(
       }
     }
 
-    emit(BattleInProgress(battleState: _battleState!, message: _battleState!.lastActionMessage));
+    emit(BattleInProgress(battleState: _battleState!, message: _battleState!.lastActionMessage,isAutoMode: _isAutoMode, currentLoop: _currentLoop, totalLoop: _totalLoop, autoSpeed: _autoSpeed));
   }
 
   /// CPU行動実行（事前に選択された技を使用）
@@ -542,13 +577,13 @@ Future<void> _onUseSkill(
     if (skill.isAttack) {
       if (playerMonster.isProtecting) {
         _battleState!.addLog('${playerMonster.baseMonster.monsterName}は攻撃を防いだ！');
-        emit(BattleInProgress(battleState: _battleState!, message: '攻撃を防いだ！'));
+        emit(BattleInProgress(battleState: _battleState!, message: '攻撃を防いだ！',isAutoMode: _isAutoMode, currentLoop: _currentLoop, totalLoop: _totalLoop, autoSpeed: _autoSpeed));
         return;
       }
       
       if (!BattleCalculationService.checkHit(skill, cpuMonster, playerMonster)) {
         _battleState!.addLog('攻撃は外れた！');
-        emit(BattleInProgress(battleState: _battleState!, message: '攻撃は外れた！'));
+        emit(BattleInProgress(battleState: _battleState!, message: '攻撃は外れた！',isAutoMode: _isAutoMode, currentLoop: _currentLoop, totalLoop: _totalLoop, autoSpeed: _autoSpeed));
         return;
       }
 
@@ -654,7 +689,7 @@ Future<void> _onUseSkill(
       }
     }
 
-    emit(BattleInProgress(battleState: _battleState!, message: _battleState!.lastActionMessage));
+    emit(BattleInProgress(battleState: _battleState!, message: _battleState!.lastActionMessage,isAutoMode: _isAutoMode, currentLoop: _currentLoop, totalLoop: _totalLoop, autoSpeed: _autoSpeed));
   }
 
   /// CPU行動実行（簡易AI）- ラッパーメソッド
@@ -698,6 +733,7 @@ Future<void> _onUseSkill(
       emit(BattleInProgress(
         battleState: _battleState!,
         message: message,
+        isAutoMode: _isAutoMode, currentLoop: _currentLoop, totalLoop: _totalLoop, autoSpeed: _autoSpeed
       ));
       return;
     }
@@ -720,6 +756,7 @@ Future<void> _onUseSkill(
     emit(BattleInProgress(
       battleState: _battleState!,
       message: '${newMonster.baseMonster.monsterName}に交代！',
+      isAutoMode: _isAutoMode, currentLoop: _currentLoop, totalLoop: _totalLoop, autoSpeed: _autoSpeed
     ));
 
     if (!event.isForcedSwitch) {
@@ -757,6 +794,7 @@ Future<void> _onUseSkill(
       emit(BattleInProgress(
         battleState: _battleState!,
         message: message,
+        isAutoMode: _isAutoMode, currentLoop: _currentLoop, totalLoop: _totalLoop, autoSpeed: _autoSpeed
       ));
       return;
     }
@@ -773,6 +811,7 @@ Future<void> _onUseSkill(
       emit(BattleInProgress(
         battleState: _battleState!,
         message: '交代中...',
+        isAutoMode: _isAutoMode, currentLoop: _currentLoop, totalLoop: _totalLoop, autoSpeed: _autoSpeed
       ));
 
       // 相手の攻撃を受ける（交代前のモンスターが対象）
@@ -805,6 +844,7 @@ Future<void> _onUseSkill(
     emit(BattleInProgress(
       battleState: _battleState!,
       message: '${newMonster.baseMonster.monsterName}に交代！',
+      isAutoMode: _isAutoMode, currentLoop: _currentLoop, totalLoop: _totalLoop, autoSpeed: _autoSpeed
     ));
 
     // 交代完了後はターン終了（相手は既に攻撃済み）
@@ -916,6 +956,7 @@ Future<void> _onUseSkill(
     emit(BattleInProgress(
       battleState: _battleState!,
       message: _battleState!.lastActionMessage,
+      isAutoMode: _isAutoMode, currentLoop: _currentLoop, totalLoop: _totalLoop, autoSpeed: _autoSpeed
     ));
 
     // 少し待機（演出のため）
@@ -993,10 +1034,18 @@ Future<void> _onUseSkill(
           final result = await _generateBattleResult(isWin: true, expGains: expGains);
           await _saveBattleHistory(isWin: true);
           
-          emit(BattlePlayerWin(
-            battleState: _battleState!,
-            result: result,
-          ));
+          // ★修正: AUTOモードならVICTORY画面スキップ
+          if (_isAutoMode) {
+            emit(BattleAutoWin(
+              battleState: _battleState!,
+              result: result,
+            ));
+          } else {
+            emit(BattlePlayerWin(
+              battleState: _battleState!,
+              result: result,
+            ));
+          }
         } catch (e) {
           print('バトル結果保存エラー: $e');
           emit(BattlePlayerWin(
@@ -1036,7 +1085,14 @@ Future<void> _onUseSkill(
         emit(BattleInProgress(
           battleState: _battleState!,
           message: '次のモンスターを選んでください',
+          isAutoMode: _isAutoMode, currentLoop: _currentLoop, totalLoop: _totalLoop, autoSpeed: _autoSpeed
         ));
+        
+        // ★追加: AUTOモードなら自動交代
+        if (_isAutoMode) {
+          await Future.delayed(Duration(milliseconds: _getAutoDelayMs()));
+          add(const ExecuteAutoSwitch());
+        }
         return;
       } else {
         _stopConnectionCheck();
@@ -1201,7 +1257,22 @@ Future<void> _onUseSkill(
     emit(BattleInProgress(
       battleState: _battleState!,
       message: 'ターン${_battleState!.turnNumber}',
+      isAutoMode: _isAutoMode, currentLoop: _currentLoop, totalLoop: _totalLoop, autoSpeed: _autoSpeed
     ));
+
+    // ★追加: AUTOモードの自動行動
+    if (_isAutoMode) {
+      await Future.delayed(Duration(milliseconds: _getAutoDelayMs()));
+      
+      // 瀕死でモンスター選択が必要な場合
+      if (_battleState!.phase == BattlePhase.monsterFainted) {
+        add(const ExecuteAutoSwitch());
+      }
+      // 行動選択フェーズなら自動行動
+      else if (_battleState!.phase == BattlePhase.actionSelect) {
+        add(const ExecuteAutoAction());
+      }
+    }
   }
 
   /// バトル終了
@@ -1664,6 +1735,7 @@ Future<void> _onUseSkill(
       emit(BattleInProgress(
         battleState: _battleState!,
         message: '最初に出すモンスターを選んでください',
+        isAutoMode: _isAutoMode, currentLoop: _currentLoop, totalLoop: _totalLoop, autoSpeed: _autoSpeed
       ));
     } catch (e) {
       emit(BattleError(message: 'バトルの開始に失敗しました: $e'));
@@ -1699,6 +1771,7 @@ Future<void> _onUseSkill(
       emit(BattleInProgress(
         battleState: _battleState!,
         message: '最初に出すモンスターを選んでください',
+        isAutoMode: _isAutoMode, currentLoop: _currentLoop, totalLoop: _totalLoop, autoSpeed: _autoSpeed
       ));
     } catch (e) {
       emit(BattleError(message: 'ボスバトルの開始に失敗しました: $e'));
@@ -1736,11 +1809,155 @@ Future<void> _onUseSkill(
       emit(BattleInProgress(
         battleState: _battleState!,
         message: '最初に出すモンスターを選んでください',
+        isAutoMode: _isAutoMode, currentLoop: _currentLoop, totalLoop: _totalLoop, autoSpeed: _autoSpeed
       ));
     } catch (e) {
       emit(BattleError(message: 'ドラフトバトル開始エラー: $e'));
     }
   }
+
+  /// AUTOモード切替（速度サイクル対応）
+void _onToggleAutoMode(ToggleAutoMode event, Emitter<BattleState> emit) {
+  if (_battleState == null) return;
+  
+  // 周回モード（totalLoop > 0）の場合: 速度サイクル
+  if (_totalLoop > 0) {
+    if (!_isAutoMode) {
+      // OFF → ON (1倍)
+      _isAutoMode = true;
+      _autoSpeed = 1;
+    } else if (_autoSpeed == 1) {
+      // ON (1倍) → ON (2倍)
+      _autoSpeed = 2;
+    } else if (_autoSpeed == 2) {
+      // ON (2倍) → ON (4倍)
+      _autoSpeed = 4;
+    } else {
+      // ON (4倍) → OFF
+      _isAutoMode = false;
+      _autoSpeed = 1;
+    }
+  } else {
+    // 周回なしの場合: 単純ON/OFF
+    _isAutoMode = !_isAutoMode;
+    _autoSpeed = 1;
+  }
+  
+  final speedText = _isAutoMode ? ' (${_autoSpeed}倍)' : '';
+  emit(BattleInProgress(
+    battleState: _battleState!,
+    message: _isAutoMode ? 'AUTO ON$speedText' : 'AUTO OFF',
+    isAutoMode: _isAutoMode,
+    currentLoop: _currentLoop,
+    totalLoop: _totalLoop,
+    autoSpeed: _autoSpeed,
+  ));
+  
+  // AUTOモードONで行動選択フェーズなら即座に行動
+  if (_isAutoMode && _battleState!.phase == BattlePhase.actionSelect) {
+    add(const ExecuteAutoAction());
+  }
+}
+
+/// AUTO速度に応じた待機時間を取得
+int _getAutoDelayMs() {
+  switch (_autoSpeed) {
+    case 4:
+      return 100;  // 4倍速: 0.1秒
+    case 2:
+      return 250;  // 2倍速: 0.25秒
+    default:
+      return 500;  // 1倍速: 0.5秒
+  }
+}
+
+/// AUTO速度変更
+void _onChangeAutoSpeed(ChangeAutoSpeed event, Emitter<BattleState> emit) {
+  _autoSpeed = event.speed;
+  
+  if (_battleState != null) {
+    emit(BattleInProgress(
+      battleState: _battleState!,
+      message: 'AUTO速度: ${_autoSpeed}倍',
+      isAutoMode: _isAutoMode,
+      currentLoop: _currentLoop,
+      totalLoop: _totalLoop,
+    ));
+  }
+}
+
+/// AUTO行動実行
+Future<void> _onExecuteAutoAction(ExecuteAutoAction event, Emitter<BattleState> emit) async {
+  if (_battleState == null || !_isAutoMode) return;
+  if (_battleState!.playerActiveMonster == null) return;
+  
+  final playerMonster = _battleState!.playerActiveMonster!;
+  
+  // 使用可能な技を取得
+  final usableSkills = playerMonster.skills
+      .where((s) => playerMonster.canUseSkill(s))
+      .toList();
+  
+  if (usableSkills.isEmpty) {
+    // 技が使えない場合は待機
+    add(const WaitTurn());
+    return;
+  }
+  
+  // 最も威力の高い攻撃技を選択（簡易AI）
+  BattleSkill selectedSkill = usableSkills.first;
+  double maxPower = 0;
+  
+  for (final skill in usableSkills) {
+    if (skill.isAttack && skill.powerMultiplier > maxPower) {
+      maxPower = skill.powerMultiplier;
+      selectedSkill = skill;
+    }
+  }
+  
+  // 技を使用
+  add(UseSkill(skill: selectedSkill));
+}
+
+/// AUTO交代実行（瀕死時の自動モンスター選択）
+Future<void> _onExecuteAutoSwitch(
+  ExecuteAutoSwitch event, 
+  Emitter<BattleState> emit,
+) async {
+  if (_battleState == null || !_isAutoMode) return;
+  
+  // 交代可能なモンスターを探す
+  final availableMonsters = _battleState!.playerParty.where((m) {
+    final monsterId = m.baseMonster.id;
+    final isActive = _battleState!.playerActiveMonster?.baseMonster.id == monsterId;
+    final isFainted = m.isFainted;
+    final isFieldMonster = _battleState!.playerFieldMonsterIds.contains(monsterId);
+    
+    // 瀕死でない、かつ（場に出ていないOR場に出ているが現在アクティブでない）
+    if (isFainted) return false;
+    if (isActive) return false;
+    
+    // 3体制限チェック
+    if (!isFieldMonster && !_battleState!.canPlayerSendMore) return false;
+    
+    return true;
+  }).toList();
+  
+  if (availableMonsters.isEmpty) {
+    // 交代できるモンスターがいない（敗北確定）
+    return;
+  }
+  
+  // HPが最も高いモンスターを選択
+  availableMonsters.sort((a, b) => b.currentHp.compareTo(a.currentHp));
+  final selectedMonster = availableMonsters.first;
+  
+  // 交代実行
+  add(SwitchMonster(
+    monsterId: selectedMonster.baseMonster.id,
+    isForcedSwitch: true,
+  ));
+}
 
   @override
   Future<void> close() {

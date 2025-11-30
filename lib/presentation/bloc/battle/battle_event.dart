@@ -18,10 +18,16 @@ class StartCpuBattle extends BattleEvent {
 class StartStageBattle extends BattleEvent {
   final List<Monster> playerParty;
   final StageData stageData;
+  final bool isAutoMode;
+  final int currentLoop;  // ★追加
+  final int totalLoop;    // ★追加
 
   const StartStageBattle({
     required this.playerParty,
     required this.stageData,
+    this.isAutoMode = false,
+    this.currentLoop = 0,   // ★追加
+    this.totalLoop = 0,     // ★追加
   });
 }
 
@@ -132,3 +138,23 @@ class StartDraftBattle extends BattleEvent {
   List<Object?> get props => [playerParty, enemyParty, battleId, isCpuOpponent];
 }
 
+/// AUTOモード切替
+class ToggleAutoMode extends BattleEvent {
+  const ToggleAutoMode();
+}
+
+/// AUTO行動実行
+class ExecuteAutoAction extends BattleEvent {
+  const ExecuteAutoAction();
+}
+
+/// AUTO交代実行（瀕死時）
+class ExecuteAutoSwitch extends BattleEvent {
+  const ExecuteAutoSwitch();
+}
+
+/// AUTO速度変更
+class ChangeAutoSpeed extends BattleEvent {
+  final int speed;
+  const ChangeAutoSpeed({required this.speed});
+}

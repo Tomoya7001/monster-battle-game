@@ -23,14 +23,22 @@ class BattleLoading extends BattleState {
 class BattleInProgress extends BattleState {
   final BattleStateModel battleState;
   final String? message;
+  final bool isAutoMode;
+  final int currentLoop;
+  final int totalLoop;
+  final int autoSpeed;  // ★追加
 
   const BattleInProgress({
     required this.battleState,
     this.message,
+    this.isAutoMode = false,
+    this.currentLoop = 0,
+    this.totalLoop = 0,
+    this.autoSpeed = 1,  // ★追加
   });
 
   @override
-  List<Object?> get props => [battleState, message];
+  List<Object?> get props => [battleState, message, isAutoMode, currentLoop, totalLoop, autoSpeed];
 }
 
 /// プレイヤー勝利
@@ -39,6 +47,34 @@ class BattlePlayerWin extends BattleState {
   final BattleResult? result; // ★追加
 
   const BattlePlayerWin({
+    required this.battleState,
+    this.result,
+  });
+
+  @override
+  List<Object?> get props => [battleState, result];
+}
+
+/// AUTOモード勝利（VICTORY画面スキップ用）
+class BattleAutoWin extends BattleState {
+  final BattleStateModel battleState;
+  final BattleResult? result;
+
+  const BattleAutoWin({
+    required this.battleState,
+    this.result,
+  });
+
+  @override
+  List<Object?> get props => [battleState, result];
+}
+
+/// AUTOモード停止（バトル中にOFFにした場合）
+class BattleAutoStopped extends BattleState {
+  final BattleStateModel battleState;
+  final BattleResult? result;
+
+  const BattleAutoStopped({
     required this.battleState,
     this.result,
   });

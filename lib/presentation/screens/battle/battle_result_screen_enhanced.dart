@@ -112,7 +112,7 @@ class _BattleResultScreenEnhancedState extends State<BattleResultScreenEnhanced>
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
         if (!didPop) {
-          Navigator.of(context).popUntil((route) => route.isFirst || route.settings.name == '/home');
+          Navigator.of(context).pop(widget.result.isWin);
         }
       },
       child: Scaffold(
@@ -680,7 +680,8 @@ class _BattleResultScreenEnhancedState extends State<BattleResultScreenEnhanced>
         Expanded(
           child: ElevatedButton(
             onPressed: () {
-              Navigator.of(context).popUntil((route) => route.isFirst || route.settings.name == '/home');
+              // ★修正: 勝敗結果を返しながら戻る
+              Navigator.of(context).pop(widget.result.isWin);
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white,
@@ -701,9 +702,8 @@ class _BattleResultScreenEnhancedState extends State<BattleResultScreenEnhanced>
           Expanded(
             child: ElevatedButton(
               onPressed: () {
-                // 次のステージへ or 再挑戦
-                Navigator.pop(context);
-                Navigator.pop(context);
+                // ★修正: 勝敗結果を返す
+                Navigator.of(context).pop(widget.result.isWin);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.amber,

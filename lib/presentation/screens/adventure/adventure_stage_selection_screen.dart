@@ -7,6 +7,7 @@ import '../../../domain/models/stage/stage_data.dart';
 import '../../../domain/entities/monster.dart';
 import '../../../data/repositories/adventure_repository.dart';
 import '../battle/battle_screen.dart';
+import 'adventure_battle_screen.dart';
 
 class AdventureStageSelectionScreen extends StatelessWidget {
   final List<Monster> party;
@@ -116,7 +117,6 @@ class AdventureStageSelectionScreen extends StatelessWidget {
     final bossUnlocked = progress?.bossUnlocked ?? false;
     final encountersToBoss = stage.encountersToBoss ?? 5;
     
-    // ★修正: 表示用のカウント（maxを超えない）
     final displayCount = encounterCount.clamp(0, encountersToBoss);
 
     return Card(
@@ -127,6 +127,7 @@ class AdventureStageSelectionScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // ステージ情報行
             Row(
               children: [
                 Container(
@@ -161,7 +162,6 @@ class AdventureStageSelectionScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 4),
-                      // ★修正: 進行状況バー
                       Row(
                         children: [
                           Expanded(
@@ -191,45 +191,21 @@ class AdventureStageSelectionScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-                
-                if (bossUnlocked)
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: Colors.purple,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.shield, size: 14, color: Colors.white),
-                        SizedBox(width: 4),
-                        Text(
-                          'BOSS',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
               ],
             ),
 
             const SizedBox(height: 12),
-            const Divider(),
-            const SizedBox(height: 8),
 
-            if (stage.description != null)
+            // 説明文
+            if (stage.description != null) ...[
               Text(
                 stage.description!,
                 style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
               ),
+              const SizedBox(height: 12),
+            ],
 
-            const SizedBox(height: 12),
-
+            // 情報チップ
             Row(
               children: [
                 _buildInfoChip(Icons.trending_up, 'Lv.${stage.recommendedLevel}', Colors.blue),
@@ -242,38 +218,87 @@ class AdventureStageSelectionScreen extends StatelessWidget {
 
             const SizedBox(height: 16),
 
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () => _startNormalBattle(context, stage),
-                    icon: const Icon(Icons.play_arrow),
-                    label: const Text('挑戦'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
+            // ボタン行（Columnの直接の子として配置）
+            if (bossUnlocked)
+              // ボス解放時: 挑戦 | AUTO | ボス戦
+              Row(
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: ElevatedButton.icon(
+                      onPressed: () => _startNormalBattle(context, stage),
+                      icon: const Icon(Icons.play_arrow, size: 18),
+                      label: const Text('挑戦'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                      ),
                     ),
                   ),
-                ),
-                
-                if (bossUnlocked) ...[
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 6),
                   Expanded(
+                    flex: 2,
+                    child: ElevatedButton.icon(
+                      onPressed: () => _startAutoAdventure(context, stage),
+                      icon: const Icon(Icons.repeat, size: 18),
+                      label: const Text('AUTO'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.orange,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    flex: 2,
                     child: ElevatedButton.icon(
                       onPressed: () => _startBossBattle(context, stage),
-                      icon: const Icon(Icons.shield),
+                      icon: const Icon(Icons.shield, size: 18),
                       label: const Text('ボス戦'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.purple,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            else
+              // ボス未解放時: 挑戦 | AUTO
+              Row(
+                children: [
+                  Expanded(
+                    flex: 3,
+                    child: ElevatedButton.icon(
+                      onPressed: () => _startNormalBattle(context, stage),
+                      icon: const Icon(Icons.play_arrow, size: 18),
+                      label: const Text('挑戦'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    flex: 2,
+                    child: ElevatedButton.icon(
+                      onPressed: () => _startAutoAdventure(context, stage),
+                      icon: const Icon(Icons.repeat, size: 18),
+                      label: const Text('AUTO'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.orange,
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 12),
                       ),
                     ),
                   ),
                 ],
-              ],
-            ),
+              ),
           ],
         ),
       ),
@@ -281,13 +306,12 @@ class AdventureStageSelectionScreen extends StatelessWidget {
   }
 
   void _startNormalBattle(BuildContext context, StageData stage) {
-    // ★HPチェック: 戦えるモンスターがいるか確認
     final availableMonsters = party.where((m) => m.currentHp > 0).toList();
     
-    if (availableMonsters.isEmpty) {
+    if (availableMonsters.length < 3) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('戦えるモンスターがいません。回復アイテムを使用してください。'),
+          content: Text('戦闘可能なモンスターが3体以上必要です。回復してください。'),
           backgroundColor: Colors.red,
         ),
       );
@@ -297,92 +321,162 @@ class AdventureStageSelectionScreen extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (ctx) => BattleScreen(
-          playerParty: party,
-          stageData: stage,
+        builder: (ctx) => AdventureBattleScreen(
+          party: party,
+          stage: stage,
         ),
       ),
     ).then((_) {
-      // バトル終了後にステージリストをリロード
       if (context.mounted) {
         context.read<AdventureBloc>().add(const AdventureEvent.loadStages());
       }
     });
   }
 
-  /// ★実装: ボスバトル開始
-  void _startBossBattle(BuildContext context, StageData stage) async {
-    // ★HPチェック: 戦えるモンスターがいるか確認
+  /// ★修正: ボスバトル開始（AdventureBattleScreen経由）
+  void _startBossBattle(BuildContext context, StageData stage) {
     final availableMonsters = party.where((m) => m.currentHp > 0).toList();
     
-    if (availableMonsters.isEmpty) {
+    if (availableMonsters.length < 3) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('戦えるモンスターがいません。回復アイテムを使用してください。'),
+          content: Text('戦闘可能なモンスターが3体以上必要です。回復してください。'),
           backgroundColor: Colors.red,
         ),
       );
       return;
     }
     
-    final bossStageId = stage.bossStageId;
-    if (bossStageId == null) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (ctx) => AdventureBattleScreen(
+          party: party,
+          stage: stage,
+        ),
+      ),
+    ).then((_) {
+      if (context.mounted) {
+        context.read<AdventureBloc>().add(const AdventureEvent.loadStages());
+      }
+    });
+  }
+
+  /// AUTO周回開始
+  void _startAutoAdventure(BuildContext context, StageData stage) {
+    final availableMonsters = party.where((m) => m.currentHp > 0).toList();
+    
+    if (availableMonsters.length < 3) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('ボスステージが設定されていません')),
+        const SnackBar(
+          content: Text('戦闘可能なモンスターが3体以上必要です。回復してください。'),
+          backgroundColor: Colors.red,
+        ),
       );
       return;
     }
+    
+    // AUTO周回回数選択ダイアログ
+    _showAutoLoopSelectDialog(context, stage);
+  }
 
-    // ローディング表示
+  void _showAutoLoopSelectDialog(BuildContext context, StageData stage) {
+    int selectedCount = 5;
+    
     showDialog(
       context: context,
-      barrierDismissible: false,
-      builder: (ctx) => const Center(child: CircularProgressIndicator()),
-    );
-
-    try {
-      // ボスステージデータを取得
-      final adventureRepo = AdventureRepository();
-      final bossStage = await adventureRepo.getStage(bossStageId);
-      
-      if (context.mounted) {
-        Navigator.pop(context); // ローディング閉じる
-      }
-
-      if (bossStage == null) {
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('ボスステージの取得に失敗しました')),
-          );
-        }
-        return;
-      }
-
-      // ボスバトル画面へ遷移
-      if (context.mounted) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (ctx) => BattleScreen(
-              playerParty: party,
-              stageData: bossStage,
-            ),
+      builder: (ctx) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: const Row(
+            children: [
+              Icon(Icons.repeat, color: Colors.orange),
+              SizedBox(width: 8),
+              Text('AUTO周回'),
+            ],
           ),
-        ).then((_) {
-          // バトル終了後にステージリストをリロード
-          if (context.mounted) {
-            context.read<AdventureBloc>().add(const AdventureEvent.loadStages());
-          }
-        });
-      }
-    } catch (e) {
-      if (context.mounted) {
-        Navigator.pop(context); // ローディング閉じる
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('エラー: $e')),
-        );
-      }
-    }
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('周回回数を選択してください'),
+              const SizedBox(height: 16),
+              
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                alignment: WrapAlignment.center,
+                children: [5, 10, 20, 50].map((count) {
+                  final isSelected = selectedCount == count;
+                  return GestureDetector(
+                    onTap: () => setDialogState(() => selectedCount = count),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                      decoration: BoxDecoration(
+                        color: isSelected ? Colors.orange : Colors.grey.shade200,
+                        borderRadius: BorderRadius.circular(8),
+                        border: isSelected 
+                            ? Border.all(color: Colors.orange.shade700, width: 2)
+                            : null,
+                      ),
+                      child: Text(
+                        '$count回',
+                        style: TextStyle(
+                          color: isSelected ? Colors.white : Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+              
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade100,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  '・敗北時は自動で停止します\n・ボス解放時も停止します',
+                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('キャンセル'),
+            ),
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.pop(ctx);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (ctx) => AdventureBattleScreen(
+                      party: party,
+                      stage: stage,
+                      autoLoopCount: selectedCount,
+                    ),
+                  ),
+                ).then((_) {
+                  if (context.mounted) {
+                    context.read<AdventureBloc>().add(const AdventureEvent.loadStages());
+                  }
+                });
+              },
+              icon: const Icon(Icons.play_arrow),
+              label: const Text('開始'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.orange,
+                foregroundColor: Colors.white,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildInfoChip(IconData icon, String label, Color color) {

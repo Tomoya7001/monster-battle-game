@@ -11,15 +11,22 @@ import '../../../domain/models/stage/stage_data.dart';
 import 'battle_result_screen.dart';
 import 'battle_result_screen_enhanced.dart'; // ★追加: 強化版結果画面
 import '../../widgets/battle/battle_effect_widgets.dart';
+import '../../../domain/models/battle/battle_result.dart';
 
 class BattleScreen extends StatelessWidget {
   final List<Monster> playerParty;
   final StageData? stageData;
+  final bool isAutoMode; // ★追加
+  final int currentLoop;  // ★追加
+  final int totalLoop;    // ★追加
 
   const BattleScreen({
     Key? key,
     required this.playerParty,
     this.stageData,
+    this.isAutoMode = false, // ★追加
+    this.currentLoop = 0,  // ★追加
+    this.totalLoop = 0,    // ★追加
   }) : super(key: key);
 
   @override
@@ -28,10 +35,20 @@ class BattleScreen extends StatelessWidget {
       create: (context) => BattleBloc()
         ..add(
           stageData != null
-              ? StartStageBattle(playerParty: playerParty, stageData: stageData!)
+              ? StartStageBattle(
+                  playerParty: playerParty, 
+                  stageData: stageData!,
+                  isAutoMode: isAutoMode,
+                  currentLoop: currentLoop,  // ★追加
+                  totalLoop: totalLoop,      // ★追加
+                )
               : StartCpuBattle(playerParty: playerParty),
         ),
-      child: _BattleScreenContent(stageData: stageData),
+      child: _BattleScreenContent(
+        stageData: stageData,
+        currentLoop: currentLoop,   // ★追加
+        totalLoop: totalLoop,       // ★追加
+      ),
     );
   }
 }
@@ -39,10 +56,15 @@ class BattleScreen extends StatelessWidget {
 // ★修正: StatefulWidget に変更（エフェクトコントローラー用）
 class _BattleScreenContent extends StatefulWidget {
   final StageData? stageData;
+  final int currentLoop;   // ★追加
+  final int totalLoop;     // ★追加
+
 
   const _BattleScreenContent({
     Key? key,
     this.stageData,
+    this.currentLoop = 0,   // ★追加
+    this.totalLoop = 0,     // ★追加
   }) : super(key: key);
 
   @override
@@ -74,7 +96,7 @@ class _BattleScreenContentState extends State<_BattleScreenContent> {
                 context: context,
                 builder: (ctx) => AlertDialog(
                   title: const Text('バトル終了'),
-                  content: const Text('バトルを終了しますか？'),
+                  content: const Text('バトルを終了しますか？\nAUTO周回も停止します。'),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.pop(ctx),
@@ -83,7 +105,7 @@ class _BattleScreenContentState extends State<_BattleScreenContent> {
                     TextButton(
                       onPressed: () {
                         Navigator.pop(ctx);
-                        Navigator.pop(context);
+                        Navigator.pop(context, null);
                       },
                       child: const Text('終了'),
                     ),
@@ -93,6 +115,44 @@ class _BattleScreenContentState extends State<_BattleScreenContent> {
             },
           ),
           actions: [
+            // ★追加: AUTO周回表示
+            BlocBuilder<BattleBloc, BattleState>(
+              builder: (context, state) {
+                if (state is BattleInProgress && state.isAutoMode && state.totalLoop > 0) {
+                  final speedColor = state.autoSpeed == 4 
+                      ? Colors.red 
+                      : state.autoSpeed == 2 
+                          ? Colors.orange 
+                          : Colors.green;
+                  
+                  return Container(
+                    margin: const EdgeInsets.only(right: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: speedColor,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.repeat, size: 16, color: Colors.white),
+                        const SizedBox(width: 4),
+                        Text(
+                          'x${state.autoSpeed} ${state.currentLoop}/${state.totalLoop}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+            ),
+            // バトルログボタン
             BlocBuilder<BattleBloc, BattleState>(
               builder: (context, state) {
                 if (state is BattleInProgress || 
@@ -143,18 +203,17 @@ class _BattleScreenContentState extends State<_BattleScreenContent> {
               }
             }
 
+            // ★追加: AUTOモード勝利時（VICTORY画面スキップ）
+            if (state is BattleAutoWin) {
+              // 即座に結果を返して画面を閉じる
+              Navigator.pop(context, true);
+              return;
+            }
+
             // 勝利時
             if (state is BattlePlayerWin) {
               if (state.result != null) {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (ctx) => BattleResultScreenEnhanced( // ★修正: 強化版に変更
-                      result: state.result!,
-                      stageData: widget.stageData,
-                    ),
-                  ),
-                );
+                _navigateToResult(context, state.result!, true);
               } else {
                 _showResultDialog(context, '勝利！', Colors.green);
               }
@@ -162,15 +221,7 @@ class _BattleScreenContentState extends State<_BattleScreenContent> {
             // 敗北時
             else if (state is BattlePlayerLose) {
               if (state.result != null) {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (ctx) => BattleResultScreenEnhanced( // ★修正: 強化版に変更
-                      result: state.result!,
-                      stageData: widget.stageData,
-                    ),
-                  ),
-                );
+                _navigateToResult(context, state.result!, false);
               } else {
                 _showResultDialog(context, '敗北...', Colors.red);
               }
@@ -224,14 +275,14 @@ class _BattleScreenContentState extends State<_BattleScreenContent> {
             }
 
             if (state is BattleInProgress) {
-              return _buildBattleUI(context, state.battleState, state.message);
+              return _buildBattleUI(context, state.battleState, state.message, state.isAutoMode);
             }
 
             if (state is BattlePlayerWin || state is BattlePlayerLose) {
               final battleState = state is BattlePlayerWin
                   ? state.battleState
                   : (state as BattlePlayerLose).battleState;
-              return _buildBattleUI(context, battleState, null);
+              return _buildBattleUI(context, battleState, null, false); // 勝敗確定後はAUTO不要
             }
 
             return const Center(child: Text('バトル準備中...'));
@@ -240,6 +291,8 @@ class _BattleScreenContentState extends State<_BattleScreenContent> {
       ),
     );
   }
+
+  
   
   Widget _buildErrorView(
     BuildContext context,
@@ -352,7 +405,7 @@ class _BattleScreenContentState extends State<_BattleScreenContent> {
     );
   }
 
-  Widget _buildBattleUI(BuildContext context, BattleStateModel battleState, String? message) {
+  Widget _buildBattleUI(BuildContext context, BattleStateModel battleState, String? message, bool isAutoMode) {
     return SingleChildScrollView(
       child: ConstrainedBox(
         constraints: BoxConstraints(
@@ -393,7 +446,7 @@ class _BattleScreenContentState extends State<_BattleScreenContent> {
             if (battleState.phase == BattlePhase.selectFirstMonster)
               _buildMonsterSelection(context, battleState)
             else if (battleState.phase == BattlePhase.actionSelect)
-              _buildActionButtons(context, battleState)
+               _buildActionButtons(context, battleState, isAutoMode: isAutoMode)
             else if (battleState.phase == BattlePhase.monsterFainted)
               _buildMonsterSelection(context, battleState)
             else
@@ -683,7 +736,7 @@ class _BattleScreenContentState extends State<_BattleScreenContent> {
     );
   }
 
-  Widget _buildActionButtons(BuildContext context, BattleStateModel battleState) {
+  Widget _buildActionButtons(BuildContext context, BattleStateModel battleState, {bool isAutoMode = false}) {
     final activeMonster = battleState.playerActiveMonster;
     if (activeMonster == null) return const SizedBox.shrink();
 
@@ -783,7 +836,7 @@ class _BattleScreenContentState extends State<_BattleScreenContent> {
 
           const SizedBox(height: 12),
 
-          // 交代・待機ボタン
+          // 交代・待機・AUTOボタン
           Row(
             children: [
               Expanded(
@@ -807,6 +860,45 @@ class _BattleScreenContentState extends State<_BattleScreenContent> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.grey,
                   ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              // ★追加: AUTOボタン
+              // ★修正: AUTOボタン（速度表示対応）
+              Expanded(
+                child: BlocBuilder<BattleBloc, BattleState>(
+                  builder: (context, state) {
+                    final isAuto = state is BattleInProgress && state.isAutoMode;
+                    final speed = state is BattleInProgress ? state.autoSpeed : 1;
+                    final hasLoop = state is BattleInProgress && state.totalLoop > 0;
+                    
+                    String label;
+                    Color bgColor;
+                    IconData icon;
+                    
+                    if (!isAuto) {
+                      label = 'AUTO';
+                      bgColor = Colors.blueGrey;
+                      icon = Icons.play_circle_filled;
+                    } else if (hasLoop) {
+                      label = 'x$speed';
+                      bgColor = speed == 4 ? Colors.red : speed == 2 ? Colors.orange : Colors.green;
+                      icon = Icons.fast_forward;
+                    } else {
+                      label = 'AUTO';
+                      bgColor = Colors.green;
+                      icon = Icons.pause_circle_filled;
+                    }
+                    
+                    return ElevatedButton.icon(
+                      onPressed: () => context.read<BattleBloc>().add(const ToggleAutoMode()),
+                      icon: Icon(icon),
+                      label: Text(label),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: bgColor,
+                      ),
+                    );
+                  },
                 ),
               ),
             ],
@@ -1097,6 +1189,7 @@ class _BattleScreenContentState extends State<_BattleScreenContent> {
   }
 
   void _showResultDialog(BuildContext context, String title, Color color) {
+    final isWin = color == Colors.green;
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -1111,13 +1204,29 @@ class _BattleScreenContentState extends State<_BattleScreenContent> {
           TextButton(
             onPressed: () {
               Navigator.pop(ctx);
-              Navigator.pop(context);
+              Navigator.pop(context, isWin);
             },
             child: const Text('閉じる'),
           ),
         ],
       ),
     );
+  }
+
+  /// ★追加: 結果画面へ遷移し、結果を返す
+  void _navigateToResult(BuildContext context, BattleResult result, bool isWin) async {
+    final resultValue = await Navigator.push<bool>(
+      context,
+      MaterialPageRoute(
+        builder: (ctx) => BattleResultScreenEnhanced(
+          result: result,
+          stageData: widget.stageData,
+        ),
+      ),
+    );
+    if (context.mounted) {
+      Navigator.of(context).pop(resultValue ?? isWin);
+    }
   }
 }
 
