@@ -36,7 +36,7 @@ class BattleScreen extends StatelessWidget {
         ..add(
           stageData != null
               ? StartStageBattle(
-                  playerParty: playerParty, 
+                  playerParty: playerParty,
                   stageData: stageData!,
                   isAutoMode: isAutoMode,
                   currentLoop: currentLoop,  // ★追加
@@ -119,10 +119,10 @@ class _BattleScreenContentState extends State<_BattleScreenContent> {
             BlocBuilder<BattleBloc, BattleState>(
               builder: (context, state) {
                 if (state is BattleInProgress && state.isAutoMode && state.totalLoop > 0) {
-                  final speedColor = state.autoSpeed == 4 
-                      ? Colors.red 
-                      : state.autoSpeed == 2 
-                          ? Colors.orange 
+                  final speedColor = state.autoSpeed == 4
+                      ? Colors.red
+                      : state.autoSpeed == 2
+                          ? Colors.orange
                           : Colors.green;
                   
                   return Container(
@@ -155,8 +155,8 @@ class _BattleScreenContentState extends State<_BattleScreenContent> {
             // バトルログボタン
             BlocBuilder<BattleBloc, BattleState>(
               builder: (context, state) {
-                if (state is BattleInProgress || 
-                    state is BattlePlayerWin || 
+                if (state is BattleInProgress ||
+                    state is BattlePlayerWin ||
                     state is BattlePlayerLose) {
                   final battleState = state is BattleInProgress
                       ? state.battleState
@@ -653,7 +653,7 @@ class _BattleScreenContentState extends State<_BattleScreenContent> {
     final absStage = stage.abs();
     final arrow = isPositive ? '↑' : '↓';
     final arrowText = arrow * absStage.clamp(1, 3);
-    
+
     int turnsRemaining = 0;
     switch (statName) {
       case '攻':
@@ -675,7 +675,7 @@ class _BattleScreenContentState extends State<_BattleScreenContent> {
         turnsRemaining = monster.evasionStageTurns;
         break;
     }
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
@@ -875,7 +875,7 @@ class _BattleScreenContentState extends State<_BattleScreenContent> {
                     String label;
                     Color bgColor;
                     IconData icon;
-                    
+
                     if (!isAuto) {
                       label = 'AUTO';
                       bgColor = Colors.blueGrey;
@@ -889,7 +889,7 @@ class _BattleScreenContentState extends State<_BattleScreenContent> {
                       bgColor = Colors.green;
                       icon = Icons.pause_circle_filled;
                     }
-                    
+
                     return ElevatedButton.icon(
                       onPressed: () => context.read<BattleBloc>().add(const ToggleAutoMode()),
                       icon: Icon(icon),

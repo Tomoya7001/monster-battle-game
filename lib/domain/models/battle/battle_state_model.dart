@@ -50,8 +50,17 @@ class BattleStateModel {
   /// プレイヤーが追加でモンスターを出せるか
   bool get canPlayerSendMore => playerFieldMonsterIds.length < maxDeployableCount;
 
-  /// 相手が追加でモンスターを出せるか（敵パーティサイズに依存）
-  bool get canEnemySendMore => enemyFieldMonsterIds.length < enemyParty.length;
+  /// 相手が追加でモンスターを出せるか（3体制限を適用）
+  bool get canEnemySendMore {
+    // 既に場に出したモンスター数が上限に達しているかチェック
+    if (enemyFieldMonsterIds.length >= maxDeployableCount) {
+      return false;
+    }
+    // パーティ内に未使用かつ非瀕死のモンスターがいるかチェック
+    return enemyParty.any((m) => 
+      !m.isFainted && !enemyFieldMonsterIds.contains(m.baseMonster.id)
+    );
+  }
 
   /// ★修正: 交代可能なモンスターが存在するか（3体制限を考慮）
   bool get hasAvailableSwitchMonster {
@@ -67,14 +76,26 @@ class BattleStateModel {
     });
   }
 
-  /// ★追加: 敵側の交代可能判定
+  /// ★修正: 敵側の交代可能判定（3体制限を厳密に適用）
   bool get hasEnemyAvailableSwitchMonster {
-    return enemyParty.any((m) {
-      if (m.isFainted) return false;
-      if (m.baseMonster.id == enemyActiveMonster?.baseMonster.id) return false;
-      if (enemyFieldMonsterIds.contains(m.baseMonster.id)) return true;
-      return canEnemySendMore;
-    });
+    // 現在アクティブでなく、瀕死でないモンスターを検索
+    for (final m in enemyParty) {
+      // 瀕死はスキップ
+      if (m.isFainted) continue;
+      // 現在アクティブはスキップ
+      if (m.baseMonster.id == enemyActiveMonster?.baseMonster.id) continue;
+      
+      // 既に場に出したモンスターは交代可能
+      if (enemyFieldMonsterIds.contains(m.baseMonster.id)) {
+        return true;
+      }
+      
+      // 新しいモンスターの場合、3体制限をチェック
+      if (enemyFieldMonsterIds.length < maxDeployableCount) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /// プレイヤーが使用したモンスターIDリスト（Firestore保存用）

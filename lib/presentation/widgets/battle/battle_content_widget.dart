@@ -49,99 +49,159 @@ class _BattleContentWidgetState extends State<BattleContentWidget> {
   String? _enemySkillType;
   bool _showPlayerSkillEffect = false;
   bool _showEnemySkillEffect = false;
+  
+  // 前回のモンスターIDを記録（交代時のリセット用）
+  String? _lastPlayerMonsterId;
+  String? _lastEnemyMonsterId;
 
   @override
   void didUpdateWidget(BattleContentWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
+
+    final currentPlayerMonsterId = widget.battleState.playerActiveMonster?.baseMonster.id;
+    final currentEnemyMonsterId = widget.battleState.enemyActiveMonster?.baseMonster.id;
+    
+    // モンスターが変わった場合はエフェクトをリセット
+    if (_lastPlayerMonsterId != null && _lastPlayerMonsterId != currentPlayerMonsterId) {
+      _resetPlayerEffects();
+    }
+    if (_lastEnemyMonsterId != null && _lastEnemyMonsterId != currentEnemyMonsterId) {
+      _resetEnemyEffects();
+    }
+    
+    _lastPlayerMonsterId = currentPlayerMonsterId;
+    _lastEnemyMonsterId = currentEnemyMonsterId;
 
     // HP変化を検知してエフェクトをトリガー
     final oldPlayerHp = oldWidget.battleState.playerActiveMonster?.currentHp;
     final newPlayerHp = widget.battleState.playerActiveMonster?.currentHp;
     final oldEnemyHp = oldWidget.battleState.enemyActiveMonster?.currentHp;
     final newEnemyHp = widget.battleState.enemyActiveMonster?.currentHp;
+    
+    final oldPlayerMonsterId = oldWidget.battleState.playerActiveMonster?.baseMonster.id;
+    final oldEnemyMonsterId = oldWidget.battleState.enemyActiveMonster?.baseMonster.id;
 
-    // プレイヤーがダメージを受けた
-    if (oldPlayerHp != null && newPlayerHp != null && newPlayerHp < oldPlayerHp) {
-      setState(() {
-        _playerPreviousHp = oldPlayerHp;
-        _playerDamageDealt = oldPlayerHp - newPlayerHp;
-        _showPlayerDamage = true;
-        _isPlayerHeal = false;
-      });
-      _resetPlayerDamageAfterDelay();
+    // プレイヤーがダメージを受けた（同じモンスターの場合のみ）
+    if (oldPlayerHp != null && newPlayerHp != null && 
+        oldPlayerMonsterId == currentPlayerMonsterId &&
+        oldPlayerMonsterId != null &&
+        newPlayerHp < oldPlayerHp) {
+      final damage = oldPlayerHp - newPlayerHp;
+      if (damage > 0) {  // 実際にダメージがある場合のみ
+        setState(() {
+          _playerPreviousHp = oldPlayerHp;
+          _playerDamageDealt = damage;
+          _showPlayerDamage = true;
+          _isPlayerHeal = false;
+          _showPlayerSkillEffect = true;
+          _playerSkillType = 'physical';
+        });
+        _resetPlayerDamageAfterDelay();
+      }
     }
 
-    // プレイヤーが回復した
-    if (oldPlayerHp != null && newPlayerHp != null && newPlayerHp > oldPlayerHp) {
-      setState(() {
-        _playerPreviousHp = oldPlayerHp;
-        _playerDamageDealt = newPlayerHp - oldPlayerHp;
-        _showPlayerDamage = true;
-        _isPlayerHeal = true;
-      });
-      _resetPlayerDamageAfterDelay();
+    // プレイヤーが回復した（同じモンスターの場合のみ）
+    if (oldPlayerHp != null && newPlayerHp != null && 
+        oldPlayerMonsterId == currentPlayerMonsterId &&
+        oldPlayerMonsterId != null &&
+        newPlayerHp > oldPlayerHp) {
+      final heal = newPlayerHp - oldPlayerHp;
+      if (heal > 0) {  // 実際に回復がある場合のみ
+        setState(() {
+          _playerPreviousHp = oldPlayerHp;
+          _playerDamageDealt = heal;
+          _showPlayerDamage = true;
+          _isPlayerHeal = true;
+          _showPlayerSkillEffect = true;
+          _playerSkillType = 'heal';
+        });
+        _resetPlayerDamageAfterDelay();
+      }
     }
 
-    // 敵がダメージを受けた
-    if (oldEnemyHp != null && newEnemyHp != null && newEnemyHp < oldEnemyHp) {
-      setState(() {
-        _enemyPreviousHp = oldEnemyHp;
-        _enemyDamageDealt = oldEnemyHp - newEnemyHp;
-        _showEnemyDamage = true;
-        _isEnemyHeal = false;
-      });
-      _resetEnemyDamageAfterDelay();
+    // 敵がダメージを受けた（同じモンスターの場合のみ）
+    if (oldEnemyHp != null && newEnemyHp != null && 
+        oldEnemyMonsterId == currentEnemyMonsterId &&
+        oldEnemyMonsterId != null &&
+        newEnemyHp < oldEnemyHp) {
+      final damage = oldEnemyHp - newEnemyHp;
+      if (damage > 0) {  // 実際にダメージがある場合のみ
+        setState(() {
+          _enemyPreviousHp = oldEnemyHp;
+          _enemyDamageDealt = damage;
+          _showEnemyDamage = true;
+          _isEnemyHeal = false;
+          _showEnemySkillEffect = true;
+          _enemySkillType = 'physical';
+        });
+        _resetEnemyDamageAfterDelay();
+      }
     }
 
-    // 敵が回復した
-    if (oldEnemyHp != null && newEnemyHp != null && newEnemyHp > oldEnemyHp) {
-      setState(() {
-        _enemyPreviousHp = oldEnemyHp;
-        _enemyDamageDealt = newEnemyHp - oldEnemyHp;
-        _showEnemyDamage = true;
-        _isEnemyHeal = true;
-      });
-      _resetEnemyDamageAfterDelay();
+    // 敵が回復した（同じモンスターの場合のみ）
+    if (oldEnemyHp != null && newEnemyHp != null && 
+        oldEnemyMonsterId == currentEnemyMonsterId &&
+        oldEnemyMonsterId != null &&
+        newEnemyHp > oldEnemyHp) {
+      final heal = newEnemyHp - oldEnemyHp;
+      if (heal > 0) {  // 実際に回復がある場合のみ
+        setState(() {
+          _enemyPreviousHp = oldEnemyHp;
+          _enemyDamageDealt = heal;
+          _showEnemyDamage = true;
+          _isEnemyHeal = true;
+          _showEnemySkillEffect = true;
+          _enemySkillType = 'heal';
+        });
+        _resetEnemyDamageAfterDelay();
+      }
     }
   }
 
+  /// プレイヤー側エフェクトリセット
+  void _resetPlayerEffects() {
+    setState(() {
+      _playerPreviousHp = null;
+      _playerDamageDealt = null;
+      _showPlayerDamage = false;
+      _showPlayerSkillEffect = false;
+      _isPlayerHeal = false;
+    });
+  }
+
+  /// 敵側エフェクトリセット
+  void _resetEnemyEffects() {
+    setState(() {
+      _enemyPreviousHp = null;
+      _enemyDamageDealt = null;
+      _showEnemyDamage = false;
+      _showEnemySkillEffect = false;
+      _isEnemyHeal = false;
+    });
+  }
+
   void _resetPlayerDamageAfterDelay() {
-    Future.delayed(const Duration(milliseconds: 1000), () {
+    Future.delayed(const Duration(milliseconds: 1500), () {
       if (mounted) {
         setState(() {
           _showPlayerDamage = false;
           _showPlayerSkillEffect = false;
+          _playerDamageDealt = null;
+          _playerPreviousHp = null;
         });
       }
     });
   }
 
   void _resetEnemyDamageAfterDelay() {
-    Future.delayed(const Duration(milliseconds: 1000), () {
+    Future.delayed(const Duration(milliseconds: 1500), () {
       if (mounted) {
         setState(() {
           _showEnemyDamage = false;
           _showEnemySkillEffect = false;
+          _enemyDamageDealt = null;
+          _enemyPreviousHp = null;
         });
-      }
-    });
-  }
-
-  /// 技使用時にエフェクトを表示
-  void _showSkillEffect(BattleSkill skill, bool isPlayerAttack) {
-    setState(() {
-      if (isPlayerAttack) {
-        _enemySkillElement = skill.element;
-        _enemySkillType = skill.isAttack 
-            ? (skill.type == 'physical' ? 'physical' : 'magical')
-            : (skill.effects.containsKey('heal') ? 'heal' : 'buff');
-        _showEnemySkillEffect = true;
-      } else {
-        _playerSkillElement = skill.element;
-        _playerSkillType = skill.isAttack 
-            ? (skill.type == 'physical' ? 'physical' : 'magical')
-            : (skill.effects.containsKey('heal') ? 'heal' : 'buff');
-        _showPlayerSkillEffect = true;
       }
     });
   }
@@ -257,7 +317,6 @@ class _BattleContentWidgetState extends State<BattleContentWidget> {
                   canUse: canUse,
                   elementColor: elementColor,
                   onPressed: () {
-                    _showSkillEffect(skill, true);
                     context.read<BattleBloc>().add(UseSkill(skill: skill));
                   },
                 );
@@ -578,25 +637,27 @@ class _MonsterSelectTile extends StatelessWidget {
             ),
             const SizedBox(width: 8),
             Text(
-              isActive
-                  ? '出撃中'
-                  : (isFainted ? '瀕死' : '${monster.currentHp}/${monster.maxHp}'),
+              // 瀕死を最優先表示
+              isFainted
+                  ? '瀕死'
+                  : (isActive ? '出撃中' : '${monster.currentHp}/${monster.maxHp}'),
               style: TextStyle(
                 fontSize: 12,
-                color: isActive
-                    ? Colors.blue
-                    : (isFainted ? Colors.red : Colors.grey.shade700),
+                color: isFainted
+                    ? Colors.red
+                    : (isActive ? Colors.blue : Colors.grey.shade700),
               ),
             ),
           ],
         ),
         trailing: Icon(
-          isActive
-              ? Icons.check_circle
-              : (isFainted ? Icons.cancel : Icons.arrow_forward_ios),
-          color: isActive
-              ? Colors.blue
-              : (isFainted ? Colors.red : Colors.green),
+          // 瀕死を最優先表示
+          isFainted
+              ? Icons.cancel
+              : (isActive ? Icons.check_circle : Icons.arrow_forward_ios),
+          color: isFainted
+              ? Colors.red
+              : (isActive ? Colors.blue : Colors.green),
         ),
         onTap: canSwitch ? onTap : null,
       ),

@@ -11,6 +11,7 @@ import '../../bloc/battle/battle_state.dart';
 import '../../widgets/battle/battle_content_widget.dart';
 import '../../widgets/battle/battle_effect_widgets.dart';
 import '../battle/battle_result_screen.dart';
+import '../battle/pvp_matching_screen.dart';
 
 class DraftSelectionScreen extends StatelessWidget {
   const DraftSelectionScreen({Key? key}) : super(key: key);
@@ -42,7 +43,7 @@ class _DraftSelectionContent extends StatelessWidget {
           if (state is DraftReady) {
             _navigateToBattle(context, state);
           } else if (state is DraftCancelled) {
-            Navigator.pop(context);
+            Navigator.of(context).pop();
           } else if (state is DraftErrorState) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(state.message)),
@@ -81,13 +82,6 @@ class _DraftSelectionContent extends StatelessWidget {
             '${state.waitSeconds}秒',
             style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
-          if (state.isCpuFallback) ...[
-            const SizedBox(height: 16),
-            const Text(
-              'まもなくCPU対戦に切り替わります',
-              style: TextStyle(color: Colors.orange),
-            ),
-          ],
         ],
       ),
     );
@@ -288,17 +282,18 @@ class _DraftSelectionContent extends StatelessWidget {
   void _showCancelDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
+      barrierDismissible: false,
+      builder: (dialogContext) => AlertDialog(
         title: const Text('キャンセル'),
         content: const Text('ドラフトバトルをキャンセルしますか？'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(ctx),
+            onPressed: () => Navigator.of(dialogContext).pop(),
             child: const Text('いいえ'),
           ),
           TextButton(
             onPressed: () {
-              Navigator.pop(ctx);
+              Navigator.of(dialogContext).pop();
               context.read<DraftBloc>().add(const CancelDraftMatching());
             },
             style: TextButton.styleFrom(foregroundColor: Colors.red),
@@ -321,8 +316,9 @@ class _DraftSelectionContent extends StatelessWidget {
     final playerParty = bloc.getPlayerPartyAsMonsters();
     final cpuParty = bloc.getCpuPartyAsMonsters();
 
-    Navigator.pushReplacement(
-      context,
+    // ★修正: pushでバトル画面に遷移
+    // 結果画面からはpopUntilでバトル選択画面まで一気に戻る
+    Navigator.of(context).push(
       MaterialPageRoute(
         builder: (ctx) => _DraftBattleScreen(
           playerParty: playerParty,
@@ -975,15 +971,15 @@ class _DraftBattleContent extends StatelessWidget {
       body: BlocConsumer<BattleBloc, BattleState>(
         listener: (context, state) {
           if (state is BattlePlayerWin && state.result != null) {
-            Navigator.pushReplacement(
-              context,
+            // ★修正: pushで結果画面に遷移
+            // 結果画面からはpopUntilでバトル選択画面まで戻る
+            Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (ctx) => BattleResultScreen(result: state.result!, stageData: null),
               ),
             );
           } else if (state is BattlePlayerLose && state.result != null) {
-            Navigator.pushReplacement(
-              context,
+            Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (ctx) => BattleResultScreen(result: state.result!, stageData: null),
               ),
@@ -1005,7 +1001,7 @@ class _DraftBattleContent extends StatelessWidget {
                   Text('エラー: ${state.message}'),
                   const SizedBox(height: 16),
                   ElevatedButton(
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () => Navigator.of(context).pop(),
                     child: const Text('戻る'),
                   ),
                 ],
@@ -1031,7 +1027,7 @@ class _DraftBattleContent extends StatelessWidget {
   void _showBattleMenu(BuildContext context) {
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         title: const Text('メニュー'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -1040,14 +1036,14 @@ class _DraftBattleContent extends StatelessWidget {
               leading: const Icon(Icons.flag, color: Colors.red),
               title: const Text('降参'),
               onTap: () {
-                Navigator.pop(ctx);
+                Navigator.of(dialogContext).pop();
                 _confirmSurrender(context);
               },
             ),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('閉じる')),
+          TextButton(onPressed: () => Navigator.of(dialogContext).pop(), child: const Text('閉じる')),
         ],
       ),
     );
@@ -1056,16 +1052,16 @@ class _DraftBattleContent extends StatelessWidget {
   void _confirmSurrender(BuildContext context) {
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         title: const Text('降参'),
         content: const Text('本当に降参しますか？'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('キャンセル')),
+          TextButton(onPressed: () => Navigator.of(dialogContext).pop(), child: const Text('キャンセル')),
           TextButton(
             onPressed: () {
-              Navigator.pop(ctx);
+              Navigator.of(dialogContext).pop();
               context.read<BattleBloc>().add(const ForceBattleEnd());
-              Navigator.pop(context);
+              Navigator.of(context).pop();
             },
             style: TextButton.styleFrom(foregroundColor: Colors.red),
             child: const Text('降参'),
@@ -1094,7 +1090,7 @@ class _DraftBattleContent extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text('バトルログ', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                    IconButton(icon: const Icon(Icons.close), onPressed: () => Navigator.pop(ctx)),
+                    IconButton(icon: const Icon(Icons.close), onPressed: () => Navigator.of(ctx).pop()),
                   ],
                 ),
                 const Divider(),

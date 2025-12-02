@@ -19,34 +19,17 @@ class StartStageBattle extends BattleEvent {
   final List<Monster> playerParty;
   final StageData stageData;
   final bool isAutoMode;
-  final int currentLoop;  // ★追加
-  final int totalLoop;    // ★追加
+  final int currentLoop;
+  final int totalLoop;
 
   const StartStageBattle({
     required this.playerParty,
     required this.stageData,
     this.isAutoMode = false,
-    this.currentLoop = 0,   // ★追加
-    this.totalLoop = 0,     // ★追加
+    this.currentLoop = 0,
+    this.totalLoop = 0,
   });
 }
-
-/*
-/// ドラフトバトル開始
-class StartDraftBattle extends BattleEvent {
-  final List<Monster> playerParty;
-  final List<Monster> enemyParty;
-  final String battleId;
-  final bool isCpuOpponent;
-
-  const StartDraftBattle({
-    required this.playerParty,
-    required this.enemyParty,
-    required this.battleId,
-    this.isCpuOpponent = false,
-  });
-}
-*/
 
 /// 最初のモンスター選択
 class SelectFirstMonster extends BattleEvent {
@@ -65,7 +48,7 @@ class UseSkill extends BattleEvent {
 /// モンスター交代
 class SwitchMonster extends BattleEvent {
   final String monsterId;
-  final bool isForcedSwitch; // 瀕死による強制交代かどうか
+  final bool isForcedSwitch;
 
   const SwitchMonster({
     required this.monsterId,
@@ -120,7 +103,7 @@ class StartBossBattle extends BattleEvent {
   });
 }
 
-  /// ドラフトバトル開始
+/// ドラフトバトル開始
 class StartDraftBattle extends BattleEvent {
   final List<Monster> playerParty;
   final List<Monster> enemyParty;
@@ -136,6 +119,16 @@ class StartDraftBattle extends BattleEvent {
 
   @override
   List<Object?> get props => [playerParty, enemyParty, battleId, isCpuOpponent];
+}
+
+/// カジュアルバトル開始（PvP、CPU対戦）
+class StartCasualBattle extends BattleEvent {
+  final List<Monster> playerParty;
+
+  const StartCasualBattle({required this.playerParty});
+
+  @override
+  List<Object?> get props => [playerParty];
 }
 
 /// AUTOモード切替

@@ -15,6 +15,7 @@ import '../../../core/services/battle/battle_calculation_service.dart';
 import '../../../data/repositories/adventure_repository.dart';
 import '../../../data/repositories/monster_repository_impl.dart';
 import '../../../data/repositories/equipment_repository.dart';
+import '../../../data/repositories/item_repository.dart';
 import '../../../domain/entities/equipment_master.dart';
 
 /// バトル設定クラス（BattleBlocの外部に配置）
@@ -57,6 +58,7 @@ class BattleBloc extends Bloc<BattleEvent, BattleState> {
     on<StartAdventureEncounter>(_onStartAdventureEncounter);
     on<StartBossBattle>(_onStartBossBattle);
     on<StartDraftBattle>(_onStartDraftBattle);
+    on<StartCasualBattle>(_onStartCasualBattle);
     on<ToggleAutoMode>(_onToggleAutoMode);
     on<ExecuteAutoAction>(_onExecuteAutoAction);
     on<ExecuteAutoSwitch>(_onExecuteAutoSwitch);
@@ -1122,13 +1124,49 @@ Future<void> _onUseSkill(
 
     // 相手モンスター瀕死処理
     if (_battleState!.enemyActiveMonster?.isFainted == true) {
-      if (_battleState!.canEnemySendMore) {
-        final availableMonster = _battleState!.enemyParty.firstWhere(
-          (m) => !m.isFainted && 
-                  m.baseMonster.id != _battleState!.enemyActiveMonster?.baseMonster.id,
-          orElse: () => throw Exception('No available monster'),
-        );
+      print('🔍 敵モンスター瀕死チェック:');
+      print('  - enemyFieldMonsterIds: ${_battleState!.enemyFieldMonsterIds}');
+      print('  - maxDeployableCount: ${_battleState!.maxDeployableCount}');
+      print('  - enemyParty count: ${_battleState!.enemyParty.length}');
+      
+      // 交代可能なモンスターを探す（3体制限を厳密に適用）
+      BattleMonster? availableMonster;
+      
+      for (final m in _battleState!.enemyParty) {
+        final monsterId = m.baseMonster.id;
+        print('  - チェック中: ${m.baseMonster.monsterName} (ID: $monsterId, 瀕死: ${m.isFainted})');
         
+        // 瀕死はスキップ
+        if (m.isFainted) {
+          print('    → 瀕死のためスキップ');
+          continue;
+        }
+        
+        // 現在アクティブはスキップ
+        if (monsterId == _battleState!.enemyActiveMonster?.baseMonster.id) {
+          print('    → 現在アクティブのためスキップ');
+          continue;
+        }
+        
+        // 既に場に出したモンスターは交代可能
+        if (_battleState!.enemyFieldMonsterIds.contains(monsterId)) {
+          print('    → 既にフィールドに出ているため交代可能');
+          availableMonster = m;
+          break;
+        }
+        
+        // 新しいモンスターは3体制限をチェック
+        if (_battleState!.enemyFieldMonsterIds.length < _battleState!.maxDeployableCount) {
+          print('    → 新規モンスター、制限内のため交代可能');
+          availableMonster = m;
+          break;
+        } else {
+          print('    → 3体制限に達しているため交代不可');
+        }
+      }
+      
+      if (availableMonster != null) {
+        // 新しいモンスターの場合のみフィールドIDに追加
         if (!_battleState!.enemyFieldMonsterIds.contains(availableMonster.baseMonster.id)) {
           _battleState!.enemyFieldMonsterIds.add(availableMonster.baseMonster.id);
         }
@@ -1138,6 +1176,11 @@ Future<void> _onUseSkill(
         availableMonster.resetCost();
         _battleState!.enemySwitchedThisTurn = true;
         _battleState!.addLog('相手は${availableMonster.baseMonster.monsterName}を繰り出した！');
+        
+        print('🔄 敵交代完了: ${availableMonster.baseMonster.monsterName} (フィールド: ${_battleState!.enemyFieldMonsterIds.length}/${_battleState!.maxDeployableCount}体)');
+      } else {
+        print('🏆 敵に交代可能なモンスターがいない（フィールド: ${_battleState!.enemyFieldMonsterIds.length}体）');
+        // ★重要: ここで勝利判定が次回のisBattleEndで行われる
       }
     }
 
@@ -1291,12 +1334,51 @@ Future<void> _onUseSkill(
     required bool isWin,
     List<MonsterExpGain> expGains = const [],
   }) async {
+    List<DropItem> dropItems = [];
+    
+    // 冒険/ボス戦でプレイヤーが勝利した場合のみドロップ処理
+    if (isWin && _currentStage != null) {
+      try {
+        final adventureRepo = AdventureRepository();
+        final isBoss = _currentStage!.stageType == 'boss';
+        
+        // ドロップ計算
+        final drops = await adventureRepo.calculateBattleDrops(
+          _currentStage!.stageId,
+          isBoss: isBoss,
+        );
+        
+        if (drops.isNotEmpty) {
+          // ドロップアイテムをユーザーに付与
+          const userId = 'dev_user_12345';
+          await adventureRepo.grantDropItems(userId, drops);
+          
+          // BattleResultに表示用のDropItemリストを作成
+          final itemRepo = ItemRepository();
+          final itemMasters = await itemRepo.getItemMasters();
+          
+          for (final entry in drops.entries) {
+            final master = itemMasters[entry.key];
+            dropItems.add(DropItem(
+              itemId: entry.key,
+              itemName: master?.name ?? entry.key,
+              quantity: entry.value,
+            ));
+          }
+          
+          print('✅ ドロップアイテム付与: ${drops.length}種類');
+        }
+      } catch (e) {
+        print('❌ ドロップ処理エラー: $e');
+      }
+    }
+    
     final rewards = _currentStage != null
         ? BattleRewards(
             exp: isWin ? _currentStage!.rewards.exp : 0,
             gold: isWin ? _currentStage!.rewards.gold : 0,
             gems: 0,
-            items: [],
+            items: dropItems,
           )
         : const BattleRewards(exp: 0, gold: 0, gems: 0, items: []);
 
@@ -1813,6 +1895,45 @@ Future<void> _onUseSkill(
       ));
     } catch (e) {
       emit(BattleError(message: 'ドラフトバトル開始エラー: $e'));
+    }
+  }
+
+  /// カジュアルバトル開始（CPUパーティ自動生成）
+  Future<void> _onStartCasualBattle(
+    StartCasualBattle event,
+    Emitter<BattleState> emit,
+  ) async {
+    emit(const BattleLoading());
+
+    try {
+      // プレイヤーパーティをLv50固定で変換（フルHP）
+      final playerParty = await _convertToBattleMonsters(
+        event.playerParty,
+        useCurrentHp: false,
+      ).timeout(const Duration(seconds: 10));
+
+      // CPUパーティ生成（既存メソッド使用）
+      final cpuParty = _generateDummyCpuParty();
+
+      _battleState = BattleStateModel(
+        playerParty: playerParty,
+        enemyParty: cpuParty,
+        battleType: 'casual', // casualタイプに設定
+        maxDeployableCount: 3, // 最大3体まで
+      );
+
+      _battleState!.addLog('カジュアルマッチ開始！');
+
+      emit(BattleInProgress(
+        battleState: _battleState!,
+        message: '最初に出すモンスターを選んでください',
+        isAutoMode: _isAutoMode,
+        currentLoop: _currentLoop,
+        totalLoop: _totalLoop,
+        autoSpeed: _autoSpeed,
+      ));
+    } catch (e) {
+      emit(BattleError(message: 'カジュアルバトル開始エラー: $e'));
     }
   }
 

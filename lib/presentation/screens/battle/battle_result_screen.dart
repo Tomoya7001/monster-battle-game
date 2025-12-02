@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../domain/models/battle/battle_result.dart';
 import '../../../domain/models/stage/stage_data.dart';
 
@@ -12,14 +13,20 @@ class BattleResultScreen extends StatelessWidget {
     this.stageData,
   }) : super(key: key);
 
+  /// ★修正: ホーム画面に戻る共通メソッド
+  void _goToHome(BuildContext context) {
+    // まずNavigatorのスタックをクリアしてからgo_routerでホームに遷移
+    Navigator.of(context).popUntil((route) => route.isFirst);
+    context.go('/home');
+  }
+
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        // 2回戻る（バトル画面とリザルト画面）
-        Navigator.pop(context);
-        Navigator.pop(context);
-        return false;
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        _goToHome(context);
       },
       child: Scaffold(
         appBar: AppBar(
@@ -217,15 +224,15 @@ class BattleResultScreen extends StatelessWidget {
   }
 
   Widget _buildRewards() {
-  // ★追加: PvP/CPU戦（stageDataがない）は報酬を表示しない
-  if (stageData == null) {
-    return const SizedBox.shrink();
-  }
+    // PvP/CPU戦（stageDataがない）は報酬を表示しない
+    if (stageData == null) {
+      return const SizedBox.shrink();
+    }
 
-  return Card(
-    elevation: 2,
-    child: Padding(
-      padding: const EdgeInsets.all(16),
+    return Card(
+      elevation: 2,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -425,7 +432,7 @@ class BattleResultScreen extends StatelessWidget {
                         ),
                         const SizedBox(width: 12),
                         
-                        // 変更後レベル（アニメーション風）
+                        // 変更後レベル
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                           decoration: BoxDecoration(
@@ -509,10 +516,7 @@ class BattleResultScreen extends StatelessWidget {
         SizedBox(
           width: double.infinity,
           child: ElevatedButton.icon(
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
-            },
+            onPressed: () => _goToHome(context),
             icon: const Icon(Icons.home),
             label: const Text('ホームに戻る'),
             style: ElevatedButton.styleFrom(
@@ -529,7 +533,7 @@ class BattleResultScreen extends StatelessWidget {
             child: OutlinedButton.icon(
               onPressed: () {
                 // TODO: 同じステージに再挑戦
-                Navigator.pop(context);
+                _goToHome(context);
               },
               icon: const Icon(Icons.refresh),
               label: const Text('もう一度挑戦'),

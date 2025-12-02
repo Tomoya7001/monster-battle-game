@@ -374,6 +374,28 @@ class _DataImportScreenState extends State<DataImportScreen> {
             
             const SizedBox(height: 8),
             
+            ElevatedButton.icon(
+              onPressed: () async {
+                final confirmed = await _showConfirmDialog(
+                  '探索システム用データ',
+                  '素材マスタと探索先マスタを投入します。',
+                );
+                if (confirmed != true) return;
+                
+                await _executeWithLoading(() async {
+                  await _importer.importDispatchSystemData();
+                }, '✅ 探索システム用データ投入完了');
+              },
+              icon: const Icon(Icons.hiking),
+              label: const Text('探索システム用データ投入'),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.all(16),
+                backgroundColor: Colors.brown,
+              ),
+            ),
+            
+            const SizedBox(height: 8),
+            
             // ステータス表示
             Card(
               child: Padding(

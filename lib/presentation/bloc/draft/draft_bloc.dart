@@ -20,6 +20,9 @@ class DraftBloc extends Bloc<DraftEvent, DraftBlocState> {
   DraftStateModel _draftState = const DraftStateModel();
   List<DraftMonster> _cpuSelection = [];
 
+  // マッチング時間: 5〜13秒ランダム
+  late int _matchingDuration;
+
   static const List<String> _cpuNames = [
     'りゅうのつかい', 'ほのおのけんし', 'みずのまほうつかい',
     'かぜのたびびと', 'やみのきし', 'ひかりのてんし',
@@ -45,13 +48,16 @@ class DraftBloc extends Bloc<DraftEvent, DraftBlocState> {
     StartDraftMatching event,
     Emitter<DraftBlocState> emit,
   ) async {
+    // 5〜13秒のランダムでマッチング時間を決定
+    _matchingDuration = 5 + _random.nextInt(9);
+    
     emit(const DraftMatching(waitSeconds: 0));
 
     int waitSeconds = 0;
     _matchingTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       waitSeconds++;
 
-      if (waitSeconds >= 10) {
+      if (waitSeconds >= _matchingDuration) {
         timer.cancel();
         _isCpuOpponent = true;
         add(DraftMatchFound(
@@ -68,10 +74,10 @@ class DraftBloc extends Bloc<DraftEvent, DraftBlocState> {
     UpdateMatchingTimer event,
     Emitter<DraftBlocState> emit,
   ) async {
-    final isCpuFallback = event.waitSeconds >= 8;
+    // CPUフォールバックメッセージは表示しない
     emit(DraftMatching(
       waitSeconds: event.waitSeconds,
-      isCpuFallback: isCpuFallback,
+      isCpuFallback: false,
     ));
   }
 
@@ -81,12 +87,6 @@ class DraftBloc extends Bloc<DraftEvent, DraftBlocState> {
   ) async {
     _battleId = event.battleId;
     _matchingTimer?.cancel();
-
-    if (_isCpuOpponent) {
-      final additionalWait = 1 + _random.nextInt(2);
-      emit(const DraftMatching(waitSeconds: 10, isCpuFallback: true));
-      await Future.delayed(Duration(seconds: additionalWait));
-    }
 
     final pool = await _generateDraftPool();
 
