@@ -4,11 +4,21 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/gacha_ticket.dart';
 
-// ガチャ確率定数
-const double RATE_5_STAR = 0.02; // 2%
-const double RATE_4_STAR = 0.15; // 15%
-const double RATE_3_STAR = 0.30; // 30%
-const double RATE_2_STAR = 0.53; // 53%
+// ガチャ確率定数（v8.3 カテゴリ制）
+// カテゴリ: 一般種(★2-3) 65%, 希少種(★4) 27%, 幻種(★5) 8%
+const double RATE_MYTHICAL = 0.08;  // 幻種(★5): 8%
+const double RATE_RARE = 0.27;      // 希少種(★4): 27%
+const double RATE_COMMON = 0.65;    // 一般種(★2-3): 65%
+
+// 一般種内の★2/★3比率（★2: 7体, ★3: 15体）
+const double RATE_STAR2_IN_COMMON = 0.32;  // 7÷22≨32%
+const double RATE_STAR3_IN_COMMON = 0.68;  // 15÷22≨68%
+
+// 後方互換性のため旧定数も維持
+const double RATE_5_STAR = RATE_MYTHICAL;
+const double RATE_4_STAR = RATE_RARE;
+const double RATE_3_STAR = 0.30;
+const double RATE_2_STAR = 0.53;
 
 /// ガチャ結果モデル
 class GachaResult {
@@ -133,27 +143,36 @@ Future<GachaResult> drawSingle({
     return results;
   }
 
-  /// レアリティを抽選
+  /// レアリティを抽選（v8.3 カテゴリ制）
   int _determineRarity(bool isGuaranteed4Star) {
     if (isGuaranteed4Star) {
-      // ★4以上確定の場合
+      // ★4以上確定の場合（10連保証）
       final rand = _random.nextDouble();
-      // ★5: 2% ÷ 17% = 11.76%
-      // ★4: 15% ÷ 17% = 88.24%
-      return rand < (RATE_5_STAR / (RATE_5_STAR + RATE_4_STAR)) ? 5 : 4;
+      // 幻種: 8% ÷ 35% ≈ 22.86%
+      // 希少種: 27% ÷ 35% ≈ 77.14%
+      return rand < (RATE_MYTHICAL / (RATE_MYTHICAL + RATE_RARE)) ? 5 : 4;
     }
 
     // 通常抽選
     final rand = _random.nextDouble();
 
-    if (rand < RATE_5_STAR) {
+    // 幻種(★5): 8%
+    if (rand < RATE_MYTHICAL) {
       return 5;
-    } else if (rand < RATE_5_STAR + RATE_4_STAR) {
+    }
+    
+    // 希少種(★4): 27% (累計35%)
+    if (rand < RATE_MYTHICAL + RATE_RARE) {
       return 4;
-    } else if (rand < RATE_5_STAR + RATE_4_STAR + RATE_3_STAR) {
-      return 3;
+    }
+    
+    // 一般種(★2-3): 65%
+    // 一般種内で★2と★3を抽選
+    final commonRand = _random.nextDouble();
+    if (commonRand < RATE_STAR2_IN_COMMON) {
+      return 2;  // ★2: 一般種全32%
     } else {
-      return 2;
+      return 3;  // ★3: 一般種全68%
     }
   }
 

@@ -1,0 +1,1019 @@
+{
+  "version": "3.3",
+  "created_at": "2025-12-04",
+  "updated_at": "2025-12-11",
+  "description": "★3モンスター14体の技プール・アビリティプール完全設計（後半7体）（v7.1ミュータント強化）",
+  "changelog": {
+    "v3.3": [
+      "v7.1ミュータント強化",
+      "クリス: Lv50-60で全属性可変コスト技習得",
+      "ゼラ: Lv50-60で全属性可変コスト技習得"
+    ],
+    "v3.2": [
+      "v7.1後攻技・トリックルーム追加",
+      "セラ: 魔力返し(Lv32)追加",
+      "タロス: 報復(Lv22)追加",
+      "クリス: 報復(Lv22)追加",
+      "ゼラ: 時空歪曲(Lv32)追加"
+    ],
+    "v3.1": [
+      "v7.1防護技・交代プレッシャー技・速度操作技追加",
+      "ビットマンアビリティ修正: 量産機の絆→量産型の意地",
+      "マモン: 棘の罠(Lv25)追加",
+      "セラ: 順風（全体）(Lv30)追加"
+    ],
+    "v3.0": [
+      "状態異常100%確定システム対応",
+      "ビットマン奥義: 麻痺20%削除（バランス型のため）",
+      "ゼラ: 拘束40%/80%→100%、威力下方修正"
+    ],
+    "v1.1": "v5.1バランス改修: サイクル技追加",
+    "v2.0": [
+      "可変コスト技システム対応（var_*スキルID）",
+      "ポケモン技名重複回避（威嚇→威圧、突進→猛進、月光→癒月、光壁→光の障壁、羽休め→翼の休息）",
+      "スキルID更新（fire_001→var_fire_001等）"
+    ]
+  },
+  "monsters": [
+    {
+      "monster_id": "mon_024",
+      "name": "量産型ビットマン",
+      "rarity": 3,
+      "species": "mechanoid",
+      "element": "thunder",
+      "role": "バランス型",
+      "base_stats": {
+        "hp": 80,
+        "attack": 65,
+        "defense": 70,
+        "magic": 65,
+        "speed": 55
+      },
+      "ability_pool": {
+        "rare": [
+          {
+            "id": "bitman_unique",
+            "name": "量産型の意地",
+            "effect": "常時: 防御+10%。味方にメカノイドがいると: 全ステ+15%",
+            "balance_note": "v7.1: 量産機の絆から変更"
+          },
+          {
+            "id": "species_005",
+            "name": "機械の体",
+            "effect": "防御+20%、状態異常弱点"
+          }
+        ],
+        "common": [
+          {
+            "id": "common_002",
+            "name": "鋼の体躯",
+            "effect": "防御+20"
+          },
+          {
+            "id": "common_005",
+            "name": "生命力",
+            "effect": "HP+50"
+          },
+          {
+            "id": "common_016",
+            "name": "慎重派",
+            "effect": "被ダメ-10%、与ダメ-10%"
+          }
+        ]
+      },
+      "skill_pool": {
+        "initial_skills": [
+          {
+            "id": "var_thunder_001",
+            "name": "天雷",
+            "learn_level": 1
+          },
+          {
+            "id": "cmn_phy_001",
+            "name": "猛進",
+            "learn_level": 1
+          }
+        ],
+        "learnable_skills": [
+          {
+            "id": "bitman_001",
+            "name": "機銃掃射",
+            "learn_level": 5,
+            "cost": 2,
+            "power": "B",
+            "element": "none",
+            "effect": "3連撃（各D威力）"
+          },
+          {
+            "id": "bitman_002",
+            "name": "緊急修復",
+            "learn_level": 15,
+            "cost": 2,
+            "power": "-",
+            "element": "none",
+            "effect": "HP25%回復+状態異常解除"
+          },
+          {
+            "id": "bitman_003",
+            "name": "電磁シールド",
+            "learn_level": 25,
+            "cost": 2,
+            "power": "-",
+            "element": "thunder",
+            "effect": "3T被ダメ-25%"
+          },
+          {
+            "id": "buff_earth_001",
+            "name": "堅守",
+            "learn_level": 30
+          },
+          {
+            "id": "var_earth_001",
+            "name": "ストーンショット",
+            "learn_level": 50,
+            "note": "意外性・大地属性"
+          },
+          {
+            "id": "cycle_earth_001",
+            "name": "砂塵返し",
+            "learn_level": 52,
+            "note": "v5.1追加: サイクル技"
+          }
+        ],
+        "ultimate": {
+          "id": "ult_bitman",
+          "name": "一斉砲撃",
+          "learn_level": 40,
+          "cost": 4,
+          "power_rank": "A",
+          "power_value": 110,
+          "element": "thunder",
+          "effect": "5連撃",
+          "balance_note": "v7.0: 麻痺20%削除（バランス型として火力重視）"
+        }
+      }
+    },
+    {
+      "monster_id": "mon_025",
+      "name": "貪欲マモン",
+      "rarity": 3,
+      "species": "demon",
+      "element": "earth",
+      "role": "物理型吸収アタッカー",
+      "base_stats": {
+        "hp": 90,
+        "attack": 80,
+        "defense": 65,
+        "magic": 50,
+        "speed": 60
+      },
+      "ability_pool": {
+        "rare": [
+          {
+            "id": "star3_001",
+            "name": "強欲の力",
+            "effect": "攻撃時30%で攻撃↑、撃破時さらに攻撃↑"
+          },
+          {
+            "id": "species_002",
+            "name": "闇の契約",
+            "effect": "デバフ技成功率+25%"
+          }
+        ],
+        "common": [
+          {
+            "id": "common_001",
+            "name": "力自慢",
+            "effect": "攻撃+20"
+          },
+          {
+            "id": "common_005",
+            "name": "生命力",
+            "effect": "HP+50"
+          },
+          {
+            "id": "common_007",
+            "name": "背水の陣",
+            "effect": "HP30%以下で攻撃+40"
+          }
+        ]
+      },
+      "skill_pool": {
+        "initial_skills": [
+          {
+            "id": "spc_earth_001",
+            "name": "砂礫弾",
+            "learn_level": 1
+          },
+          {
+            "id": "cmn_phy_002",
+            "name": "裂爪",
+            "learn_level": 1
+          }
+        ],
+        "learnable_skills": [
+          {
+            "id": "mamon_001",
+            "name": "強欲の爪",
+            "learn_level": 5,
+            "cost": 3,
+            "power": "A",
+            "element": "earth",
+            "effect": "HP25%吸収+防御↓"
+          },
+          {
+            "id": "var_earth_001",
+            "name": "ストーンショット",
+            "learn_level": 10
+          },
+          {
+            "id": "cycle_earth_001",
+            "name": "砂塵返し",
+            "learn_level": 12,
+            "note": "v5.1追加: サイクル技"
+          },
+          {
+            "id": "mamon_002",
+            "name": "金貨乱舞",
+            "learn_level": 15,
+            "cost": 2,
+            "power": "B",
+            "element": "earth",
+            "effect": "相手コスト-1"
+          },
+          {
+            "id": "mamon_003",
+            "name": "守銭奴",
+            "learn_level": 25,
+            "cost": 2,
+            "power": "-",
+            "element": "earth",
+            "effect": "自分コスト+2"
+          },
+          {
+            "id": "swp_001",
+            "name": "棘の罠",
+            "learn_level": 28,
+            "note": "v7.1追加: 交代プレッシャー技"
+          },
+          {
+            "id": "cmn_sup_003",
+            "name": "集中",
+            "learn_level": 30
+          },
+          {
+            "id": "var_dark_001",
+            "name": "ナイトメア",
+            "learn_level": 50,
+            "note": "意外性・闇属性"
+          }
+        ],
+        "ultimate": {
+          "id": "ult_mamon",
+          "name": "黄金の暴虐",
+          "learn_level": 40,
+          "cost": 4,
+          "power_rank": "S",
+          "power_value": 150,
+          "element": "earth",
+          "effect": "HP30%吸収+相手コスト-2"
+        }
+      }
+    },
+    {
+      "monster_id": "mon_026",
+      "name": "結晶体クリス",
+      "rarity": 3,
+      "species": "mutant",
+      "element": "earth",
+      "role": "物理型タンク",
+      "base_stats": {
+        "hp": 85,
+        "attack": 70,
+        "defense": 90,
+        "magic": 40,
+        "speed": 50
+      },
+      "ability_pool": {
+        "rare": [
+          {
+            "id": "star3_002",
+            "name": "結晶化",
+            "effect": "毎T防御+15（最大+60）"
+          },
+          {
+            "id": "species_007",
+            "name": "変幻の魂",
+            "effect": "技スロット+1"
+          }
+        ],
+        "common": [
+          {
+            "id": "common_002",
+            "name": "鋼の体躯",
+            "effect": "防御+20"
+          },
+          {
+            "id": "common_005",
+            "name": "生命力",
+            "effect": "HP+50"
+          },
+          {
+            "id": "common_018",
+            "name": "鈍足の誇り",
+            "effect": "素早さ<相手時与ダメ+25%"
+          }
+        ]
+      },
+      "skill_pool": {
+        "initial_skills": [
+          {
+            "id": "var_earth_001",
+            "name": "ストーンショット",
+            "learn_level": 1
+          },
+          {
+            "id": "buff_earth_001",
+            "name": "堅守",
+            "learn_level": 1
+          }
+        ],
+        "learnable_skills": [
+          {
+            "id": "chris_001",
+            "name": "結晶槍",
+            "learn_level": 5,
+            "cost": 3,
+            "power": "B",
+            "element": "earth",
+            "effect": "後攻時威力+30%"
+          },
+          {
+            "id": "cycle_earth_001",
+            "name": "砂塵返し",
+            "learn_level": 12,
+            "note": "v5.1追加: サイクル技"
+          },
+          {
+            "id": "chris_002",
+            "name": "結晶壁",
+            "learn_level": 15,
+            "cost": 2,
+            "power": "-",
+            "element": "earth",
+            "effect": "3T被ダメ-30%"
+          },
+          {
+            "id": "rear_phy_002",
+            "name": "報復",
+            "learn_level": 22,
+            "note": "v7.1追加: 後攻技"
+          },
+          {
+            "id": "chris_003",
+            "name": "結晶崩壊",
+            "learn_level": 25,
+            "cost": 3,
+            "power": "A",
+            "element": "earth",
+            "effect": "コスト-1、後攻時威力+30%"
+          },
+          {
+            "id": "cmn_sup_004",
+            "name": "守護陣",
+            "learn_level": 30
+          },
+          {
+            "id": "var_fire_001",
+            "name": "業炎",
+            "learn_level": 50,
+            "note": "v7.1ミュータント強化: 全属性技習得"
+          },
+          {
+            "id": "var_water_001",
+            "name": "アクアボール",
+            "learn_level": 52,
+            "note": "v7.1ミュータント強化"
+          },
+          {
+            "id": "var_thunder_001",
+            "name": "天雷",
+            "learn_level": 54,
+            "note": "v7.1ミュータント強化"
+          },
+          {
+            "id": "var_wind_001",
+            "name": "烈風",
+            "learn_level": 56,
+            "note": "v7.1ミュータント強化"
+          },
+          {
+            "id": "var_light_001",
+            "name": "裁きの光",
+            "learn_level": 58,
+            "note": "v7.1ミュータント強化"
+          },
+          {
+            "id": "var_dark_001",
+            "name": "ナイトメア",
+            "learn_level": 60,
+            "note": "v7.1ミュータント強化"
+          }
+        ],
+        "ultimate": {
+          "id": "ult_chris",
+          "name": "結晶爆裂",
+          "learn_level": 40,
+          "cost": 4,
+          "power_rank": "S",
+          "power_value": 150,
+          "element": "earth",
+          "effect": "後攻時SS威力+相手防御↓↓"
+        }
+      }
+    },
+    {
+      "monster_id": "mon_027",
+      "name": "魔導師メルラン",
+      "rarity": 3,
+      "species": "human",
+      "element": "none",
+      "role": "魔力型オールラウンダー",
+      "base_stats": {
+        "hp": 65,
+        "attack": 40,
+        "defense": 50,
+        "magic": 95,
+        "speed": 85
+      },
+      "ability_pool": {
+        "rare": [
+          {
+            "id": "star3_007",
+            "name": "七色の力",
+            "effect": "技属性ランダム化、タイプ一致+5%"
+          },
+          {
+            "id": "rare_003",
+            "name": "装備マスター",
+            "effect": "装備スロット+1"
+          }
+        ],
+        "common": [
+          {
+            "id": "common_003",
+            "name": "魔力の素質",
+            "effect": "魔力+20"
+          },
+          {
+            "id": "common_004",
+            "name": "俊足",
+            "effect": "素早さ+20"
+          },
+          {
+            "id": "common_006",
+            "name": "先手必勝",
+            "effect": "初ターン与ダメ+25%"
+          }
+        ]
+      },
+      "skill_pool": {
+        "initial_skills": [
+          {
+            "id": "cmn_phy_003",
+            "name": "疾風撃",
+            "learn_level": 1
+          },
+          {
+            "id": "cmn_sup_003",
+            "name": "集中",
+            "learn_level": 1
+          }
+        ],
+        "learnable_skills": [
+          {
+            "id": "merlan_001",
+            "name": "魔弾",
+            "learn_level": 5,
+            "cost": 1,
+            "power": "C",
+            "element": "none",
+            "effect": "属性ランダム"
+          },
+          {
+            "id": "var_fire_001",
+            "name": "業炎",
+            "learn_level": 10
+          },
+          {
+            "id": "var_water_001",
+            "name": "アクアボール",
+            "learn_level": 12
+          },
+          {
+            "id": "var_thunder_001",
+            "name": "天雷",
+            "learn_level": 14
+          },
+          {
+            "id": "merlan_002",
+            "name": "魔法陣",
+            "learn_level": 18,
+            "cost": 2,
+            "power": "-",
+            "element": "none",
+            "effect": "自分魔力↑↑"
+          },
+          {
+            "id": "var_wind_001",
+            "name": "烈風",
+            "learn_level": 20
+          },
+          {
+            "id": "var_light_001",
+            "name": "裁きの光",
+            "learn_level": 22
+          },
+          {
+            "id": "var_dark_001",
+            "name": "ナイトメア",
+            "learn_level": 24
+          },
+          {
+            "id": "merlan_003",
+            "name": "七彩砲",
+            "learn_level": 30,
+            "cost": 3,
+            "power": "A",
+            "element": "none",
+            "effect": "ランダム属性+相性判定2回（有利採用）"
+          }
+        ],
+        "ultimate": {
+          "id": "ult_merlan",
+          "name": "全属性魔法",
+          "learn_level": 40,
+          "cost": 4,
+          "power_rank": "S",
+          "power_value": 150,
+          "element": "none",
+          "effect": "7属性ランダム+最も有利な属性で攻撃"
+        }
+      }
+    },
+    {
+      "monster_id": "mon_028",
+      "name": "癒光セラ",
+      "rarity": 3,
+      "species": "angel",
+      "element": "light",
+      "role": "サポート特化ヒーラー",
+      "base_stats": {
+        "hp": 80,
+        "attack": 35,
+        "defense": 60,
+        "magic": 80,
+        "speed": 75
+      },
+      "ability_pool": {
+        "rare": [
+          {
+            "id": "star3_005",
+            "name": "聖なる守護",
+            "effect": "味方登場時HP15%回復、毎T自分HP3%回復"
+          },
+          {
+            "id": "species_001",
+            "name": "聖なるオーラ",
+            "effect": "回復技効果+30%"
+          }
+        ],
+        "common": [
+          {
+            "id": "common_003",
+            "name": "魔力の素質",
+            "effect": "魔力+20"
+          },
+          {
+            "id": "common_010",
+            "name": "生命の息吹",
+            "effect": "毎ターンHP15回復"
+          },
+          {
+            "id": "common_011",
+            "name": "状態異常耐性",
+            "effect": "状態異常付与率-20%"
+          }
+        ]
+      },
+      "skill_pool": {
+        "initial_skills": [
+          {
+            "id": "var_light_001",
+            "name": "裁きの光",
+            "learn_level": 1
+          },
+          {
+            "id": "buff_light_001",
+            "name": "癒月",
+            "learn_level": 1
+          }
+        ],
+        "learnable_skills": [
+          {
+            "id": "sera_001",
+            "name": "癒しの光",
+            "learn_level": 5,
+            "cost": 2,
+            "power": "-",
+            "element": "light",
+            "effect": "味方HP35%回復"
+          },
+          {
+            "id": "spc_light_001",
+            "name": "閃光",
+            "learn_level": 10
+          },
+          {
+            "id": "cycle_light_001",
+            "name": "光の帰還",
+            "learn_level": 12,
+            "note": "v5.1追加: サイクル技"
+          },
+          {
+            "id": "sera_002",
+            "name": "祝福",
+            "learn_level": 15,
+            "cost": 2,
+            "power": "-",
+            "element": "light",
+            "effect": "味方状態異常解除+防御↑"
+          },
+          {
+            "id": "buff_light_002",
+            "name": "光の障壁",
+            "learn_level": 20
+          },
+          {
+            "id": "sera_003",
+            "name": "聖域",
+            "learn_level": 25,
+            "cost": 3,
+            "power": "-",
+            "element": "light",
+            "effect": "3T味方毎THP10%回復"
+          },
+          {
+            "id": "spd_001",
+            "name": "順風（全体）",
+            "learn_level": 30,
+            "note": "v7.1追加: 速度操作技。素早さ80以下でのみ使用可能"
+          },
+          {
+            "id": "rear_mag_001",
+            "name": "魔力返し",
+            "learn_level": 32,
+            "note": "v7.1追加: 後攻技"
+          },
+          {
+            "id": "buff_wind_002",
+            "name": "翼の休息",
+            "learn_level": 50,
+            "note": "意外性・風属性"
+          }
+        ],
+        "ultimate": {
+          "id": "ult_sera",
+          "name": "聖なる癒し",
+          "learn_level": 40,
+          "cost": 4,
+          "power_rank": "-",
+          "power_value": 0,
+          "element": "light",
+          "effect": "味方HP50%回復+全状態異常解除+3T回復効果+20%"
+        }
+      }
+    },
+    {
+      "monster_id": "mon_029",
+      "name": "要塞タロス",
+      "rarity": 3,
+      "species": "mechanoid",
+      "element": "earth",
+      "role": "物理型タンク",
+      "base_stats": {
+        "hp": 100,
+        "attack": 65,
+        "defense": 95,
+        "magic": 30,
+        "speed": 55
+      },
+      "ability_pool": {
+        "rare": [
+          {
+            "id": "talos_unique",
+            "name": "鉄壁",
+            "effect": "HP80%以上で被ダメ-20%"
+          },
+          {
+            "id": "species_005",
+            "name": "機械の体",
+            "effect": "防御+20%、状態異常弱点"
+          }
+        ],
+        "common": [
+          {
+            "id": "common_002",
+            "name": "鋼の体躯",
+            "effect": "防御+20"
+          },
+          {
+            "id": "common_005",
+            "name": "生命力",
+            "effect": "HP+50"
+          },
+          {
+            "id": "common_008",
+            "name": "粘り強さ",
+            "effect": "HP30%以下で被ダメ-25%"
+          }
+        ]
+      },
+      "skill_pool": {
+        "initial_skills": [
+          {
+            "id": "var_earth_001",
+            "name": "ストーンショット",
+            "learn_level": 1
+          },
+          {
+            "id": "cmn_sup_001",
+            "name": "威圧",
+            "learn_level": 1
+          }
+        ],
+        "learnable_skills": [
+          {
+            "id": "talos_001",
+            "name": "鉄壁モード",
+            "learn_level": 5,
+            "cost": 3,
+            "power": "-",
+            "element": "earth",
+            "effect": "3T被ダメ-50%"
+          },
+          {
+            "id": "cycle_earth_001",
+            "name": "砂塵返し",
+            "learn_level": 12,
+            "note": "v5.1追加: サイクル技"
+          },
+          {
+            "id": "talos_002",
+            "name": "要塞砲",
+            "learn_level": 15,
+            "cost": 4,
+            "power": "S",
+            "element": "earth",
+            "effect": "後攻時SS威力"
+          },
+          {
+            "id": "buff_earth_001",
+            "name": "堅守",
+            "learn_level": 20
+          },
+          {
+            "id": "rear_phy_002",
+            "name": "報復",
+            "learn_level": 22,
+            "note": "v7.1追加: 後攻技"
+          },
+          {
+            "id": "talos_003",
+            "name": "装甲展開",
+            "learn_level": 25,
+            "cost": 2,
+            "power": "-",
+            "element": "earth",
+            "effect": "自分防御↑↑+HP10%回復"
+          },
+          {
+            "id": "var_thunder_001",
+            "name": "天雷",
+            "learn_level": 50,
+            "note": "意外性・雷属性"
+          }
+        ],
+        "ultimate": {
+          "id": "ult_talos",
+          "name": "要塞崩撃",
+          "learn_level": 40,
+          "cost": 4,
+          "power_rank": "SS",
+          "power_value": 200,
+          "element": "earth",
+          "effect": "後攻時SSS威力+自分防御↓↓"
+        }
+      }
+    },
+    {
+      "monster_id": "mon_030",
+      "name": "深淵ゼラ",
+      "rarity": 3,
+      "species": "mutant",
+      "element": "water",
+      "role": "魔力型特殊アタッカー",
+      "base_stats": {
+        "hp": 75,
+        "attack": 45,
+        "defense": 55,
+        "magic": 90,
+        "speed": 65
+      },
+      "ability_pool": {
+        "rare": [
+          {
+            "id": "star3_006",
+            "name": "深淵の呼び声",
+            "effect": "自分初期コスト+1"
+          },
+          {
+            "id": "species_007",
+            "name": "変幻の魂",
+            "effect": "技スロット+1"
+          }
+        ],
+        "common": [
+          {
+            "id": "common_003",
+            "name": "魔力の素質",
+            "effect": "魔力+20"
+          },
+          {
+            "id": "common_005",
+            "name": "生命力",
+            "effect": "HP+50"
+          },
+          {
+            "id": "common_015",
+            "name": "逆転のオーラ",
+            "effect": "相手HP>自分HP時与ダメ+25%"
+          }
+        ]
+      },
+      "skill_pool": {
+        "initial_skills": [
+          {
+            "id": "var_water_001",
+            "name": "アクアボール",
+            "learn_level": 1
+          },
+          {
+            "id": "pri_dark_001",
+            "name": "影縫い",
+            "learn_level": 1
+          }
+        ],
+        "learnable_skills": [
+          {
+            "id": "zela_001",
+            "name": "深海の圧力",
+            "learn_level": 5,
+            "cost": 2,
+            "power": "B",
+            "element": "water",
+            "effect": "防御↓"
+          },
+          {
+            "id": "zela_002",
+            "name": "深淵の触手",
+            "learn_level": 15,
+            "cost": 2,
+            "power": "D",
+            "element": "dark",
+            "effect": "拘束確定",
+            "balance_note": "v7.0: 威力C→D、拘束40%→100%"
+          },
+          {
+            "id": "var_dark_001",
+            "name": "ナイトメア",
+            "learn_level": 20
+          },
+          {
+            "id": "zela_003",
+            "name": "深淵の渦",
+            "learn_level": 25,
+            "cost": 6,
+            "power": "B",
+            "element": "water",
+            "effect": "相手コスト0化+2T交代不可"
+          },
+          {
+            "id": "field_time_001",
+            "name": "時空歪曲",
+            "learn_level": 32,
+            "note": "v7.1追加: トリックルーム"
+          },
+          {
+            "id": "var_fire_001",
+            "name": "業炎",
+            "learn_level": 50,
+            "note": "v7.1ミュータント強化: 全属性技習得"
+          },
+          {
+            "id": "var_water_001",
+            "name": "アクアボール",
+            "learn_level": 52,
+            "note": "v7.1ミュータント強化"
+          },
+          {
+            "id": "var_thunder_001",
+            "name": "天雷",
+            "learn_level": 54,
+            "note": "v7.1ミュータント強化"
+          },
+          {
+            "id": "var_wind_001",
+            "name": "烈風",
+            "learn_level": 56,
+            "note": "v7.1ミュータント強化"
+          },
+          {
+            "id": "var_light_001",
+            "name": "裁きの光",
+            "learn_level": 58,
+            "note": "v7.1ミュータント強化"
+          },
+          {
+            "id": "var_dark_001",
+            "name": "ナイトメア",
+            "learn_level": 60,
+            "note": "v7.1ミュータント強化"
+          }
+        ],
+        "ultimate": {
+          "id": "ult_zela",
+          "name": "深淵の支配",
+          "learn_level": 40,
+          "cost": 4,
+          "power_rank": "A",
+          "power_value": 110,
+          "element": "water",
+          "effect": "拘束確定+相手コスト-2",
+          "balance_note": "v7.0: 威力S→A、拘束80%→100%"
+        }
+      }
+    },
+    {
+      "monster_id": "mon_038",
+      "name": "深海魚シーラ",
+      "rarity": 3,
+      "species": "demon",
+      "element": "water",
+      "role": "デバフ型（圧力・防御低下）",
+      "base_stats": {
+        "hp": 80,
+        "attack": 50,
+        "defense": 60,
+        "magic": 85,
+        "speed": 55
+      },
+      "ability_pool": {
+        "rare": [
+          {"id": "star3_008", "name": "深海の圧力", "effect": "相手の防御-15%（常時）"},
+          {"id": "species_002", "name": "闇の契約", "effect": "デバフ技成功率+25%"}
+        ],
+        "common": [
+          {"id": "common_003", "name": "魔力の素質", "effect": "魔力+20"},
+          {"id": "common_005", "name": "生命力", "effect": "HP+50"},
+          {"id": "common_018", "name": "鈍足の誇り", "effect": "素早さ<相手時与ダメ+25%"}
+        ]
+      },
+      "skill_pool": {
+        "initial_skills": [
+          {"id": "var_water_001", "name": "アクアボール", "learn_level": 1},
+          {"id": "cmn_sup_001", "name": "威圧", "learn_level": 1}
+        ],
+        "learnable_skills": [
+          {"id": "sheera_001", "name": "深海の牙", "learn_level": 5, "cost": 3, "power": "B", "element": "water", "effect": "防御↓↓"},
+          {"id": "sts_dark_001", "name": "呪詛", "learn_level": 10},
+          {"id": "sheera_002", "name": "暗黒水流", "learn_level": 15, "cost": 4, "power": "B", "element": "dark", "effect": "恐怖確定"},
+          {"id": "var_dark_001", "name": "ナイトメア", "learn_level": 20},
+          {"id": "sheera_003", "name": "深淵の誘い", "learn_level": 28, "cost": 3, "power": "-", "element": "water", "effect": "相手交代不可（2T）+防御↓"},
+          {"id": "field_time_001", "name": "時空歪曲", "learn_level": 35, "note": "トリックルーム"},
+          {"id": "var_thunder_001", "name": "天雷", "learn_level": 50, "note": "意外性・雷属性"}
+        ],
+        "ultimate": {
+          "id": "ult_sheera",
+          "name": "深淵の支配",
+          "learn_level": 40,
+          "cost": 4,
+          "power_rank": "A",
+          "power_value": 110,
+          "element": "water",
+          "effect": "防御↓↓↓+拘束確定+暗闘フィールド設置"
+        }
+      }
+    }
+  ]
+}

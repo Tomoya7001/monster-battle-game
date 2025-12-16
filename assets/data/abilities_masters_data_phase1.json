@@ -1,0 +1,1032 @@
+{
+    "version": "7.3",
+    "created_at": "2025-12-04",
+    "updated_at": "2025-12-13",
+    "description": "Phase1 アビリティマスターデータ v7.3（タマモ・スライム改修）",
+    "changelog": {
+        "v7.3": "タマモ: 狐火の魂を状態異常シナジーに変更、呪縛の炎・妖狐の守り追加、霊体削除。スライム: 無限適応を耐性+25%固定+HP5%回復に変更、属性変化・捕食本能追加、全属性技追加",
+        "v7.2": "★5アビリティ強化: ミカ復活30%、ヴェル吸収15%、グラム4T、テュール与ダメ+15%/被ダメ+10%、アーサークリ率+25%、タマモ炎+30%/火傷+15%",
+        "v5.0": "状態異常100%確定化、装備マスター調整、新アビリティ追加、バフシステム強化、鈍足キャラ救済",
+        "v5.1": "テュール下方修正、★2弱キャラ上方修正（ノエル/カグラ/イム）",
+        "v7.1": "ビットマンアビリティ修正: 量産機の絆→量産型の意地（常時防御+10%、メカ時全ステ+15%）"
+    },
+    "game_rules": {
+        "initial_cost": 4,
+        "max_cost": 7,
+        "cost_recovery_per_turn": 2,
+        "cost_floor": 0,
+        "switch_resets": [
+            "cost_to_4",
+            "buffs",
+            "debuffs"
+        ],
+        "switch_preserves": [
+            "status_ailments_except_stun",
+            "hp",
+            "skill_usage_count"
+        ],
+        "switch_cost": 4,
+        "forced_switch_pierces_trap": true,
+        "status_ailment_rules": {
+            "inflict_rate": 100,
+            "persists_on_switch": true,
+            "exception": "stun",
+            "stun_duration": 1,
+            "default_duration": 3,
+            "bind_duration": 2,
+            "seal_duration": 2,
+            "seal_target": "last_used_skill",
+            "damage_per_turn": 3,
+            "stat_reduction": 5,
+            "paralysis_speed_reduction": 20,
+            "nightmare_heal_reduction": 50
+        },
+        "buff_rules": {
+            "per_stage_percent": 25,
+            "max_stages": 6,
+            "duration": 6,
+            "buff_skill_cost_reduction": 1
+        },
+        "consecutive_damage_rules": {
+            "threshold": 4,
+            "bonus_per_hit": 10,
+            "reset_on_heal": true,
+            "description": "連続4回以上ダメージを受けると、以降+10%ずつダメージ増加。回復でリセット"
+        },
+        "slow_character_rules": {
+            "speed_threshold": 60,
+            "passive_name": "重装の構え",
+            "hp_bonus_percent": 15,
+            "priority_move_damage_reduction": 20,
+            "description": "素早さ60以下のキャラはHP+15%、先制技被ダメ-20%"
+        }
+    },
+    "categories": {
+        "rare": "レアアビリティ（強力、戦略的）",
+        "common": "コモンアビリティ（汎用的、戦術的）",
+        "species_exclusive": "種族専用アビリティ",
+        "element_change": "属性変更アビリティ",
+        "star5_exclusive": "★5モンスター専用アビリティ",
+        "star4_exclusive": "★4モンスター専用アビリティ",
+        "star3_exclusive": "★3モンスター専用アビリティ",
+        "star2_exclusive": "★2モンスター専用アビリティ"
+    },
+    "abilities": {
+        "rare": [
+            {
+                "ability_id": "rare_001",
+                "name": "捕縛の鎖",
+                "effect": "相手は交代不可",
+                "effect_type": "switch_block",
+                "description": "有利対面をロックし、相手の逃げ道を塞ぐ"
+            },
+            {
+                "ability_id": "rare_002",
+                "name": "身代わりの呪符",
+                "effect": "最初に受ける攻撃はHP10%ダメージのみ（バトル中1回）",
+                "effect_type": "damage_cap",
+                "usage_limit": 1,
+                "description": "初撃を軽減し、行動を保証する"
+            },
+            {
+                "ability_id": "rare_003",
+                "name": "装備マスター",
+                "effect": "装備スロット+1、全ステータス-15",
+                "effect_type": "equipment_slot_boost",
+                "slot_bonus": 1,
+                "stat_penalty": -15,
+                "description": "装備枠が増えるがステータスが下がるトレードオフ",
+                "balance_note": "v5.0: 全ステ-15のデメリット追加"
+            },
+            {
+                "ability_id": "rare_004",
+                "name": "属性の壁",
+                "effect": "弱点属性ダメージを等倍化",
+                "effect_type": "type_resistance",
+                "description": "弱点を消し、安定性を高める"
+            },
+            {
+                "ability_id": "rare_005",
+                "name": "属性吸収",
+                "effect": "弱点属性技を受けるとHP15%回復",
+                "effect_type": "type_absorb",
+                "heal_percentage": 15,
+                "description": "弱点を強みに変える"
+            },
+            {
+                "ability_id": "rare_006",
+                "name": "無色の霧",
+                "effect": "相手の技を全て無属性化",
+                "effect_type": "type_nullify",
+                "description": "属性相性を無効化し、純粋なステータス勝負に持ち込む"
+            },
+            {
+                "ability_id": "rare_007",
+                "name": "貫通の眼",
+                "effect": "相手のアビリティを無視して攻撃",
+                "effect_type": "ability_ignore",
+                "description": "防御系アビリティを貫通する"
+            },
+            {
+                "ability_id": "rare_008",
+                "name": "虚無の存在",
+                "effect": "自分のアビリティ無効、相手のアビリティも無効",
+                "effect_type": "ability_nullify_both",
+                "description": "アビリティ戦を拒否し、素のスペック勝負"
+            },
+            {
+                "ability_id": "rare_009",
+                "name": "コピー",
+                "effect": "登場時、相手のアビリティをコピー",
+                "effect_type": "ability_copy",
+                "trigger": "on_entry",
+                "description": "相手の強みを奪い取る"
+            },
+            {
+                "ability_id": "rare_010",
+                "name": "結界粉砕",
+                "effect": "登場時、相手のバフ全解除",
+                "effect_type": "buff_clear",
+                "trigger": "on_entry",
+                "description": "積みアタッカーへのカウンター"
+            },
+            {
+                "ability_id": "rare_011",
+                "name": "残響",
+                "effect": "交代時、相手の素早さ1段階↓",
+                "effect_type": "debuff_on_switch",
+                "trigger": "on_switch_out",
+                "stat": "speed",
+                "stages": -1,
+                "description": "交代するだけで相手を弱体化"
+            },
+            {
+                "ability_id": "rare_012",
+                "name": "奇襲の心得",
+                "effect": "交代登場ターン、必ず先制",
+                "effect_type": "priority_on_entry",
+                "trigger": "on_entry",
+                "description": "交代から奇襲攻撃を仕掛ける"
+            },
+            {
+                "ability_id": "rare_013",
+                "name": "コスト浸食",
+                "effect": "攻撃命中時、相手の次ターンコスト回復-1",
+                "effect_type": "cost_debuff",
+                "trigger": "on_hit",
+                "value": -1,
+                "description": "相手のテンポを奪い、大技を封じる"
+            },
+            {
+                "ability_id": "rare_014",
+                "name": "暴走起動",
+                "effect": "初期コスト+2、毎ターン回復量-1",
+                "effect_type": "cost_manipulation",
+                "initial_cost_bonus": 2,
+                "recovery_penalty": -1,
+                "description": "初手の爆発力と引き換えに持久力を犠牲"
+            },
+            {
+                "ability_id": "rare_015",
+                "name": "属性変化",
+                "effect": "相手が直前に使った技の属性に自分の属性が変化",
+                "effect_type": "type_shift",
+                "trigger": "on_hit_received",
+                "description": "弱点をずらし続ける"
+            },
+            {
+                "ability_id": "rare_016",
+                "name": "威圧領域",
+                "effect": "相手のコスト1技を無効化",
+                "effect_type": "low_cost_nullify",
+                "cost_threshold": 1,
+                "description": "低コスト技による牽制を封じる"
+            },
+            {
+                "ability_id": "rare_017",
+                "name": "刻印",
+                "effect": "被弾時、相手のコスト回復-1（バトル中1回）",
+                "effect_type": "cost_debuff_once",
+                "trigger": "on_hit_received",
+                "usage_limit": 1,
+                "description": "攻撃してきた相手にペナルティを与える"
+            },
+            {
+                "ability_id": "rare_018",
+                "name": "呪縛の躯",
+                "effect": "接触技を受けた時、相手は2ターン交代不可",
+                "effect_type": "switch_block_on_contact",
+                "trigger": "on_contact_received",
+                "duration": 2,
+                "description": "物理アタッカーを対面に縛り付ける"
+            },
+            {
+                "ability_id": "rare_019",
+                "name": "最後の切り札",
+                "effect": "奥義威力+50%、使用後HP1になる",
+                "effect_type": "ultimate_boost",
+                "damage_boost": 50,
+                "hp_after": 1,
+                "description": "決死の覚悟で放つ最強の一撃"
+            },
+            {
+                "ability_id": "rare_020",
+                "name": "共鳴の波",
+                "effect": "ターン終了時、控えも含め全員HP3%回復",
+                "effect_type": "party_regen",
+                "heal_percentage": 3,
+                "trigger": "turn_end",
+                "description": "パーティ全体を少しずつ回復"
+            },
+            {
+                "ability_id": "rare_021",
+                "name": "鈍重の覇気",
+                "effect": "素早さが相手より低い時、コスト3以下の技で必ず先制",
+                "effect_type": "slow_priority",
+                "condition": "speed_lower",
+                "cost_threshold": 3,
+                "description": "遅いキャラが先手を取れるように",
+                "balance_note": "v5.0: 新規追加（タンク救済）"
+            },
+            {
+                "ability_id": "rare_022",
+                "name": "戦術指揮",
+                "effect": "バフ技使用時、自分もHP8%回復",
+                "effect_type": "buff_heal",
+                "trigger": "on_buff_skill",
+                "heal_percentage": 8,
+                "description": "サポーターの価値向上",
+                "balance_note": "v5.0: 新規追加（サポート救済）"
+            }
+        ],
+        "common": [
+            {
+                "ability_id": "common_001",
+                "name": "畏怖の波動",
+                "effect": "登場時、相手の攻撃1段階↓",
+                "effect_type": "debuff_on_entry",
+                "trigger": "on_entry",
+                "stat": "attack",
+                "stages": -1,
+                "description": "交代で相手の火力を削ぐ"
+            },
+            {
+                "ability_id": "common_002",
+                "name": "凍気の纏い",
+                "effect": "登場時、相手の素早さ1段階↓",
+                "effect_type": "debuff_on_entry",
+                "trigger": "on_entry",
+                "stat": "speed",
+                "stages": -1,
+                "description": "交代で先手を取り返す"
+            },
+            {
+                "ability_id": "common_003",
+                "name": "号令の旗",
+                "effect": "登場時、自分の素早さ1段階↑",
+                "effect_type": "buff_on_entry",
+                "trigger": "on_entry",
+                "stat": "speed",
+                "stages": 1,
+                "description": "交代から先手を確保"
+            },
+            {
+                "ability_id": "common_004",
+                "name": "離脱の風",
+                "effect": "不利属性相手に先制交代可能",
+                "effect_type": "priority_switch",
+                "condition": "type_disadvantage",
+                "description": "不利対面から安全に撤退"
+            },
+            {
+                "ability_id": "common_005",
+                "name": "追撃本能",
+                "effect": "相手交代時、交代先にHP10%ダメージ",
+                "effect_type": "pursuit_damage",
+                "trigger": "on_opponent_switch",
+                "damage_percentage": 10,
+                "description": "交代を牽制する"
+            },
+            {
+                "ability_id": "common_006",
+                "name": "搾取",
+                "effect": "相手を倒した時、コスト+2",
+                "effect_type": "cost_gain_on_kill",
+                "trigger": "on_kill",
+                "cost_gain": 2,
+                "description": "連続撃破のリターン"
+            },
+            {
+                "ability_id": "common_007",
+                "name": "節制の術",
+                "effect": "コスト4以上の技のコスト-1（奥義除く）",
+                "effect_type": "cost_reduction",
+                "cost_threshold": 4,
+                "reduction": 1,
+                "exclude_ultimate": true,
+                "description": "重い技を使いやすく"
+            },
+            {
+                "ability_id": "common_008",
+                "name": "帯電被膜",
+                "effect": "接触技を受けた時、麻痺付与",
+                "effect_type": "contact_status",
+                "trigger": "on_contact_received",
+                "status": "paralysis",
+                "description": "物理アタッカーへの牽制",
+                "balance_note": "v5.0: 確率削除（100%確定）"
+            },
+            {
+                "ability_id": "common_009",
+                "name": "瘴気の纏い",
+                "effect": "接触技を受けた時、瘴気付与",
+                "effect_type": "contact_status",
+                "trigger": "on_contact_received",
+                "status": "miasma",
+                "description": "物理アタッカーへの牽制",
+                "balance_note": "v5.0: 確率削除（100%確定）"
+            },
+            {
+                "ability_id": "common_010",
+                "name": "感染体質",
+                "effect": "状態異常を受けた時、相手にも同じ状態異常",
+                "effect_type": "status_reflect",
+                "trigger": "on_status_received",
+                "description": "状態異常への抑止力"
+            },
+            {
+                "ability_id": "common_011",
+                "name": "浄化の息吹",
+                "effect": "ターン終了時、状態異常が50%で自然回復",
+                "effect_type": "status_recovery",
+                "trigger": "turn_end",
+                "probability": 50,
+                "description": "状態異常に強い"
+            },
+            {
+                "ability_id": "common_012",
+                "name": "反射の鎧",
+                "effect": "被弾時、ダメージの20%を反射",
+                "effect_type": "damage_reflect",
+                "trigger": "on_hit_received",
+                "reflect_percentage": 20,
+                "description": "攻撃を躊躇させる"
+            },
+            {
+                "ability_id": "common_013",
+                "name": "最期の呪詛",
+                "effect": "倒された時、相手にHP20%ダメージ",
+                "effect_type": "revenge_damage",
+                "trigger": "on_death",
+                "damage_percentage": 20,
+                "description": "倒すリスクを与える"
+            },
+            {
+                "ability_id": "common_014",
+                "name": "先陣の誉れ",
+                "effect": "最初に場に出た時、与ダメ+25%（そのターンのみ）",
+                "effect_type": "first_entry_boost",
+                "trigger": "first_entry",
+                "damage_boost": 25,
+                "duration": 1,
+                "description": "先発の初手火力"
+            },
+            {
+                "ability_id": "common_015",
+                "name": "必殺の型",
+                "effect": "クリティカル率+25%、被ダメ+10%",
+                "effect_type": "risk_reward",
+                "critical_boost": 25,
+                "damage_received_boost": 10,
+                "description": "ハイリスク・ハイリターン"
+            },
+            {
+                "ability_id": "common_016",
+                "name": "猪突猛進",
+                "effect": "与ダメ+20%、被ダメ+20%",
+                "effect_type": "risk_reward",
+                "damage_boost": 20,
+                "damage_received_boost": 20,
+                "description": "攻撃的なリスクリターン"
+            },
+            {
+                "ability_id": "common_017",
+                "name": "背水の陣",
+                "effect": "HP30%以下で与ダメ+40%",
+                "effect_type": "conditional_damage_boost",
+                "condition": "hp_below_30",
+                "damage_boost": 40,
+                "description": "逆転の力"
+            },
+            {
+                "ability_id": "common_018",
+                "name": "鈍足の誇り",
+                "effect": "素早さが相手より低い時、与ダメ+25%",
+                "effect_type": "conditional_damage_boost",
+                "condition": "speed_lower",
+                "damage_boost": 25,
+                "description": "鈍足をメリットに変える"
+            },
+            {
+                "ability_id": "common_019",
+                "name": "守りの構え",
+                "effect": "HP50%以上で被ダメ-20%",
+                "effect_type": "conditional_damage_reduction",
+                "condition": "hp_above_50",
+                "damage_reduction": 20,
+                "description": "序盤の安定感"
+            },
+            {
+                "ability_id": "common_020",
+                "name": "再生細胞",
+                "effect": "毎ターン終了時HP8%回復",
+                "effect_type": "regeneration",
+                "trigger": "turn_end",
+                "heal_percentage": 8,
+                "description": "長期戦向け"
+            }
+        ],
+        "species_exclusive": [
+            {
+                "ability_id": "species_001",
+                "name": "聖なるオーラ",
+                "effect": "回復技効果+30%",
+                "effect_type": "healing_boost",
+                "value": 30,
+                "species": "angel",
+                "description": "エンジェル種族の回復特化"
+            },
+            {
+                "ability_id": "species_002",
+                "name": "闇の契約",
+                "effect": "デバフ技成功率+25%",
+                "effect_type": "debuff_boost",
+                "value": 25,
+                "species": "demon",
+                "description": "デーモン種族の妨害特化"
+            },
+            {
+                "ability_id": "species_003",
+                "name": "適応力",
+                "effect": "同じ技を2回受けると、その技の被ダメ-50%",
+                "effect_type": "adaptive_resistance",
+                "reduction": 50,
+                "species": "human",
+                "description": "ヒューマン種族の学習能力"
+            },
+            {
+                "ability_id": "species_004",
+                "name": "霊体",
+                "effect": "状態異常効果時間-1ターン",
+                "effect_type": "status_duration_reduction",
+                "value": -1,
+                "species": "spirit",
+                "description": "スピリット種族の状態異常耐性",
+                "balance_note": "v5.0: 100%確定に伴い効果変更（付与率-30%→持続-1T）"
+            },
+            {
+                "ability_id": "species_005",
+                "name": "機械の体",
+                "effect": "防御+20%、状態異常効果時間+1ターン",
+                "effect_type": "stat_boost_with_weakness",
+                "defense_boost": 20,
+                "status_duration_increase": 1,
+                "species": "mechanoid",
+                "description": "メカノイド種族の硬さと弱点",
+                "balance_note": "v5.0: 100%確定に伴い効果変更（付与率+20%→持続+1T）"
+            },
+            {
+                "ability_id": "species_006",
+                "name": "竜の威厳",
+                "effect": "攻撃技威力+10%",
+                "effect_type": "damage_boost",
+                "value": 10,
+                "species": "dragon",
+                "description": "ドラゴン種族の火力",
+                "balance_note": "v5.1: +15%→+10%に下方修正"
+            },
+            {
+                "ability_id": "species_007",
+                "name": "変幻の魂",
+                "effect": "技スロット+1（4個→5個）",
+                "effect_type": "skill_slot_boost",
+                "bonus_slots": 1,
+                "species": "mutant",
+                "description": "ミュータント種族の多様性"
+            }
+        ],
+        "star5_exclusive": [
+            {
+                "ability_id": "star5_001",
+                "name": "女神の祝福",
+                "effect": "HP70%以上で瀕死ダメージを受けた時、HP30%で復活（バトル中1回）",
+                "effect_type": "survival",
+                "trigger": "on_lethal_damage",
+                "condition": "hp_above_70",
+                "revive_hp": 30,
+                "usage_limit": 1,
+                "exclusive_monster": "mika",
+                "monster_name": "三大天ミカ",
+                "balance_note": "v7.1: 復活HP 15%→30%"
+            },
+            {
+                "ability_id": "star5_002",
+                "name": "終わりなき飢え",
+                "effect": "攻撃時HP15%吸収、撃破時さらにHP20%回復",
+                "effect_type": "lifesteal",
+                "drain_percentage": 15,
+                "kill_heal_percentage": 20,
+                "exclusive_monster": "vel",
+                "monster_name": "暴食ヴェル",
+                "balance_note": "v7.1: 吸収10%→15%"
+            },
+            {
+                "ability_id": "star5_003",
+                "name": "アビリティ封じ",
+                "effect": "登場時から4T、相手アビリティ無効",
+                "effect_type": "ability_seal",
+                "trigger": "on_entry",
+                "duration": 4,
+                "exclusive_monster": "gram",
+                "monster_name": "裏の支配者グラム",
+                "balance_note": "v7.1: 効果3T→4T"
+            },
+            {
+                "ability_id": "star5_004",
+                "name": "暴君のオーラ",
+                "effect": "与ダメ+15%、被ダメ+10%",
+                "effect_type": "risk_reward",
+                "damage_boost": 15,
+                "damage_received_boost": 10,
+                "exclusive_monster": "tyr",
+                "monster_name": "竜帝テュール",
+                "balance_note": "v7.1: 与ダメ+10%→+15%、被ダメ+15%→+10%"
+            },
+            {
+                "ability_id": "star5_005",
+                "name": "剣聖の極意",
+                "effect": "クリティカル率+25%、クリティカル時攻撃↑1段階",
+                "effect_type": "critical_boost",
+                "critical_boost": 25,
+                "on_crit_buff": {
+                    "stat": "attack",
+                    "stages": 1
+                },
+                "exclusive_monster": "arthur",
+                "monster_name": "剣聖アーサー",
+                "balance_note": "v7.1: クリ率+20%→+25%"
+            },
+            {
+                "ability_id": "star5_006",
+                "name": "狐火の魂",
+                "effect": "状態異常中の相手に与ダメ+20%",
+                "effect_type": "status_damage_boost",
+                "damage_boost": 20,
+                "condition": "opponent_has_status",
+                "exclusive_monster": "tamamo",
+                "monster_name": "九尾タマモ",
+                "balance_note": "v7.3: 状態異常シナジー特化に変更"
+            },
+            {
+                "ability_id": "star5_008",
+                "name": "呪縛の炎",
+                "effect": "状態異常中の相手に每T HP5%ダメージ",
+                "effect_type": "status_dot",
+                "damage_percentage": 5,
+                "trigger": "turn_end",
+                "condition": "opponent_has_status",
+                "exclusive_monster": "tamamo",
+                "monster_name": "九尾タマモ",
+                "balance_note": "v7.3: 新規追加"
+            },
+            {
+                "ability_id": "star5_009",
+                "name": "妖狐の守り",
+                "effect": "状態異常中の相手からの被ダメ-15%",
+                "effect_type": "status_damage_reduction",
+                "damage_reduction": 15,
+                "condition": "opponent_has_status",
+                "exclusive_monster": "tamamo",
+                "monster_name": "九尾タマモ",
+                "balance_note": "v7.3: 新規追加"
+            },
+            {
+                "ability_id": "star5_007",
+                "name": "無限適応",
+                "effect": "被弾属性への耐性+25%、被弾時HP5%回復（累積なし）",
+                "effect_type": "adaptive_resistance_heal",
+                "resistance_gain": 25,
+                "heal_percentage": 5,
+                "trigger": "on_hit_received",
+                "exclusive_monster": "slime",
+                "monster_name": "国喰いスライム",
+                "balance_note": "v7.3: 累積廃止、耐性+25%固定、被弾時HP5%回復追加"
+            },
+            {
+                "ability_id": "star5_010",
+                "name": "属性変化",
+                "effect": "自分が使う技と同じ属性に変化（タイプ一致+20%が常に適用）",
+                "effect_type": "type_shift_on_attack",
+                "stab_bonus": 20,
+                "trigger": "on_skill_use",
+                "exclusive_monster": "slime",
+                "monster_name": "国喰いスライム",
+                "balance_note": "v7.3: 新規追加"
+            },
+            {
+                "ability_id": "star5_011",
+                "name": "捕食本能",
+                "effect": "敵を倒すとHP30%回復+全ステ1段階↑",
+                "effect_type": "kill_boost",
+                "heal_percentage": 30,
+                "all_stat_stages": 1,
+                "trigger": "on_kill",
+                "exclusive_monster": "slime",
+                "monster_name": "国喰いスライム",
+                "balance_note": "v7.3: 新規追加"
+            }
+        ],
+        "star4_exclusive": [
+            {
+                "ability_id": "star4_001",
+                "name": "ジェットエンジン",
+                "effect": "毎T素早さ+10（最大+50）",
+                "effect_type": "stacking_stat",
+                "trigger": "turn_end",
+                "stat": "speed",
+                "per_turn": 10,
+                "max_bonus": 50,
+                "exclusive_monster": "linto",
+                "monster_name": "機竜リント"
+            },
+            {
+                "ability_id": "star4_002",
+                "name": "聖鱗",
+                "effect": "味方登場時HP10%回復",
+                "effect_type": "team_heal",
+                "trigger": "on_ally_entry",
+                "heal_percentage": 10,
+                "exclusive_monster": "wurm",
+                "monster_name": "白竜ヴルム"
+            },
+            {
+                "ability_id": "star4_003",
+                "name": "海賊魂",
+                "effect": "先制攻撃時与ダメ+20%",
+                "effect_type": "conditional_damage",
+                "condition": "move_first",
+                "damage_boost": 20,
+                "exclusive_monster": "jack",
+                "monster_name": "海賊王ジャック"
+            },
+            {
+                "ability_id": "star4_004",
+                "name": "雷神の加護",
+                "effect": "雷技威力+20%",
+                "effect_type": "element_boost",
+                "element": "thunder",
+                "damage_boost": 20,
+                "exclusive_monster": "ram",
+                "monster_name": "雷神ラム",
+                "balance_note": "v5.0: 麻痺付与率+15%削除（100%確定のため）"
+            },
+            {
+                "ability_id": "star4_005",
+                "name": "竜姫の慈愛",
+                "effect": "回復技使用時、自分もHP10%回復",
+                "effect_type": "self_heal_on_support",
+                "trigger": "on_heal_skill",
+                "heal_percentage": 10,
+                "exclusive_monster": "eva",
+                "monster_name": "竜姫エヴァ"
+            },
+            {
+                "ability_id": "star4_006",
+                "name": "太陽の祝福",
+                "effect": "炎被ダメ-50%、炎技威力+15%、光技威力+10%",
+                "effect_type": "element_affinity",
+                "element": "fire",
+                "resistance": 50,
+                "fire_damage_boost": 15,
+                "light_damage_boost": 10,
+                "exclusive_monster": "honoo",
+                "monster_name": "太陽民ホノオ",
+                "balance_note": "v5.0: 光技威力+10%追加"
+            },
+            {
+                "ability_id": "star4_007",
+                "name": "夢魔の誘惑",
+                "effect": "登場時、相手に気絶付与",
+                "effect_type": "entry_status",
+                "trigger": "on_entry",
+                "status": "stun",
+                "exclusive_monster": "lilith",
+                "monster_name": "夢魔リリス",
+                "balance_note": "v5.0: 20%→100%確定"
+            },
+            {
+                "ability_id": "star4_008",
+                "name": "癒しの歌声",
+                "effect": "サポート技使用時、自分HP8%回復+次の攻撃威力+20%",
+                "effect_type": "support_boost",
+                "trigger": "on_support_skill",
+                "heal_percentage": 8,
+                "next_attack_boost": 20,
+                "exclusive_monster": "luria",
+                "monster_name": "歌姫ルリア",
+                "balance_note": "v5.0: HP5%→8%、攻撃+20%追加"
+            },
+            {
+                "ability_id": "star4_009",
+                "name": "呪符術師",
+                "effect": "サポート技が必ず先制",
+                "effect_type": "support_priority",
+                "exclusive_monster": "kyouka",
+                "monster_name": "呪符キョウカ"
+            }
+        ],
+        "star3_exclusive": [
+            {
+                "ability_id": "star3_001",
+                "name": "神速の翼",
+                "effect": "先制攻撃時クリ率+30%",
+                "effect_type": "conditional_critical",
+                "condition": "move_first",
+                "critical_boost": 30,
+                "exclusive_monster": "karasu",
+                "monster_name": "夜叉天狗カラス"
+            },
+            {
+                "ability_id": "star3_002",
+                "name": "雷鱗",
+                "effect": "雷被ダメ-50%、被弾時麻痺反撃、麻痺状態の相手へ与ダメ+15%",
+                "effect_type": "element_counter",
+                "element": "thunder",
+                "resistance": 50,
+                "counter_status": "paralysis",
+                "paralysis_damage_boost": 15,
+                "exclusive_monster": "fafna",
+                "monster_name": "雷竜ファフナ",
+                "balance_note": "v5.0: 反撃100%確定"
+            },
+            {
+                "ability_id": "star3_003",
+                "name": "翡翠の加護",
+                "effect": "HP50%以上で被ダメ-20%、回復技効果+20%",
+                "effect_type": "conditional_defense",
+                "condition": "hp_above_50",
+                "damage_reduction": 20,
+                "healing_boost": 20,
+                "exclusive_monster": "jade",
+                "monster_name": "翡翠竜ジェイド"
+            },
+            {
+                "ability_id": "star3_004",
+                "name": "凍てつく美貌",
+                "effect": "登場時、相手の素早さ2段階↓",
+                "effect_type": "entry_debuff",
+                "trigger": "on_entry",
+                "stat": "speed",
+                "stages": -2,
+                "exclusive_monster": "shirone",
+                "monster_name": "雪女シロネ"
+            },
+            {
+                "ability_id": "star3_005",
+                "name": "風の加護",
+                "effect": "登場時、自分の素早さ2段階↑+攻撃1段階↑",
+                "effect_type": "entry_buff",
+                "trigger": "on_entry",
+                "buffs": [
+                    {
+                        "stat": "speed",
+                        "stages": 2
+                    },
+                    {
+                        "stat": "attack",
+                        "stages": 1
+                    }
+                ],
+                "exclusive_monster": "sylphy",
+                "monster_name": "風唄シルフィ"
+            },
+            {
+                "ability_id": "star3_006",
+                "name": "煉獄の炎",
+                "effect": "火傷状態の相手への与ダメ+25%",
+                "effect_type": "conditional_damage",
+                "condition": "opponent_burned",
+                "damage_boost": 25,
+                "exclusive_monster": "asmo",
+                "monster_name": "欲望魔アスモ"
+            },
+            {
+                "ability_id": "star3_007",
+                "name": "不屈の闘志",
+                "effect": "HP50%以下で被ダメ-20%",
+                "effect_type": "conditional_defense",
+                "condition": "hp_below_50",
+                "damage_reduction": 20,
+                "exclusive_monster": "garm",
+                "monster_name": "拳闘士ガルム",
+                "balance_note": "v5.0: 装備マスターから変更"
+            },
+            {
+                "ability_id": "star3_008",
+                "name": "量産型の意地",
+                "effect": "常時防御+10%、味方にメカノイドがいると全ステ+15%",
+                "effect_type": "team_synergy_v2",
+                "base_defense_boost_percentage": 10,
+                "condition": "ally_mechanoid",
+                "synergy_all_stat_boost_percentage": 15,
+                "exclusive_monster": "bitman",
+                "monster_name": "量産型ビットマン",
+                "balance_note": "v7.1: 量産機の絆→量産型の意地。常時防御+10%、メカ時全ステ+15%"
+            },
+            {
+                "ability_id": "star3_009",
+                "name": "強欲の力",
+                "effect": "攻撃命中時、攻撃↑1段階（確定）。撃破時さらに攻撃↑+コスト+1",
+                "effect_type": "conditional_buff",
+                "trigger": "on_hit",
+                "stat": "attack",
+                "stages": 1,
+                "kill_bonus": {
+                    "attack_stages": 1,
+                    "cost_gain": 1
+                },
+                "exclusive_monster": "mamon",
+                "monster_name": "欲望魔マモン",
+                "balance_note": "v5.0: 30%確率→100%確定、撃破時コスト+1追加"
+            },
+            {
+                "ability_id": "star3_010",
+                "name": "結晶化",
+                "effect": "毎T防御+15（最大+75）、5段階到達時に与ダメ+15%",
+                "effect_type": "stacking_stat",
+                "trigger": "turn_end",
+                "stat": "defense",
+                "per_turn": 15,
+                "max_bonus": 75,
+                "max_stage_bonus": {
+                    "damage_boost": 15
+                },
+                "exclusive_monster": "chris",
+                "monster_name": "結晶獣クリス",
+                "balance_note": "v5.0: 最大+60→+75、5段階時与ダメ+15%追加"
+            },
+            {
+                "ability_id": "star3_011",
+                "name": "七色の力",
+                "effect": "技属性を弱点優先選択（弱点なしならランダム）、タイプ一致+10%、弱点時さらに+15%",
+                "effect_type": "adaptive_element",
+                "priority": "weakness",
+                "stab_bonus": 10,
+                "weakness_bonus": 15,
+                "exclusive_monster": "merlan",
+                "monster_name": "魔導師メルラン",
+                "balance_note": "v5.0: ランダム→弱点優先、弱点時+10%→+15%"
+            },
+            {
+                "ability_id": "star3_012",
+                "name": "聖なる守護",
+                "effect": "交代退場時、交代先のHP15%回復+防御↑1段階。毎T自分HP5%回復",
+                "effect_type": "switch_out_support_and_regen",
+                "trigger": "on_switch_out",
+                "switch_out_heal": 15,
+                "switch_out_buff": {
+                    "stat": "defense",
+                    "stages": 1
+                },
+                "regen_percentage": 5,
+                "exclusive_monster": "sera",
+                "monster_name": "癒光セラ"
+            },
+            {
+                "ability_id": "star3_013",
+                "name": "鉄壁",
+                "effect": "HP70%以上で被ダメ-20%",
+                "effect_type": "conditional_defense",
+                "condition": "hp_above_70",
+                "damage_reduction": 20,
+                "exclusive_monster": "talos",
+                "monster_name": "機械兵タロス",
+                "balance_note": "v5.0: 条件HP80%→70%に緩和"
+            },
+            {
+                "ability_id": "star3_014",
+                "name": "深淵の呼び声",
+                "effect": "自分の初期コスト+1",
+                "effect_type": "cost_boost",
+                "initial_cost_bonus": 1,
+                "exclusive_monster": "zela",
+                "monster_name": "深海魚ゼラ"
+            }
+        ],
+        "star2_exclusive": [
+            {
+                "ability_id": "star2_001",
+                "name": "炎の守護",
+                "effect": "炎被ダメ-50%、毎T魔力+15（最大+75）、炎技威力+15%",
+                "effect_type": "element_resistance_and_buff",
+                "element": "fire",
+                "resistance": 50,
+                "stat": "magic",
+                "per_turn": 15,
+                "max_bonus": 75,
+                "fire_damage_boost": 15,
+                "exclusive_monster": "kagura",
+                "monster_name": "灯火カグラ",
+                "balance_note": "v5.1: 魔力+10→+15、最大+50→+75、炎技+10%→+15%に上方修正"
+            },
+            {
+                "ability_id": "star2_002",
+                "name": "精密照準",
+                "effect": "クリ率+20%、クリ時防御↓1段階",
+                "effect_type": "critical_debuff",
+                "critical_boost": 20,
+                "on_crit_debuff": {
+                    "stat": "defense",
+                    "stages": -1
+                },
+                "exclusive_monster": "scorpion",
+                "monster_name": "狙撃機スコーピオン"
+            },
+            {
+                "ability_id": "star2_003",
+                "name": "鋼の意志",
+                "effect": "後攻時、与ダメ+50%・被ダメ-25%",
+                "effect_type": "last_move_bonus",
+                "condition": "move_last",
+                "damage_boost": 50,
+                "damage_reduction": 25,
+                "exclusive_monster": "chrome",
+                "monster_name": "鋼鉄騎士クローム"
+            },
+            {
+                "ability_id": "star2_004",
+                "name": "聖なる祈り",
+                "effect": "毎T味方HP12%回復+自分HP8%回復、登場時防御↑1段階",
+                "effect_type": "regen_and_entry_buff",
+                "trigger": "turn_end",
+                "ally_heal_percentage": 12,
+                "self_heal_percentage": 8,
+                "on_entry_buff": {
+                    "stat": "defense",
+                    "stages": 1
+                },
+                "exclusive_monster": "noel",
+                "monster_name": "祈り子ノエル",
+                "balance_note": "v5.1: 味方HP10%→12%、自分5%→8%、登場時防御↑追加"
+            },
+            {
+                "ability_id": "star2_005",
+                "name": "剣技の冴え",
+                "effect": "同技連続威力+30%（最大+90%）",
+                "effect_type": "stacking_damage",
+                "per_use": 30,
+                "max_bonus": 90,
+                "exclusive_monster": "kaito",
+                "monster_name": "剣士カイト"
+            },
+            {
+                "ability_id": "star2_006",
+                "name": "邪心の囁き",
+                "effect": "妨害技先制、状態異常の相手へ与ダメ+25%、デバフ命中時コスト+1",
+                "effect_type": "priority_and_boost",
+                "skill_type": "debuff",
+                "status_damage_boost": 25,
+                "on_debuff_hit_cost_gain": 1,
+                "exclusive_monster": "im",
+                "monster_name": "小悪魔イム",
+                "balance_note": "v5.1: 与ダメ+15%→+25%、デバフ命中時コスト+1追加"
+            }
+        ]
+    },
+    "summary": {
+        "total_abilities": 92,
+        "breakdown": {
+            "rare": 22,
+            "common": 20,
+            "species_exclusive": 7,
+            "star5_exclusive": 7,
+            "star4_exclusive": 9,
+            "star3_exclusive": 14,
+            "star2_exclusive": 6
+        }
+    },
+    "design_notes": {
+        "philosophy": "単なる数値上昇ではなく、戦略的選択と読み合いを生むアビリティ設計",
+        "balance_rules": [
+            "専用アビリティと汎用アビリティの同系統効果は重複不可",
+            "強制交代は交代封じ（捕縛の鎖等）を貫通する",
+            "初期コストは最大7まで",
+            "コスト回復量の下限は0",
+            "ステータス段階変化は最大±6段階",
+            "1回無効系アビリティは重複しても1回分のみ有効",
+            "状態異常は100%確定付与（運要素排除）",
+            "バフ効果は1段階+25%、持続6ターン",
+            "素早さ60以下のキャラは「重装の構え」で救済"
+        ]
+    }
+}
