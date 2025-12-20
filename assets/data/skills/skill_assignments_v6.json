@@ -2,8 +2,8 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "v6.0 Additional Skills Assignment",
   "description": "種族専用技・限定専用技のモンスター別割り当て",
-  "version": "7.1.0",
-  "last_updated": "2025-12-11",
+  "version": "10.0.0",
+  "last_updated": "2025-12-20",
   "species_skill_assignments": {
     "dragon": {
       "skill_id": "species_dragon_001",
@@ -28,7 +28,8 @@
         {"id": "mon_015", "name": "歌姫ルリア"},
         {"id": "mon_023", "name": "拳闘士ガルム"},
         {"id": "mon_027", "name": "魔導師メルラン"},
-        {"id": "mon_036", "name": "流浪の剣士カイト"}
+        {"id": "mon_036", "name": "流浪の剣士カイト"},
+        {"id": "mon_039", "name": "聖騎士レオン"}
       ]
     },
     "angel": {
@@ -52,7 +53,8 @@
         {"id": "mon_014", "name": "夢魔リリス"},
         {"id": "mon_022", "name": "煉獄アスモ"},
         {"id": "mon_025", "name": "貪欲マモン"},
-        {"id": "mon_031", "name": "小悪魔イム"}
+        {"id": "mon_031", "name": "小悪魔イム"},
+        {"id": "mon_038", "name": "深海魚シーラ"}
       ]
     },
     "spirit": {
@@ -87,7 +89,8 @@
         {"id": "mon_007", "name": "国喰いスライム"},
         {"id": "mon_013", "name": "太陽民ホノオ"},
         {"id": "mon_026", "name": "結晶体クリス"},
-        {"id": "mon_030", "name": "深淵ゼラ"}
+        {"id": "mon_030", "name": "深淵ゼラ"},
+        {"id": "mon_037", "name": "擬態キノコ・モフ"}
       ]
     }
   },
@@ -286,6 +289,23 @@
           {"id": "mon_028", "name": "癒光セラ", "base_speed": 75, "note": "★3サポート型。素早さ75なので使用可能"}
         ],
         "synergy": "鈍足サポーターの役割明確化"
+      }
+    },
+    "field_skills": {
+      "field_001_trick_room": {
+        "name": "時空歪曲",
+        "learn_level": 35,
+        "assigned_monsters": [
+          {"id": "mon_003", "name": "裏の支配者グラム", "note": "幻種デバフ型"},
+          {"id": "mon_020", "name": "雪女シロネ", "note": "一般種状態異常型"},
+          {"id": "mon_030", "name": "深淵ゼラ", "note": "一般種状態異常型"},
+          {"id": "mon_038", "name": "深海魚シーラ", "note": "一般種状態異常型"},
+          {"id": "mon_034", "name": "鉄竜クロム", "note": "一般種耐久型"},
+          {"id": "mon_029", "name": "要塞タロス", "note": "一般種耐久型"},
+          {"id": "mon_026", "name": "結晶体クリス", "note": "一般種耐久型"}
+        ],
+        "synergy": "鈍足パーティ構築用。素早さ逆転で先制確保",
+        "balance_note": "v10.0: シーラ、クロム、タロス、クリスを追加"
       }
     }
   },

@@ -1,9 +1,9 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "Common Skills - Phase 1 v7.1",
+  "title": "Common Skills - Phase 1 v8.0",
   "description": "共通技マスターデータ（v7.1防護技・交代プレッシャー技・速度操作技追加）",
-  "version": "7.1.0",
-  "last_updated": "2025-12-11",
+  "version": "10.0.0",
+  "last_updated": "2025-12-20",
   "power_rank_reference": {
     "D": 30, "C": 55, "B": 80, "A": 110, "S": 150, "SS": 200, "SSS": 250
   },
@@ -17,15 +17,15 @@
       "封印: ランダム → 最高コスト技確定"
     ],
     "status_effects": {
-      "poison": {"effect": "毎T HP2%ダメージ", "duration": 3},
-      "burn": {"effect": "毎T HP3%ダメ + 攻撃-5%", "duration": 3},
-      "miasma": {"effect": "毎T HP3%ダメ + 魔力-5%", "duration": 3},
-      "paralysis": {"effect": "素早さ-15%", "duration": 3},
-      "restraint": {"effect": "交代不可", "duration": 1},
+      "poison": {"effect": "毎T HP4%ダメージ", "duration": 3},
+      "burn": {"effect": "毎T HP3%ダメ + 攻撃-10%", "duration": 3},
+      "miasma": {"effect": "毎T HP3%ダメ + 魔力-10%", "duration": 3},
+      "paralysis": {"effect": "素早さ-20%", "duration": 3},
+      "restraint": {"effect": "このターンと次のターン交代不可", "duration": 2},
       "seal": {"effect": "最高コスト技使用不可", "duration": 2},
-      "charm": {"effect": "被ダメージ+10%", "duration": 2},
-      "fear": {"effect": "与ダメージ-10%", "duration": 2},
-      "nightmare": {"effect": "毎T 魔力3%ダメ + 回復無効", "duration": 3}
+      "charm": {"effect": "被ダメージ+15%", "duration": 2},
+      "fear": {"effect": "与ダメージ-15%", "duration": 2},
+      "nightmare": {"effect": "毎T HP3%ダメ + 回復効果-50%", "duration": 3}
     }
   },
   "variable_cost_system": {
@@ -65,8 +65,7 @@
           {"cost": 2, "power": 30, "power_rank": "D"},
           {"cost": 3, "power": 55, "power_rank": "C"},
           {"cost": 4, "power": 80, "power_rank": "B"},
-          {"cost": 5, "power": 110, "power_rank": "A"},
-          {"cost": 6, "power": 150, "power_rank": "S"}
+          {"cost": 5, "power": 110, "power_rank": "A"}
         ],
         "special_effects": []
       },
@@ -107,10 +106,10 @@
           {"cost": 2, "power": 30, "power_rank": "D"},
           {"cost": 3, "power": 55, "power_rank": "C"},
           {"cost": 4, "power": 80, "power_rank": "B"},
-          {"cost": 5, "power": 110, "power_rank": "A"},
-          {"cost": 6, "power": 150, "power_rank": "S"}
+          {"cost": 5, "power": 110, "power_rank": "A"}
         ],
-        "special_effects": []
+        "special_effects": [],
+        "balance_note": "v8.0: 最大威力S→A（コスト6削除）"
       },
       {
         "skill_id": "var_water_002",
@@ -127,9 +126,9 @@
         "cost_levels": [
           {"cost": 3, "power": 55, "power_rank": "C", "speed_debuff": -1},
           {"cost": 4, "power": 80, "power_rank": "B", "speed_debuff": -1},
-          {"cost": 5, "power": 110, "power_rank": "A", "speed_debuff": -2},
-          {"cost": 6, "power": 150, "power_rank": "S", "speed_debuff": -2}
+          {"cost": 5, "power": 110, "power_rank": "A", "speed_debuff": -2}
         ],
+        "balance_note": "v8.0: 最大威力S→A（コスト6削除）",
         "special_effects": [{"effect_type": "stat_change", "stat": "speed", "modifier": "variable", "target": "opponent"}]
       },
       {
@@ -148,10 +147,10 @@
           {"cost": 2, "power": 30, "power_rank": "D"},
           {"cost": 3, "power": 55, "power_rank": "C"},
           {"cost": 4, "power": 80, "power_rank": "B"},
-          {"cost": 5, "power": 110, "power_rank": "A"},
-          {"cost": 6, "power": 150, "power_rank": "S"}
+          {"cost": 5, "power": 110, "power_rank": "A"}
         ],
-        "special_effects": []
+        "special_effects": [],
+        "balance_note": "v8.0: 最大威力S→A（コスト6削除）"
       },
       {
         "skill_id": "var_thunder_002",
@@ -190,10 +189,10 @@
           {"cost": 2, "power": 30, "power_rank": "D"},
           {"cost": 3, "power": 55, "power_rank": "C"},
           {"cost": 4, "power": 80, "power_rank": "B"},
-          {"cost": 5, "power": 110, "power_rank": "A"},
-          {"cost": 6, "power": 150, "power_rank": "S"}
+          {"cost": 5, "power": 110, "power_rank": "A"}
         ],
-        "special_effects": []
+        "special_effects": [],
+        "balance_note": "v8.0: 最大威力S→A（コスト6削除）"
       },
       {
         "skill_id": "var_wind_002",
@@ -232,10 +231,10 @@
           {"cost": 2, "power": 30, "power_rank": "D"},
           {"cost": 3, "power": 55, "power_rank": "C"},
           {"cost": 4, "power": 80, "power_rank": "B"},
-          {"cost": 5, "power": 110, "power_rank": "A"},
-          {"cost": 6, "power": 150, "power_rank": "S"}
+          {"cost": 5, "power": 110, "power_rank": "A"}
         ],
-        "special_effects": []
+        "special_effects": [],
+        "balance_note": "v8.0: 最大威力S→A（コスト6削除）"
       },
       {
         "skill_id": "var_light_001",
@@ -253,10 +252,10 @@
           {"cost": 2, "power": 30, "power_rank": "D"},
           {"cost": 3, "power": 55, "power_rank": "C"},
           {"cost": 4, "power": 80, "power_rank": "B"},
-          {"cost": 5, "power": 110, "power_rank": "A"},
-          {"cost": 6, "power": 150, "power_rank": "S"}
+          {"cost": 5, "power": 110, "power_rank": "A"}
         ],
-        "special_effects": [{"effect_type": "type_effective", "effective_against": "dark", "multiplier": 1.3}]
+        "special_effects": [{"effect_type": "type_effective", "effective_against": "dark", "multiplier": 1.3}],
+        "balance_note": "v8.0: 最大威力S→A（コスト6削除）"
       },
       {
         "skill_id": "var_dark_001",
@@ -274,10 +273,10 @@
           {"cost": 2, "power": 30, "power_rank": "D"},
           {"cost": 3, "power": 55, "power_rank": "C"},
           {"cost": 4, "power": 80, "power_rank": "B"},
-          {"cost": 5, "power": 110, "power_rank": "A"},
-          {"cost": 6, "power": 150, "power_rank": "S"}
+          {"cost": 5, "power": 110, "power_rank": "A"}
         ],
-        "special_effects": []
+        "special_effects": [],
+        "balance_note": "v8.0: 最大威力S→A（コスト6削除）"
       },
       {
         "skill_id": "var_dark_002",
@@ -457,7 +456,7 @@
           "name_en": "Pressure",
           "category": "support_only",
           "element": "none",
-          "cost": 0,
+          "cost": 1,
           "damage_type": "none",
           "power": 0,
           "power_rank": "-",
@@ -473,7 +472,7 @@
           "name_en": "Provoke",
           "category": "support_only",
           "element": "none",
-          "cost": 0,
+          "cost": 1,
           "damage_type": "none",
           "power": 0,
           "power_rank": "-",
@@ -489,7 +488,7 @@
           "name_en": "Focus",
           "category": "support_only",
           "element": "none",
-          "cost": 0,
+          "cost": 1,
           "damage_type": "none",
           "power": 0,
           "power_rank": "-",
@@ -513,7 +512,11 @@
           "priority": 4,
           "target": "self",
           "description": "1ターン完全無敵になる",
-          "special_effects": [{"effect_type": "protect", "duration": 1}]
+          "special_effects": [
+            {"effect_type": "protect", "duration": 1},
+            {"effect_type": "no_consecutive_use", "value": true}
+          ],
+          "balance_note": "v8.0: 連続使用不可追加（永続無敵コンボ防止）"
         },
         {
           "skill_id": "cmn_sup_005",
@@ -715,14 +718,14 @@
           "accuracy": 100,
           "priority": -1,
           "target": "opponent",
-          "description": "後攻時威力1.5倍（B相当）",
+          "description": "後攻時威力2.0倍（A相当）",
           "special_effects": [
-            {"effect_type": "rear_guard_bonus", "power_multiplier": 1.5},
+            {"effect_type": "rear_guard_bonus", "power_multiplier": 2.0},
             {"effect_type": "priority", "value": -1}
           ],
           "learnable_by": ["chrome", "talos", "chris"],
           "learnable_by_names": ["鉄竜クロム", "要塞タロス", "結晶体クリス"],
-          "balance_note": "v7.1: 新規追加。鉅速耐久型用後攻技"
+          "balance_note": "v10.0: 後攻倍率1.5倍→2.0倍に強化"
         }
       ],
       "status_condition": [
@@ -748,7 +751,7 @@
           "name_en": "Paralyze Wave",
           "category": "support_only",
           "element": "thunder",
-          "cost": 1,
+          "cost": 2,
           "damage_type": "none",
           "power": 0,
           "power_rank": "-",
@@ -918,9 +921,9 @@
             {"effect_type": "trick_room", "duration": 5},
             {"effect_type": "speed_reverse", "scope": "same_priority"}
           ],
-          "learnable_by": ["gram", "shirone", "zela"],
-          "learnable_by_names": ["裏の支配者グラム", "雪女シロネ", "深淵ゼラ"],
-          "balance_note": "v7.1: 新規追加。鉅速パーティ用"
+          "learnable_by": ["gram", "shirone", "zela", "sheela", "chrome", "talos", "chris"],
+          "learnable_by_names": ["裏の支配者グラム", "雪女シロネ", "深淵ゼラ", "深海魚シーラ", "鉄竜クロム", "要塞タロス", "結晶体クリス"],
+          "balance_note": "v10.0: 習得者追加（シーラ、クロム、タロス、クリス）"
         }
       ],
       "speed_control_skills": [

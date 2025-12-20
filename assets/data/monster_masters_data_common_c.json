@@ -1,0 +1,459 @@
+{
+  "version": "9.4",
+  "created_at": "2025-12-04",
+  "updated_at": "2025-12-20",
+  "description": "一般種モンスター（パートC）8体（個体値パターン追加版）",
+  "category": "common",
+  "category_description": "一般種（入手難易度：標準）- 合計238-245、個体値3-5パターン（外れなし設計）",
+  "changelog": {
+    "v9.4": [
+      "【Mutant種技プール拡張】クリス: 8技→13技、2属性→5属性",
+      "【物理技追加】ビットマン: 疾風撃・剛腕撃追加"
+    ],
+    "v9.3": [
+      "【アビリティプール再設計】全モンスターのアビリティプールをシナジー重視で再構築",
+      "【シーラ変更】深海の圧力: 全能力↓1→魔力↓1",
+      "【セラ変更】聖なる守護: 回復+防御↑1→回復10%のみ",
+      "ゼラ: 暴走起動→前借りに変更"
+    ],
+    "v9.2": [
+      "【奥義コスト統一】全一般種の奥義コストを4→5に変更"
+    ],
+    "v9.0": [
+      "【個体値パターン追加】全モンスターに3-5パターンの個体値を追加"
+    ]
+  },
+  "design_rules": {
+    "base_stats_range": "12-95",
+    "common_total_range": "238-245",
+    "iv_pattern_count": "3-5（役割に応じて変動）",
+    "iv_design": "主力ステは絶対に下降しない。不要ステのみ-12。どのパターンも使える設計",
+    "balance_principle": "一般種でも十分戦える設計"
+  },
+  "monsters": [
+    {
+      "monster_id": "mon_024",
+      "name": "量産型ビットマン",
+      "category": "common",
+      "species": "mechanoid",
+      "element": "thunder",
+      "role": "バランス型（連携特化）",
+      "design_concept": "【バランス型】全ステ平均的でメカノイドとの連携で強化",
+      "base_stats": {
+        "attack": 48,
+        "defense": 48,
+        "magic": 48,
+        "magic_defense": 48,
+        "speed": 48
+      },
+      "total": 240,
+      "iv_patterns": [
+        {"name": "攻撃特化", "attack": 12, "defense": 0, "magic": 0, "magic_defense": -12, "speed": 0, "recommended": "物理型"},
+        {"name": "魔力特化", "attack": 0, "defense": 0, "magic": 12, "magic_defense": -12, "speed": 0, "recommended": "魔法型"},
+        {"name": "速さ特化", "attack": 0, "defense": 0, "magic": 0, "magic_defense": -12, "speed": 12, "recommended": "先制型"},
+        {"name": "防御特化", "attack": 0, "defense": 12, "magic": 0, "magic_defense": -12, "speed": 0, "recommended": "物理耐久型"},
+        {"name": "魔防特化", "attack": -12, "defense": 0, "magic": 0, "magic_defense": 12, "speed": 0, "recommended": "魔法耐久型"}
+      ],
+      "strengths": ["メカノイドと組むと強化", "育成の自由度が最高", "電磁シールドで雷半減"],
+      "weaknesses": ["単体では特化型に劣る", "連携前提の性能"],
+      "ability_pool": {
+        "rare": [
+          {"id": "ex_com_bitman", "name": "量産型の連携", "effect": "メカノイドの味方がいると攻撃強化"},
+          {"id": "sp_mecha", "name": "電磁シールド", "effect": "雷属性のダメージを半減"}
+        ],
+        "common": [
+          {"id": "com_019", "name": "守りの構え", "effect": "HP半分以上で被ダメージ軽減"},
+          {"id": "com_020", "name": "再生細胞", "effect": "毎ターン終了時、HPを少し回復"}
+        ]
+      },
+      "skill_pool": {
+        "initial_skills": [
+          {"id": "var_thunder_001", "name": "天雷", "learn_level": 1},
+          {"id": "cmn_phy_002", "name": "裂爪", "learn_level": 1}
+        ],
+        "learnable_skills": [
+          {"id": "bitman_001", "name": "連携攻撃", "learn_level": 5, "cost": 3, "power": "C", "effect": "味方メカノイド数×威力20%UP"},
+          {"id": "cmn_phy_003", "name": "疾風撃", "learn_level": 10},
+          {"id": "bitman_002", "name": "自己修復", "learn_level": 15, "cost": 2, "effect": "HP30%回復"},
+          {"id": "sts_thunder_001", "name": "痺撃波", "learn_level": 20},
+          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 25},
+          {"id": "cmn_phy_004", "name": "剛腕撃", "learn_level": 30},
+          {"id": "var_wind_001", "name": "烈風", "learn_level": 50}
+        ],
+        "ultimate": {"id": "ult_bitman", "name": "量産型の本気", "learn_level": 40, "cost": 5, "power_rank": "A", "element": "thunder", "effect": "味方メカノイド数×威力30%UP+麻痺確定"}
+      }
+    },
+    {
+      "monster_id": "mon_025",
+      "name": "貪欲マモン",
+      "category": "common",
+      "species": "demon",
+      "element": "earth",
+      "role": "火力型（バフ蓄積特化）",
+      "design_concept": "【バフ蓄積型】攻撃78で攻撃命中毎に強化。長期戦で真価発揮",
+      "base_stats": {
+        "attack": 78,
+        "defense": 45,
+        "magic": 22,
+        "magic_defense": 40,
+        "speed": 55
+      },
+      "total": 240,
+      "iv_patterns": [
+        {"name": "攻撃特化", "attack": 12, "defense": 0, "magic": -12, "magic_defense": 0, "speed": 0, "recommended": "火力最大化（推奨）"},
+        {"name": "速さ特化", "attack": 0, "defense": 0, "magic": -12, "magic_defense": 0, "speed": 12, "recommended": "先制型"},
+        {"name": "防御特化", "attack": 0, "defense": 12, "magic": -12, "magic_defense": 0, "speed": 0, "recommended": "耐久型"}
+      ],
+      "strengths": ["攻撃命中で強化が蓄積", "長期戦で最強クラス", "撃破でコスト稼ぎ"],
+      "weaknesses": ["魔法攻撃完全不可", "序盤は火力控えめ"],
+      "ability_pool": {
+        "rare": [
+          {"id": "ex_com_mamon", "name": "強欲の力", "effect": "攻撃命中で攻撃↑1"},
+          {"id": "sp_demon", "name": "魂喰らい", "effect": "相手を倒した時、全ステータス↑1"}
+        ],
+        "common": [
+          {"id": "com_006", "name": "搾取", "effect": "相手を倒した時、コスト+2"},
+          {"id": "com_017", "name": "背水の陣", "effect": "HP半分以下で攻撃大幅強化"}
+        ]
+      },
+      "skill_pool": {
+        "initial_skills": [
+          {"id": "var_earth_001", "name": "ストーンショット", "learn_level": 1},
+          {"id": "cmn_phy_002", "name": "裂爪", "learn_level": 1}
+        ],
+        "learnable_skills": [
+          {"id": "mamon_001", "name": "強奪", "learn_level": 5, "cost": 2, "power": "D", "effect": "相手バフ1つ奪取"},
+          {"id": "mamon_002", "name": "貪欲の爪", "learn_level": 15, "cost": 3, "power": "C", "effect": "自分バフ数×威力10%UP"},
+          {"id": "var_dark_001", "name": "ナイトメア", "learn_level": 20},
+          {"id": "cmn_sup_003", "name": "集中", "learn_level": 25},
+          {"id": "var_none_001", "name": "剛拳", "learn_level": 30},
+          {"id": "var_fire_001", "name": "業炎", "learn_level": 50}
+        ],
+        "ultimate": {"id": "ult_mamon", "name": "強欲の極み", "learn_level": 40, "cost": 5, "power_rank": "A", "element": "earth", "effect": "自分バフ数×威力20%UP+全バフ1段階↑"}
+      }
+    },
+    {
+      "monster_id": "mon_026",
+      "name": "結晶体クリス",
+      "category": "common",
+      "species": "mutant",
+      "element": "earth",
+      "role": "耐久型（超物理耐久）",
+      "design_concept": "【超物理耐久特化】防御90で攻撃・速さを捨てた。結晶の鎧で更に硬い",
+      "base_stats": {
+        "attack": 25,
+        "defense": 90,
+        "magic": 42,
+        "magic_defense": 68,
+        "speed": 17
+      },
+      "total": 242,
+      "iv_patterns": [
+        {"name": "防御特化", "attack": 0, "defense": 12, "magic": 0, "magic_defense": 0, "speed": -12, "recommended": "物理耐久最大化（推奨）"},
+        {"name": "魔防特化", "attack": 0, "defense": 0, "magic": 0, "magic_defense": 12, "speed": -12, "recommended": "両耐久型"},
+        {"name": "魔力特化", "attack": 0, "defense": 0, "magic": 12, "magic_defense": 0, "speed": -12, "recommended": "魔法攻撃型"}
+      ],
+      "strengths": ["物理耐久が最高クラス", "結晶の鎧で更に軽減", "変幻の魂で強化"],
+      "weaknesses": ["速さが最遅クラス", "攻撃は控えめ"],
+      "ability_pool": {
+        "rare": [
+          {"id": "ex_com_chris", "name": "結晶の鎧", "effect": "攻撃技のダメージを大幅軽減"},
+          {"id": "sp_mutant", "name": "変幻の魂", "effect": "被ダメージ時、ランダムで1ステータス↑1"}
+        ],
+        "common": [
+          {"id": "com_018", "name": "鈍足の誇り", "effect": "後攻の時、攻撃強化"},
+          {"id": "com_019", "name": "守りの構え", "effect": "HP半分以上で被ダメージ軽減"}
+        ]
+      },
+      "skill_pool": {
+        "initial_skills": [
+          {"id": "var_earth_001", "name": "ストーンショット", "learn_level": 1},
+          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 1}
+        ],
+        "learnable_skills": [
+          {"id": "chris_001", "name": "結晶化", "learn_level": 5, "cost": 2, "effect": "防御↑↑+次T行動不能"},
+          {"id": "cmn_phy_002", "name": "裂爪", "learn_level": 8},
+          {"id": "chris_002", "name": "結晶弾", "learn_level": 12, "cost": 3, "power": "C", "effect": "自分防御依存ダメージ"},
+          {"id": "var_light_001", "name": "裁きの光", "learn_level": 16},
+          {"id": "buff_earth_001", "name": "堅守", "learn_level": 20},
+          {"id": "var_water_001", "name": "アクアボール", "learn_level": 24},
+          {"id": "chris_003", "name": "結晶の棘", "learn_level": 28, "cost": 3, "effect": "3T被弾時反射ダメージ+30%"},
+          {"id": "var_fire_001", "name": "業炎", "learn_level": 32},
+          {"id": "rear_phy_002", "name": "報復", "learn_level": 36},
+          {"id": "var_dark_001", "name": "ナイトメア", "learn_level": 50},
+          {"id": "spc_phy_001", "name": "力量転嫁", "learn_level": 55}
+        ],
+        "ultimate": {"id": "ult_chris", "name": "結晶要塞", "learn_level": 40, "cost": 5, "power_rank": "B", "element": "earth", "effect": "自分防御依存ダメ+防御↑2段階+3T被ダメ50%軽減"}
+      }
+    },
+    {
+      "monster_id": "mon_027",
+      "name": "魔導師メルラン",
+      "category": "common",
+      "species": "human",
+      "element": "none",
+      "role": "火力型（弱点狙い特化）",
+      "design_concept": "【弱点狙い特化】魔力85で攻撃を捨てた。全ての技が弱点属性に変化",
+      "base_stats": {
+        "attack": 15,
+        "defense": 32,
+        "magic": 85,
+        "magic_defense": 50,
+        "speed": 60
+      },
+      "total": 242,
+      "iv_patterns": [
+        {"name": "魔力特化", "attack": -12, "defense": 0, "magic": 12, "magic_defense": 0, "speed": 0, "recommended": "火力最大化（推奨）"},
+        {"name": "速さ特化", "attack": -12, "defense": 0, "magic": 0, "magic_defense": 0, "speed": 12, "recommended": "先制型"},
+        {"name": "魔防特化", "attack": -12, "defense": 0, "magic": 0, "magic_defense": 12, "speed": 0, "recommended": "魔法耐久型"}
+      ],
+      "strengths": ["魔力がトップクラス", "全ての技が弱点を突ける", "どんな相手にも有利"],
+      "weaknesses": ["物理攻撃完全不可", "耐久が低め"],
+      "ability_pool": {
+        "rare": [
+          {"id": "ex_com_merlan", "name": "七色の力", "effect": "技が相手の弱点属性に変化"},
+          {"id": "sp_human", "name": "適応力", "effect": "同じ技を2回受けると、その技のダメージ半減"}
+        ],
+        "common": [
+          {"id": "com_015", "name": "必殺の型", "effect": "急所に当たりやすい"},
+          {"id": "com_014", "name": "先陣の誉れ", "effect": "先発で登場した時、攻撃強化（1ターン）"}
+        ]
+      },
+      "skill_pool": {
+        "initial_skills": [
+          {"id": "var_none_002", "name": "魔弾", "learn_level": 1},
+          {"id": "cmn_sup_003", "name": "集中", "learn_level": 1}
+        ],
+        "learnable_skills": [
+          {"id": "merlan_001", "name": "属性解析", "learn_level": 5, "cost": 1, "effect": "相手弱点属性を可視化+次攻撃威力1.2倍"},
+          {"id": "var_fire_001", "name": "業炎", "learn_level": 8},
+          {"id": "var_water_001", "name": "アクアボール", "learn_level": 12},
+          {"id": "var_thunder_001", "name": "天雷", "learn_level": 16},
+          {"id": "merlan_002", "name": "七色の魔弾", "learn_level": 20, "cost": 4, "power": "B", "effect": "弱点時威力1.5倍"},
+          {"id": "var_wind_001", "name": "烈風", "learn_level": 25},
+          {"id": "var_earth_001", "name": "ストーンショット", "learn_level": 30},
+          {"id": "var_light_001", "name": "裁きの光", "learn_level": 35},
+          {"id": "var_dark_001", "name": "ナイトメア", "learn_level": 50}
+        ],
+        "ultimate": {"id": "ult_merlan", "name": "七色の極光", "learn_level": 40, "cost": 5, "power_rank": "A", "element": "none", "effect": "弱点属性ダメ+魔力↑1+相手魔防↓1"}
+      }
+    },
+    {
+      "monster_id": "mon_028",
+      "name": "癒光セラ",
+      "category": "common",
+      "species": "angel",
+      "element": "light",
+      "role": "サポート型（交代サポート特化）",
+      "design_concept": "【交代サポート特化】交代先を回復する特殊ヒーラー",
+      "base_stats": {
+        "attack": 18,
+        "defense": 52,
+        "magic": 68,
+        "magic_defense": 72,
+        "speed": 32
+      },
+      "total": 242,
+      "iv_patterns": [
+        {"name": "魔防特化", "attack": -12, "defense": 0, "magic": 0, "magic_defense": 12, "speed": 0, "recommended": "魔法耐久最大化（推奨）"},
+        {"name": "魔力特化", "attack": -12, "defense": 0, "magic": 12, "magic_defense": 0, "speed": 0, "recommended": "回復量重視型"},
+        {"name": "防御特化", "attack": -12, "defense": 12, "magic": 0, "magic_defense": 0, "speed": 0, "recommended": "両耐久型"},
+        {"name": "速さ特化", "attack": -12, "defense": 0, "magic": 0, "magic_defense": 0, "speed": 12, "recommended": "先制サポート型"}
+      ],
+      "strengths": ["交代時に味方を回復", "魔法耐久が高い", "回復量トップクラス"],
+      "weaknesses": ["攻撃は完全に不可", "速さが遅い"],
+      "ability_pool": {
+        "rare": [
+          {"id": "ex_com_sera", "name": "聖なる守護", "effect": "交代する時、交代先を10%回復"},
+          {"id": "sp_angel", "name": "聖なるオーラ", "effect": "回復技の効果が強化される"}
+        ],
+        "common": [
+          {"id": "com_011", "name": "浄化の息吹", "effect": "毎ターン終了時、状態異常を1つ回復"},
+          {"id": "com_019", "name": "守りの構え", "effect": "HP半分以上で被ダメージ軽減"}
+        ]
+      },
+      "skill_pool": {
+        "initial_skills": [
+          {"id": "var_light_001", "name": "裁きの光", "learn_level": 1},
+          {"id": "buff_light_001", "name": "癒月", "learn_level": 1}
+        ],
+        "learnable_skills": [
+          {"id": "sera_001", "name": "守護の光", "learn_level": 5, "cost": 2, "effect": "味方HP25%回復+防御↑"},
+          {"id": "cmn_sup_006", "name": "浄化", "learn_level": 10},
+          {"id": "sera_002", "name": "浄化の光", "learn_level": 15, "cost": 3, "effect": "味方状態異常解除+HP20%回復"},
+          {"id": "buff_light_002", "name": "光の障壁", "learn_level": 20},
+          {"id": "sera_003", "name": "守護結界", "learn_level": 25, "cost": 3, "effect": "3T味方被ダメ-25%"},
+          {"id": "cycle_light_001", "name": "光の帰還", "learn_level": 30},
+          {"id": "var_wind_001", "name": "烈風", "learn_level": 50}
+        ],
+        "ultimate": {"id": "ult_sera", "name": "癒しの聖光", "learn_level": 40, "cost": 5, "power_rank": "-", "element": "light", "effect": "味方HP50%回復+状態異常解除+3T被ダメ-20%"}
+      }
+    },
+    {
+      "monster_id": "mon_029",
+      "name": "要塞タロス",
+      "category": "common",
+      "species": "mechanoid",
+      "element": "earth",
+      "role": "耐久型（超物理耐久）",
+      "design_concept": "【超物理耐久特化】防御95で攻撃・速さを捨てた。鉄壁で更に硬い",
+      "base_stats": {
+        "attack": 42,
+        "defense": 95,
+        "magic": 20,
+        "magic_defense": 75,
+        "speed": 12
+      },
+      "total": 244,
+      "iv_patterns": [
+        {"name": "防御特化", "attack": 0, "defense": 12, "magic": -12, "magic_defense": 0, "speed": 0, "recommended": "物理耐久最大化（推奨）"},
+        {"name": "魔防特化", "attack": 0, "defense": 0, "magic": -12, "magic_defense": 12, "speed": 0, "recommended": "両耐久型"},
+        {"name": "攻撃特化", "attack": 12, "defense": 0, "magic": -12, "magic_defense": 0, "speed": 0, "recommended": "後攻物理型"}
+      ],
+      "strengths": ["防御が全モンスター最高", "鉄壁で更に軽減", "両耐久が優秀"],
+      "weaknesses": ["速さが全モンスター最遅", "魔法攻撃不可", "先制技に弱い"],
+      "ability_pool": {
+        "rare": [
+          {"id": "ex_com_talos", "name": "鉄壁", "effect": "HP半分以上で被ダメージ軽減"},
+          {"id": "sp_mecha", "name": "電磁シールド", "effect": "雷属性のダメージを半減"}
+        ],
+        "common": [
+          {"id": "com_019", "name": "守りの構え", "effect": "HP半分以上で被ダメージ軽減"},
+          {"id": "com_018", "name": "鈍足の誇り", "effect": "後攻の時、攻撃強化"}
+        ]
+      },
+      "skill_pool": {
+        "initial_skills": [
+          {"id": "var_earth_001", "name": "ストーンショット", "learn_level": 1},
+          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 1}
+        ],
+        "learnable_skills": [
+          {"id": "talos_001", "name": "要塞の構え", "learn_level": 5, "cost": 1, "effect": "防御↑+魔防↑"},
+          {"id": "buff_earth_001", "name": "堅守", "learn_level": 10},
+          {"id": "talos_002", "name": "重撃", "learn_level": 15, "cost": 3, "power": "C", "effect": "自分防御依存ダメージ"},
+          {"id": "talos_003", "name": "鉄壁の守護", "learn_level": 25, "cost": 4, "effect": "3T味方被ダメ-40%（自分行動不能）"},
+          {"id": "rear_phy_002", "name": "報復", "learn_level": 30},
+          {"id": "var_thunder_001", "name": "天雷", "learn_level": 50}
+        ],
+        "ultimate": {"id": "ult_talos", "name": "要塞砲", "learn_level": 40, "cost": 5, "power_rank": "A", "element": "earth", "effect": "自分防御依存ダメ+防御↑2段階+恐怖確定"}
+      }
+    },
+    {
+      "monster_id": "mon_030",
+      "name": "深淵ゼラ",
+      "category": "common",
+      "species": "spirit",
+      "element": "dark",
+      "role": "火力型（コスト特化）",
+      "design_concept": "【コスト特化魔法】初期コスト+1で序盤から高コスト技が使える",
+      "base_stats": {
+        "attack": 18,
+        "defense": 42,
+        "magic": 75,
+        "magic_defense": 48,
+        "speed": 60
+      },
+      "total": 243,
+      "iv_patterns": [
+        {"name": "魔力特化", "attack": -12, "defense": 0, "magic": 12, "magic_defense": 0, "speed": 0, "recommended": "火力最大化（推奨）"},
+        {"name": "速さ特化", "attack": -12, "defense": 0, "magic": 0, "magic_defense": 0, "speed": 12, "recommended": "先制型"},
+        {"name": "魔防特化", "attack": -12, "defense": 0, "magic": 0, "magic_defense": 12, "speed": 0, "recommended": "魔法耐久型"}
+      ],
+      "strengths": ["初期コスト+1で序盤から強い", "魔力が高い", "節制の術でコスト軽減"],
+      "weaknesses": ["物理攻撃完全不可", "耐久は普通"],
+      "ability_pool": {
+        "rare": [
+          {"id": "ex_com_zela", "name": "深淵の呼び声", "effect": "初期コスト+1"},
+          {"id": "sp_mutant", "name": "変幻の魂", "effect": "被ダメージ時、ランダムで1ステータス↑1"}
+        ],
+        "common": [
+          {"id": "com_007", "name": "節制の術", "effect": "コスト4以上の技のコスト-1"},
+          {"id": "rare_013", "name": "前借り", "effect": "初期コスト+1、次の回復-1"}
+        ]
+      },
+      "skill_pool": {
+        "initial_skills": [
+          {"id": "var_dark_001", "name": "ナイトメア", "learn_level": 1},
+          {"id": "cmn_sup_002", "name": "煽動", "learn_level": 1}
+        ],
+        "learnable_skills": [
+          {"id": "zela_001", "name": "深淵の眼", "learn_level": 5, "cost": 3, "power": "C", "effect": "瘴気確定+闇属性ダメージ"},
+          {"id": "sts_dark_001", "name": "呪詛", "learn_level": 10},
+          {"id": "zela_002", "name": "深淵の招き", "learn_level": 15, "cost": 4, "power": "B", "effect": "恐怖確定+HP20%消費"},
+          {"id": "zela_003", "name": "暗黒の支配", "learn_level": 25, "cost": 3, "effect": "3T闇技威力+30%"},
+          {"id": "var_fire_001", "name": "業炎", "learn_level": 30},
+          {"id": "var_water_001", "name": "アクアボール", "learn_level": 50}
+        ],
+        "ultimate": {"id": "ult_zela", "name": "深淵の終焉", "learn_level": 40, "cost": 5, "power_rank": "A", "element": "dark", "effect": "悪夢確定+瘴気確定+相手コスト-2"}
+      }
+    },
+    {
+      "monster_id": "mon_038",
+      "name": "深海魚シーラ",
+      "category": "common",
+      "species": "demon",
+      "element": "water",
+      "role": "デバフ型（登場時デバフ特化）",
+      "design_concept": "【登場時デバフ特化】登場時に相手魔力を下げるデバッファー",
+      "base_stats": {
+        "attack": 40,
+        "defense": 60,
+        "magic": 55,
+        "magic_defense": 62,
+        "speed": 25
+      },
+      "total": 242,
+      "iv_patterns": [
+        {"name": "防御特化", "attack": 0, "defense": 12, "magic": 0, "magic_defense": 0, "speed": -12, "recommended": "物理耐久型"},
+        {"name": "魔防特化", "attack": 0, "defense": 0, "magic": 0, "magic_defense": 12, "speed": -12, "recommended": "魔法耐久型（推奨）"},
+        {"name": "魔力特化", "attack": 0, "defense": 0, "magic": 12, "magic_defense": 0, "speed": -12, "recommended": "魔法攻撃型"},
+        {"name": "攻撃特化", "attack": 12, "defense": 0, "magic": 0, "magic_defense": 0, "speed": -12, "recommended": "物理攻撃型"}
+      ],
+      "strengths": ["登場時魔力↓1で魔法対策", "両耐久が高め", "デバフが豊富"],
+      "weaknesses": ["速さが遅い", "火力は控えめ"],
+      "ability_pool": {
+        "rare": [
+          {"id": "ex_com_sheela", "name": "深海の圧力", "effect": "登場時、相手の魔力↓1"},
+          {"id": "sp_demon", "name": "魂喰らい", "effect": "相手を倒した時、全ステータス↑1"}
+        ],
+        "common": [
+          {"id": "com_001", "name": "畏怖の波動", "effect": "登場時、相手の攻撃↓1"},
+          {"id": "com_018", "name": "鈍足の誇り", "effect": "後攻の時、攻撃強化"}
+        ]
+      },
+      "skill_pool": {
+        "initial_skills": [
+          {"id": "var_water_001", "name": "アクアボール", "learn_level": 1},
+          {"id": "cmn_sup_001", "name": "威圧", "learn_level": 1}
+        ],
+        "learnable_skills": [
+          {"id": "sheela_001", "name": "深海の呪い", "learn_level": 5, "cost": 2, "power": "D", "effect": "瘴気確定+相手速さ↓"},
+          {"id": "sheela_002", "name": "圧潰", "learn_level": 15, "cost": 3, "power": "C", "effect": "相手魔力↓↓"},
+          {"id": "buff_water_001", "name": "水鏡", "learn_level": 20},
+          {"id": "sheela_003", "name": "深海の抱擁", "learn_level": 25, "cost": 3, "power": "C", "effect": "拘束確定"},
+          {"id": "rear_mag_001", "name": "魔力返し", "learn_level": 30},
+          {"id": "var_dark_001", "name": "ナイトメア", "learn_level": 50}
+        ],
+        "ultimate": {"id": "ult_sheela", "name": "深海の支配", "learn_level": 40, "cost": 5, "power_rank": "A", "element": "water", "effect": "相手全デバフ+拘束確定+瘴気確定"}
+      }
+    }
+  ],
+  "category_summary": {
+    "total_monsters": 8,
+    "stat_totals": [240, 240, 242, 242, 242, 244, 243, 242],
+    "average_total": 241.9,
+    "stat_range": "240-244（差4）",
+    "iv_pattern_count": "3-5",
+    "role_distribution": {
+      "ビットマン": "バランス型（全ステ48）- 育成自由度最高、5パターン",
+      "マモン": "バフ蓄積型（攻78）- 魔力-12固定、3パターン",
+      "クリス": "超物理耐久（防90）- 速さ-12固定、3パターン",
+      "メルラン": "弱点狙い魔法（魔85）- 攻撃-12固定、3パターン",
+      "セラ": "交代サポート（魔防72）- 攻撃-12固定、4パターン",
+      "タロス": "超耐久（防95）- 魔力-12固定、3パターン",
+      "ゼラ": "コスト特化魔法（魔75）- 攻撃-12固定、3パターン",
+      "シーラ": "登場時デバフ（魔防62）- 速さ-12固定、4パターン"
+    },
+    "design_philosophy": "万能型は5パターン、特化型は3パターン。役割が明確な設計"
+  }
+}

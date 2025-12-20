@@ -1,0 +1,415 @@
+{
+  "version": "9.3",
+  "created_at": "2025-12-04",
+  "updated_at": "2025-12-20",
+  "description": "幻種モンスター7体（個体値パターン追加版）",
+  "category": "legendary",
+  "category_description": "幻種（入手難易度：非常に難）- 合計245-252、個体値3パターン（外れなし設計）",
+  "changelog": {
+    "v9.3": [
+      "【アビリティプール再設計】全モンスターのアビリティプールをシナジー重視で再構築",
+      "ミカ: 再生細胞→守りの構え（angelパッシブで毎T回復あり）",
+      "グラム: 畏怖の波動→コスト浸食（デバフ特化）",
+      "スライム: 再生細胞→反射の鎧（攻撃的耐久）"
+    ],
+    "v9.2": [
+      "【奥義コスト統一】全幻種の奥義コストを6→5に変更",
+      "威力調整: S→Aに変更（コスト下減に伴うバランス調整）"
+    ],
+    "v9.1": [
+      "【バランス調整】テュールの暴君のオーラ: 攻撃×1.3→×1.2、被ダメ×1.15→×1.2",
+      "【状態異常制限】タマモの魅了の炎: 魅了+火傷→火傷+攻撃↓1"
+    ],
+    "v9.0": [
+      "【個体値パターン追加】全モンスターに3パターンの個体値を追加"
+    ]
+  },
+  "design_rules": {
+    "base_stats_range": "12-90",
+    "legendary_total_range": "245-252",
+    "iv_pattern_count": 3,
+    "iv_design": "主力ステは絶対に下降しない。不要ステのみ-12。どのパターンも使える設計",
+    "balance_principle": "合計値差を最大14以内に抑え、各モンスターの役割を明確化"
+  },
+  "monsters": [
+    {
+      "monster_id": "mon_001",
+      "name": "三大天ミカ",
+      "category": "legendary",
+      "species": "angel",
+      "element": "light",
+      "role": "サポート型（回復・復活特化）",
+      "design_concept": "【回復特化】魔力と魔防に極振り。攻撃は完全に捨てた純サポーター",
+      "base_stats": {
+        "attack": 15,
+        "defense": 52,
+        "magic": 68,
+        "magic_defense": 73,
+        "speed": 42
+      },
+      "total": 250,
+      "iv_patterns": [
+        {"name": "魔力特化", "attack": -12, "defense": 0, "magic": 12, "magic_defense": 0, "speed": 0, "recommended": "回復量最大化"},
+        {"name": "魔防特化", "attack": -12, "defense": 0, "magic": 0, "magic_defense": 12, "speed": 0, "recommended": "耐久サポート型"},
+        {"name": "速さ特化", "attack": -12, "defense": 0, "magic": 0, "magic_defense": 0, "speed": 12, "recommended": "先制回復型"}
+      ],
+      "strengths": ["魔防が最高クラス", "回復量トップ", "復活アビリティ"],
+      "weaknesses": ["物理攻撃は完全に不可能", "速さは普通"],
+      "ability_pool": {
+        "rare": [
+          {"id": "ex_leg_mika", "name": "女神の祝福", "effect": "HP半分以上で倒される時、HP半分で復活（1回）"},
+          {"id": "sp_angel", "name": "聖なるオーラ", "effect": "回復技の効果が強化される"}
+        ],
+        "common": [
+          {"id": "com_011", "name": "浄化の息吹", "effect": "毎ターン終了時、状態異常を1つ回復"},
+          {"id": "com_019", "name": "守りの構え", "effect": "HP半分以上で被ダメージ軽減"}
+        ]
+      },
+      "skill_pool": {
+        "initial_skills": [
+          {"id": "var_light_001", "name": "裁きの光", "learn_level": 1},
+          {"id": "cmn_sup_001", "name": "威圧", "learn_level": 1},
+          {"id": "buff_light_001", "name": "癒月", "learn_level": 1}
+        ],
+        "learnable_skills": [
+          {"id": "spc_light_001", "name": "閃光", "learn_level": 5},
+          {"id": "mika_001", "name": "天恵", "learn_level": 10, "cost": 2, "effect": "味方HP20%回復+状態異常解除"},
+          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 15},
+          {"id": "mika_002", "name": "聖域展開", "learn_level": 25, "cost": 3, "effect": "3T味方被ダメ-20%"},
+          {"id": "buff_light_002", "name": "光の障壁", "learn_level": 30},
+          {"id": "pri_light_002", "name": "閃光撃", "learn_level": 32},
+          {"id": "mika_003", "name": "神威", "learn_level": 35, "cost": 3, "power": "C", "effect": "麻痺確定"},
+          {"id": "rear_mag_001", "name": "魔力返し", "learn_level": 38},
+          {"id": "var_wind_001", "name": "烈風", "learn_level": 55}
+        ],
+        "ultimate": {"id": "ult_mika", "name": "天界の裁き", "learn_level": 40, "cost": 5, "power_rank": "A", "element": "light", "effect": "麻痺確定+光属性ダメージ"}
+      }
+    },
+    {
+      "monster_id": "mon_002",
+      "name": "暴食ヴェル",
+      "category": "legendary",
+      "species": "demon",
+      "element": "dark",
+      "role": "火力型（吸収・瘴気特化）",
+      "design_concept": "【魔法火力特化】魔力に極振りしたガラスキャノン。吸収で実質耐久あり",
+      "base_stats": {
+        "attack": 18,
+        "defense": 32,
+        "magic": 85,
+        "magic_defense": 40,
+        "speed": 70
+      },
+      "total": 245,
+      "iv_patterns": [
+        {"name": "魔力特化", "attack": 0, "defense": -12, "magic": 12, "magic_defense": 0, "speed": 0, "recommended": "火力最大化（推奨）"},
+        {"name": "速さ特化", "attack": 0, "defense": -12, "magic": 0, "magic_defense": 0, "speed": 12, "recommended": "先制確殺型"},
+        {"name": "魔防特化", "attack": 0, "defense": -12, "magic": 0, "magic_defense": 12, "speed": 0, "recommended": "魔法耐久型"}
+      ],
+      "strengths": ["魔力が全モンスター最高クラス", "HP吸収で実質耐久", "撃破で更に強化"],
+      "weaknesses": ["耐久が低め", "物理攻撃不可"],
+      "ability_pool": {
+        "rare": [
+          {"id": "ex_leg_vel", "name": "終わりなき飢え", "effect": "与ダメージの15%吸収"},
+          {"id": "sp_demon", "name": "魂喰らい", "effect": "相手を倒した時、全ステータス↑1"}
+        ],
+        "common": [
+          {"id": "com_017", "name": "背水の陣", "effect": "HP半分以下で攻撃大幅強化"},
+          {"id": "com_013", "name": "最期の呪詛", "effect": "倒された時、相手に大ダメージ"}
+        ]
+      },
+      "skill_pool": {
+        "initial_skills": [
+          {"id": "var_dark_001", "name": "ナイトメア", "learn_level": 1},
+          {"id": "vel_001", "name": "飢餓", "learn_level": 1, "cost": 1, "power": "D", "effect": "与ダメ15%回復"},
+          {"id": "cmn_sup_003", "name": "集中", "learn_level": 1}
+        ],
+        "learnable_skills": [
+          {"id": "sts_dark_001", "name": "呪詛", "learn_level": 5},
+          {"id": "vel_002", "name": "捕食", "learn_level": 10, "cost": 4, "power": "B", "effect": "与ダメ25%回復、連続使用不可"},
+          {"id": "vel_003", "name": "飢餓の呪い", "learn_level": 20, "cost": 3, "effect": "相手回復50%吸収（3T）"},
+          {"id": "swp_002", "name": "追撃", "learn_level": 28},
+          {"id": "vel_004", "name": "暗黒宴", "learn_level": 30, "cost": 3, "power": "C", "effect": "瘴気確定+HP15%回復"},
+          {"id": "var_none_001", "name": "剛拳", "learn_level": 35},
+          {"id": "var_fire_001", "name": "業炎", "learn_level": 55}
+        ],
+        "ultimate": {"id": "ult_vel", "name": "飢餓地獄", "learn_level": 40, "cost": 5, "power_rank": "A", "element": "dark", "effect": "HP30%回復+相手回復封印2T"}
+      }
+    },
+    {
+      "monster_id": "mon_003",
+      "name": "裏の支配者グラム",
+      "category": "legendary",
+      "species": "mechanoid",
+      "element": "thunder",
+      "role": "デバフ型（アビリティ封じ特化）",
+      "design_concept": "【デバフ特化】魔力と速さに振って確実にデバフを通す。耐久は普通",
+      "base_stats": {
+        "attack": 22,
+        "defense": 45,
+        "magic": 72,
+        "magic_defense": 50,
+        "speed": 61
+      },
+      "total": 250,
+      "iv_patterns": [
+        {"name": "魔力特化", "attack": -12, "defense": 0, "magic": 12, "magic_defense": 0, "speed": 0, "recommended": "火力重視（推奨）"},
+        {"name": "速さ特化", "attack": -12, "defense": 0, "magic": 0, "magic_defense": 0, "speed": 12, "recommended": "先制デバフ型"},
+        {"name": "防御特化", "attack": -12, "defense": 12, "magic": 0, "magic_defense": 0, "speed": 0, "recommended": "耐久デバフ型"}
+      ],
+      "strengths": ["アビリティ4T封じが最強クラス", "デバフが確実に通る", "バランス良い"],
+      "weaknesses": ["火力は魔法に偏る", "物理攻撃不可"],
+      "ability_pool": {
+        "rare": [
+          {"id": "ex_leg_gram", "name": "アビリティ封じ", "effect": "登場から4ターン、相手のアビリティ無効"},
+          {"id": "sp_mecha", "name": "電磁シールド", "effect": "雷属性のダメージを半減"}
+        ],
+        "common": [
+          {"id": "com_003", "name": "号令の旗", "effect": "登場時、自分の素早さ↑1"},
+          {"id": "rare_012", "name": "コスト浸食", "effect": "攻撃命中時、相手の次ターンのコスト回復-1"}
+        ]
+      },
+      "skill_pool": {
+        "initial_skills": [
+          {"id": "var_thunder_001", "name": "天雷", "learn_level": 1},
+          {"id": "sts_thunder_001", "name": "痺撃波", "learn_level": 1},
+          {"id": "cmn_sup_002", "name": "煽動", "learn_level": 1}
+        ],
+        "learnable_skills": [
+          {"id": "gram_001", "name": "データ解析", "learn_level": 5, "cost": 1, "effect": "相手バフ1段階↓"},
+          {"id": "gram_002", "name": "システムハック", "learn_level": 15, "cost": 4, "effect": "相手バフコピー+デバフ1段階"},
+          {"id": "gram_003", "name": "電磁パルス", "learn_level": 25, "cost": 3, "power": "C", "effect": "全状態異常解除（両者）"},
+          {"id": "swp_001", "name": "棘の罠", "learn_level": 32},
+          {"id": "gram_004", "name": "機械連携", "learn_level": 35, "cost": 2, "power": "C", "effect": "味方メカノイドがいると威力+50%"},
+          {"id": "field_time_001", "name": "時空歪曲", "learn_level": 38}
+        ],
+        "ultimate": {"id": "ult_gram", "name": "完全掌握", "learn_level": 40, "cost": 5, "power_rank": "A", "element": "thunder", "effect": "相手コスト0化+デバフ2段階"}
+      }
+    },
+    {
+      "monster_id": "mon_004",
+      "name": "竜帝テュール",
+      "category": "legendary",
+      "species": "dragon",
+      "element": "fire",
+      "role": "火力型（物理・火傷特化）",
+      "design_concept": "【物理火力特化】攻撃90は全モンスター最高。魔法は完全に捨てた",
+      "base_stats": {
+        "attack": 90,
+        "defense": 52,
+        "magic": 12,
+        "magic_defense": 42,
+        "speed": 56
+      },
+      "total": 252,
+      "iv_patterns": [
+        {"name": "攻撃特化", "attack": 12, "defense": 0, "magic": -12, "magic_defense": 0, "speed": 0, "recommended": "火力最大化（推奨）"},
+        {"name": "速さ特化", "attack": 0, "defense": 0, "magic": -12, "magic_defense": 0, "speed": 12, "recommended": "先制物理型"},
+        {"name": "防御特化", "attack": 0, "defense": 12, "magic": -12, "magic_defense": 0, "speed": 0, "recommended": "耐久物理型"}
+      ],
+      "strengths": ["攻撃が全モンスター最高", "暴君オーラで更に強化", "竜の耐久"],
+      "weaknesses": ["魔法攻撃は完全に不可能", "魔防が低め"],
+      "ability_pool": {
+        "rare": [
+          {"id": "ex_leg_tyr", "name": "暴君のオーラ", "effect": "攻撃強化、被ダメージも増加"},
+          {"id": "sp_dragon", "name": "竜鱗", "effect": "攻撃技が強化される"}
+        ],
+        "common": [
+          {"id": "com_016", "name": "猪突猛進", "effect": "攻撃強化、被ダメージも増加"},
+          {"id": "com_017", "name": "背水の陣", "effect": "HP半分以下で攻撃大幅強化"}
+        ]
+      },
+      "skill_pool": {
+        "initial_skills": [
+          {"id": "fire_002", "name": "焔牙", "learn_level": 1},
+          {"id": "cmn_phy_001", "name": "猛進", "learn_level": 1},
+          {"id": "cmn_sup_003", "name": "集中", "learn_level": 1}
+        ],
+        "learnable_skills": [
+          {"id": "tyr_001", "name": "竜爪", "learn_level": 5, "cost": 2, "power": "C", "effect": "急所率↑"},
+          {"id": "var_fire_001", "name": "業炎", "learn_level": 10},
+          {"id": "tyr_002", "name": "暴君の咆哮", "learn_level": 15, "cost": 2, "effect": "自分攻撃↑↑+恐怖確定"},
+          {"id": "var_none_001", "name": "剛拳", "learn_level": 20},
+          {"id": "tyr_003", "name": "蹂躙", "learn_level": 30, "cost": 4, "power": "B", "effect": "HP10%消費+必中"},
+          {"id": "tyr_004", "name": "竜の息吹", "learn_level": 35, "cost": 3, "power": "C", "effect": "火傷確定"}
+        ],
+        "ultimate": {"id": "ult_tyr", "name": "暴君の蹂躙", "learn_level": 40, "cost": 5, "power_rank": "A", "element": "fire", "effect": "自分HP15%消費+恐怖確定"}
+      }
+    },
+    {
+      "monster_id": "mon_005",
+      "name": "剣聖アーサー",
+      "category": "legendary",
+      "species": "human",
+      "element": "none",
+      "role": "火力型（クリティカル特化）",
+      "design_concept": "【速攻クリティカル特化】攻撃と速さに極振り。耐久を捨てた一撃必殺型",
+      "base_stats": {
+        "attack": 80,
+        "defense": 30,
+        "magic": 15,
+        "magic_defense": 35,
+        "speed": 88
+      },
+      "total": 248,
+      "iv_patterns": [
+        {"name": "速さ特化", "attack": 0, "defense": 0, "magic": -12, "magic_defense": 0, "speed": 12, "recommended": "最速確殺型（推奨）"},
+        {"name": "攻撃特化", "attack": 12, "defense": 0, "magic": -12, "magic_defense": 0, "speed": 0, "recommended": "火力最大化"},
+        {"name": "魔防特化", "attack": 0, "defense": 0, "magic": -12, "magic_defense": 12, "speed": 0, "recommended": "対魔法型"}
+      ],
+      "strengths": ["速さと攻撃の両立", "クリティカルで確殺", "先手を取れる"],
+      "weaknesses": ["耐久が低い", "魔法攻撃不可", "一発でも受けたら危険"],
+      "ability_pool": {
+        "rare": [
+          {"id": "ex_leg_arthur", "name": "剣聖の極意", "effect": "急所時に攻撃↑1"},
+          {"id": "sp_human", "name": "適応力", "effect": "同じ技を2回受けると、その技のダメージ半減"}
+        ],
+        "common": [
+          {"id": "com_015", "name": "必殺の型", "effect": "急所に当たりやすい"},
+          {"id": "com_014", "name": "先陣の誉れ", "effect": "先発で登場した時、攻撃強化（1ターン）"}
+        ]
+      },
+      "skill_pool": {
+        "initial_skills": [
+          {"id": "cmn_phy_002", "name": "裂爪", "learn_level": 1},
+          {"id": "cmn_phy_003", "name": "疾風撃", "learn_level": 1},
+          {"id": "cmn_sup_003", "name": "集中", "learn_level": 1}
+        ],
+        "learnable_skills": [
+          {"id": "arthur_001", "name": "剣閃", "learn_level": 5, "cost": 2, "power": "C", "effect": "急所率↑↑"},
+          {"id": "arthur_002", "name": "カウンター", "learn_level": 10, "cost": 2, "power": "B", "effect": "後攻時威力+50%"},
+          {"id": "cmn_phy_004", "name": "破砕撃", "learn_level": 15},
+          {"id": "arthur_003", "name": "聖剣", "learn_level": 20, "cost": 3, "power": "B", "effect": "闇特効"},
+          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 25},
+          {"id": "prot_002", "name": "先読み", "learn_level": 28},
+          {"id": "arthur_004", "name": "一閃", "learn_level": 30, "cost": 3, "power": "B", "effect": "必中+先制"},
+          {"id": "pri_none_002", "name": "神速斬", "learn_level": 32},
+          {"id": "var_none_001", "name": "剛拳", "learn_level": 35}
+        ],
+        "ultimate": {"id": "ult_arthur", "name": "聖剣エクスカリバー", "learn_level": 40, "cost": 5, "power_rank": "A", "element": "none", "effect": "必クリ+アビリティ無効1T"}
+      }
+    },
+    {
+      "monster_id": "mon_006",
+      "name": "九尾タマモ",
+      "category": "legendary",
+      "species": "spirit",
+      "element": "fire",
+      "role": "状態異常型（火傷・魅了特化）",
+      "design_concept": "【状態異常特化】魔力と速さに振って状態異常を確実に撒く。霊体で物理軽減",
+      "base_stats": {
+        "attack": 15,
+        "defense": 28,
+        "magic": 82,
+        "magic_defense": 50,
+        "speed": 75
+      },
+      "total": 250,
+      "iv_patterns": [
+        {"name": "速さ特化", "attack": -12, "defense": 0, "magic": 0, "magic_defense": 0, "speed": 12, "recommended": "先制状態異常型（推奨）"},
+        {"name": "魔力特化", "attack": -12, "defense": 0, "magic": 12, "magic_defense": 0, "speed": 0, "recommended": "火力最大化"},
+        {"name": "魔防特化", "attack": -12, "defense": 0, "magic": 0, "magic_defense": 12, "speed": 0, "recommended": "対魔法耐久型"}
+      ],
+      "strengths": ["状態異常の鬼", "霊体で物理軽減", "高速魔法アタッカー"],
+      "weaknesses": ["物理防御が低い（霊体で補う）", "物理攻撃不可"],
+      "ability_pool": {
+        "rare": [
+          {"id": "ex_leg_tamamo", "name": "狐火の魂", "effect": "状態異常の相手に攻撃強化"},
+          {"id": "sp_spirit", "name": "霊体", "effect": "攻撃技のダメージを軽減"}
+        ],
+        "common": [
+          {"id": "com_003", "name": "号令の旗", "effect": "登場時、自分の素早さ↑1"},
+          {"id": "com_009", "name": "瘴気の纏い", "effect": "攻撃技を受けた時、相手を瘴気にする"}
+        ]
+      },
+      "skill_pool": {
+        "initial_skills": [
+          {"id": "var_fire_001", "name": "業炎", "learn_level": 1},
+          {"id": "tamamo_001", "name": "狐火", "learn_level": 1, "cost": 1, "power": "D", "effect": "火傷確定"},
+          {"id": "cmn_sup_001", "name": "威圧", "learn_level": 1}
+        ],
+        "learnable_skills": [
+          {"id": "buff_fire_001", "name": "炎舞", "learn_level": 5},
+          {"id": "tamamo_002", "name": "幻惑", "learn_level": 10, "cost": 2, "effect": "魅了確定+回避↑"},
+          {"id": "tamamo_003", "name": "九尾乱舞", "learn_level": 20, "cost": 3, "power": "B", "effect": "3連撃"},
+          {"id": "tamamo_004", "name": "魅了の炎", "learn_level": 30, "cost": 2, "power": "D", "effect": "火傷確定+相手攻撃↓1"},
+          {"id": "sts_fire_001", "name": "焦熱獄", "learn_level": 35},
+          {"id": "sts_dark_001", "name": "呪詛", "learn_level": 55}
+        ],
+        "ultimate": {"id": "ult_tamamo", "name": "狐火・九重", "learn_level": 40, "cost": 5, "power_rank": "A", "element": "fire", "effect": "火傷確定+6連続攻撃"}
+      }
+    },
+    {
+      "monster_id": "mon_007",
+      "name": "国喰いスライム",
+      "category": "legendary",
+      "species": "mutant",
+      "element": "none",
+      "role": "耐久型（吸収・適応特化）",
+      "design_concept": "【超耐久特化】両防御に極振り。速さと攻撃を完全に捨てた鉄壁",
+      "base_stats": {
+        "attack": 25,
+        "defense": 85,
+        "magic": 40,
+        "magic_defense": 82,
+        "speed": 20
+      },
+      "total": 252,
+      "iv_patterns": [
+        {"name": "防御特化", "attack": 0, "defense": 12, "magic": 0, "magic_defense": 0, "speed": -12, "recommended": "物理耐久型（推奨）"},
+        {"name": "魔防特化", "attack": 0, "defense": 0, "magic": 0, "magic_defense": 12, "speed": -12, "recommended": "魔法耐久型"},
+        {"name": "魔力特化", "attack": 0, "defense": 0, "magic": 12, "magic_defense": 0, "speed": -12, "recommended": "魔法攻撃型"}
+      ],
+      "strengths": ["両防御がトップクラス", "無限適応で更に硬く", "長期戦最強"],
+      "weaknesses": ["火力が低い", "速さが最遅クラス", "先手を取られる"],
+      "ability_pool": {
+        "rare": [
+          {"id": "ex_leg_slime", "name": "無限適応", "effect": "受けた属性のダメージを軽減（3属性まで）"},
+          {"id": "sp_mutant", "name": "変幻の魂", "effect": "被ダメージ時、ランダムで1ステータス↑1"}
+        ],
+        "common": [
+          {"id": "com_019", "name": "守りの構え", "effect": "HP半分以上で被ダメージ軽減"},
+          {"id": "com_012", "name": "反射の鎧", "effect": "攻撃を受けた時、相手にもダメージ"}
+        ]
+      },
+      "skill_pool": {
+        "initial_skills": [
+          {"id": "slime_001", "name": "粘液弾", "learn_level": 1, "cost": 1, "power": "D", "effect": "速さ↓"},
+          {"id": "cmn_sup_005", "name": "活力の息吹", "learn_level": 1},
+          {"id": "cmn_sup_001", "name": "威圧", "learn_level": 1}
+        ],
+        "learnable_skills": [
+          {"id": "slime_002", "name": "吸収", "learn_level": 5, "cost": 2, "power": "D", "effect": "与ダメ50%回復"},
+          {"id": "slime_003", "name": "分裂", "learn_level": 10, "cost": 2, "effect": "次被ダメ50%軽減"},
+          {"id": "cmn_phy_004", "name": "破砕撃", "learn_level": 15},
+          {"id": "slime_004", "name": "擬態", "learn_level": 20, "cost": 3, "effect": "相手の最後の技をコピー"},
+          {"id": "slime_005", "name": "溶解液", "learn_level": 25, "cost": 3, "power": "B", "effect": "防御↓↓"},
+          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 30},
+          {"id": "slime_006", "name": "飲み込み", "learn_level": 35, "cost": 4, "power": "B", "effect": "拘束確定（2T）+与ダメ30%回復"},
+          {"id": "var_water_001", "name": "アクアボール", "learn_level": 50},
+          {"id": "var_fire_001", "name": "業炎", "learn_level": 52},
+          {"id": "var_thunder_001", "name": "天雷", "learn_level": 54},
+          {"id": "var_wind_001", "name": "烈風", "learn_level": 56}
+        ],
+        "ultimate": {"id": "ult_slime", "name": "完全吸収", "learn_level": 40, "cost": 5, "power_rank": "A", "element": "none", "effect": "与ダメ50%回復+相手ステコピー"}
+      }
+    }
+  ],
+  "category_summary": {
+    "total_monsters": 7,
+    "stat_totals": [250, 245, 250, 252, 248, 250, 252],
+    "average_total": 249.6,
+    "stat_range": "245-252（差7）",
+    "iv_pattern_count": 3,
+    "role_distribution": {
+      "ミカ": "純サポーター（攻15/魔68）- 攻撃-12固定",
+      "ヴェル": "魔法ガラスキャノン（魔85/速70）- 防御-12固定",
+      "グラム": "デバフ特化（魔72/速61）- 攻撃-12固定",
+      "テュール": "物理最高火力（攻90）- 魔力-12固定",
+      "アーサー": "高速クリティカル（攻80/速88）- 魔力-12固定",
+      "タマモ": "状態異常（魔82/速75）- 攻撃-12固定",
+      "スライム": "超耐久（防85/魔防82）- 速さ-12固定"
+    },
+    "design_philosophy": "幻種は3パターン全てが使える設計。どれを引いても外れなし"
+  }
+}

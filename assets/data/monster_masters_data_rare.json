@@ -1,0 +1,567 @@
+{
+  "version": "9.4",
+  "created_at": "2025-12-04",
+  "updated_at": "2025-12-20",
+  "description": "希少種モンスター10体（個体値パターン追加版）",
+  "category": "rare",
+  "category_description": "希少種（入手難易度：やや難）- 合計240-245、個体値4パターン（外れなし設計）",
+  "changelog": {
+    "v9.4": [
+      "【Mutant種技プール拡張】ホノオ: 7技→1┉3技、2属性→5属性",
+      "【サポート技追加】リリス: 守護陣追加、業炎追加"
+    ],
+    "v9.2": [
+      "【アビリティプール再設計】全モンスターのアビリティプールをシナジー重視で再構築",
+      "【リリス弱体化】夢魔の誘惑: 登場時魅了確定→攻撃命中時25%魅了",
+      "ヴルム: 再生細胞→守りの構え（竜種で状態異常1種類制限あり）",
+      "ラム: 号令の旗→帯電被膜、再生細胞→守りの構え（angelパッシブで回復あり）",
+      "エヴァ: 再生細胞→守りの構え",
+      "ホノオ: 太陽の祝福を効果1つに（炎技強化のみ）",
+      "ルリア: 再生細胞→守りの構え"
+    ],
+    "v9.1": [
+      "【状態異常制限】ラムの天罰: 麻痺+恐怖→麻痺+速さ↓1"
+    ],
+    "v9.0": [
+      "【個体値パターン追加】全モンスターに4パターンの個体値を追加"
+    ]
+  },
+  "design_rules": {
+    "base_stats_range": "12-97",
+    "rare_total_range": "240-245",
+    "iv_pattern_count": 4,
+    "iv_design": "主力ステは絶対に下降しない。不要ステのみ-12。どのパターンも使える設計",
+    "balance_principle": "速度特化の価値を認め、合計値を均等化"
+  },
+  "monsters": [
+    {
+      "monster_id": "mon_008",
+      "name": "メカ白竜リント",
+      "category": "rare",
+      "species": "mechanoid",
+      "element": "wind",
+      "role": "火力型（先制・速度特化）",
+      "design_concept": "【加速型】初期速さは控えめだが、毎T加速で最速になる。バランス配分",
+      "base_stats": {
+        "attack": 50,
+        "defense": 42,
+        "magic": 45,
+        "magic_defense": 42,
+        "speed": 63
+      },
+      "total": 242,
+      "iv_patterns": [
+        {"name": "速さ特化", "attack": 0, "defense": 0, "magic": 0, "magic_defense": -12, "speed": 12, "recommended": "加速最大化（推奨）"},
+        {"name": "攻撃特化", "attack": 12, "defense": 0, "magic": 0, "magic_defense": -12, "speed": 0, "recommended": "物理型"},
+        {"name": "魔力特化", "attack": 0, "defense": 0, "magic": 12, "magic_defense": -12, "speed": 0, "recommended": "魔法型"},
+        {"name": "防御特化", "attack": 0, "defense": 12, "magic": 0, "magic_defense": -12, "speed": 0, "recommended": "耐久型"}
+      ],
+      "strengths": ["ジェットエンジンで最終的に最速", "物理魔法どちらも選択可能"],
+      "weaknesses": ["初期耐久が低め", "特化型に初速で負ける"],
+      "ability_pool": {
+        "rare": [
+          {"id": "ex_rare_linto", "name": "ジェットエンジン", "effect": "毎ターン素早さ↑1（最大3回）"},
+          {"id": "sp_mecha", "name": "電磁シールド", "effect": "雷属性のダメージを半減"}
+        ],
+        "common": [
+          {"id": "com_003", "name": "号令の旗", "effect": "登場時、自分の素早さ↑1"},
+          {"id": "com_014", "name": "先陣の誉れ", "effect": "先発で登場した時、攻撃強化（1ターン）"}
+        ]
+      },
+      "skill_pool": {
+        "initial_skills": [
+          {"id": "var_wind_001", "name": "烈風", "learn_level": 1},
+          {"id": "cmn_phy_003", "name": "疾風撃", "learn_level": 1}
+        ],
+        "learnable_skills": [
+          {"id": "linto_001", "name": "ジェット突撃", "learn_level": 5, "cost": 2, "power": "C", "effect": "先制+自分速さ↑"},
+          {"id": "spc_wind_002", "name": "疾空斬", "learn_level": 10},
+          {"id": "var_thunder_001", "name": "天雷", "learn_level": 15},
+          {"id": "linto_002", "name": "機械咆哮", "learn_level": 25, "cost": 2, "effect": "相手速さ↓↓"},
+          {"id": "linto_003", "name": "超音速", "learn_level": 35, "cost": 3, "power": "B", "effect": "先制+命中↓付与"}
+        ],
+        "ultimate": {"id": "ult_linto", "name": "ジェットストリーム", "learn_level": 40, "cost": 5, "power_rank": "A", "element": "wind", "effect": "必ず先制+相手速さ↓↓"}
+      }
+    },
+    {
+      "monster_id": "mon_009",
+      "name": "白竜ヴルム",
+      "category": "rare",
+      "species": "dragon",
+      "element": "light",
+      "role": "サポート型（回復特化）",
+      "design_concept": "【回復特化】魔力と魔防に振った純ヒーラー。攻撃は捨てた",
+      "base_stats": {
+        "attack": 25,
+        "defense": 52,
+        "magic": 70,
+        "magic_defense": 65,
+        "speed": 30
+      },
+      "total": 242,
+      "iv_patterns": [
+        {"name": "魔力特化", "attack": -12, "defense": 0, "magic": 12, "magic_defense": 0, "speed": 0, "recommended": "回復量最大化（推奨）"},
+        {"name": "魔防特化", "attack": -12, "defense": 0, "magic": 0, "magic_defense": 12, "speed": 0, "recommended": "魔法耐久型"},
+        {"name": "防御特化", "attack": -12, "defense": 12, "magic": 0, "magic_defense": 0, "speed": 0, "recommended": "物理耐久型"},
+        {"name": "速さ特化", "attack": -12, "defense": 0, "magic": 0, "magic_defense": 0, "speed": 12, "recommended": "先制回復型"}
+      ],
+      "strengths": ["回復量が高い", "両耐久が優秀", "味方登場時回復"],
+      "weaknesses": ["速さが遅い", "攻撃は期待できない"],
+      "ability_pool": {
+        "rare": [
+          {"id": "ex_rare_wurm", "name": "聖鱗", "effect": "味方が登場した時、その味方のHP5%回復"},
+          {"id": "sp_dragon", "name": "竜鱗", "effect": "攻撃技が強化される"}
+        ],
+        "common": [
+          {"id": "rare_018", "name": "共鳴の波", "effect": "毎ターン終了時、味方全員のHPを少し回復"},
+          {"id": "com_019", "name": "守りの構え", "effect": "HP半分以上で被ダメージ軽減"}
+        ]
+      },
+      "skill_pool": {
+        "initial_skills": [
+          {"id": "var_light_001", "name": "裁きの光", "learn_level": 1},
+          {"id": "buff_light_001", "name": "癒月", "learn_level": 1}
+        ],
+        "learnable_skills": [
+          {"id": "wurm_001", "name": "聖息", "learn_level": 5, "cost": 2, "power": "C", "effect": "味方HP10%回復"},
+          {"id": "cycle_light_001", "name": "光の帰還", "learn_level": 12},
+          {"id": "wurm_002", "name": "浄化の光", "learn_level": 15, "cost": 2, "effect": "味方状態異常解除"},
+          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 20},
+          {"id": "buff_light_002", "name": "光の障壁", "learn_level": 25},
+          {"id": "wurm_003", "name": "竜の威光", "learn_level": 30, "cost": 3, "power": "B", "effect": "相手攻撃↓↓"},
+          {"id": "pri_light_002", "name": "閃光撃", "learn_level": 32},
+          {"id": "var_wind_001", "name": "烈風", "learn_level": 55}
+        ],
+        "ultimate": {"id": "ult_wurm", "name": "聖竜の息吹", "learn_level": 40, "cost": 5, "power_rank": "-", "element": "light", "effect": "味方全体HP40%回復"}
+      }
+    },
+    {
+      "monster_id": "mon_010",
+      "name": "海賊王ジャック",
+      "category": "rare",
+      "species": "human",
+      "element": "water",
+      "role": "火力型（先制・速度特化）",
+      "design_concept": "【超速攻型】攻撃と速さに極振り。耐久を捨てた一撃離脱",
+      "base_stats": {
+        "attack": 75,
+        "defense": 25,
+        "magic": 20,
+        "magic_defense": 28,
+        "speed": 94
+      },
+      "total": 242,
+      "iv_patterns": [
+        {"name": "速さ特化", "attack": 0, "defense": 0, "magic": -12, "magic_defense": 0, "speed": 12, "recommended": "最速確殺型（推奨）"},
+        {"name": "攻撃特化", "attack": 12, "defense": 0, "magic": -12, "magic_defense": 0, "speed": 0, "recommended": "火力最大化"},
+        {"name": "防御特化", "attack": 0, "defense": 12, "magic": -12, "magic_defense": 0, "speed": 0, "recommended": "物理耐久型"},
+        {"name": "魔防特化", "attack": 0, "defense": 0, "magic": -12, "magic_defense": 12, "speed": 0, "recommended": "魔法耐久型"}
+      ],
+      "strengths": ["先制で確殺狙い", "速さがトップクラス", "先制攻撃強化"],
+      "weaknesses": ["耐久が低い", "魔法攻撃不可", "一発でも受けたら危険"],
+      "ability_pool": {
+        "rare": [
+          {"id": "ex_rare_jack", "name": "海賊魂", "effect": "先制攻撃時、攻撃強化"},
+          {"id": "sp_human", "name": "適応力", "effect": "同じ技を2回受けると、その技のダメージ半減"}
+        ],
+        "common": [
+          {"id": "com_015", "name": "必殺の型", "effect": "急所に当たりやすい"},
+          {"id": "com_014", "name": "先陣の誉れ", "effect": "先発で登場した時、攻撃強化（1ターン）"}
+        ]
+      },
+      "skill_pool": {
+        "initial_skills": [
+          {"id": "pri_water_001", "name": "激流撃", "learn_level": 1},
+          {"id": "cmn_phy_003", "name": "疾風撃", "learn_level": 1}
+        ],
+        "learnable_skills": [
+          {"id": "jack_001", "name": "海賊斬り", "learn_level": 5, "cost": 2, "power": "C", "effect": "急所率↑"},
+          {"id": "var_water_001", "name": "アクアボール", "learn_level": 10},
+          {"id": "jack_002", "name": "砲撃", "learn_level": 15, "cost": 3, "power": "C", "effect": "恐怖確定"},
+          {"id": "prot_002", "name": "先読み", "learn_level": 22},
+          {"id": "jack_003", "name": "略奪", "learn_level": 25, "cost": 2, "power": "D", "effect": "相手コスト-1"},
+          {"id": "swp_002", "name": "追撃", "learn_level": 28},
+          {"id": "var_none_001", "name": "剛拳", "learn_level": 30},
+          {"id": "jack_004", "name": "嵐の海", "learn_level": 35, "cost": 3, "power": "B", "effect": "相手全デバフ1段階"}
+        ],
+        "ultimate": {"id": "ult_jack", "name": "海賊王の覇気", "learn_level": 40, "cost": 5, "power_rank": "A", "element": "water", "effect": "相手全デバフ+自分全バフ"}
+      }
+    },
+    {
+      "monster_id": "mon_011",
+      "name": "雷霆ラム",
+      "category": "rare",
+      "species": "angel",
+      "element": "thunder",
+      "role": "状態異常型（麻痺特化）",
+      "design_concept": "【麻痺特化】魔力と魔防に振った麻痺スペシャリスト",
+      "base_stats": {
+        "attack": 18,
+        "defense": 45,
+        "magic": 72,
+        "magic_defense": 62,
+        "speed": 48
+      },
+      "total": 245,
+      "iv_patterns": [
+        {"name": "魔力特化", "attack": -12, "defense": 0, "magic": 12, "magic_defense": 0, "speed": 0, "recommended": "火力最大化（推奨）"},
+        {"name": "魔防特化", "attack": -12, "defense": 0, "magic": 0, "magic_defense": 12, "speed": 0, "recommended": "魔法耐久型"},
+        {"name": "速さ特化", "attack": -12, "defense": 0, "magic": 0, "magic_defense": 0, "speed": 12, "recommended": "先制麻痺型"},
+        {"name": "防御特化", "attack": -12, "defense": 12, "magic": 0, "magic_defense": 0, "speed": 0, "recommended": "物理耐久型"}
+      ],
+      "strengths": ["麻痺が確実に通る", "サポートも可能", "魔法耐久が高い"],
+      "weaknesses": ["物理攻撃不可", "速さは普通"],
+      "ability_pool": {
+        "rare": [
+          {"id": "ex_rare_ram", "name": "雷神の加護", "effect": "雷技が強化される"},
+          {"id": "sp_angel", "name": "聖なるオーラ", "effect": "回復技の効果が強化される"}
+        ],
+        "common": [
+          {"id": "com_008", "name": "帯電被膜", "effect": "攻撃技を受けた時、相手を麻痺にする"},
+          {"id": "com_019", "name": "守りの構え", "effect": "HP半分以上で被ダメージ軽減"}
+        ]
+      },
+      "skill_pool": {
+        "initial_skills": [
+          {"id": "var_thunder_001", "name": "天雷", "learn_level": 1},
+          {"id": "cmn_sup_003", "name": "集中", "learn_level": 1}
+        ],
+        "learnable_skills": [
+          {"id": "ram_001", "name": "雷槍", "learn_level": 5, "cost": 2, "power": "D", "effect": "麻痺確定"},
+          {"id": "buff_light_001", "name": "癒月", "learn_level": 15},
+          {"id": "ram_002", "name": "疾雷", "learn_level": 20, "cost": 2, "power": "C", "effect": "先制"},
+          {"id": "ram_003", "name": "天罰", "learn_level": 30, "cost": 3, "power": "C", "effect": "麻痺確定+相手速さ↓1"},
+          {"id": "var_light_001", "name": "裁きの光", "learn_level": 35},
+          {"id": "var_wind_001", "name": "烈風", "learn_level": 55}
+        ],
+        "ultimate": {"id": "ult_ram", "name": "神雷一閃", "learn_level": 40, "cost": 5, "power_rank": "A", "element": "thunder", "effect": "必ず先制+麻痺確定"}
+      }
+    },
+    {
+      "monster_id": "mon_012",
+      "name": "竜姫エヴァ",
+      "category": "rare",
+      "species": "dragon",
+      "element": "water",
+      "role": "サポート型（回復特化）",
+      "design_concept": "【自己回復付きヒーラー】味方回復で自分も回復する効率の良さ",
+      "base_stats": {
+        "attack": 20,
+        "defense": 50,
+        "magic": 72,
+        "magic_defense": 68,
+        "speed": 32
+      },
+      "total": 242,
+      "iv_patterns": [
+        {"name": "魔力特化", "attack": -12, "defense": 0, "magic": 12, "magic_defense": 0, "speed": 0, "recommended": "回復量最大化（推奨）"},
+        {"name": "魔防特化", "attack": -12, "defense": 0, "magic": 0, "magic_defense": 12, "speed": 0, "recommended": "魔法耐久型"},
+        {"name": "防御特化", "attack": -12, "defense": 12, "magic": 0, "magic_defense": 0, "speed": 0, "recommended": "物理耐久型"},
+        {"name": "速さ特化", "attack": -12, "defense": 0, "magic": 0, "magic_defense": 0, "speed": 12, "recommended": "先制回復型"}
+      ],
+      "strengths": ["回復量トップクラス", "自己回復も同時", "魔法耐久が高い"],
+      "weaknesses": ["速さが遅い", "攻撃は不可"],
+      "ability_pool": {
+        "rare": [
+          {"id": "ex_rare_eva", "name": "竜姫の慈愛", "effect": "回復技を使った時、自分も5%回復"},
+          {"id": "sp_dragon", "name": "竜鱗", "effect": "攻撃技が強化される"}
+        ],
+        "common": [
+          {"id": "com_011", "name": "浄化の息吹", "effect": "毎ターン終了時、状態異常を1つ回復"},
+          {"id": "com_019", "name": "守りの構え", "effect": "HP半分以上で被ダメージ軽減"}
+        ]
+      },
+      "skill_pool": {
+        "initial_skills": [
+          {"id": "var_water_001", "name": "アクアボール", "learn_level": 1},
+          {"id": "buff_water_001", "name": "水鏡", "learn_level": 1}
+        ],
+        "learnable_skills": [
+          {"id": "eva_001", "name": "癒しの水", "learn_level": 5, "cost": 2, "effect": "味方HP30%回復"},
+          {"id": "eva_002", "name": "龍の舞", "learn_level": 15, "cost": 2, "effect": "自分攻撃↑+速さ↑"},
+          {"id": "eva_003", "name": "清浄の霧", "learn_level": 25, "cost": 2, "effect": "味方状態異常解除+HP15%回復"},
+          {"id": "buff_light_001", "name": "癒月", "learn_level": 35},
+          {"id": "var_light_001", "name": "裁きの光", "learn_level": 55}
+        ],
+        "ultimate": {"id": "ult_eva", "name": "竜姫の慈愛", "learn_level": 40, "cost": 5, "power_rank": "-", "element": "water", "effect": "味方HP50%回復+全状態異常解除"}
+      }
+    },
+    {
+      "monster_id": "mon_013",
+      "name": "太陽民ホノオ",
+      "category": "rare",
+      "species": "mutant",
+      "element": "fire",
+      "role": "状態異常型（火傷特化）",
+      "design_concept": "【多型対応】バランス型で物理魔法どちらも選択可能",
+      "base_stats": {
+        "attack": 48,
+        "defense": 42,
+        "magic": 55,
+        "magic_defense": 48,
+        "speed": 49
+      },
+      "total": 242,
+      "iv_patterns": [
+        {"name": "攻撃特化", "attack": 12, "defense": 0, "magic": 0, "magic_defense": -12, "speed": 0, "recommended": "物理型"},
+        {"name": "魔力特化", "attack": 0, "defense": 0, "magic": 12, "magic_defense": -12, "speed": 0, "recommended": "魔法型（推奨）"},
+        {"name": "速さ特化", "attack": 0, "defense": 0, "magic": 0, "magic_defense": -12, "speed": 12, "recommended": "先制火傷型"},
+        {"name": "防御特化", "attack": 0, "defense": 12, "magic": 0, "magic_defense": -12, "speed": 0, "recommended": "耐久型"}
+      ],
+      "strengths": ["炎技が強化される", "多様な育成が可能", "変幻の魂で強化"],
+      "weaknesses": ["特化型には劣る", "器用貧乏になりやすい"],
+      "ability_pool": {
+        "rare": [
+          {"id": "ex_rare_honoo", "name": "太陽の祝福", "effect": "炎技が強化される"},
+          {"id": "sp_mutant", "name": "変幻の魂", "effect": "被ダメージ時、ランダムで1ステータス↑1"}
+        ],
+        "common": [
+          {"id": "com_017", "name": "背水の陣", "effect": "HP半分以下で攻撃大幅強化"},
+          {"id": "com_016", "name": "猪突猛進", "effect": "攻撃強化、被ダメージも増加"}
+        ]
+      },
+      "skill_pool": {
+        "initial_skills": [
+          {"id": "var_fire_001", "name": "業炎", "learn_level": 1},
+          {"id": "buff_fire_001", "name": "炎舞", "learn_level": 1}
+        ],
+        "learnable_skills": [
+          {"id": "honoo_001", "name": "陽光撃", "learn_level": 5, "cost": 2, "power": "D", "effect": "火傷確定"},
+          {"id": "cmn_phy_002", "name": "裂爪", "learn_level": 8},
+          {"id": "honoo_002", "name": "熱波", "learn_level": 12, "cost": 2, "power": "D", "effect": "相手速さ↓↓"},
+          {"id": "var_light_001", "name": "裁きの光", "learn_level": 16},
+          {"id": "cmn_sup_003", "name": "集中", "learn_level": 20},
+          {"id": "var_wind_001", "name": "烈風", "learn_level": 24},
+          {"id": "honoo_003", "name": "炎熱領域", "learn_level": 28, "cost": 3, "effect": "3T炎技威力+30%"},
+          {"id": "var_earth_001", "name": "ストーンショット", "learn_level": 32},
+          {"id": "sts_fire_001", "name": "焦熱獄", "learn_level": 36},
+          {"id": "var_thunder_001", "name": "天雷", "learn_level": 50},
+          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 55}
+        ],
+        "ultimate": {"id": "ult_honoo", "name": "太陽の怒り", "learn_level": 40, "cost": 5, "power_rank": "A", "element": "fire", "effect": "灼熱フィールド設置+自分炎技+30%"}
+      }
+    },
+    {
+      "monster_id": "mon_014",
+      "name": "夢魔リリス",
+      "category": "rare",
+      "species": "demon",
+      "element": "dark",
+      "role": "状態異常型（魅了・悪夢特化）",
+      "design_concept": "【最速特化】速さ97で全モンスター最高。耐久を捨てて確実に先制",
+      "base_stats": {
+        "attack": 18,
+        "defense": 25,
+        "magic": 68,
+        "magic_defense": 32,
+        "speed": 97
+      },
+      "total": 240,
+      "iv_patterns": [
+        {"name": "速さ特化", "attack": -12, "defense": 0, "magic": 0, "magic_defense": 0, "speed": 12, "recommended": "最速確定型（推奨）"},
+        {"name": "魔力特化", "attack": -12, "defense": 0, "magic": 12, "magic_defense": 0, "speed": 0, "recommended": "火力重視型"},
+        {"name": "魔防特化", "attack": -12, "defense": 0, "magic": 0, "magic_defense": 12, "speed": 0, "recommended": "魔法耐久型"},
+        {"name": "防御特化", "attack": -12, "defense": 12, "magic": 0, "magic_defense": 0, "speed": 0, "recommended": "物理耐久型"}
+      ],
+      "strengths": ["速さが全モンスター最高", "攻撃命中で魅了チャンス", "必ず先手が取れる"],
+      "weaknesses": ["耐久が低い", "一発受けたら危険", "火力も控えめ"],
+      "ability_pool": {
+        "rare": [
+          {"id": "ex_rare_lilith", "name": "夢魔の誘惑", "effect": "攻撃命中時、25%の確率で魅了"},
+          {"id": "sp_demon", "name": "魂喰らい", "effect": "相手を倒した時、全ステータス↑1"}
+        ],
+        "common": [
+          {"id": "com_003", "name": "号令の旗", "effect": "登場時、自分の素早さ↑1"},
+          {"id": "com_009", "name": "瘴気の纏い", "effect": "攻撃技を受けた時、相手を瘴気にする"}
+        ]
+      },
+      "skill_pool": {
+        "initial_skills": [
+          {"id": "pri_dark_001", "name": "影縫い", "learn_level": 1},
+          {"id": "var_dark_001", "name": "ナイトメア", "learn_level": 1}
+        ],
+        "learnable_skills": [
+          {"id": "lilith_001", "name": "魅了のキス", "learn_level": 5, "cost": 3, "effect": "魅了確定（2T）"},
+          {"id": "lilith_002", "name": "悪夢の囁き", "learn_level": 15, "cost": 2, "power": "E", "effect": "悪夢確定"},
+          {"id": "sts_dark_001", "name": "呪詛", "learn_level": 20},
+          {"id": "lilith_003", "name": "悪夢の檻", "learn_level": 25, "cost": 4, "effect": "悪夢確定（3T）"},
+          {"id": "lilith_004", "name": "夢喰い", "learn_level": 35, "cost": 3, "power": "B", "effect": "悪夢状態の相手に威力2倍"},
+          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 45},
+          {"id": "var_fire_001", "name": "業炎", "learn_level": 50}
+        ],
+        "ultimate": {"id": "ult_lilith", "name": "永遠の悪夢", "learn_level": 40, "cost": 5, "power_rank": "A", "element": "dark", "effect": "悪夢確定+3T毎T魔力10%ダメ"}
+      }
+    },
+    {
+      "monster_id": "mon_015",
+      "name": "歌姫ルリア",
+      "category": "rare",
+      "species": "human",
+      "element": "wind",
+      "role": "サポート型（バフ・回復特化）",
+      "design_concept": "【高速サポート特化】速さ92で攻撃を完全に捨てた先制サポーター",
+      "base_stats": {
+        "attack": 12,
+        "defense": 35,
+        "magic": 55,
+        "magic_defense": 48,
+        "speed": 92
+      },
+      "total": 242,
+      "iv_patterns": [
+        {"name": "速さ特化", "attack": -12, "defense": 0, "magic": 0, "magic_defense": 0, "speed": 12, "recommended": "最速サポート型（推奨）"},
+        {"name": "魔力特化", "attack": -12, "defense": 0, "magic": 12, "magic_defense": 0, "speed": 0, "recommended": "回復量重視型"},
+        {"name": "魔防特化", "attack": -12, "defense": 0, "magic": 0, "magic_defense": 12, "speed": 0, "recommended": "魔法耐久型"},
+        {"name": "防御特化", "attack": -12, "defense": 12, "magic": 0, "magic_defense": 0, "speed": 0, "recommended": "物理耐久型"}
+      ],
+      "strengths": ["速さがトップクラス", "先手でバフを確実に撒ける", "自己回復も可能"],
+      "weaknesses": ["攻撃は完全に不可能", "耐久が低い"],
+      "ability_pool": {
+        "rare": [
+          {"id": "ex_rare_luria", "name": "癒しの歌声", "effect": "サポート技を使った時、自分を5%回復"},
+          {"id": "sp_human", "name": "適応力", "effect": "同じ技を2回受けると、その技のダメージ半減"}
+        ],
+        "common": [
+          {"id": "com_003", "name": "号令の旗", "effect": "登場時、自分の素早さ↑1"},
+          {"id": "com_019", "name": "守りの構え", "effect": "HP半分以上で被ダメージ軽減"}
+        ]
+      },
+      "skill_pool": {
+        "initial_skills": [
+          {"id": "var_wind_001", "name": "烈風", "learn_level": 1},
+          {"id": "buff_wind_002", "name": "翼の休息", "learn_level": 1}
+        ],
+        "learnable_skills": [
+          {"id": "luria_001", "name": "鼓舞の歌", "learn_level": 5, "cost": 2, "effect": "味方攻撃↑+魔力↑"},
+          {"id": "buff_wind_001", "name": "順風", "learn_level": 10},
+          {"id": "luria_002", "name": "守りの歌", "learn_level": 15, "cost": 2, "effect": "味方防御↑↑"},
+          {"id": "buff_light_001", "name": "癒月", "learn_level": 20},
+          {"id": "luria_003", "name": "眠りの歌", "learn_level": 25, "cost": 3, "effect": "恐怖確定"},
+          {"id": "luria_004", "name": "魂の癒し", "learn_level": 35, "cost": 4, "effect": "味方HP40%回復+状態異常解除"}
+        ],
+        "ultimate": {"id": "ult_luria", "name": "魂の歌声", "learn_level": 40, "cost": 5, "power_rank": "-", "element": "wind", "effect": "味方全体バフ2段階+HP30%回復"}
+      }
+    },
+    {
+      "monster_id": "mon_016",
+      "name": "呪符キョウカ",
+      "category": "rare",
+      "species": "spirit",
+      "element": "dark",
+      "role": "状態異常型（多種状態異常特化）",
+      "design_concept": "【状態異常特化】魔力と速さに振って状態異常を確実に通す",
+      "base_stats": {
+        "attack": 18,
+        "defense": 38,
+        "magic": 70,
+        "magic_defense": 44,
+        "speed": 72
+      },
+      "total": 242,
+      "iv_patterns": [
+        {"name": "魔力特化", "attack": -12, "defense": 0, "magic": 12, "magic_defense": 0, "speed": 0, "recommended": "火力重視型"},
+        {"name": "速さ特化", "attack": -12, "defense": 0, "magic": 0, "magic_defense": 0, "speed": 12, "recommended": "先制状態異常型（推奨）"},
+        {"name": "魔防特化", "attack": -12, "defense": 0, "magic": 0, "magic_defense": 12, "speed": 0, "recommended": "魔法耐久型"},
+        {"name": "防御特化", "attack": -12, "defense": 12, "magic": 0, "magic_defense": 0, "speed": 0, "recommended": "物理耐久型"}
+      ],
+      "strengths": ["状態異常の種類が豊富", "サポート技先制アビリティ", "霊体で物理に強い"],
+      "weaknesses": ["火力は控えめ", "物理攻撃不可"],
+      "ability_pool": {
+        "rare": [
+          {"id": "ex_rare_kyouka", "name": "呪符術師", "effect": "サポート技が必ず先制になる"},
+          {"id": "sp_spirit", "name": "霊体", "effect": "攻撃技のダメージを軽減"}
+        ],
+        "common": [
+          {"id": "rare_002", "name": "身代わりの呪符", "effect": "最初に受ける攻撃を無効化（1回）"},
+          {"id": "com_003", "name": "号令の旗", "effect": "登場時、自分の素早さ↑1"}
+        ]
+      },
+      "skill_pool": {
+        "initial_skills": [
+          {"id": "var_dark_001", "name": "ナイトメア", "learn_level": 1},
+          {"id": "cmn_sup_001", "name": "威圧", "learn_level": 1},
+          {"id": "kyouka_001", "name": "呪符・束縛", "learn_level": 1, "cost": 1, "power": "E", "effect": "拘束確定"}
+        ],
+        "learnable_skills": [
+          {"id": "kyouka_002", "name": "呪符・封印", "learn_level": 5, "cost": 2, "power": "E", "effect": "封印確定"},
+          {"id": "kyouka_003", "name": "呪符・瘴気", "learn_level": 15, "cost": 2, "power": "D", "effect": "瘴気確定"},
+          {"id": "var_fire_001", "name": "業炎", "learn_level": 20},
+          {"id": "kyouka_004", "name": "呪符・爆炎", "learn_level": 25, "cost": 3, "power": "C", "effect": "火傷確定"},
+          {"id": "kyouka_005", "name": "呪符・結界", "learn_level": 35, "cost": 2, "effect": "1T無敵+先制"}
+        ],
+        "ultimate": {"id": "ult_kyouka", "name": "呪符・万霊", "learn_level": 40, "cost": 5, "power_rank": "A", "element": "dark", "effect": "瘴気確定+相手アビリティ無効2T"}
+      }
+    },
+    {
+      "monster_id": "mon_039",
+      "name": "聖騎士レオン",
+      "category": "rare",
+      "species": "human",
+      "element": "light",
+      "role": "タンク型（防護・カウンター）",
+      "design_concept": "【超防御特化】防御90で速さを完全に捨てた鉄壁。後攻カウンターで反撃",
+      "base_stats": {
+        "attack": 55,
+        "defense": 90,
+        "magic": 15,
+        "magic_defense": 68,
+        "speed": 17
+      },
+      "total": 245,
+      "iv_patterns": [
+        {"name": "防御特化", "attack": 0, "defense": 12, "magic": -12, "magic_defense": 0, "speed": 0, "recommended": "物理耐久最大化（推奨）"},
+        {"name": "魔防特化", "attack": 0, "defense": 0, "magic": -12, "magic_defense": 12, "speed": 0, "recommended": "両耐久型"},
+        {"name": "攻撃特化", "attack": 12, "defense": 0, "magic": -12, "magic_defense": 0, "speed": 0, "recommended": "カウンター火力型"},
+        {"name": "速さ特化", "attack": 0, "defense": 0, "magic": -12, "magic_defense": 0, "speed": 12, "recommended": "速度補正型"}
+      ],
+      "strengths": ["防御がトップクラス", "2つの生存アビリティ", "後攻カウンターで反撃"],
+      "weaknesses": ["速さが最遅クラス", "魔法攻撃不可", "先制技に弱い"],
+      "ability_pool": {
+        "rare": [
+          {"id": "ex_rare_leon_1", "name": "聖盾の誓い", "effect": "登場時、1回だけダメージを無効化"},
+          {"id": "ex_rare_leon_2", "name": "不屈の闘志", "effect": "HP満タン時、一撃でHP1で耐える（1回）"}
+        ],
+        "common": [
+          {"id": "com_019", "name": "守りの構え", "effect": "HP半分以上で被ダメージ軽減"},
+          {"id": "com_012", "name": "反射の鎧", "effect": "攻撃を受けた時、相手にもダメージ"}
+        ]
+      },
+      "skill_pool": {
+        "initial_skills": [
+          {"id": "var_light_001", "name": "裁きの光", "learn_level": 1},
+          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 1}
+        ],
+        "learnable_skills": [
+          {"id": "leon_001", "name": "シールドバッシュ", "learn_level": 5, "cost": 2, "power": "D", "effect": "相手攻撃↓+自分防御↑"},
+          {"id": "buff_light_002", "name": "光の障壁", "learn_level": 10},
+          {"id": "leon_002", "name": "聖なる守護", "learn_level": 15, "cost": 3, "effect": "3T被ダメ-40%+状態異常耐性↑"},
+          {"id": "prot_002", "name": "先読み", "learn_level": 20},
+          {"id": "leon_003", "name": "報復の聖剣", "learn_level": 28, "cost": 4, "power": "B", "effect": "後攻時威力+50%+HP10%回復"},
+          {"id": "rear_phy_002", "name": "報復", "learn_level": 32},
+          {"id": "cycle_light_001", "name": "光の帰還", "learn_level": 38}
+        ],
+        "ultimate": {"id": "ult_leon", "name": "聖騎士の守護", "learn_level": 40, "cost": 5, "power_rank": "B", "element": "light", "effect": "味方全体被ダメ-30%（3T）+自分HP30%回復+防御↑↑"}
+      }
+    }
+  ],
+  "category_summary": {
+    "total_monsters": 10,
+    "stat_totals": [242, 242, 242, 245, 242, 242, 240, 242, 242, 245],
+    "average_total": 242.4,
+    "stat_range": "240-245（差5）",
+    "iv_pattern_count": 4,
+    "role_distribution": {
+      "リント": "加速型（速63→最速）- 魔防-12固定",
+      "ヴルム": "ヒーラー（魔70/魔防65）- 攻撃-12固定",
+      "ジャック": "超速攻型（速94/攻75）- 魔力-12固定",
+      "ラム": "麻痺特化（魔72/魔防62）- 攻撃-12固定",
+      "エヴァ": "ヒーラー（魔72/魔防68）- 攻撃-12固定",
+      "ホノオ": "バランス型（両刀可能）- 魔防-12固定",
+      "リリス": "最速妨害（速97/魔68）- 攻撃-12固定",
+      "ルリア": "高速サポ（速92）- 攻撃-12固定",
+      "キョウカ": "状態異常（魔70/速72）- 攻撃-12固定",
+      "レオン": "超耐久（防90/魔防68）- 魔力-12固定"
+    },
+    "design_philosophy": "希少種は4パターン全てが使える設計。厳選に適度な選択肢"
+  }
+}

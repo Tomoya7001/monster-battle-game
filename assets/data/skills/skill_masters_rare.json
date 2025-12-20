@@ -1,10 +1,18 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "★4 Unique Skills - Phase 1 v7.0",
-  "description": "★4モンスター専用技マスターデータ（状態異常100%確定システム対応）",
-  "version": "7.0.0",
-  "last_updated": "2025-12-10",
-  "monsters": ["linto", "wurm", "jack", "ram", "eva", "honoo", "lilith", "luria", "kyouka"],
+  "title": "Rare Species Unique Skills - Phase 1 v9.0",
+  "description": "希少種モンスター専用技マスターデータ（カテゴリシステム移行版）",
+  "version": "10.0.0",
+  "last_updated": "2025-12-20",
+  "category": "rare",
+  "category_description": "希少種（入手難易度：やや難）- カテゴリは入手難易度であり強さではない",
+  "design_philosophy": {
+    "principle": "カテゴリ＝入手難易度、強さの序列ではない",
+    "power_difference": "幻種・一般種との性能差は最大5%",
+    "ultimate_rule": "同コストなら同等の強さ（カテゴリ無関係）"
+  },
+  "monsters": ["linto", "wurm", "jack", "ram", "eva", "honoo", "lilith", "luria", "kyouka", "leon"],
+  "monster_count": 10,
   "monster_roles": {
     "linto": "火力型（先制特化）",
     "wurm": "サポート型（回復・状態異常解除）",
@@ -13,8 +21,9 @@
     "eva": "サポート型（速度操作・回復）",
     "honoo": "状態異常型（火傷・フィールド）",
     "lilith": "状態異常型（魅了・悪夢特化）",
-    "luria": "サポート型（復活・魅了）",
-    "kyouka": "デバフ型（拘束・瘴気）"
+    "luria": "サポート型（魅了・恐怖）",
+    "kyouka": "デバフ型（拘束・瘴気）",
+    "leon": "耐久型（耐久・味方保護）"
   },
   "skills": [
     {
@@ -62,8 +71,8 @@
       "element": "wind",
       "cost": 5,
       "damage_type": "magical",
-      "power": 150,
-      "power_rank": "S",
+      "power": 110,
+      "power_rank": "A",
       "accuracy": 100,
       "priority": 1,
       "target": "opponent",
@@ -73,7 +82,8 @@
         {"effect_type": "stat_change", "stat": "speed", "modifier": -2, "target": "opponent"}
       ],
       "owner_id": "linto",
-      "is_ultimate": true
+      "is_ultimate": true,
+      "balance_note": "v10.0: S→A威力統一"
     },
     {
       "skill_id": "wurm_001",
@@ -108,7 +118,7 @@
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "自分と相手の状態異常・バフ・デバフ全解除",
+      "description": "自分と相手のバフ・デバフ全解除",
       "special_effects": [{"effect_type": "reset_all", "target": "both"}],
       "owner_id": "wurm"
     },
@@ -138,17 +148,18 @@
       "name_en": "Holy Dragon's Breath",
       "category": "attack_plus_effect",
       "element": "light",
-      "cost": 5,
+      "cost": 4,
       "damage_type": "magical",
-      "power": 110,
-      "power_rank": "A",
+      "power": 80,
+      "power_rank": "B",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "【奥義】自身とパーティのHP30%回復",
-      "special_effects": [{"effect_type": "heal", "heal_percentage": 30, "target": "party"}],
+      "description": "【奥義】味方全員HP25%回復",
+      "special_effects": [{"effect_type": "heal", "heal_percentage": 25, "target": "party"}],
       "owner_id": "wurm",
-      "is_ultimate": true
+      "is_ultimate": true,
+      "balance_note": "v10.0: サポート型なのでコスト4、回復25%に調整"
     },
     {
       "skill_id": "jack_001",
@@ -163,8 +174,8 @@
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "相手装備効果を奪う（自分に装備がなければバトル中自分に適用）",
-      "special_effects": [{"effect_type": "steal_equipment_effect", "target": "opponent", "condition": "no_equipment"}],
+      "description": "相手のバフを1つ奪う",
+      "special_effects": [{"effect_type": "steal_buff", "count": 1}],
       "owner_id": "jack"
     },
     {
@@ -180,10 +191,9 @@
       "accuracy": 100,
       "priority": 0,
       "target": "self",
-      "description": "次攻撃クリ確定+相手回復効果無効（1T）",
+      "description": "次攻撃クリ確定",
       "special_effects": [
-        {"effect_type": "guaranteed_critical_next", "value": true},
-        {"effect_type": "heal_block", "duration": 1, "target": "opponent"}
+        {"effect_type": "guaranteed_critical_next", "value": true}
       ],
       "owner_id": "jack"
     },
@@ -246,8 +256,7 @@
         {"effect_type": "priority", "value": 1},
         {"effect_type": "status_condition", "status": "paralysis", "probability": 100}
       ],
-      "owner_id": "ram",
-      "balance_note": "v7.0: 威力A→B、麻痺30%→100%"
+      "owner_id": "ram"
     },
     {
       "skill_id": "ram_002",
@@ -285,8 +294,7 @@
         {"effect_type": "status_condition", "status": "paralysis", "probability": 100}
       ],
       "owner_id": "ram",
-      "is_ultimate": true,
-      "balance_note": "v7.0: 威力S→A、麻痺40%→100%"
+      "is_ultimate": true
     },
     {
       "skill_id": "eva_001",
@@ -301,10 +309,9 @@
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "速さ↓↓+次T相手技コスト+1",
+      "description": "速さ↓↓",
       "special_effects": [
-        {"effect_type": "stat_change", "stat": "speed", "modifier": -2, "target": "opponent"},
-        {"effect_type": "cost_increase", "amount": 1, "duration": 1, "target": "opponent"}
+        {"effect_type": "stat_change", "stat": "speed", "modifier": -2, "target": "opponent"}
       ],
       "owner_id": "eva"
     },
@@ -321,10 +328,9 @@
       "accuracy": 100,
       "priority": 0,
       "target": "self",
-      "description": "3T水属性ダメージ無効+水技を受けるとHP10%回復",
+      "description": "3T水属性ダメージ無効",
       "special_effects": [
-        {"effect_type": "element_immunity", "element": "water", "duration": 3},
-        {"effect_type": "on_hit_element", "element": "water", "effect": {"type": "heal", "heal_percentage": 10}}
+        {"effect_type": "element_immunity", "element": "water", "duration": 3}
       ],
       "owner_id": "eva"
     },
@@ -332,22 +338,22 @@
       "skill_id": "ult_eva",
       "name": "竜姫の慈愛",
       "name_en": "Dragon Princess's Love",
-      "category": "attack_plus_effect",
+      "category": "support_only",
       "element": "water",
-      "cost": 5,
-      "damage_type": "magical",
-      "power": 80,
-      "power_rank": "B",
+      "cost": 4,
+      "damage_type": "none",
+      "power": 0,
+      "power_rank": "-",
       "accuracy": 100,
       "priority": 0,
-      "target": "opponent",
-      "description": "【奥義】自身とパーティのHP50%回復+全状態異常解除",
+      "target": "party",
+      "description": "【奥義】味方全員HP40%回復",
       "special_effects": [
-        {"effect_type": "heal", "heal_percentage": 50, "target": "party"},
-        {"effect_type": "cure_status", "target": "party"}
+        {"effect_type": "heal", "heal_percentage": 40, "target": "party"}
       ],
       "owner_id": "eva",
-      "is_ultimate": true
+      "is_ultimate": true,
+      "balance_note": "v10.0: 純サポート型に変更、コスト4、攻撃削除"
     },
     {
       "skill_id": "honoo_001",
@@ -362,13 +368,11 @@
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "火傷確定+使用後魔力↓",
+      "description": "火傷確定",
       "special_effects": [
-        {"effect_type": "status_condition", "status": "burn", "probability": 100},
-        {"effect_type": "stat_change", "stat": "magic", "modifier": -1, "target": "self"}
+        {"effect_type": "status_condition", "status": "burn", "probability": 100}
       ],
-      "owner_id": "honoo",
-      "balance_note": "v7.0: 威力A→B、火傷90%→100%"
+      "owner_id": "honoo"
     },
     {
       "skill_id": "honoo_002",
@@ -383,15 +387,14 @@
       "accuracy": 100,
       "priority": 0,
       "target": "all",
-      "description": "フィールド「灼熱」設置（5T炎技+50%、水技-30%、毎THP2%ダメ）",
+      "description": "フィールド「灼熱」設置（5T炎技+50%、水技-30%）",
       "special_effects": [{
         "effect_type": "field",
         "field_type": "scorching",
         "duration": 5,
         "effects": [
           {"type": "element_boost", "element": "fire", "boost_percentage": 50},
-          {"type": "element_weaken", "element": "water", "reduce_percentage": 30},
-          {"type": "dot_all", "damage_percentage": 2}
+          {"type": "element_weaken", "element": "water", "reduce_percentage": 30}
         ]
       }],
       "owner_id": "honoo"
@@ -409,10 +412,9 @@
       "accuracy": 100,
       "priority": 0,
       "target": "self",
-      "description": "HP30%回復+次T炎技威力1.5倍",
+      "description": "HP30%回復",
       "special_effects": [
-        {"effect_type": "heal", "heal_percentage": 30, "target": "self"},
-        {"effect_type": "element_boost_next", "element": "fire", "multiplier": 1.5}
+        {"effect_type": "heal", "heal_percentage": 30, "target": "self"}
       ],
       "owner_id": "honoo"
     },
@@ -424,18 +426,19 @@
       "element": "fire",
       "cost": 5,
       "damage_type": "magical",
-      "power": 150,
-      "power_rank": "S",
+      "power": 110,
+      "power_rank": "A",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "【奥義】灼熱フィールド設置+自分炎技+30%",
+      "description": "【奥義】火傷確定+灼熱フィールド3T",
       "special_effects": [
-        {"effect_type": "field", "field_type": "scorching", "duration": 5},
-        {"effect_type": "element_boost", "element": "fire", "boost_percentage": 30, "target": "self"}
+        {"effect_type": "status_condition", "status": "burn", "probability": 100},
+        {"effect_type": "field", "field_type": "scorching", "duration": 3}
       ],
       "owner_id": "honoo",
-      "is_ultimate": true
+      "is_ultimate": true,
+      "balance_note": "v10.0: S→A、フィールド5T→3T、火傷確定追加"
     },
     {
       "skill_id": "lilith_001",
@@ -450,10 +453,9 @@
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "魅了確定付与",
+      "description": "魅了確定",
       "special_effects": [{"effect_type": "status_condition", "status": "charm", "probability": 100}],
-      "owner_id": "lilith",
-      "balance_note": "v7.0: 瘴気or悪夢ランダム→魅了確定"
+      "owner_id": "lilith"
     },
     {
       "skill_id": "lilith_002",
@@ -468,10 +470,9 @@
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "悪夢確定付与",
+      "description": "悪夢確定",
       "special_effects": [{"effect_type": "status_condition", "status": "nightmare", "probability": 100}],
-      "owner_id": "lilith",
-      "balance_note": "v7.0: ランダム30%→悪夢確定"
+      "owner_id": "lilith"
     },
     {
       "skill_id": "lilith_004",
@@ -503,37 +504,16 @@
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "【奥義】魅了確定+悪夢確定",
+      "description": "【奥義】悪夢確定",
       "special_effects": [
-        {"effect_type": "status_condition", "status": "charm", "probability": 100},
         {"effect_type": "status_condition", "status": "nightmare", "probability": 100}
       ],
       "owner_id": "lilith",
       "is_ultimate": true,
-      "balance_note": "v7.0: 気絶100%→魅了+悪夢確定、威力S→A"
+      "balance_note": "v10.0: 魅了削除（効果1つに統一）"
     },
     {
       "skill_id": "luria_001",
-      "name": "夢を与える",
-      "name_en": "Give Dreams",
-      "category": "support_only",
-      "element": "wind",
-      "cost": 4,
-      "damage_type": "none",
-      "power": 0,
-      "power_rank": "-",
-      "accuracy": 100,
-      "priority": 0,
-      "target": "party",
-      "description": "自分HP50%消費、瀕死味方1体HP30%で復活",
-      "special_effects": [
-        {"effect_type": "hp_cost", "cost_percentage": 50},
-        {"effect_type": "revive_ally", "hp_percentage": 30}
-      ],
-      "owner_id": "luria"
-    },
-    {
-      "skill_id": "luria_002",
       "name": "アイドルの魅力",
       "name_en": "Idol's Charm",
       "category": "attack_plus_effect",
@@ -547,8 +527,7 @@
       "target": "opponent",
       "description": "魅了確定",
       "special_effects": [{"effect_type": "status_condition", "status": "charm", "probability": 100}],
-      "owner_id": "luria",
-      "balance_note": "v7.0: アイドルの絶叫→アイドルの魅力、気絶85%→魅了100%"
+      "owner_id": "luria"
     },
     {
       "skill_id": "luria_003",
@@ -585,8 +564,7 @@
       "target": "opponent",
       "description": "恐怖確定",
       "special_effects": [{"effect_type": "status_condition", "status": "fear", "probability": 100}],
-      "owner_id": "luria",
-      "balance_note": "v7.0: 気絶10%→恐怖100%"
+      "owner_id": "luria"
     },
     {
       "skill_id": "ult_luria",
@@ -594,21 +572,22 @@
       "name_en": "Soul's Song",
       "category": "support_only",
       "element": "wind",
-      "cost": 5,
+      "cost": 4,
       "damage_type": "none",
       "power": 0,
       "power_rank": "-",
       "accuracy": 100,
       "priority": 0,
       "target": "party",
-      "description": "【奥義】味方全体バフ2段階+HP10%回復+瀕死味方1体復活(HP30%)",
+      "description": "【奥義】味方全員攻撃↑1+速さ↑1+HP15%回復",
       "special_effects": [
-        {"effect_type": "stat_change_all", "modifier": 2, "target": "party"},
-        {"effect_type": "heal", "heal_percentage": 10, "target": "party"},
-        {"effect_type": "revive_ally", "hp_percentage": 30}
+        {"effect_type": "stat_change", "stat": "attack", "modifier": 1, "target": "party"},
+        {"effect_type": "stat_change", "stat": "speed", "modifier": 1, "target": "party"},
+        {"effect_type": "heal", "heal_percentage": 15, "target": "party"}
       ],
       "owner_id": "luria",
-      "is_ultimate": true
+      "is_ultimate": true,
+      "balance_note": "v10.0: コスト4、バフ2段階→1段階×2種、回復15%に調整"
     },
     {
       "skill_id": "kyouka_001",
@@ -623,10 +602,9 @@
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "相手速さ↓↓+固定50ダメージ",
+      "description": "相手速さ↓↓",
       "special_effects": [
-        {"effect_type": "stat_change", "stat": "speed", "modifier": -2, "target": "opponent"},
-        {"effect_type": "fixed_damage", "damage": 50}
+        {"effect_type": "stat_change", "stat": "speed", "modifier": -2, "target": "opponent"}
       ],
       "owner_id": "kyouka"
     },
@@ -665,8 +643,7 @@
         {"effect_type": "priority", "value": 1},
         {"effect_type": "status_condition", "status": "restraint", "probability": 100, "duration": 1}
       ],
-      "owner_id": "kyouka",
-      "balance_note": "v7.0: 威力C→D、交代封印2T→拘束1T（100%確定）"
+      "owner_id": "kyouka"
     },
     {
       "skill_id": "ult_kyouka",
@@ -687,21 +664,101 @@
         {"effect_type": "ability_seal", "duration": 2, "target": "opponent"}
       ],
       "owner_id": "kyouka",
+      "is_ultimate": true
+    },
+    {
+      "skill_id": "leon_001",
+      "name": "聖騎士の守り",
+      "name_en": "Holy Knight's Guard",
+      "category": "support_only",
+      "element": "light",
+      "cost": 2,
+      "damage_type": "none",
+      "power": 0,
+      "power_rank": "-",
+      "accuracy": 100,
+      "priority": 0,
+      "target": "self",
+      "description": "防御↑+次T被ダメ-30%",
+      "special_effects": [
+        {"effect_type": "stat_change", "stat": "defense", "modifier": 1, "target": "self"},
+        {"effect_type": "damage_reduction_next", "reduction_percentage": 30, "duration": 1}
+      ],
+      "owner_id": "leon"
+    },
+    {
+      "skill_id": "leon_002",
+      "name": "騎士の誓い",
+      "name_en": "Knight's Oath",
+      "category": "support_only",
+      "element": "light",
+      "cost": 3,
+      "damage_type": "none",
+      "power": 0,
+      "power_rank": "-",
+      "accuracy": 100,
+      "priority": 0,
+      "target": "party",
+      "description": "3T味方への攻撃を代わりに受ける（被ダメ-20%）",
+      "special_effects": [
+        {"effect_type": "redirect_attacks", "duration": 3},
+        {"effect_type": "damage_reduction", "reduction_percentage": 20, "duration": 3}
+      ],
+      "owner_id": "leon"
+    },
+    {
+      "skill_id": "leon_003",
+      "name": "聖剣撃",
+      "name_en": "Holy Sword Strike",
+      "category": "attack_plus_effect",
+      "element": "light",
+      "cost": 4,
+      "damage_type": "physical",
+      "power": 80,
+      "power_rank": "B",
+      "accuracy": 100,
+      "priority": 0,
+      "target": "opponent",
+      "description": "自分HP満タン時威力1.3倍",
+      "special_effects": [
+        {"effect_type": "hp_condition", "condition": "full", "effect": {"type": "power_multiplier", "value": 1.3}}
+      ],
+      "owner_id": "leon"
+    },
+    {
+      "skill_id": "ult_leon",
+      "name": "聖騎士の覚悟",
+      "name_en": "Holy Knight's Resolve",
+      "category": "attack_plus_effect",
+      "element": "light",
+      "cost": 5,
+      "damage_type": "physical",
+      "power": 110,
+      "power_rank": "A",
+      "accuracy": 100,
+      "priority": 0,
+      "target": "opponent",
+      "description": "【奥義】味方全員HP25%回復+被ダメ-20%（3T）",
+      "special_effects": [
+        {"effect_type": "heal", "heal_percentage": 25, "target": "party"},
+        {"effect_type": "damage_reduction", "reduction_percentage": 20, "duration": 3, "target": "party"}
+      ],
+      "owner_id": "leon",
       "is_ultimate": true,
-      "balance_note": "v7.0: 威力S→A、瘴気100%確定"
+      "balance_note": "v10.0: 回復20%→25%に強化"
     }
   ],
   "metadata": {
-    "total_skills": 34,
-    "monster_count": 9,
-    "ultimate_count": 9,
+    "total_skills": 38,
+    "ultimate_count": 10,
     "changelog": {
-      "v7.0.0": [
-        "状態異常100%確定システム対応",
-        "気絶→魅了/恐怖に変更",
-        "リリス: 状態異常型として魅了・悪夢特化",
-        "ルリア: サポート型として魅了・恐怖付与",
-        "状態異常付与技の威力下方修正"
+      "v9.0.0": [
+        "【カテゴリシステム移行】旧★4を「希少種」として管理",
+        "ファイル名変更: skill_masters_star4.json → skill_masters_rare.json",
+        "★表記を完全廃止",
+        "設計思想を明記: カテゴリ＝入手難易度、強さではない",
+        "技効果をシンプル化（復活効果削除、複合効果削減）",
+        "ルリア「夢を与える」（復活技）を削除"
       ]
     }
   }

@@ -2,8 +2,8 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Shared Skills - Phase 1 v7.0",
   "description": "複数モンスター共有技マスターデータ（状態異常100%確定システム対応）",
-  "version": "7.0.0",
-  "last_updated": "2025-12-10",
+  "version": "10.0.0",
+  "last_updated": "2025-12-20",
   "skills": [
     {
       "skill_id": "shared_001",
@@ -273,28 +273,10 @@
       "description": "自身とパーティHP30%回復",
       "special_effects": [{"effect_type": "heal", "heal_percentage": 30, "target": "party"}],
       "owner_ids": ["luria", "sera"]
-    },
-    {
-      "skill_id": "shared_015",
-      "name": "時空歪曲",
-      "name_en": "Time Distortion",
-      "category": "support_only",
-      "element": "none",
-      "cost": 3,
-      "damage_type": "none",
-      "power": 0,
-      "power_rank": "-",
-      "accuracy": 100,
-      "priority": 0,
-      "target": "all",
-      "description": "3T素早さ判定を逆転（遅い方が先制）",
-      "special_effects": [{"effect_type": "speed_inversion", "duration": 3}],
-      "owner_ids": ["gram", "shirone", "zela"],
-      "balance_note": "v5.0: 新規追加（鈍足キャラ救済）"
     }
   ],
   "metadata": {
-    "total_skills": 15,
+    "total_skills": 14,
     "description": "複数のモンスターが習得できる共有技",
     "changelog": {
       "v7.0.0": [

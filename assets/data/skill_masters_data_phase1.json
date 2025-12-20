@@ -1,8 +1,16 @@
 {
-  "version": "3.0",
+  "version": "4.0",
   "created_at": "2025-12-04",
+  "updated_at": "2025-12-20",
   "description": "Phase1 技マスターデータ（完全オリジナル技名版）",
   "note": "ポケモンの技名と一切被らないオリジナル技",
+  "changelog": {
+    "v4.0": [
+      "【新規追加】イカサマ系技4種（力量転嫁、魔力反射、撃砕衝、侵蝕の刻印）",
+      "【新規追加】共通物理技2種（猛襲、連撃）",
+      "【新規追加】共通サポート技2種（精神統一、活力賦活）"
+    ]
+  },
   "power_ranks": {
     "D": 30,
     "C": 55,
@@ -52,6 +60,11 @@
       "name": "悪夢",
       "duration": 3,
       "effect": "魔力5%ダメ+回復無効"
+    },
+    "erosion": {
+      "name": "侵蝕",
+      "duration": 3,
+      "effect": "毎ターンHP10%減少"
     }
   },
   "common_skills": {
@@ -121,6 +134,33 @@
         "accuracy": 90,
         "effect": "気絶20%",
         "description": "全力の拳撃。気絶させることがある"
+      },
+      {
+        "skill_id": "cmn_phy_006",
+        "name": "猛襲",
+        "name_en": "Fierce Assault",
+        "cost": 2,
+        "power_rank": "C",
+        "power_value": 55,
+        "element": "none",
+        "damage_type": "physical",
+        "accuracy": 100,
+        "effect": null,
+        "description": "獰猛に襲いかかる物理攻撃"
+      },
+      {
+        "skill_id": "cmn_phy_007",
+        "name": "連撃",
+        "name_en": "Combo Strike",
+        "cost": 3,
+        "power_rank": "D",
+        "power_value": 30,
+        "element": "none",
+        "damage_type": "physical",
+        "accuracy": 90,
+        "hits": 2,
+        "effect": "2連撃",
+        "description": "素早く2回攻撃する"
       }
     ],
     "basic_support": [
@@ -201,6 +241,91 @@
         "accuracy": 100,
         "effect": "状態異常解除",
         "description": "状態異常を全て解除する"
+      },
+      {
+        "skill_id": "cmn_sup_007",
+        "name": "精神統一",
+        "name_en": "Mental Unity",
+        "cost": 1,
+        "power_rank": "-",
+        "power_value": 0,
+        "element": "none",
+        "damage_type": "none",
+        "accuracy": 100,
+        "effect": "自分魔力↑",
+        "description": "精神を統一して魔力を高める"
+      },
+      {
+        "skill_id": "cmn_sup_008",
+        "name": "活力賦活",
+        "name_en": "Vitality Boost",
+        "cost": 2,
+        "power_rank": "-",
+        "power_value": 0,
+        "element": "none",
+        "damage_type": "none",
+        "accuracy": 100,
+        "effect": "HP30%回復",
+        "description": "活力を高めてHPを少し回復"
+      }
+    ],
+    "special_physical": [
+      {
+        "skill_id": "spc_phy_001",
+        "name": "力量転嫁",
+        "name_en": "Power Transfer",
+        "cost": 3,
+        "power_rank": "B",
+        "power_value": 80,
+        "element": "none",
+        "damage_type": "physical",
+        "accuracy": 100,
+        "use_opponent_attack": true,
+        "effect": "相手の攻撃力でダメージ計算",
+        "description": "相手の力を利用して攻撃する。攻撃力が高い敵ほど効果的"
+      },
+      {
+        "skill_id": "spc_phy_002",
+        "name": "撃砕衝",
+        "name_en": "Crushing Impact",
+        "cost": 2,
+        "power_rank": "-",
+        "power_value": 50,
+        "element": "none",
+        "damage_type": "fixed",
+        "accuracy": 100,
+        "fixed_damage": 50,
+        "effect": "50固定ダメージ",
+        "description": "能力に関係なく50の固定ダメージを与える"
+      }
+    ],
+    "special_magical": [
+      {
+        "skill_id": "spc_mag_001",
+        "name": "魔力反射",
+        "name_en": "Magic Reflection",
+        "cost": 3,
+        "power_rank": "B",
+        "power_value": 80,
+        "element": "none",
+        "damage_type": "magical",
+        "accuracy": 100,
+        "use_opponent_magic": true,
+        "effect": "相手の魔力でダメージ計算",
+        "description": "相手の魔力を利用して攻撃する。魔力が高い敵ほど効果的"
+      },
+      {
+        "skill_id": "spc_mag_002",
+        "name": "侵蝕の刻印",
+        "name_en": "Erosion Mark",
+        "cost": 3,
+        "power_rank": "D",
+        "power_value": 30,
+        "element": "dark",
+        "damage_type": "magical",
+        "accuracy": 100,
+        "effect": "侵蝕付与（3T毎ターンHP10%減少）",
+        "description": "呪いの刻印を刻み、毎ターンHPを削る"
       }
     ]
   },
@@ -282,6 +407,19 @@
       "accuracy": 100,
       "effect": "自分魔力↑↑",
       "description": "炎の舞で魔力を高める"
+    },
+    {
+      "skill_id": "fire_007",
+      "name": "紅蓮拳",
+      "name_en": "Crimson Fist",
+      "cost": 3,
+      "power_rank": "B",
+      "power_value": 80,
+      "element": "fire",
+      "damage_type": "physical",
+      "accuracy": 100,
+      "effect": null,
+      "description": "炎を纏った拳で殴りつける物理攻撃"
     }
   ],
   "water_skills": [
@@ -363,6 +501,19 @@
       "accuracy": 100,
       "effect": "自分防御↑↑",
       "description": "水の壁で防御を高める"
+    },
+    {
+      "skill_id": "water_007",
+      "name": "氷砕拳",
+      "name_en": "Frost Fist",
+      "cost": 3,
+      "power_rank": "B",
+      "power_value": 80,
+      "element": "water",
+      "damage_type": "physical",
+      "accuracy": 100,
+      "effect": "速さ↓20%",
+      "description": "冷気を纏った拳で殴りつける物理攻撃"
     }
   ],
   "thunder_skills": [
@@ -443,6 +594,19 @@
       "accuracy": 100,
       "effect": "自分速さ↑↑",
       "description": "帯電して素早さを高める"
+    },
+    {
+      "skill_id": "thunder_007",
+      "name": "雷鳴拳",
+      "name_en": "Thunder Fist",
+      "cost": 3,
+      "power_rank": "B",
+      "power_value": 80,
+      "element": "thunder",
+      "damage_type": "physical",
+      "accuracy": 100,
+      "effect": "麻痺20%",
+      "description": "電撃を纏った拳で殴りつける物理攻撃"
     }
   ],
   "wind_skills": [
@@ -523,6 +687,19 @@
       "accuracy": 100,
       "effect": "自分速さ↑↑",
       "description": "追い風を受けて素早さ上昇"
+    },
+    {
+      "skill_id": "wind_007",
+      "name": "旋風拳",
+      "name_en": "Whirlwind Fist",
+      "cost": 3,
+      "power_rank": "B",
+      "power_value": 80,
+      "element": "wind",
+      "damage_type": "physical",
+      "accuracy": 100,
+      "effect": null,
+      "description": "風を纏った拳で殴りつける物理攻撃"
     }
   ],
   "earth_skills": [
@@ -603,6 +780,19 @@
       "accuracy": 100,
       "effect": "自分防御↑↑",
       "description": "防御を大きく高める"
+    },
+    {
+      "skill_id": "earth_007",
+      "name": "剛岩拳",
+      "name_en": "Boulder Fist",
+      "cost": 4,
+      "power_rank": "A",
+      "power_value": 110,
+      "element": "earth",
+      "damage_type": "physical",
+      "accuracy": 90,
+      "effect": null,
+      "description": "岩のように硬い拳で殴りつける高威力物理攻撃"
     }
   ],
   "light_skills": [
@@ -683,6 +873,19 @@
       "accuracy": 100,
       "effect": "5T魔法被ダメ-30%",
       "description": "光の壁で魔法ダメージを軽減"
+    },
+    {
+      "skill_id": "light_007",
+      "name": "聖拳",
+      "name_en": "Holy Fist",
+      "cost": 3,
+      "power_rank": "B",
+      "power_value": 80,
+      "element": "light",
+      "damage_type": "physical",
+      "accuracy": 100,
+      "effect": null,
+      "description": "聖なる力を纏った拳で殴りつける物理攻撃"
     }
   ],
   "dark_skills": [
@@ -723,7 +926,7 @@
       "element": "dark",
       "damage_type": "magical",
       "accuracy": 100,
-      "effect": "気絶3%",
+      "effect": "気絶30%",
       "description": "闇の波動で攻撃"
     },
     {
@@ -764,18 +967,33 @@
       "accuracy": 100,
       "effect": "回避↑↑",
       "description": "闇に身を隠し回避を高める"
+    },
+    {
+      "skill_id": "dark_007",
+      "name": "冥府拳",
+      "name_en": "Nether Fist",
+      "cost": 3,
+      "power_rank": "B",
+      "power_value": 80,
+      "element": "dark",
+      "damage_type": "physical",
+      "accuracy": 100,
+      "effect": null,
+      "description": "闇の力を纏った拳で殴りつける物理攻撃"
     }
   ],
   "summary": {
-    "common_physical": 5,
-    "common_support": 6,
-    "fire": 6,
-    "water": 6,
-    "thunder": 6,
-    "wind": 6,
-    "earth": 6,
-    "light": 6,
-    "dark": 6,
-    "total_base_skills": 53
+    "common_physical": 7,
+    "common_support": 8,
+    "special_physical": 2,
+    "special_magical": 2,
+    "fire": 7,
+    "water": 7,
+    "thunder": 7,
+    "wind": 7,
+    "earth": 7,
+    "light": 7,
+    "dark": 7,
+    "total_base_skills": 68
   }
 }

@@ -1,10 +1,18 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "★5 Unique Skills - Phase 1 v7.0",
-  "description": "★5モンスター専用技マスターデータ（状態異常100%確定システム対応）",
-  "version": "7.0.0",
-  "last_updated": "2025-12-10",
+  "title": "Legendary Species Unique Skills - Phase 1 v9.0",
+  "description": "幻種モンスター専用技マスターデータ（カテゴリシステム移行版）",
+  "version": "10.0.0",
+  "last_updated": "2025-12-20",
+  "category": "legendary",
+  "category_description": "幻種（入手難易度：非常に難）- カテゴリは入手難易度であり強さではない",
+  "design_philosophy": {
+    "principle": "カテゴリ＝入手難易度、強さの序列ではない",
+    "power_difference": "希少種・一般種との性能差は最大5%",
+    "ultimate_rule": "同コストなら同等の強さ（カテゴリ無関係）"
+  },
   "monsters": ["mika", "vel", "gram", "tyr", "arthur", "tamamo", "slime"],
+  "monster_count": 7,
   "monster_roles": {
     "mika": "サポート型（回復・状態異常解除）",
     "vel": "吸収型（HP回復特化）",
@@ -58,20 +66,20 @@
       "name_en": "Divine Judgment",
       "category": "attack_plus_effect",
       "element": "light",
-      "cost": 6,
+      "cost": 5,
       "damage_type": "magical",
-      "power": 200,
-      "power_rank": "SS",
+      "power": 110,
+      "power_rank": "A",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "【奥義】全状態異常解除（状態異常付与なし、サポート特化）",
+      "description": "【奥義】味方全員HP30%回復",
       "special_effects": [
-        {"effect_type": "cure_status", "target": "self"}
+        {"effect_type": "heal", "heal_percentage": 30, "target": "party"}
       ],
       "owner_id": "mika",
       "is_ultimate": true,
-      "balance_note": "v7.0: 麻痺40%削除（サポート型として状態異常付与は不要）"
+      "balance_note": "v10.0: コスト6→5、SS→A、味方全員回復に変更"
     },
     {
       "skill_id": "vel_001",
@@ -103,12 +111,13 @@
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "与ダメ50%回復（連続使用不可）",
+      "description": "与ダメ25%回復（連続使用不可）",
       "special_effects": [
-        {"effect_type": "drain", "drain_percentage": 50},
+        {"effect_type": "drain", "drain_percentage": 25},
         {"effect_type": "no_consecutive_use", "value": true}
       ],
-      "owner_id": "vel"
+      "owner_id": "vel",
+      "balance_note": "v10.0: 50%→25%に弱体化"
     },
     {
       "skill_id": "vel_003",
@@ -133,17 +142,18 @@
       "name_en": "Hunger Hell",
       "category": "attack_plus_effect",
       "element": "dark",
-      "cost": 6,
+      "cost": 5,
       "damage_type": "magical",
-      "power": 200,
-      "power_rank": "SS",
+      "power": 110,
+      "power_rank": "A",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "【奥義】HP30%回復",
-      "special_effects": [{"effect_type": "heal", "heal_percentage": 30, "target": "self"}],
+      "description": "【奥義】HP20%回復",
+      "special_effects": [{"effect_type": "heal", "heal_percentage": 20, "target": "self"}],
       "owner_id": "vel",
-      "is_ultimate": true
+      "is_ultimate": true,
+      "balance_note": "v10.0: コスト6→5、SS→A、回復30%→20%"
     },
     {
       "skill_id": "gram_001",
@@ -195,13 +205,11 @@
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "メカノイドに威力2倍+麻痺確定",
+      "description": "麻痺確定",
       "special_effects": [
-        {"effect_type": "species_effective", "species": "mechanoid", "multiplier": 2.0},
         {"effect_type": "status_condition", "status": "paralysis", "probability": 100}
       ],
-      "owner_id": "gram",
-      "balance_note": "v7.0: 威力C→D、麻痺30%→100%（メカ以外にも確定）"
+      "owner_id": "gram"
     },
     {
       "skill_id": "ult_gram",
@@ -209,20 +217,20 @@
       "name_en": "Total Control",
       "category": "attack_plus_effect",
       "element": "thunder",
-      "cost": 6,
+      "cost": 5,
       "damage_type": "magical",
-      "power": 80,
-      "power_rank": "B",
+      "power": 110,
+      "power_rank": "A",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "【奥義】相手コスト0化+デバフ全段階",
+      "description": "【奥義】相手の全能力↓1",
       "special_effects": [
-        {"effect_type": "cost_set", "value": 0, "target": "opponent"},
-        {"effect_type": "stat_change_all", "modifier": -3, "target": "opponent"}
+        {"effect_type": "stat_change_all", "modifier": -1, "target": "opponent"}
       ],
       "owner_id": "gram",
-      "is_ultimate": true
+      "is_ultimate": true,
+      "balance_note": "v10.0: コスト6→5、B→A、デバフ-3→-1"
     },
     {
       "skill_id": "tyr_001",
@@ -260,8 +268,7 @@
         {"effect_type": "stat_change", "stat": "defense", "modifier": -1, "target": "opponent"},
         {"effect_type": "status_condition", "status": "fear", "probability": 100}
       ],
-      "owner_id": "tyr",
-      "balance_note": "v7.0: 気絶30%→恐怖100%"
+      "owner_id": "tyr"
     },
     {
       "skill_id": "tyr_003",
@@ -291,18 +298,18 @@
       "element": "fire",
       "cost": 6,
       "damage_type": "physical",
-      "power": 250,
-      "power_rank": "SSS",
+      "power": 150,
+      "power_rank": "S",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "【奥義】自分HP50%消費+相手バフ全解除",
+      "description": "【奥義】必中",
       "special_effects": [
-        {"effect_type": "hp_cost", "cost_percentage": 50},
-        {"effect_type": "remove_buffs", "target": "opponent"}
+        {"effect_type": "sure_hit", "value": true}
       ],
       "owner_id": "tyr",
-      "is_ultimate": true
+      "is_ultimate": true,
+      "balance_note": "v10.0: SSS→S、HP消費削除、必中追加"
     },
     {
       "skill_id": "arthur_001",
@@ -369,21 +376,21 @@
       "name": "聖剣エクスカリバー",
       "name_en": "Excalibur",
       "category": "attack_plus_effect",
-      "element": "none",
-      "cost": 6,
+      "element": "light",
+      "cost": 5,
       "damage_type": "physical",
       "power": 110,
       "power_rank": "A",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "【奥義】必クリ+コスト回復+1",
+      "description": "【奥義】必ず急所に当たる",
       "special_effects": [
-        {"effect_type": "guaranteed_critical", "value": true},
-        {"effect_type": "cost_recovery", "amount": 1}
+        {"effect_type": "guaranteed_critical", "value": true}
       ],
       "owner_id": "arthur",
-      "is_ultimate": true
+      "is_ultimate": true,
+      "balance_note": "v10.0: コスト6→5、無属性→光属性、コスト回復削除"
     },
     {
       "skill_id": "tamamo_001",
@@ -398,16 +405,8 @@
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "「狐火」状態付与（3T毎T魔力3%ダメ+炎技被ダメ+30%）",
-      "special_effects": [{
-        "effect_type": "special_status",
-        "status": "foxfire",
-        "duration": 3,
-        "effects": [
-          {"type": "dot_magic_percent", "value": 3},
-          {"type": "element_weakness", "element": "fire", "increase": 30}
-        ]
-      }],
+      "description": "火傷確定",
+      "special_effects": [{"effect_type": "status_condition", "status": "burn", "probability": 100}],
       "owner_id": "tamamo"
     },
     {
@@ -423,13 +422,11 @@
       "accuracy": 100,
       "priority": 0,
       "target": "self",
-      "description": "次攻撃回避+回避成功時相手に火傷確定",
+      "description": "次攻撃回避",
       "special_effects": [
-        {"effect_type": "evade_next", "value": true},
-        {"effect_type": "on_evade", "effect": {"type": "status_condition", "status": "burn", "probability": 100}}
+        {"effect_type": "evade_next", "value": true}
       ],
-      "owner_id": "tamamo",
-      "balance_note": "v7.0: 火傷100%確定（回避成功時）"
+      "owner_id": "tamamo"
     },
     {
       "skill_id": "tamamo_004",
@@ -444,31 +441,30 @@
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "3回攻撃（連続攻撃のため回数に運要素あり）",
-      "special_effects": [{"effect_type": "multi_hit", "hits": 3, "hits_range": [2, 4]}],
-      "balance_note": "v7.0: 命中90%→100%、回数2-4でランダム"
+      "description": "3回攻撃",
+      "special_effects": [{"effect_type": "multi_hit", "hits": 3}],
+      "owner_id": "tamamo"
     },
     {
       "skill_id": "ult_tamamo",
-      "name": "九尾炎舞",
+      "name": "狐火・九重",
       "name_en": "Nine-Tail Flame Dance",
       "category": "attack_plus_effect",
       "element": "fire",
-      "cost": 6,
+      "cost": 5,
       "damage_type": "magical",
-      "power": 55,
-      "power_rank": "C",
+      "power": 110,
+      "power_rank": "A",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "【奥義】3回攻撃+火傷確定",
+      "description": "【奥義】火傷確定",
       "special_effects": [
-        {"effect_type": "multi_hit", "hits": 3, "hits_range": [2, 4]},
         {"effect_type": "status_condition", "status": "burn", "probability": 100}
       ],
       "owner_id": "tamamo",
       "is_ultimate": true,
-      "balance_note": "v7.0: 命中90%→100%、火傷80%→100%、威力B→C"
+      "balance_note": "v10.0: コスト6→5、C→A、3回攻撃削除"
     },
     {
       "skill_id": "slime_001",
@@ -483,15 +479,15 @@
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "速さ↓20%",
-      "special_effects": [{"effect_type": "stat_change_percent", "stat": "speed", "modifier": -20, "target": "opponent"}],
+      "description": "速さ↓",
+      "special_effects": [{"effect_type": "stat_change", "stat": "speed", "modifier": -1, "target": "opponent"}],
       "owner_id": "slime"
     },
     {
       "skill_id": "slime_002",
       "name": "国喰い",
       "name_en": "Nation Eater",
-      "category": "attack_plus_effect",
+      "category": "damage_only",
       "element": "none",
       "cost": 4,
       "damage_type": "physical",
@@ -500,12 +496,12 @@
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "与ダメ10%回復（連続使用不可）",
+      "description": "連続使用不可",
       "special_effects": [
-        {"effect_type": "drain", "drain_percentage": 10},
         {"effect_type": "no_consecutive_use", "value": true}
       ],
-      "owner_id": "slime"
+      "owner_id": "slime",
+      "balance_note": "v10.0: 吸収10%削除"
     },
     {
       "skill_id": "slime_003",
@@ -520,7 +516,7 @@
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "相手のバフを全て無くし自分にその分のバフ",
+      "description": "相手のバフを全て奪う",
       "special_effects": [{"effect_type": "steal_buffs", "target": "opponent"}],
       "owner_id": "slime"
     },
@@ -557,12 +553,13 @@
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "与ダメ30%回復（連続使用不可）",
+      "description": "与ダメ20%回復（連続使用不可）",
       "special_effects": [
-        {"effect_type": "drain", "drain_percentage": 30},
+        {"effect_type": "drain", "drain_percentage": 20},
         {"effect_type": "no_consecutive_use", "value": true}
       ],
-      "owner_id": "slime"
+      "owner_id": "slime",
+      "balance_note": "v10.0: 30%→20%に弱体化"
     },
     {
       "skill_id": "ult_slime",
@@ -570,33 +567,32 @@
       "name_en": "Complete Absorption",
       "category": "attack_plus_effect",
       "element": "none",
-      "cost": 6,
+      "cost": 5,
       "damage_type": "physical",
-      "power": 150,
-      "power_rank": "S",
+      "power": 110,
+      "power_rank": "A",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "【奥義】与ダメ100%回復+相手ステコピー",
+      "description": "【奥義】HP25%回復",
       "special_effects": [
-        {"effect_type": "drain", "drain_percentage": 100},
-        {"effect_type": "copy_stats", "target": "opponent"}
+        {"effect_type": "heal", "heal_percentage": 25, "target": "self"}
       ],
       "owner_id": "slime",
-      "is_ultimate": true
+      "is_ultimate": true,
+      "balance_note": "v10.0: コスト6→5、S→A、回夏50%→25%"
     }
   ],
   "metadata": {
     "total_skills": 29,
-    "monster_count": 7,
     "ultimate_count": 7,
     "changelog": {
-      "v7.0.0": [
-        "状態異常100%確定システム対応",
-        "気絶→恐怖に変更（tyr_002）",
-        "ミカ奥義から麻痺削除（サポート型として）",
-        "タマモの連続攻撃を命中100%に変更",
-        "状態異常付与技の威力下方修正"
+      "v9.0.0": [
+        "【カテゴリシステム移行】旧★5を「幻種」として管理",
+        "ファイル名変更: skill_masters_star5.json → skill_masters_legendary.json",
+        "★表記を完全廃止",
+        "設計思想を明記: カテゴリ＝入手難易度、強さではない",
+        "技効果をシンプル化（複合効果削減）"
       ]
     }
   }
