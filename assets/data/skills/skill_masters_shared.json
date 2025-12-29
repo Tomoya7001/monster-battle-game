@@ -2,8 +2,14 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Shared Skills - Phase 1 v7.0",
   "description": "複数モンスター共有技マスターデータ（状態異常100%確定システム対応）",
-  "version": "10.0.0",
-  "last_updated": "2025-12-20",
+  "version": "11.0.0",
+  "last_updated": "2025-12-28",
+  "damage_type_reference": {
+    "attack": "攻撃技（攻撃ステータス参照）",
+    "magic": "魔力技（魔力ステータス参照）",
+    "adaptive": "適応型（攻撃と魔力の高い方）",
+    "none": "ダメージなし"
+  },
   "skills": [
     {
       "skill_id": "shared_001",
@@ -12,7 +18,7 @@
       "category": "damage_only",
       "element": "light_dark",
       "cost": 5,
-      "damage_type": "magical",
+      "damage_type": "magic",
       "power": 110,
       "power_rank": "A",
       "accuracy": 100,
@@ -29,7 +35,7 @@
       "category": "attack_plus_effect",
       "element": "thunder",
       "cost": 4,
-      "damage_type": "magical",
+      "damage_type": "magic",
       "power": 80,
       "power_rank": "B",
       "accuracy": 100,
@@ -101,20 +107,20 @@
       "category": "attack_plus_effect",
       "element": "dark",
       "cost": 4,
-      "damage_type": "magical",
+      "damage_type": "magic",
       "power": 55,
       "power_rank": "C",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "与ダメ30%回復+瘴気確定（連続使用不可）",
+      "description": "自分HP30回復+瘴気確定（連続使用不可）",
       "special_effects": [
-        {"effect_type": "drain", "drain_percentage": 30},
+        {"effect_type": "heal", "heal_fixed": 30, "target": "self"},
         {"effect_type": "status_condition", "status": "miasma", "probability": 100},
         {"effect_type": "no_consecutive_use", "value": true}
       ],
       "owner_ids": ["slime", "zela"],
-      "balance_note": "v7.0: 威力B→C、瘴気30%→100%"
+      "balance_note": "v10.1: ドレイン→固定回復30に変更"
     },
     {
       "skill_id": "shared_007",
@@ -161,7 +167,7 @@
       "category": "attack_plus_effect",
       "element": "fire",
       "cost": 3,
-      "damage_type": "magical",
+      "damage_type": "magic",
       "power": 30,
       "power_rank": "D",
       "accuracy": 100,
@@ -182,7 +188,7 @@
       "category": "attack_plus_effect",
       "element": "thunder",
       "cost": 4,
-      "damage_type": "magical",
+      "damage_type": "magic",
       "power": 55,
       "power_rank": "C",
       "accuracy": 100,
@@ -209,12 +215,13 @@
       "accuracy": 100,
       "priority": 0,
       "target": "self",
-      "description": "魔力↑↑+HP10%消費",
+      "description": "魔力↑↑+自分HP15消費",
       "special_effects": [
         {"effect_type": "stat_change", "stat": "magic", "modifier": 2, "target": "self"},
-        {"effect_type": "hp_cost", "cost_percentage": 10}
+        {"effect_type": "hp_cost", "cost_fixed": 15}
       ],
-      "owner_ids": ["lilith", "kyouka"]
+      "owner_ids": ["lilith", "kyouka"],
+      "balance_note": "v10.2: HP%消費→固定倰15に変更"
     },
     {
       "skill_id": "shared_012",
@@ -240,22 +247,21 @@
       "skill_id": "shared_013",
       "name": "疾風迅雷",
       "name_en": "Swift Thunder",
-      "category": "attack_plus_effect",
+      "category": "damage_only",
       "element": "wind",
       "cost": 5,
-      "damage_type": "physical",
+      "damage_type": "attack",
       "power": 80,
       "power_rank": "B",
       "accuracy": 100,
       "priority": 1,
       "target": "opponent",
-      "description": "先制+魅了確定",
+      "description": "先制",
       "special_effects": [
-        {"effect_type": "priority", "value": 1},
-        {"effect_type": "status_condition", "status": "charm", "probability": 100}
+        {"effect_type": "priority", "value": 1}
       ],
       "owner_ids": ["jade", "karasu"],
-      "balance_note": "v7.0: 威力A→B、気絶20%→魅了100%"
+      "balance_note": "v10.1: 追加効果1つルール対応、先制のみ"
     },
     {
       "skill_id": "shared_014",
@@ -269,16 +275,21 @@
       "power_rank": "-",
       "accuracy": 100,
       "priority": 0,
-      "target": "party",
-      "description": "自身とパーティHP30%回復",
-      "special_effects": [{"effect_type": "heal", "heal_percentage": 30, "target": "party"}],
-      "owner_ids": ["luria", "sera"]
+      "target": "all_allies",
+      "description": "自分と控え全員HP40回復",
+      "special_effects": [{"effect_type": "heal", "heal_fixed": 40, "target": "all_allies"}],
+      "owner_ids": ["luria", "sera"],
+      "balance_note": "v10.2: party→all_allies、%回復→固定倲40に変更"
     }
   ],
   "metadata": {
     "total_skills": 14,
     "description": "複数のモンスターが習得できる共有技",
     "changelog": {
+      "v11.0.0": [
+        "damage_type用語変更: physical→attack, magical→magic",
+        "damage_type_reference追加"
+      ],
       "v7.0.0": [
         "状態異常100%確定システム対応",
         "気絶→魅了に変更（shared_013）",

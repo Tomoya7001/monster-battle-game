@@ -1,39 +1,29 @@
 {
-  "version": "9.4",
+  "version": "10.1",
   "created_at": "2025-12-04",
-  "updated_at": "2025-12-20",
-  "description": "一般種モンスター（パートC）8体（個体値パターン追加版）",
+  "updated_at": "2025-12-28",
+  "description": "一般種モンスター（パートC）8体（技プール拡張版）",
   "category": "common",
   "category_description": "一般種（入手難易度：標準）- 合計238-245、個体値3-5パターン（外れなし設計）",
   "changelog": {
-    "v9.4": [
-      "【Mutant種技プール拡張】クリス: 8技→13技、2属性→5属性",
-      "【物理技追加】ビットマン: 疾風撃・剛腕撃追加"
-    ],
-    "v9.3": [
-      "【アビリティプール再設計】全モンスターのアビリティプールをシナジー重視で再構築",
-      "【シーラ変更】深海の圧力: 全能力↓1→魔力↓1",
-      "【セラ変更】聖なる守護: 回復+防御↑1→回復10%のみ",
-      "ゼラ: 暴走起動→前借りに変更"
-    ],
-    "v9.2": [
-      "【奥義コスト統一】全一般種の奥義コストを4→5に変更"
-    ],
-    "v9.0": [
-      "【個体値パターン追加】全モンスターに3-5パターンの個体値を追加"
+    "v10.0": [
+      "【技プール大幅拡張】全モンスターの技数を15-17技に拡張",
+      "【習得レベル調整】4レベル刻みに統一",
+      "【サブ属性追加】各モンスターに2-3種類のサブ属性技を追加"
     ]
   },
   "design_rules": {
     "base_stats_range": "12-95",
     "common_total_range": "238-245",
-    "iv_pattern_count": "3-5（役割に応じて変動）",
-    "iv_design": "主力ステは絶対に下降しない。不要ステのみ-12。どのパターンも使える設計",
-    "balance_principle": "一般種でも十分戦える設計"
+    "iv_pattern_count": "3-5",
+    "skill_count_target": "15技（ミュータントは17技）",
+    "skill_learn_interval": "4レベル刻み"
   },
   "monsters": [
     {
-      "monster_id": "mon_024",
+      "monster_id": "mon_032",
       "name": "量産型ビットマン",
+      "lore": "古代文明が量産した汎用機械兵。単体では凡庸だが、仲間との連携で真価を発揮する。",
       "category": "common",
       "species": "mechanoid",
       "element": "thunder",
@@ -68,24 +58,36 @@
       },
       "skill_pool": {
         "initial_skills": [
-          {"id": "var_thunder_001", "name": "天雷", "learn_level": 1},
-          {"id": "cmn_phy_002", "name": "裂爪", "learn_level": 1}
+          {"id": "thunder_008", "name": "天雷", "learn_level": 1},
+          {"id": "cmn_phy_002", "name": "裂爪", "learn_level": 1},
+          {"id": "cmn_sup_003", "name": "集中", "learn_level": 1}
         ],
         "learnable_skills": [
-          {"id": "bitman_001", "name": "連携攻撃", "learn_level": 5, "cost": 3, "power": "C", "effect": "味方メカノイド数×威力20%UP"},
-          {"id": "cmn_phy_003", "name": "疾風撃", "learn_level": 10},
-          {"id": "bitman_002", "name": "自己修復", "learn_level": 15, "cost": 2, "effect": "HP30%回復"},
-          {"id": "sts_thunder_001", "name": "痺撃波", "learn_level": 20},
-          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 25},
-          {"id": "cmn_phy_004", "name": "剛腕撃", "learn_level": 30},
-          {"id": "var_wind_001", "name": "烈風", "learn_level": 50}
+          {"id": "bitman_001", "name": "自爆", "learn_level": 4, "cost": 4, "power": "S", "effect": "使用後自分瀕死"},
+          {"id": "thunder_006", "name": "帯電", "learn_level": 8},
+          {"id": "cmn_phy_003", "name": "疾風撃", "learn_level": 12},
+          {"id": "bitman_002", "name": "緊急複製", "learn_level": 16, "cost": 3, "effect": "自分HP40回復+次攻撃2回攻撃"},
+          {"id": "wind_003", "name": "烈風", "learn_level": 20},
+          {"id": "thunder_002", "name": "痺撃波", "learn_level": 24},
+          {"id": "wind_002", "name": "疾空斬", "learn_level": 28},
+          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 32},
+          {"id": "thunder_007", "name": "雷鳴拳", "learn_level": 36},
+          {"id": "thunder_009", "name": "雷鳴", "learn_level": 44},
+          {"id": "wind_008", "name": "畏怖の風", "learn_level": 48}
         ],
-        "ultimate": {"id": "ult_bitman", "name": "量産型の本気", "learn_level": 40, "cost": 5, "power_rank": "A", "element": "thunder", "effect": "味方メカノイド数×威力30%UP+麻痺確定"}
+        "ultimate": {"id": "ult_bitman", "name": "量産型の本気", "learn_level": 40, "cost": 5, "power_rank": "B", "element": "thunder", "type": "control", "effect": "麻痺確定"}
+      },
+      "skill_summary": {
+        "total_skills": 15,
+        "main_element": "thunder",
+        "sub_elements": ["wind"],
+        "skill_types": {"attack": 9, "support": 5, "ultimate": 1}
       }
     },
     {
-      "monster_id": "mon_025",
+      "monster_id": "mon_033",
       "name": "貪欲マモン",
+      "lore": "富と力を貪る悪魔。戦うほどに強くなり、その欲望は決して満たされない。",
       "category": "common",
       "species": "demon",
       "element": "earth",
@@ -118,28 +120,41 @@
       },
       "skill_pool": {
         "initial_skills": [
-          {"id": "var_earth_001", "name": "ストーンショット", "learn_level": 1},
-          {"id": "cmn_phy_002", "name": "裂爪", "learn_level": 1}
+          {"id": "earth_008", "name": "ストーンショット", "learn_level": 1},
+          {"id": "cmn_phy_002", "name": "裂爪", "learn_level": 1},
+          {"id": "cmn_sup_003", "name": "集中", "learn_level": 1}
         ],
         "learnable_skills": [
-          {"id": "mamon_001", "name": "強奪", "learn_level": 5, "cost": 2, "power": "D", "effect": "相手バフ1つ奪取"},
-          {"id": "mamon_002", "name": "貪欲の爪", "learn_level": 15, "cost": 3, "power": "C", "effect": "自分バフ数×威力10%UP"},
-          {"id": "var_dark_001", "name": "ナイトメア", "learn_level": 20},
-          {"id": "cmn_sup_003", "name": "集中", "learn_level": 25},
-          {"id": "var_none_001", "name": "剛拳", "learn_level": 30},
-          {"id": "var_fire_001", "name": "業炎", "learn_level": 50}
+          {"id": "mamon_001", "name": "金貨投げ", "learn_level": 4, "cost": 3, "power": "D", "effect": "2回攻撃"},
+          {"id": "earth_006", "name": "堅守", "learn_level": 8},
+          {"id": "dark_008", "name": "ナイトメア", "learn_level": 12},
+          {"id": "mamon_002", "name": "強欲の罠", "learn_level": 16, "cost": 4, "effect": "最高コスト技を封印確定"},
+          {"id": "dark_005", "name": "呪詛", "learn_level": 20},
+          {"id": "earth_007", "name": "剛岩拳", "learn_level": 24},
+          {"id": "dark_007", "name": "冥府拳", "learn_level": 28},
+          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 32},
+          {"id": "cmn_phy_005", "name": "猛襲", "learn_level": 36},
+          {"id": "cmn_phy_004", "name": "剛腕撃", "learn_level": 44},
+          {"id": "dark_009", "name": "冥府の呪い", "learn_level": 48}
         ],
-        "ultimate": {"id": "ult_mamon", "name": "強欲の極み", "learn_level": 40, "cost": 5, "power_rank": "A", "element": "earth", "effect": "自分バフ数×威力20%UP+全バフ1段階↑"}
+        "ultimate": {"id": "ult_mamon", "name": "強欲の極み", "learn_level": 40, "cost": 5, "power_rank": "SS", "element": "earth", "type": "attack", "effect": null}
+      },
+      "skill_summary": {
+        "total_skills": 15,
+        "main_element": "earth",
+        "sub_elements": ["dark"],
+        "skill_types": {"attack": 10, "support": 4, "ultimate": 1}
       }
     },
     {
-      "monster_id": "mon_026",
+      "monster_id": "mon_034",
       "name": "結晶体クリス",
+      "lore": "純粋な結晶から生まれた生命体。その身体は極めて硬く、あらゆる攻撃をはじく。",
       "category": "common",
       "species": "mutant",
       "element": "earth",
       "role": "耐久型（超物理耐久）",
-      "design_concept": "【超物理耐久特化】防御90で攻撃・速さを捨てた。結晶の鎧で更に硬い",
+      "design_concept": "【超物理耐久特化】防御90で攻撃・速さを捨てた。結晶の鎧で更に硬い。ミュータントなので多属性",
       "base_stats": {
         "attack": 25,
         "defense": 90,
@@ -167,28 +182,38 @@
       },
       "skill_pool": {
         "initial_skills": [
-          {"id": "var_earth_001", "name": "ストーンショット", "learn_level": 1},
-          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 1}
+          {"id": "earth_001", "name": "砂礫弾", "learn_level": 1},
+          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 1},
+          {"id": "cmn_sup_001", "name": "威圧", "learn_level": 1}
         ],
         "learnable_skills": [
-          {"id": "chris_001", "name": "結晶化", "learn_level": 5, "cost": 2, "effect": "防御↑↑+次T行動不能"},
-          {"id": "cmn_phy_002", "name": "裂爪", "learn_level": 8},
-          {"id": "chris_002", "name": "結晶弾", "learn_level": 12, "cost": 3, "power": "C", "effect": "自分防御依存ダメージ"},
-          {"id": "var_light_001", "name": "裁きの光", "learn_level": 16},
-          {"id": "buff_earth_001", "name": "堅守", "learn_level": 20},
-          {"id": "var_water_001", "name": "アクアボール", "learn_level": 24},
-          {"id": "chris_003", "name": "結晶の棘", "learn_level": 28, "cost": 3, "effect": "3T被弾時反射ダメージ+30%"},
-          {"id": "var_fire_001", "name": "業炎", "learn_level": 32},
-          {"id": "rear_phy_002", "name": "報復", "learn_level": 36},
-          {"id": "var_dark_001", "name": "ナイトメア", "learn_level": 50},
-          {"id": "spc_phy_001", "name": "力量転嫁", "learn_level": 55}
+          {"id": "chris_001", "name": "結晶化", "learn_level": 4, "cost": 3, "effect": "防御↑↑"},
+          {"id": "earth_006", "name": "堅守", "learn_level": 8},
+          {"id": "chris_002", "name": "結晶射出", "learn_level": 12, "cost": 3, "power": "C", "effect": "自分防御高いほど威力UP"},
+          {"id": "light_004", "name": "裁きの光", "learn_level": 16},
+          {"id": "water_008", "name": "アクアボール", "learn_level": 20},
+          {"id": "chris_003", "name": "結晶障壁", "learn_level": 24, "cost": 3, "effect": "2T被ダメ-20%"},
+          {"id": "fire_004", "name": "業炎", "learn_level": 28},
+          {"id": "spc_phy_001", "name": "力量転嫁", "learn_level": 32},
+          {"id": "thunder_008", "name": "天雷", "learn_level": 36},
+          {"id": "earth_007", "name": "剛岩拳", "learn_level": 44},
+          {"id": "light_008", "name": "魅惑の光", "learn_level": 48},
+          {"id": "water_009", "name": "凍結波", "learn_level": 52},
+          {"id": "dark_008", "name": "ナイトメア", "learn_level": 56}
         ],
-        "ultimate": {"id": "ult_chris", "name": "結晶要塞", "learn_level": 40, "cost": 5, "power_rank": "B", "element": "earth", "effect": "自分防御依存ダメ+防御↑2段階+3T被ダメ50%軽減"}
+        "ultimate": {"id": "ult_chris", "name": "結晶要塞", "learn_level": 40, "cost": 5, "power_rank": "-", "element": "earth", "type": "support", "effect": "次に受ける攻撃を1回無効、自分HP50回復"}
+      },
+      "skill_summary": {
+        "total_skills": 17,
+        "main_element": "earth",
+        "sub_elements": ["light", "water", "fire", "thunder", "dark"],
+        "skill_types": {"attack": 10, "support": 5, "buff": 1, "ultimate": 1}
       }
     },
     {
-      "monster_id": "mon_027",
+      "monster_id": "mon_035",
       "name": "魔導師メルラン",
+      "lore": "七色の魔法を操る天才魔導士。あらゆる属性を自在に操り、弱点を見抜く。",
       "category": "common",
       "species": "human",
       "element": "none",
@@ -221,26 +246,36 @@
       },
       "skill_pool": {
         "initial_skills": [
-          {"id": "var_none_002", "name": "魔弾", "learn_level": 1},
-          {"id": "cmn_sup_003", "name": "集中", "learn_level": 1}
+          {"id": "cmn_phy_006", "name": "連撃", "learn_level": 1},
+          {"id": "cmn_sup_007", "name": "精神統一", "learn_level": 1},
+          {"id": "light_004", "name": "裁きの光", "learn_level": 1}
         ],
         "learnable_skills": [
-          {"id": "merlan_001", "name": "属性解析", "learn_level": 5, "cost": 1, "effect": "相手弱点属性を可視化+次攻撃威力1.2倍"},
-          {"id": "var_fire_001", "name": "業炎", "learn_level": 8},
-          {"id": "var_water_001", "name": "アクアボール", "learn_level": 12},
-          {"id": "var_thunder_001", "name": "天雷", "learn_level": 16},
-          {"id": "merlan_002", "name": "七色の魔弾", "learn_level": 20, "cost": 4, "power": "B", "effect": "弱点時威力1.5倍"},
-          {"id": "var_wind_001", "name": "烈風", "learn_level": 25},
-          {"id": "var_earth_001", "name": "ストーンショット", "learn_level": 30},
-          {"id": "var_light_001", "name": "裁きの光", "learn_level": 35},
-          {"id": "var_dark_001", "name": "ナイトメア", "learn_level": 50}
+          {"id": "merlan_001", "name": "魔力暴走", "learn_level": 4, "cost": 5, "power": "A", "effect": "使用後魔力↓↓↓"},
+          {"id": "fire_004", "name": "業炎", "learn_level": 8},
+          {"id": "water_008", "name": "アクアボール", "learn_level": 12},
+          {"id": "thunder_008", "name": "天雷", "learn_level": 16},
+          {"id": "merlan_002", "name": "属性変換", "learn_level": 20, "cost": 2, "effect": "次に使う技の属性を相手の弱点にする"},
+          {"id": "wind_003", "name": "烈風", "learn_level": 24},
+          {"id": "earth_001", "name": "砂礫弾", "learn_level": 28},
+          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 32},
+          {"id": "dark_008", "name": "ナイトメア", "learn_level": 36},
+          {"id": "light_008", "name": "魅惑の光", "learn_level": 44},
+          {"id": "dark_009", "name": "冥府の呪い", "learn_level": 48}
         ],
-        "ultimate": {"id": "ult_merlan", "name": "七色の極光", "learn_level": 40, "cost": 5, "power_rank": "A", "element": "none", "effect": "弱点属性ダメ+魔力↑1+相手魔防↓1"}
+        "ultimate": {"id": "ult_merlan", "name": "七色の極光", "learn_level": 40, "cost": 5, "power_rank": "SS", "element": "none", "type": "attack", "effect": null}
+      },
+      "skill_summary": {
+        "total_skills": 15,
+        "main_element": "none",
+        "sub_elements": ["fire", "water", "thunder", "wind", "earth", "light", "dark"],
+        "skill_types": {"attack": 11, "support": 3, "ultimate": 1}
       }
     },
     {
-      "monster_id": "mon_028",
+      "monster_id": "mon_036",
       "name": "癒光セラ",
+      "lore": "慈愛に満ちた癒しの天使。傷ついた者のために光を注ぎ、平和をもたらす。",
       "category": "common",
       "species": "angel",
       "element": "light",
@@ -274,24 +309,36 @@
       },
       "skill_pool": {
         "initial_skills": [
-          {"id": "var_light_001", "name": "裁きの光", "learn_level": 1},
-          {"id": "buff_light_001", "name": "癒月", "learn_level": 1}
+          {"id": "light_004", "name": "裁きの光", "learn_level": 1},
+          {"id": "light_005", "name": "癒月", "learn_level": 1},
+          {"id": "cmn_sup_001", "name": "威圧", "learn_level": 1}
         ],
         "learnable_skills": [
-          {"id": "sera_001", "name": "守護の光", "learn_level": 5, "cost": 2, "effect": "味方HP25%回復+防御↑"},
-          {"id": "cmn_sup_006", "name": "浄化", "learn_level": 10},
-          {"id": "sera_002", "name": "浄化の光", "learn_level": 15, "cost": 3, "effect": "味方状態異常解除+HP20%回復"},
-          {"id": "buff_light_002", "name": "光の障壁", "learn_level": 20},
-          {"id": "sera_003", "name": "守護結界", "learn_level": 25, "cost": 3, "effect": "3T味方被ダメ-25%"},
-          {"id": "cycle_light_001", "name": "光の帰還", "learn_level": 30},
-          {"id": "var_wind_001", "name": "烈風", "learn_level": 50}
+          {"id": "sera_001", "name": "癒しの抱擁", "learn_level": 4, "cost": 4, "effect": "自分HP60回復+防御↑↑"},
+          {"id": "light_002", "name": "閃光", "learn_level": 8},
+          {"id": "cmn_sup_006", "name": "浄化", "learn_level": 12},
+          {"id": "sera_002", "name": "光の障壁", "learn_level": 16, "cost": 3, "effect": "3T状態異常を受けない"},
+          {"id": "wind_005", "name": "翼の休息", "learn_level": 20},
+          {"id": "light_006", "name": "光の障壁", "learn_level": 24},
+          {"id": "sera_003", "name": "守護結界", "learn_level": 28, "cost": 3, "effect": "3T味方被ダメ-25%"},
+          {"id": "wind_003", "name": "烈風", "learn_level": 32},
+          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 36},
+          {"id": "light_008", "name": "魅惑の光", "learn_level": 44},
+          {"id": "wind_008", "name": "畏怖の風", "learn_level": 48}
         ],
-        "ultimate": {"id": "ult_sera", "name": "癒しの聖光", "learn_level": 40, "cost": 5, "power_rank": "-", "element": "light", "effect": "味方HP50%回復+状態異常解除+3T被ダメ-20%"}
+        "ultimate": {"id": "ult_sera", "name": "癒しの聖光", "learn_level": 40, "cost": 5, "power_rank": "-", "element": "light", "type": "support", "effect": "自分HP80+控えHP30回復、状態異常解除"}
+      },
+      "skill_summary": {
+        "total_skills": 15,
+        "main_element": "light",
+        "sub_elements": ["wind"],
+        "skill_types": {"attack": 4, "support": 10, "ultimate": 1}
       }
     },
     {
-      "monster_id": "mon_029",
+      "monster_id": "mon_037",
       "name": "要塞タロス",
+      "lore": "古代文明が防衛のために造った巨大機械兵。その装甲は難攻不落の要塞と言われる。",
       "category": "common",
       "species": "mechanoid",
       "element": "earth",
@@ -324,23 +371,36 @@
       },
       "skill_pool": {
         "initial_skills": [
-          {"id": "var_earth_001", "name": "ストーンショット", "learn_level": 1},
-          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 1}
+          {"id": "earth_008", "name": "ストーンショット", "learn_level": 1},
+          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 1},
+          {"id": "cmn_sup_001", "name": "威圧", "learn_level": 1}
         ],
         "learnable_skills": [
-          {"id": "talos_001", "name": "要塞の構え", "learn_level": 5, "cost": 1, "effect": "防御↑+魔防↑"},
-          {"id": "buff_earth_001", "name": "堅守", "learn_level": 10},
-          {"id": "talos_002", "name": "重撃", "learn_level": 15, "cost": 3, "power": "C", "effect": "自分防御依存ダメージ"},
-          {"id": "talos_003", "name": "鉄壁の守護", "learn_level": 25, "cost": 4, "effect": "3T味方被ダメ-40%（自分行動不能）"},
-          {"id": "rear_phy_002", "name": "報復", "learn_level": 30},
-          {"id": "var_thunder_001", "name": "天雷", "learn_level": 50}
+          {"id": "talos_001", "name": "鉄壁モード", "learn_level": 4, "cost": 3, "effect": "防御↑"},
+          {"id": "earth_006", "name": "堅守", "learn_level": 8},
+          {"id": "talos_002", "name": "自己修復", "learn_level": 12, "cost": 4, "effect": "自分HP40回復+状態異常解除"},
+          {"id": "thunder_008", "name": "天雷", "learn_level": 16},
+          {"id": "spc_phy_001", "name": "力量転嫁", "learn_level": 20},
+          {"id": "talos_003", "name": "ミサイルポッド", "learn_level": 24, "cost": 4, "power": "B", "effect": "使用後防御↓↓"},
+          {"id": "thunder_007", "name": "雷鳴拳", "learn_level": 28},
+          {"id": "earth_007", "name": "剛岩拳", "learn_level": 32},
+          {"id": "cmn_phy_005", "name": "猛襲", "learn_level": 36},
+          {"id": "cmn_phy_004", "name": "剛腕撃", "learn_level": 44},
+          {"id": "thunder_009", "name": "雷鳴", "learn_level": 48}
         ],
-        "ultimate": {"id": "ult_talos", "name": "要塞砲", "learn_level": 40, "cost": 5, "power_rank": "A", "element": "earth", "effect": "自分防御依存ダメ+防御↑2段階+恐怖確定"}
+        "ultimate": {"id": "ult_talos", "name": "要塞砲", "learn_level": 40, "cost": 5, "power_rank": "SS", "element": "earth", "type": "attack", "effect": null}
+      },
+      "skill_summary": {
+        "total_skills": 15,
+        "main_element": "earth",
+        "sub_elements": ["thunder"],
+        "skill_types": {"attack": 9, "support": 5, "ultimate": 1}
       }
     },
     {
-      "monster_id": "mon_030",
+      "monster_id": "mon_038",
       "name": "深淵ゼラ",
+      "lore": "深淵から現れた謎の精霊。暗黒の力を操り、先の見えない恐怖をもたらす。",
       "category": "common",
       "species": "spirit",
       "element": "dark",
@@ -364,7 +424,7 @@
       "ability_pool": {
         "rare": [
           {"id": "ex_com_zela", "name": "深淵の呼び声", "effect": "初期コスト+1"},
-          {"id": "sp_mutant", "name": "変幻の魂", "effect": "被ダメージ時、ランダムで1ステータス↑1"}
+          {"id": "sp_spirit", "name": "霊体", "effect": "攻撃技のダメージを軽減"}
         ],
         "common": [
           {"id": "com_007", "name": "節制の術", "effect": "コスト4以上の技のコスト-1"},
@@ -373,28 +433,41 @@
       },
       "skill_pool": {
         "initial_skills": [
-          {"id": "var_dark_001", "name": "ナイトメア", "learn_level": 1},
-          {"id": "cmn_sup_002", "name": "煽動", "learn_level": 1}
+          {"id": "dark_008", "name": "ナイトメア", "learn_level": 1},
+          {"id": "cmn_sup_002", "name": "煽動", "learn_level": 1},
+          {"id": "cmn_sup_007", "name": "精神統一", "learn_level": 1}
         ],
         "learnable_skills": [
-          {"id": "zela_001", "name": "深淵の眼", "learn_level": 5, "cost": 3, "power": "C", "effect": "瘴気確定+闇属性ダメージ"},
-          {"id": "sts_dark_001", "name": "呪詛", "learn_level": 10},
-          {"id": "zela_002", "name": "深淵の招き", "learn_level": 15, "cost": 4, "power": "B", "effect": "恐怖確定+HP20%消費"},
-          {"id": "zela_003", "name": "暗黒の支配", "learn_level": 25, "cost": 3, "effect": "3T闇技威力+30%"},
-          {"id": "var_fire_001", "name": "業炎", "learn_level": 30},
-          {"id": "var_water_001", "name": "アクアボール", "learn_level": 50}
+          {"id": "zela_001", "name": "深淵の呼び声", "learn_level": 4, "cost": 3, "power": "D", "effect": "瘴気確定"},
+          {"id": "dark_006", "name": "暗幕", "learn_level": 8},
+          {"id": "dark_005", "name": "呪詛", "learn_level": 12},
+          {"id": "zela_002", "name": "深海の圧力", "learn_level": 16, "cost": 3, "effect": "素早さ↓↓"},
+          {"id": "fire_004", "name": "業炎", "learn_level": 20},
+          {"id": "zela_003", "name": "飲み込む", "learn_level": 24, "cost": 4, "power": "B", "effect": "与ダメ30%回復（連続使用不可）"},
+          {"id": "fire_008", "name": "獄炎", "learn_level": 28},
+          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 32},
+          {"id": "dark_009", "name": "冥府の呪い", "learn_level": 36},
+          {"id": "dark_007", "name": "冥府拳", "learn_level": 44},
+          {"id": "fire_005", "name": "焦熱獄", "learn_level": 48}
         ],
-        "ultimate": {"id": "ult_zela", "name": "深淵の終焉", "learn_level": 40, "cost": 5, "power_rank": "A", "element": "dark", "effect": "悪夢確定+瘴気確定+相手コスト-2"}
+        "ultimate": {"id": "ult_zela", "name": "深淵の終焉", "learn_level": 40, "cost": 5, "power_rank": "C", "element": "dark", "type": "control", "effect": "悪夢確定、瘴気確定"}
+      },
+      "skill_summary": {
+        "total_skills": 15,
+        "main_element": "dark",
+        "sub_elements": ["fire"],
+        "skill_types": {"attack": 9, "support": 5, "ultimate": 1}
       }
     },
     {
-      "monster_id": "mon_038",
+      "monster_id": "mon_039",
       "name": "深海魚シーラ",
+      "lore": "深海に棲む恐ろしい悪魔。水圧で精神を押し潰し、暗闇へと引きずり込む。",
       "category": "common",
       "species": "demon",
       "element": "water",
       "role": "デバフ型（登場時デバフ特化）",
-      "design_concept": "【登場時デバフ特化】登場時に相手魔力を下げるデバッファー",
+      "design_concept": "【登場時デバフ特化】登場時に相手を拘束するデバッファー",
       "base_stats": {
         "attack": 40,
         "defense": 60,
@@ -409,11 +482,11 @@
         {"name": "魔力特化", "attack": 0, "defense": 0, "magic": 12, "magic_defense": 0, "speed": -12, "recommended": "魔法攻撃型"},
         {"name": "攻撃特化", "attack": 12, "defense": 0, "magic": 0, "magic_defense": 0, "speed": -12, "recommended": "物理攻撃型"}
       ],
-      "strengths": ["登場時魔力↓1で魔法対策", "両耐久が高め", "デバフが豊富"],
+      "strengths": ["登場時交代不可で逃がさない", "両耐久が高め", "デバフが豊富"],
       "weaknesses": ["速さが遅い", "火力は控えめ"],
       "ability_pool": {
         "rare": [
-          {"id": "ex_com_sheela", "name": "深海の圧力", "effect": "登場時、相手の魔力↓1"},
+          {"id": "ex_com_sheela", "name": "深海の圧力", "effect": "登場時、相手はこのターン交代できない"},
           {"id": "sp_demon", "name": "魂喰らい", "effect": "相手を倒した時、全ステータス↑1"}
         ],
         "common": [
@@ -423,18 +496,30 @@
       },
       "skill_pool": {
         "initial_skills": [
-          {"id": "var_water_001", "name": "アクアボール", "learn_level": 1},
-          {"id": "cmn_sup_001", "name": "威圧", "learn_level": 1}
+          {"id": "water_008", "name": "アクアボール", "learn_level": 1},
+          {"id": "cmn_sup_001", "name": "威圧", "learn_level": 1},
+          {"id": "cmn_sup_002", "name": "煽動", "learn_level": 1}
         ],
         "learnable_skills": [
-          {"id": "sheela_001", "name": "深海の呪い", "learn_level": 5, "cost": 2, "power": "D", "effect": "瘴気確定+相手速さ↓"},
-          {"id": "sheela_002", "name": "圧潰", "learn_level": 15, "cost": 3, "power": "C", "effect": "相手魔力↓↓"},
-          {"id": "buff_water_001", "name": "水鏡", "learn_level": 20},
-          {"id": "sheela_003", "name": "深海の抱擁", "learn_level": 25, "cost": 3, "power": "C", "effect": "拘束確定"},
-          {"id": "rear_mag_001", "name": "魔力返し", "learn_level": 30},
-          {"id": "var_dark_001", "name": "ナイトメア", "learn_level": 50}
+          {"id": "sheela_001", "name": "深海の歌声", "learn_level": 4, "cost": 3, "power": "D", "effect": "魅了確定"},
+          {"id": "water_006", "name": "水鏡", "learn_level": 8},
+          {"id": "dark_005", "name": "呪詛", "learn_level": 12},
+          {"id": "sheela_002", "name": "暗黒水流", "learn_level": 16, "cost": 3, "power": "C", "effect": "瘴気確定"},
+          {"id": "dark_008", "name": "ナイトメア", "learn_level": 20},
+          {"id": "sheela_003", "name": "深海の呪い", "learn_level": 24, "cost": 2, "effect": "相手速さ↓↓"},
+          {"id": "dark_006", "name": "暗幕", "learn_level": 28},
+          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 32},
+          {"id": "water_009", "name": "凍結波", "learn_level": 36},
+          {"id": "water_007", "name": "氷砕拳", "learn_level": 44},
+          {"id": "dark_009", "name": "冥府の呪い", "learn_level": 48}
         ],
-        "ultimate": {"id": "ult_sheela", "name": "深海の支配", "learn_level": 40, "cost": 5, "power_rank": "A", "element": "water", "effect": "相手全デバフ+拘束確定+瘴気確定"}
+        "ultimate": {"id": "ult_sheela", "name": "深海の支配", "learn_level": 40, "cost": 5, "power_rank": "C", "element": "water", "type": "control", "effect": "拘束確定、瘴気確定"}
+      },
+      "skill_summary": {
+        "total_skills": 15,
+        "main_element": "water",
+        "sub_elements": ["dark"],
+        "skill_types": {"attack": 8, "support": 5, "debuff": 1, "ultimate": 1}
       }
     }
   ],
@@ -442,18 +527,16 @@
     "total_monsters": 8,
     "stat_totals": [240, 240, 242, 242, 242, 244, 243, 242],
     "average_total": 241.9,
-    "stat_range": "240-244（差4）",
-    "iv_pattern_count": "3-5",
-    "role_distribution": {
-      "ビットマン": "バランス型（全ステ48）- 育成自由度最高、5パターン",
-      "マモン": "バフ蓄積型（攻78）- 魔力-12固定、3パターン",
-      "クリス": "超物理耐久（防90）- 速さ-12固定、3パターン",
-      "メルラン": "弱点狙い魔法（魔85）- 攻撃-12固定、3パターン",
-      "セラ": "交代サポート（魔防72）- 攻撃-12固定、4パターン",
-      "タロス": "超耐久（防95）- 魔力-12固定、3パターン",
-      "ゼラ": "コスト特化魔法（魔75）- 攻撃-12固定、3パターン",
-      "シーラ": "登場時デバフ（魔防62）- 速さ-12固定、4パターン"
+    "skill_count": {
+      "ビットマン": 15,
+      "マモン": 15,
+      "クリス": 17,
+      "メルラン": 15,
+      "セラ": 15,
+      "タロス": 15,
+      "ゼラ": 15,
+      "シーラ": 15
     },
-    "design_philosophy": "万能型は5パターン、特化型は3パターン。役割が明確な設計"
+    "design_philosophy": "一般種でも15技（ミュータントは17技）、4レベル刻み習得、2-3サブ属性"
   }
 }

@@ -1,9 +1,15 @@
 {
-    "version": "10.2",
+    "version": "10.3",
     "created_at": "2025-12-04",
-    "updated_at": "2025-12-20",
-    "description": "Phase1 アビリティマスターデータ v10.2（アビリティ効果1つ統一版）",
+    "updated_at": "2025-12-22",
+    "description": "Phase1 アビリティマスターデータ v10.3（登場時効果統一版）",
     "changelog": {
+        "v10.3": [
+            "【リリス変更】夢魔の誘惑: 登場時、相手はこのターン高コスト技を封じられる",
+            "【シロネ変更】凍てつく美貌: 恐怖→速さ↓1",
+            "【シルフィ変更】風の加護: サポート回復→速さ↑1",
+            "【シーラ変更】深海の圧力: 魔力↓1→このターン相手交代不可"
+        ],
         "v10.2": [
             "【効果1つ統一】全アビリティの効果を1つに限定（猪突猛進のみ例外）",
             "【表現統一】「物理攻撃」→「攻撃技」に変更",
@@ -620,14 +626,15 @@
                 {
                     "id": "ex_rare_lilith",
                     "name": "夢魔の誘惑",
-                    "effect": "攻撃命中時、25%の確率で魅了",
+                    "effect": "登場時、相手はこのターンコスト4以上の技を使えない",
                     "monster": "lilith",
                     "monster_name": "夢魔リリス",
                     "category": "rare",
-                    "trigger": "on_hit",
-                    "inflict_status": "charm",
-                    "probability": 0.25,
-                    "change_note": "v10.2: 登場時魅了確定→攻撃命中時25%に弱体化"
+                    "trigger": "on_entry",
+                    "effect_type": "high_cost_seal",
+                    "cost_threshold": 4,
+                    "duration": 1,
+                    "change_note": "v10.3: 攻撃命中25%魅了→登場時高コスト技封印（1T）"
                 },
                 {
                     "id": "ex_rare_luria",
@@ -652,12 +659,13 @@
                 {
                     "id": "ex_rare_leon_1",
                     "name": "聖盾の誓い",
-                    "effect": "登場時、1回だけダメージを無効化",
+                    "effect": "交代で登場した時、初撃を大幅軽減（1回）",
                     "monster": "leon",
                     "monster_name": "聖騎士レオン",
                     "category": "rare",
-                    "trigger": "on_entry",
-                    "effect_type": "damage_nullify",
+                    "trigger": "on_switch_entry",
+                    "effect_type": "damage_reduce",
+                    "damage_reduction": 0.7,
                     "usage_limit": 1
                 },
                 {
@@ -711,24 +719,26 @@
                 {
                     "id": "ex_com_shirone",
                     "name": "凍てつく美貌",
-                    "effect": "登場時、相手を恐怖状態にする",
+                    "effect": "登場時、相手の素早さ↓1",
                     "monster": "shirone",
                     "monster_name": "雪女シロネ",
                     "category": "common",
                     "trigger": "on_entry",
-                    "inflict_status": "fear",
-                    "change_note": "v10.2: 速さ↓2→恐怖付与（冷気の纏いと差別化）"
+                    "target": "opponent",
+                    "stat_change": {"speed": -1},
+                    "change_note": "v10.3: 恐怖→速さ↓1（デバフ統一）"
                 },
                 {
                     "id": "ex_com_sylphy",
                     "name": "風の加護",
-                    "effect": "サポート技を使った時、自分を5%回復",
+                    "effect": "登場時、自分の素早さ↑1",
                     "monster": "sylphy",
                     "monster_name": "風唄シルフィ",
                     "category": "common",
-                    "trigger": "on_support_skill",
-                    "self_heal_percent": 5,
-                    "change_note": "v10.2: 速さ↑2→サポート回復（号令の旗と差別化）"
+                    "trigger": "on_entry",
+                    "target": "self",
+                    "stat_change": {"speed": 1},
+                    "change_note": "v10.3: サポート回復→速さ↑1（バフ統一）"
                 },
                 {
                     "id": "ex_com_asmo",
@@ -830,14 +840,14 @@
                 {
                     "id": "ex_com_sheela",
                     "name": "深海の圧力",
-                    "effect": "登場時、相手の魔力↓1",
+                    "effect": "登場時、相手はこのターン交代できない",
                     "monster": "sheela",
                     "monster_name": "深海魚シーラ",
                     "category": "common",
                     "trigger": "on_entry",
-                    "target": "opponent",
-                    "stat_change": {"magic": -1},
-                    "change_note": "v10.2: 全能力↓1→魔力↓1"
+                    "effect_type": "switch_block",
+                    "duration": 1,
+                    "change_note": "v10.3: 魔力↓1→このターン交代不可"
                 },
                 {
                     "id": "ex_com_mof",
@@ -921,7 +931,7 @@
         }
     },
     "summary": {
-        "total_abilities": 81,
+        "total_abilities": 90,
         "breakdown": {
             "common": 23,
             "rare": 20,

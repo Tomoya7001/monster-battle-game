@@ -2,14 +2,20 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Rare Species Unique Skills - Phase 1 v9.0",
   "description": "希少種モンスター専用技マスターデータ（カテゴリシステム移行版）",
-  "version": "10.0.0",
-  "last_updated": "2025-12-20",
+  "version": "12.0.0",
+  "last_updated": "2025-12-29",
   "category": "rare",
   "category_description": "希少種（入手難易度：やや難）- カテゴリは入手難易度であり強さではない",
   "design_philosophy": {
     "principle": "カテゴリ＝入手難易度、強さの序列ではない",
     "power_difference": "幻種・一般種との性能差は最大5%",
     "ultimate_rule": "同コストなら同等の強さ（カテゴリ無関係）"
+  },
+  "damage_type_reference": {
+    "attack": "攻撃技（攻撃ステータス参照）",
+    "magic": "魔力技（魔力ステータス参照）",
+    "adaptive": "適応型（攻撃と魔力の高い方）",
+    "none": "ダメージなし"
   },
   "monsters": ["linto", "wurm", "jack", "ram", "eva", "honoo", "lilith", "luria", "kyouka", "leon"],
   "monster_count": 10,
@@ -33,7 +39,7 @@
       "category": "damage_only",
       "element": "wind",
       "cost": 5,
-      "damage_type": "magical",
+      "damage_type": "magic",
       "power": 110,
       "power_rank": "A",
       "accuracy": 100,
@@ -64,26 +70,44 @@
       "owner_id": "linto"
     },
     {
-      "skill_id": "ult_linto",
-      "name": "ジェットストリーム",
-      "name_en": "Jet Stream",
+      "skill_id": "linto_003",
+      "name": "超音速",
+      "name_en": "Supersonic",
       "category": "attack_plus_effect",
       "element": "wind",
-      "cost": 5,
-      "damage_type": "magical",
-      "power": 110,
-      "power_rank": "A",
+      "cost": 3,
+      "damage_type": "magic",
+      "power": 80,
+      "power_rank": "B",
       "accuracy": 100,
       "priority": 1,
       "target": "opponent",
-      "description": "【奥義】必ず先制+相手速さ↓↓",
+      "description": "先制+相手命中↓",
       "special_effects": [
         {"effect_type": "priority", "value": 1},
-        {"effect_type": "stat_change", "stat": "speed", "modifier": -2, "target": "opponent"}
+        {"effect_type": "stat_change", "stat": "accuracy", "modifier": -1, "target": "opponent"}
       ],
       "owner_id": "linto",
+      "balance_note": "v10.4: モンスターファイルから追加（先制特化型に必須）"
+    },
+    {
+      "skill_id": "ult_linto",
+      "name": "ジェットストリーム",
+      "name_en": "Jet Stream",
+      "category": "damage_only",
+      "element": "wind",
+      "cost": 5,
+      "damage_type": "magic",
+      "power": 200,
+      "power_rank": "SS",
+      "accuracy": 100,
+      "priority": 0,
+      "target": "opponent",
+      "description": "【奥義】SS威力の風攻撃",
+      "special_effects": [],
+      "owner_id": "linto",
       "is_ultimate": true,
-      "balance_note": "v10.0: S→A威力統一"
+      "balance_note": "v10.3: Monster正として修正（A→SS、効果削除）"
     },
     {
       "skill_id": "wurm_001",
@@ -112,7 +136,7 @@
       "category": "attack_plus_effect",
       "element": "light",
       "cost": 4,
-      "damage_type": "magical",
+      "damage_type": "magic",
       "power": 80,
       "power_rank": "B",
       "accuracy": 100,
@@ -134,11 +158,11 @@
       "power_rank": "-",
       "accuracy": 100,
       "priority": 0,
-      "target": "party",
-      "description": "自身とパーティのHP20%回復+状態異常解除",
+      "target": "all_allies",
+      "description": "自分と控え全員HP30回復+状態異常解除",
       "special_effects": [
-        {"effect_type": "heal", "heal_percentage": 20, "target": "party"},
-        {"effect_type": "cure_status", "target": "party"}
+        {"effect_type": "heal", "heal_fixed": 30, "target": "all_allies"},
+        {"effect_type": "cure_status", "target": "all_allies"}
       ],
       "owner_id": "wurm"
     },
@@ -146,20 +170,23 @@
       "skill_id": "ult_wurm",
       "name": "聖竜の息吹",
       "name_en": "Holy Dragon's Breath",
-      "category": "attack_plus_effect",
+      "category": "support_only",
       "element": "light",
-      "cost": 4,
-      "damage_type": "magical",
-      "power": 80,
-      "power_rank": "B",
+      "cost": 5,
+      "damage_type": "none",
+      "power": 0,
+      "power_rank": "-",
       "accuracy": 100,
       "priority": 0,
-      "target": "opponent",
-      "description": "【奥義】味方全員HP25%回復",
-      "special_effects": [{"effect_type": "heal", "heal_percentage": 25, "target": "party"}],
+      "target": "self",
+      "description": "【奥義】自分HP60回復、自分防御↑2段階",
+      "special_effects": [
+        {"effect_type": "heal", "heal_fixed": 60, "target": "self"},
+        {"effect_type": "stat_change", "stat": "defense", "modifier": 2, "target": "self"}
+      ],
       "owner_id": "wurm",
       "is_ultimate": true,
-      "balance_note": "v10.0: サポート型なのでコスト4、回復25%に調整"
+      "balance_note": "v10.3: Monster正として修正（HP60+防御↑↑）"
     },
     {
       "skill_id": "jack_001",
@@ -168,7 +195,7 @@
       "category": "attack_plus_effect",
       "element": "water",
       "cost": 3,
-      "damage_type": "physical",
+      "damage_type": "attack",
       "power": 55,
       "power_rank": "C",
       "accuracy": 100,
@@ -204,16 +231,15 @@
       "category": "attack_plus_effect",
       "element": "water",
       "cost": 4,
-      "damage_type": "magical",
+      "damage_type": "magic",
       "power": 80,
       "power_rank": "B",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "相手速さ↓+自分速さ↑",
+      "description": "相手速さ↓",
       "special_effects": [
-        {"effect_type": "stat_change", "stat": "speed", "modifier": -1, "target": "opponent"},
-        {"effect_type": "stat_change", "stat": "speed", "modifier": 1, "target": "self"}
+        {"effect_type": "stat_change", "stat": "speed", "modifier": -1, "target": "opponent"}
       ],
       "owner_id": "jack"
     },
@@ -221,42 +247,40 @@
       "skill_id": "ult_jack",
       "name": "海賊王の覇気",
       "name_en": "Pirate King's Aura",
-      "category": "attack_plus_effect",
+      "category": "damage_only",
       "element": "water",
       "cost": 5,
-      "damage_type": "magical",
-      "power": 110,
-      "power_rank": "A",
+      "damage_type": "magic",
+      "power": 200,
+      "power_rank": "SS",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "【奥義】相手全デバフ+自分全バフ",
-      "special_effects": [
-        {"effect_type": "stat_change_all", "modifier": -1, "target": "opponent"},
-        {"effect_type": "stat_change_all", "modifier": 1, "target": "self"}
-      ],
+      "description": "【奥義】SS威力の水攻撃",
+      "special_effects": [],
       "owner_id": "jack",
-      "is_ultimate": true
+      "is_ultimate": true,
+      "balance_note": "v10.3: Monster正として修正（A→SS、効果削除）"
     },
     {
       "skill_id": "ram_001",
       "name": "裁きの雷",
       "name_en": "Judgment Thunder",
-      "category": "attack_plus_effect",
+      "category": "damage_only",
       "element": "thunder",
-      "cost": 5,
-      "damage_type": "magical",
+      "cost": 4,
+      "damage_type": "magic",
       "power": 80,
       "power_rank": "B",
       "accuracy": 100,
       "priority": 1,
       "target": "opponent",
-      "description": "先制+麻痺確定",
+      "description": "先制",
       "special_effects": [
-        {"effect_type": "priority", "value": 1},
-        {"effect_type": "status_condition", "status": "paralysis", "probability": 100}
+        {"effect_type": "priority", "value": 1}
       ],
-      "owner_id": "ram"
+      "owner_id": "ram",
+      "balance_note": "v12.0: コスト5→4（先制B威力はコスト4が適正）"
     },
     {
       "skill_id": "ram_002",
@@ -276,25 +300,48 @@
       "owner_id": "ram"
     },
     {
+      "skill_id": "ram_003",
+      "name": "天罰",
+      "name_en": "Divine Punishment",
+      "category": "attack_plus_effect",
+      "element": "thunder",
+      "cost": 3,
+      "damage_type": "magic",
+      "power": 55,
+      "power_rank": "C",
+      "accuracy": 100,
+      "priority": 0,
+      "target": "opponent",
+      "description": "麻痺確定+相手速さ↓",
+      "special_effects": [
+        {"effect_type": "status_condition", "status": "paralysis", "probability": 100},
+        {"effect_type": "stat_change", "stat": "speed", "modifier": -1, "target": "opponent"}
+      ],
+      "owner_id": "ram",
+      "balance_note": "v10.4: モンスターファイルから追加（麻痺特化型に必須）"
+    },
+    {
       "skill_id": "ult_ram",
       "name": "神雷一閃",
       "name_en": "Divine Thunder Flash",
-      "category": "attack_plus_effect",
+      "category": "support_only",
       "element": "thunder",
       "cost": 5,
-      "damage_type": "magical",
-      "power": 110,
-      "power_rank": "A",
+      "damage_type": "none",
+      "power": 0,
+      "power_rank": "-",
       "accuracy": 100,
-      "priority": 1,
-      "target": "opponent",
-      "description": "【奥義】必ず先制+麻痺確定",
+      "priority": 0,
+      "target": "self",
+      "description": "【奥義】自分HP80+控えHP30回復、相手麻痺確定",
       "special_effects": [
-        {"effect_type": "priority", "value": 1},
+        {"effect_type": "heal", "heal_fixed": 80, "target": "self"},
+        {"effect_type": "heal", "heal_fixed": 30, "target": "bench"},
         {"effect_type": "status_condition", "status": "paralysis", "probability": 100}
       ],
       "owner_id": "ram",
-      "is_ultimate": true
+      "is_ultimate": true,
+      "balance_note": "v10.3: Monster正として修正（HP80+控え30+麻痺）"
     },
     {
       "skill_id": "eva_001",
@@ -303,7 +350,7 @@
       "category": "attack_plus_effect",
       "element": "water",
       "cost": 4,
-      "damage_type": "magical",
+      "damage_type": "magic",
       "power": 80,
       "power_rank": "B",
       "accuracy": 100,
@@ -335,25 +382,47 @@
       "owner_id": "eva"
     },
     {
-      "skill_id": "ult_eva",
-      "name": "竜姫の慈愛",
-      "name_en": "Dragon Princess's Love",
+      "skill_id": "eva_003",
+      "name": "清浄の霧",
+      "name_en": "Purifying Mist",
       "category": "support_only",
       "element": "water",
-      "cost": 4,
+      "cost": 2,
       "damage_type": "none",
       "power": 0,
       "power_rank": "-",
       "accuracy": 100,
       "priority": 0,
-      "target": "party",
-      "description": "【奥義】味方全員HP40%回復",
+      "target": "self",
+      "description": "自分状態異常解除+HP30回復",
       "special_effects": [
-        {"effect_type": "heal", "heal_percentage": 40, "target": "party"}
+        {"effect_type": "cure_status", "target": "self"},
+        {"effect_type": "heal", "heal_fixed": 30, "target": "self"}
+      ],
+      "owner_id": "eva",
+      "balance_note": "v12.0: 味方→自分、%回復→固定值30に変更"
+    },
+    {
+      "skill_id": "ult_eva",
+      "name": "竜姫の慈愛",
+      "name_en": "Dragon Princess's Love",
+      "category": "support_only",
+      "element": "water",
+      "cost": 5,
+      "damage_type": "none",
+      "power": 0,
+      "power_rank": "-",
+      "accuracy": 100,
+      "priority": 0,
+      "target": "self",
+      "description": "【奥義】自分HP60回復、状態異常解除",
+      "special_effects": [
+        {"effect_type": "heal", "heal_fixed": 60, "target": "self"},
+        {"effect_type": "cure_status", "target": "self"}
       ],
       "owner_id": "eva",
       "is_ultimate": true,
-      "balance_note": "v10.0: 純サポート型に変更、コスト4、攻撃削除"
+      "balance_note": "v10.3: Monster正として修正（HP60+状態異常解除）"
     },
     {
       "skill_id": "honoo_001",
@@ -362,9 +431,9 @@
       "category": "attack_plus_effect",
       "element": "fire",
       "cost": 5,
-      "damage_type": "magical",
-      "power": 80,
-      "power_rank": "B",
+      "damage_type": "magic",
+      "power": 110,
+      "power_rank": "A",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
@@ -372,7 +441,8 @@
       "special_effects": [
         {"effect_type": "status_condition", "status": "burn", "probability": 100}
       ],
-      "owner_id": "honoo"
+      "owner_id": "honoo",
+      "balance_note": "v12.0: 威力B→A（コスト5には威力Aが適正）"
     },
     {
       "skill_id": "honoo_002",
@@ -412,9 +482,9 @@
       "accuracy": 100,
       "priority": 0,
       "target": "self",
-      "description": "HP30%回復",
+      "description": "自分HP40回復",
       "special_effects": [
-        {"effect_type": "heal", "heal_percentage": 30, "target": "self"}
+        {"effect_type": "heal", "heal_fixed": 40, "target": "self"}
       ],
       "owner_id": "honoo"
     },
@@ -425,20 +495,20 @@
       "category": "attack_plus_effect",
       "element": "fire",
       "cost": 5,
-      "damage_type": "magical",
-      "power": 110,
-      "power_rank": "A",
+      "damage_type": "magic",
+      "power": 55,
+      "power_rank": "C",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "【奥義】火傷確定+灼熱フィールド3T",
+      "description": "【奥義】火傷確定、相手攻撃↓2段階",
       "special_effects": [
         {"effect_type": "status_condition", "status": "burn", "probability": 100},
-        {"effect_type": "field", "field_type": "scorching", "duration": 3}
+        {"effect_type": "stat_change", "stat": "attack", "modifier": -2, "target": "opponent"}
       ],
       "owner_id": "honoo",
       "is_ultimate": true,
-      "balance_note": "v10.0: S→A、フィールド5T→3T、火傷確定追加"
+      "balance_note": "v10.3: Monster正として修正（A→C、火傷+攻撃↓↓）"
     },
     {
       "skill_id": "lilith_001",
@@ -447,7 +517,7 @@
       "category": "attack_plus_effect",
       "element": "dark",
       "cost": 3,
-      "damage_type": "magical",
+      "damage_type": "magic",
       "power": 30,
       "power_rank": "D",
       "accuracy": 100,
@@ -475,13 +545,34 @@
       "owner_id": "lilith"
     },
     {
+      "skill_id": "lilith_003",
+      "name": "悪夢の檻",
+      "name_en": "Nightmare Cage",
+      "category": "support_only",
+      "element": "dark",
+      "cost": 4,
+      "damage_type": "none",
+      "power": 0,
+      "power_rank": "-",
+      "accuracy": 100,
+      "priority": 0,
+      "target": "opponent",
+      "description": "悪夢確定+拘束確定",
+      "special_effects": [
+        {"effect_type": "status_condition", "status": "nightmare", "probability": 100},
+        {"effect_type": "status_condition", "status": "restraint", "probability": 100}
+      ],
+      "owner_id": "lilith",
+      "balance_note": "v12.0: 悪夢のみ→悪夢+拘束に変更（悪夢の囁きとの差別化）"
+    },
+    {
       "skill_id": "lilith_004",
       "name": "夢喰い",
       "name_en": "Dream Eater",
       "category": "attack_plus_effect",
       "element": "dark",
       "cost": 3,
-      "damage_type": "magical",
+      "damage_type": "magic",
       "power": 80,
       "power_rank": "B",
       "accuracy": 100,
@@ -498,36 +589,61 @@
       "category": "attack_plus_effect",
       "element": "dark",
       "cost": 5,
-      "damage_type": "magical",
-      "power": 110,
-      "power_rank": "A",
+      "damage_type": "magic",
+      "power": 55,
+      "power_rank": "C",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "【奥義】悪夢確定",
+      "description": "【奥義】悪夢確定、封印確定",
       "special_effects": [
-        {"effect_type": "status_condition", "status": "nightmare", "probability": 100}
+        {"effect_type": "status_condition", "status": "nightmare", "probability": 100},
+        {"effect_type": "status_condition", "status": "seal", "probability": 100}
       ],
       "owner_id": "lilith",
       "is_ultimate": true,
-      "balance_note": "v10.0: 魅了削除（効果1つに統一）"
+      "balance_note": "v10.3: Monster正として修正（A→C、悪夢+封印）"
     },
     {
       "skill_id": "luria_001",
       "name": "アイドルの魅力",
       "name_en": "Idol's Charm",
-      "category": "attack_plus_effect",
+      "category": "support_only",
       "element": "wind",
       "cost": 4,
-      "damage_type": "magical",
-      "power": 30,
-      "power_rank": "D",
+      "damage_type": "none",
+      "power": 0,
+      "power_rank": "-",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "魅了確定",
-      "special_effects": [{"effect_type": "status_condition", "status": "charm", "probability": 100}],
-      "owner_id": "luria"
+      "description": "魅了確定+拘束確定",
+      "special_effects": [
+        {"effect_type": "status_condition", "status": "charm", "probability": 100},
+        {"effect_type": "status_condition", "status": "restraint", "probability": 100}
+      ],
+      "owner_id": "luria",
+      "balance_note": "v12.0: ダメージ削除、魅了+拘束確定に変更（lilith_001との差別化）"
+    },
+    {
+      "skill_id": "luria_002",
+      "name": "守りの歌",
+      "name_en": "Defensive Song",
+      "category": "support_only",
+      "element": "wind",
+      "cost": 2,
+      "damage_type": "none",
+      "power": 0,
+      "power_rank": "-",
+      "accuracy": 100,
+      "priority": 0,
+      "target": "self",
+      "description": "自分防御↑↑",
+      "special_effects": [
+        {"effect_type": "stat_change", "stat": "defense", "modifier": 2, "target": "self"}
+      ],
+      "owner_id": "luria",
+      "balance_note": "v10.4: モンスターファイルから追加（バフ特化型に必須）"
     },
     {
       "skill_id": "luria_003",
@@ -541,13 +657,14 @@
       "power_rank": "-",
       "accuracy": 100,
       "priority": 0,
-      "target": "opponent",
-      "description": "自分HP50%消費、2T後相手瀕死（交代でリセット）",
+      "target": "all",
+      "description": "自分HP半分消費。この歌を聞いた者は3ターン後に瀕死する（交代で解除）",
       "special_effects": [
-        {"effect_type": "hp_cost", "cost_percentage": 50},
-        {"effect_type": "delayed_ko", "turns": 2, "reset_on_switch": true}
+        {"effect_type": "hp_cost", "cost_half": true},
+        {"effect_type": "perish_song", "turns": 3, "reset_on_switch": true, "affects": "all_active"}
       ],
-      "owner_id": "luria"
+      "owner_id": "luria",
+      "balance_note": "v12.0: 「ほろびのうた」風に調整。自分も対象、交代で解除"
     },
     {
       "skill_id": "luria_004",
@@ -556,7 +673,7 @@
       "category": "attack_plus_effect",
       "element": "wind",
       "cost": 3,
-      "damage_type": "magical",
+      "damage_type": "magic",
       "power": 80,
       "power_rank": "B",
       "accuracy": 100,
@@ -572,22 +689,22 @@
       "name_en": "Soul's Song",
       "category": "support_only",
       "element": "wind",
-      "cost": 4,
+      "cost": 5,
       "damage_type": "none",
       "power": 0,
       "power_rank": "-",
       "accuracy": 100,
       "priority": 0,
-      "target": "party",
-      "description": "【奥義】味方全員攻撃↑1+速さ↑1+HP15%回復",
+      "target": "self",
+      "description": "【奥義】自分攻撃↑2段階、自分魔力↑2段階、自分速さ↑2段階",
       "special_effects": [
-        {"effect_type": "stat_change", "stat": "attack", "modifier": 1, "target": "party"},
-        {"effect_type": "stat_change", "stat": "speed", "modifier": 1, "target": "party"},
-        {"effect_type": "heal", "heal_percentage": 15, "target": "party"}
+        {"effect_type": "stat_change", "stat": "attack", "modifier": 2, "target": "self"},
+        {"effect_type": "stat_change", "stat": "magic", "modifier": 2, "target": "self"},
+        {"effect_type": "stat_change", "stat": "speed", "modifier": 2, "target": "self"}
       ],
       "owner_id": "luria",
       "is_ultimate": true,
-      "balance_note": "v10.0: コスト4、バフ2段階→1段階×2種、回復15%に調整"
+      "balance_note": "v10.3: 最終版（攻撃↑↑+魔力↑↑+速さ↑↑）"
     },
     {
       "skill_id": "kyouka_001",
@@ -621,29 +738,53 @@
       "accuracy": 100,
       "priority": 0,
       "target": "self",
-      "description": "設置（相手攻撃時相手にも同ダメ30%）",
-      "special_effects": [{"effect_type": "reflect_damage", "reflect_percentage": 30, "trigger": "on_opponent_attack"}],
-      "owner_id": "kyouka"
+      "description": "3T設置（相手攻撃時相手にも同ダメ30%、使用者HP0でも残る）",
+      "special_effects": [
+        {"effect_type": "reflect_damage", "reflect_percentage": 30, "trigger": "on_opponent_attack", "duration": 3},
+        {"effect_type": "persist_after_ko", "value": true}
+      ],
+      "owner_id": "kyouka",
+      "balance_note": "v12.0: 3T持続、使用者HP0でも効果継続を明記"
     },
     {
-      "skill_id": "kyouka_004",
-      "name": "影縫い",
-      "name_en": "Shadow Stitch",
+      "skill_id": "kyouka_003",
+      "name": "呪符・瘴気",
+      "name_en": "Curse Tag: Miasma",
       "category": "attack_plus_effect",
       "element": "dark",
-      "cost": 4,
-      "damage_type": "physical",
+      "cost": 2,
+      "damage_type": "magic",
       "power": 30,
       "power_rank": "D",
       "accuracy": 100,
-      "priority": 1,
+      "priority": 0,
       "target": "opponent",
-      "description": "先制+拘束確定（1T）",
+      "description": "瘴気確定",
       "special_effects": [
-        {"effect_type": "priority", "value": 1},
-        {"effect_type": "status_condition", "status": "restraint", "probability": 100, "duration": 1}
+        {"effect_type": "status_condition", "status": "miasma", "probability": 100}
       ],
-      "owner_id": "kyouka"
+      "owner_id": "kyouka",
+      "balance_note": "v10.4: モンスターファイルから追加（状態異常特化型に必須）"
+    },
+    {
+      "skill_id": "kyouka_004",
+      "name": "呆符・縛",
+      "name_en": "Curse Tag: Bind",
+      "category": "attack_plus_effect",
+      "element": "dark",
+      "cost": 3,
+      "damage_type": "magic",
+      "power": 55,
+      "power_rank": "C",
+      "accuracy": 100,
+      "priority": 0,
+      "target": "opponent",
+      "description": "拘束確定",
+      "special_effects": [
+        {"effect_type": "status_condition", "status": "restraint", "probability": 100}
+      ],
+      "owner_id": "kyouka",
+      "balance_note": "v12.0: 影縫い(重複)→呆符・縛に変更（拘束特化型に合う技）"
     },
     {
       "skill_id": "ult_kyouka",
@@ -652,19 +793,20 @@
       "category": "attack_plus_effect",
       "element": "dark",
       "cost": 5,
-      "damage_type": "magical",
-      "power": 110,
-      "power_rank": "A",
+      "damage_type": "magic",
+      "power": 55,
+      "power_rank": "C",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "【奥義】瘴気確定+相手アビリティ無効2T",
+      "description": "【奥義】瘴気確定、拘束確定",
       "special_effects": [
         {"effect_type": "status_condition", "status": "miasma", "probability": 100},
-        {"effect_type": "ability_seal", "duration": 2, "target": "opponent"}
+        {"effect_type": "status_condition", "status": "restraint", "probability": 100}
       ],
       "owner_id": "kyouka",
-      "is_ultimate": true
+      "is_ultimate": true,
+      "balance_note": "v10.3: Monster正として修正（A→C、瘴気+拘束）"
     },
     {
       "skill_id": "leon_001",
@@ -698,11 +840,11 @@
       "power_rank": "-",
       "accuracy": 100,
       "priority": 0,
-      "target": "party",
-      "description": "3T味方への攻撃を代わりに受ける（被ダメ-20%）",
+      "target": "self",
+      "description": "防御↑↑速さ↓",
       "special_effects": [
-        {"effect_type": "redirect_attacks", "duration": 3},
-        {"effect_type": "damage_reduction", "reduction_percentage": 20, "duration": 3}
+        {"effect_type": "stat_change", "stat": "defense", "modifier": 2, "target": "self"},
+        {"effect_type": "stat_change", "stat": "speed", "modifier": -1, "target": "self"}
       ],
       "owner_id": "leon"
     },
@@ -713,7 +855,7 @@
       "category": "attack_plus_effect",
       "element": "light",
       "cost": 4,
-      "damage_type": "physical",
+      "damage_type": "attack",
       "power": 80,
       "power_rank": "B",
       "accuracy": 100,
@@ -729,29 +871,45 @@
       "skill_id": "ult_leon",
       "name": "聖騎士の覚悟",
       "name_en": "Holy Knight's Resolve",
-      "category": "attack_plus_effect",
+      "category": "support_only",
       "element": "light",
       "cost": 5,
-      "damage_type": "physical",
-      "power": 110,
-      "power_rank": "A",
+      "damage_type": "none",
+      "power": 0,
+      "power_rank": "-",
       "accuracy": 100,
       "priority": 0,
-      "target": "opponent",
-      "description": "【奥義】味方全員HP25%回復+被ダメ-20%（3T）",
+      "target": "self",
+      "description": "【奥義】次に受ける攻撃を1回無効、自分防御↑2段階",
       "special_effects": [
-        {"effect_type": "heal", "heal_percentage": 25, "target": "party"},
-        {"effect_type": "damage_reduction", "reduction_percentage": 20, "duration": 3, "target": "party"}
+        {"effect_type": "nullify_next_attack", "uses": 1},
+        {"effect_type": "stat_change", "stat": "defense", "modifier": 2, "target": "self"}
       ],
       "owner_id": "leon",
       "is_ultimate": true,
-      "balance_note": "v10.0: 回復20%→25%に強化"
+      "balance_note": "v10.3: Monster正として修正（攻撃1回無効+防御↑↑）"
     }
   ],
   "metadata": {
-    "total_skills": 38,
+    "total_skills": 43,
     "ultimate_count": 10,
     "changelog": {
+      "v12.0.0": [
+        "裁きの雷コスト5→4（ram_001）",
+        "悪夢の檫を悪夢+拘束確定に変更（lilith_003）",
+        "破滅の歌をほろびのうた型に調整（luria_003）",
+        "影縫い→呆符・縛に名称変更（kyouka_004）",
+        "呪いの人形に3T持続+HP0でも残る効果追加（kyouka_002）",
+        "清浄の霧を味方→自分、%回復→固定值30に変更（eva_003）",
+        "守りの歌の味方→自分に変更（luria_002）",
+        "太陽光線の威力B→Aに変更（honoo_001）",
+        "アイドルの魅力を魅了+拘束確定に変更（luria_001）",
+        "技数カウント44→43に修正"
+      ],
+      "v11.0.0": [
+        "damage_type用語変更: physical→attack, magical→magic",
+        "damage_type_reference追加"
+      ],
       "v9.0.0": [
         "【カテゴリシステム移行】旧★4を「希少種」として管理",
         "ファイル名変更: skill_masters_star4.json → skill_masters_rare.json",

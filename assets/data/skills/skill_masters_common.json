@@ -2,14 +2,20 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Common Species Unique Skills - Phase 1 v9.0",
   "description": "一般種モンスター専用技マスターデータ（カテゴリシステム移行版）",
-  "version": "10.0.0",
-  "last_updated": "2025-12-20",
+  "version": "12.0.0",
+  "last_updated": "2025-12-29",
   "category": "common",
   "category_description": "一般種（入手難易度：標準）- カテゴリは入手難易度であり強さではない",
   "design_philosophy": {
     "principle": "カテゴリ＝入手難易度、強さの序列ではない",
     "power_difference": "幻種・希少種との性能差は最大5%",
     "ultimate_rule": "同コストなら同等の強さ（カテゴリ無関係）"
+  },
+  "damage_type_reference": {
+    "attack": "攻撃技（攻撃ステータス参照）",
+    "magic": "魔力技（魔力ステータス参照）",
+    "adaptive": "適応型（攻撃と魔力の高い方）",
+    "none": "ダメージなし"
   },
   "monsters": [
     "karasu", "fafna", "jade", "shirone", "sylphy", "asmo", "garm", "bitman", 
@@ -49,7 +55,7 @@
       "category": "attack_plus_effect",
       "element": "wind",
       "cost": 3,
-      "damage_type": "physical",
+      "damage_type": "attack",
       "power": 30,
       "power_rank": "D",
       "accuracy": 100,
@@ -69,7 +75,7 @@
       "category": "damage_only",
       "element": "wind",
       "cost": 4,
-      "damage_type": "physical",
+      "damage_type": "attack",
       "power": 80,
       "power_rank": "B",
       "accuracy": 100,
@@ -105,35 +111,35 @@
       "name_en": "Yaksha Whirlwind",
       "category": "damage_only",
       "element": "wind",
-      "cost": 4,
-      "damage_type": "physical",
-      "power": 110,
-      "power_rank": "A",
+      "cost": 5,
+      "damage_type": "attack",
+      "power": 200,
+      "power_rank": "SS",
       "accuracy": 100,
-      "priority": 1,
+      "priority": 0,
       "target": "opponent",
-      "description": "【奥義】先制",
-      "special_effects": [{"effect_type": "priority", "value": 1}],
+      "description": "【奥義】SS威力の風攻撃",
+      "special_effects": [],
       "owner_id": "karasu",
-      "is_ultimate": true
+      "is_ultimate": true,
+      "balance_note": "v10.2: Monster正として修正（A→SS、効果削除）"
     },
     {
       "skill_id": "fafna_001",
-      "name": "雷鳴",
-      "name_en": "Thunder Roar",
+      "name": "電撃波",
+      "name_en": "Electric Wave",
       "category": "attack_plus_effect",
       "element": "thunder",
       "cost": 3,
-      "damage_type": "magical",
+      "damage_type": "magic",
       "power": 55,
       "power_rank": "C",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "麻痺確定+防御↓",
+      "description": "麻痺確定",
       "special_effects": [
-        {"effect_type": "status_condition", "status": "paralysis", "probability": 100},
-        {"effect_type": "stat_change", "stat": "defense", "modifier": -1, "target": "opponent"}
+        {"effect_type": "status_condition", "status": "paralysis", "probability": 100}
       ],
       "owner_id": "fafna"
     },
@@ -144,7 +150,7 @@
       "category": "attack_plus_effect",
       "element": "thunder",
       "cost": 4,
-      "damage_type": "magical",
+      "damage_type": "magic",
       "power": 80,
       "power_rank": "B",
       "accuracy": 100,
@@ -163,20 +169,21 @@
       "name_en": "Thunder Dragon Roar",
       "category": "attack_plus_effect",
       "element": "thunder",
-      "cost": 4,
-      "damage_type": "magical",
-      "power": 80,
-      "power_rank": "B",
+      "cost": 5,
+      "damage_type": "magic",
+      "power": 55,
+      "power_rank": "C",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "【奥義】麻痺確定+防御↓↓",
+      "description": "【奥義】麻痺確定、恐怖確定",
       "special_effects": [
         {"effect_type": "status_condition", "status": "paralysis", "probability": 100},
-        {"effect_type": "stat_change", "stat": "defense", "modifier": -2, "target": "opponent"}
+        {"effect_type": "status_condition", "status": "fear", "probability": 100}
       ],
       "owner_id": "fafna",
-      "is_ultimate": true
+      "is_ultimate": true,
+      "balance_note": "v10.3: Monster正として修正（B→C、麻痺+恐怖）"
     },
     {
       "skill_id": "jade_001",
@@ -205,7 +212,7 @@
       "category": "damage_only",
       "element": "wind",
       "cost": 3,
-      "damage_type": "magical",
+      "damage_type": "magic",
       "power": 55,
       "power_rank": "C",
       "accuracy": 100,
@@ -221,20 +228,20 @@
       "name_en": "Jade Storm",
       "category": "attack_plus_effect",
       "element": "wind",
-      "cost": 4,
-      "damage_type": "magical",
-      "power": 110,
-      "power_rank": "A",
+      "cost": 5,
+      "damage_type": "magic",
+      "power": 80,
+      "power_rank": "B",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "【奥義】HP20%回復+魅了確定",
+      "description": "【奥義】魅了確定",
       "special_effects": [
-        {"effect_type": "heal", "heal_percentage": 20, "target": "self"},
         {"effect_type": "status_condition", "status": "charm", "probability": 100}
       ],
       "owner_id": "jade",
-      "is_ultimate": true
+      "is_ultimate": true,
+      "balance_note": "v10.3: Monster正として修正（魅了確定）"
     },
     {
       "skill_id": "shirone_001",
@@ -243,16 +250,15 @@
       "category": "attack_plus_effect",
       "element": "water",
       "cost": 3,
-      "damage_type": "magical",
+      "damage_type": "magic",
       "power": 55,
       "power_rank": "C",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "素早さ↓↓+恐怖確定",
+      "description": "素早さ↓↓",
       "special_effects": [
-        {"effect_type": "stat_change", "stat": "speed", "modifier": -2, "target": "opponent"},
-        {"effect_type": "status_condition", "status": "fear", "probability": 100}
+        {"effect_type": "stat_change", "stat": "speed", "modifier": -2, "target": "opponent"}
       ],
       "owner_id": "shirone"
     },
@@ -263,7 +269,7 @@
       "category": "attack_plus_effect",
       "element": "water",
       "cost": 4,
-      "damage_type": "magical",
+      "damage_type": "magic",
       "power": 80,
       "power_rank": "B",
       "accuracy": 100,
@@ -288,7 +294,7 @@
       "power_rank": "-",
       "accuracy": 100,
       "priority": 0,
-      "target": "all",
+      "target": "field",
       "description": "フィールド「吹雪」設置（5T水技+30%、炎技-30%）",
       "special_effects": [{
         "effect_type": "field",
@@ -299,48 +305,49 @@
           {"type": "element_weaken", "element": "fire", "reduce_percentage": 30}
         ]
       }],
-      "owner_id": "shirone"
+      "owner_id": "shirone",
+      "balance_note": "v10.2: target all→fieldに統一"
     },
     {
       "skill_id": "shirone_004",
       "name": "氷槍",
       "name_en": "Ice Lance",
-      "category": "attack_plus_effect",
+      "category": "damage_only",
       "element": "water",
       "cost": 3,
-      "damage_type": "magical",
+      "damage_type": "magic",
       "power": 55,
       "power_rank": "C",
       "accuracy": 100,
       "priority": 1,
       "target": "opponent",
-      "description": "先制+素早さ↓",
+      "description": "先制",
       "special_effects": [
-        {"effect_type": "priority", "value": 1},
-        {"effect_type": "stat_change", "stat": "speed", "modifier": -1, "target": "opponent"}
+        {"effect_type": "priority", "value": 1}
       ],
       "owner_id": "shirone"
     },
     {
       "skill_id": "ult_shirone",
-      "name": "絶対零度",
-      "name_en": "Absolute Zero",
+      "name": "極寒の抱擁",
+      "name_en": "Freezing Embrace",
       "category": "attack_plus_effect",
       "element": "water",
-      "cost": 4,
-      "damage_type": "magical",
-      "power": 80,
-      "power_rank": "B",
+      "cost": 5,
+      "damage_type": "magic",
+      "power": 55,
+      "power_rank": "C",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "【奥義】恐怖確定+速さ↓↓↓",
+      "description": "【奥義】恐怖確定、拘束確定",
       "special_effects": [
         {"effect_type": "status_condition", "status": "fear", "probability": 100},
-        {"effect_type": "stat_change", "stat": "speed", "modifier": -3, "target": "opponent"}
+        {"effect_type": "status_condition", "status": "restraint", "probability": 100}
       ],
       "owner_id": "shirone",
-      "is_ultimate": true
+      "is_ultimate": true,
+      "balance_note": "v10.3: Monster正として修正（B→C、恐怖+拘束）"
     },
     {
       "skill_id": "sylphy_001",
@@ -354,12 +361,12 @@
       "power_rank": "-",
       "accuracy": 100,
       "priority": 0,
-      "target": "party",
-      "description": "3T味方物理ダメージ-30%",
+      "target": "field",
+      "description": "3T自分の場にいるモンスターが受ける攻撃技ダメージを軽減",
       "special_effects": [{
-        "effect_type": "barrier",
-        "damage_type": "physical",
-        "reduction_percentage": 30,
+        "effect_type": "field_barrier",
+        "damage_type": "attack",
+        "reduction_percentage": 25,
         "duration": 3,
         "persist_on_switch": true
       }],
@@ -377,11 +384,11 @@
       "power_rank": "-",
       "accuracy": 100,
       "priority": 0,
-      "target": "party",
-      "description": "味方全体速さ↑+次T先制権付与",
+      "target": "self",
+      "description": "次T先制権付与+控えと交代する事もできる",
       "special_effects": [
-        {"effect_type": "stat_change", "stat": "speed", "modifier": 1, "target": "party"},
-        {"effect_type": "priority_next", "value": true, "target": "party"}
+        {"effect_type": "priority_next", "value": true},
+        {"effect_type": "optional_switch", "value": true}
       ],
       "owner_id": "sylphy"
     },
@@ -392,7 +399,7 @@
       "category": "attack_plus_effect",
       "element": "wind",
       "cost": 3,
-      "damage_type": "magical",
+      "damage_type": "magic",
       "power": 55,
       "power_rank": "C",
       "accuracy": 100,
@@ -404,24 +411,26 @@
     },
     {
       "skill_id": "ult_sylphy",
-      "name": "精霊の祝福",
-      "name_en": "Spirit's Blessing",
+      "name": "天翔の祝福",
+      "name_en": "Heavenly Blessing",
       "category": "support_only",
       "element": "wind",
-      "cost": 4,
+      "cost": 5,
       "damage_type": "none",
       "power": 0,
       "power_rank": "-",
       "accuracy": 100,
       "priority": 0,
-      "target": "party",
-      "description": "【奥義】味方HP30%回復+状態異常解除",
+      "target": "self",
+      "description": "【奥義】自分HP50回復、次T先制権付与+控えと交代可能",
       "special_effects": [
-        {"effect_type": "heal", "heal_percentage": 30, "target": "party"},
-        {"effect_type": "cure_status", "target": "party"}
+        {"effect_type": "heal", "heal_fixed": 50, "target": "self"},
+        {"effect_type": "grant_priority", "duration": 1},
+        {"effect_type": "allow_switch", "target": "bench"}
       ],
       "owner_id": "sylphy",
-      "is_ultimate": true
+      "is_ultimate": true,
+      "balance_note": "v10.3: 最終版（HP50+次T先制権+交代可能）"
     },
     {
       "skill_id": "asmo_001",
@@ -430,7 +439,7 @@
       "category": "attack_plus_effect",
       "element": "fire",
       "cost": 4,
-      "damage_type": "magical",
+      "damage_type": "magic",
       "power": 55,
       "power_rank": "C",
       "accuracy": 100,
@@ -455,7 +464,7 @@
       "power_rank": "-",
       "accuracy": 100,
       "priority": 0,
-      "target": "all",
+      "target": "field",
       "description": "フィールド「煉獄」設置（5T炎技+30%）",
       "special_effects": [{
         "effect_type": "field",
@@ -465,28 +474,48 @@
           {"type": "element_boost", "element": "fire", "boost_percentage": 30}
         ]
       }],
-      "owner_id": "asmo"
+      "owner_id": "asmo",
+      "balance_note": "v10.2: target all→fieldに統一"
+    },
+    {
+      "skill_id": "asmo_003",
+      "name": "炎の気迫",
+      "name_en": "Flame Spirit",
+      "category": "support_only",
+      "element": "fire",
+      "cost": 2,
+      "damage_type": "none",
+      "power": 0,
+      "power_rank": "-",
+      "accuracy": 100,
+      "priority": 0,
+      "target": "self",
+      "description": "自分攻撃↑↑+火傷無効（3T）",
+      "special_effects": [
+        {"effect_type": "stat_change", "stat": "attack", "modifier": 2, "target": "self"},
+        {"effect_type": "status_immunity", "status": "burn", "duration": 3}
+      ],
+      "owner_id": "asmo",
+      "balance_note": "v10.3: Monsterファイルより追加"
     },
     {
       "skill_id": "ult_asmo",
-      "name": "煉獄業火",
-      "name_en": "Purgatory Inferno",
-      "category": "attack_plus_effect",
+      "name": "灼熱の剣舞",
+      "name_en": "Blazing Sword Dance",
+      "category": "damage_only",
       "element": "fire",
-      "cost": 4,
-      "damage_type": "magical",
-      "power": 80,
-      "power_rank": "B",
+      "cost": 5,
+      "damage_type": "attack",
+      "power": 200,
+      "power_rank": "SS",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "【奥義】火傷確定+魔力↑",
-      "special_effects": [
-        {"effect_type": "status_condition", "status": "burn", "probability": 100},
-        {"effect_type": "stat_change", "stat": "magic", "modifier": 1, "target": "self"}
-      ],
+      "description": "【奥義】SS威力の炎攻撃",
+      "special_effects": [],
       "owner_id": "asmo",
-      "is_ultimate": true
+      "is_ultimate": true,
+      "balance_note": "v10.3: Monster正として修正（B→SS、効果削除）"
     },
     {
       "skill_id": "garm_001",
@@ -495,7 +524,7 @@
       "category": "attack_plus_effect",
       "element": "fire",
       "cost": 3,
-      "damage_type": "physical",
+      "damage_type": "attack",
       "power": 55,
       "power_rank": "C",
       "accuracy": 100,
@@ -507,10 +536,10 @@
     },
     {
       "skill_id": "garm_002",
-      "name": "闘魂",
-      "name_en": "Fighting Spirit",
+      "name": "激昂",
+      "name_en": "Fury",
       "category": "support_only",
-      "element": "none",
+      "element": "fire",
       "cost": 2,
       "damage_type": "none",
       "power": 0,
@@ -518,11 +547,14 @@
       "accuracy": 100,
       "priority": 0,
       "target": "self",
-      "description": "攻撃↑↑",
+      "description": "自分HP30消費+攻撃↑↑+速さ↑",
       "special_effects": [
-        {"effect_type": "stat_change", "stat": "attack", "modifier": 2, "target": "self"}
+        {"effect_type": "hp_cost", "cost_fixed": 30},
+        {"effect_type": "stat_change", "stat": "attack", "modifier": 2, "target": "self"},
+        {"effect_type": "stat_change", "stat": "speed", "modifier": 1, "target": "self"}
       ],
-      "owner_id": "garm"
+      "owner_id": "garm",
+      "balance_note": "v12.0: 闘魂(重複)→激昂に変更（逆境型に合うHP消費バフ）"
     },
     {
       "skill_id": "garm_003",
@@ -535,31 +567,31 @@
       "power": 0,
       "power_rank": "-",
       "accuracy": 100,
-      "priority": 0,
+      "priority": -1,
       "target": "self",
-      "description": "そのT受けた物理ダメージを2倍返し",
-      "special_effects": [{"effect_type": "counter", "damage_type": "physical", "multiplier": 2.0, "duration": 1}],
-      "owner_id": "garm"
+      "description": "そのT受けた攻撃技ダメージを2倍返し",
+      "special_effects": [{"effect_type": "counter", "damage_type": "attack", "multiplier": 2.0, "duration": 1}],
+      "owner_id": "garm",
+      "balance_note": "v10.2: priority 0→-1に修正（後攻技）"
     },
     {
       "skill_id": "ult_garm",
       "name": "爆炎拳",
       "name_en": "Explosive Flame Fist",
-      "category": "attack_plus_effect",
+      "category": "damage_only",
       "element": "fire",
-      "cost": 4,
-      "damage_type": "physical",
-      "power": 110,
-      "power_rank": "A",
+      "cost": 5,
+      "damage_type": "attack",
+      "power": 200,
+      "power_rank": "SS",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "【奥義】自分攻撃↑↑",
-      "special_effects": [
-        {"effect_type": "stat_change", "stat": "attack", "modifier": 2, "target": "self"}
-      ],
+      "description": "【奥義】SS威力の炎攻撃",
+      "special_effects": [],
       "owner_id": "garm",
-      "is_ultimate": true
+      "is_ultimate": true,
+      "balance_note": "v10.3: Monster正として修正（SS威力、効果削除）"
     },
     {
       "skill_id": "bitman_001",
@@ -568,7 +600,7 @@
       "category": "attack_plus_effect",
       "element": "thunder",
       "cost": 4,
-      "damage_type": "physical",
+      "damage_type": "attack",
       "power": 150,
       "power_rank": "S",
       "accuracy": 100,
@@ -591,9 +623,9 @@
       "accuracy": 100,
       "priority": 0,
       "target": "self",
-      "description": "HP30%回復+次攻撃2回攻撃",
+      "description": "自分HP40回復+次攻撃2回攻撃",
       "special_effects": [
-        {"effect_type": "heal", "heal_percentage": 30, "target": "self"},
+        {"effect_type": "heal", "heal_fixed": 40, "target": "self"},
         {"effect_type": "double_attack_next", "value": true}
       ],
       "owner_id": "bitman"
@@ -605,35 +637,37 @@
       "category": "attack_plus_effect",
       "element": "thunder",
       "cost": 3,
-      "damage_type": "physical",
+      "damage_type": "attack",
       "power": 55,
       "power_rank": "C",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "味方メカノイドが控えにいれば威力1.5倍",
-      "special_effects": [{"effect_type": "ally_species_boost", "species": "mechanoid", "multiplier": 1.5}],
-      "owner_id": "bitman"
+      "description": "控えにメカノイドがいれば威力1.5倍",
+      "special_effects": [{"effect_type": "bench_species_bonus", "species": "mechanoid", "multiplier": 1.5}],
+      "owner_id": "bitman",
+      "balance_note": "v12.0: 味方→控え表記に修正"
     },
     {
       "skill_id": "ult_bitman",
-      "name": "一斉砲撃",
-      "name_en": "Barrage",
+      "name": "量産型の本気",
+      "name_en": "Mass Production Serious",
       "category": "attack_plus_effect",
       "element": "thunder",
-      "cost": 4,
-      "damage_type": "physical",
-      "power": 30,
-      "power_rank": "D",
+      "cost": 5,
+      "damage_type": "attack",
+      "power": 80,
+      "power_rank": "B",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "【奥義】4回攻撃",
+      "description": "【奥義】麻痺確定",
       "special_effects": [
-        {"effect_type": "multi_hit", "hits": 4}
+        {"effect_type": "status_condition", "status": "paralysis", "probability": 100}
       ],
       "owner_id": "bitman",
-      "is_ultimate": true
+      "is_ultimate": true,
+      "balance_note": "v10.3: Monster正として修正（D→B、麻痺確定）"
     },
     {
       "skill_id": "mamon_001",
@@ -642,7 +676,7 @@
       "category": "attack_plus_effect",
       "element": "earth",
       "cost": 3,
-      "damage_type": "physical",
+      "damage_type": "attack",
       "power": 30,
       "power_rank": "D",
       "accuracy": 100,
@@ -673,23 +707,22 @@
     },
     {
       "skill_id": "ult_mamon",
-      "name": "黄金の暴虐",
-      "name_en": "Golden Tyranny",
-      "category": "attack_plus_effect",
+      "name": "強欲の極み",
+      "name_en": "Pinnacle of Greed",
+      "category": "damage_only",
       "element": "earth",
-      "cost": 4,
-      "damage_type": "physical",
-      "power": 80,
-      "power_rank": "B",
+      "cost": 5,
+      "damage_type": "attack",
+      "power": 200,
+      "power_rank": "SS",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "【奥義】HP30%吸収",
-      "special_effects": [
-        {"effect_type": "drain", "drain_percentage": 30}
-      ],
+      "description": "【奥義】SS威力の土攻撃",
+      "special_effects": [],
       "owner_id": "mamon",
-      "is_ultimate": true
+      "is_ultimate": true,
+      "balance_note": "v10.3: Monster正として修正（B→SS、効果削除）"
     },
     {
       "skill_id": "chris_001",
@@ -717,7 +750,7 @@
       "category": "attack_plus_effect",
       "element": "earth",
       "cost": 3,
-      "damage_type": "physical",
+      "damage_type": "attack",
       "power": 55,
       "power_rank": "C",
       "accuracy": 100,
@@ -748,25 +781,25 @@
     },
     {
       "skill_id": "ult_chris",
-      "name": "結晶爆裂",
-      "name_en": "Crystal Burst",
-      "category": "attack_plus_effect",
+      "name": "結晶要塞",
+      "name_en": "Crystal Fortress",
+      "category": "support_only",
       "element": "earth",
-      "cost": 4,
-      "damage_type": "physical",
-      "power": 80,
-      "power_rank": "B",
+      "cost": 5,
+      "damage_type": "none",
+      "power": 0,
+      "power_rank": "-",
       "accuracy": 100,
-      "priority": -1,
-      "target": "opponent",
-      "description": "【奥義】後攻確定+後攻時威力1.5倍+相手防御↓↓",
+      "priority": 0,
+      "target": "self",
+      "description": "【奥義】次に受ける攻撃を1回無効、自分HP50回復",
       "special_effects": [
-        {"effect_type": "priority", "value": -1},
-        {"effect_type": "rear_guard_bonus", "multiplier": 1.5},
-        {"effect_type": "stat_change", "stat": "defense", "modifier": -2, "target": "opponent"}
+        {"effect_type": "nullify_next_attack", "uses": 1},
+        {"effect_type": "heal", "heal_fixed": 50, "target": "self"}
       ],
       "owner_id": "chris",
-      "is_ultimate": true
+      "is_ultimate": true,
+      "balance_note": "v10.3: Monster正として修正（攻撃1回無効+HP50回復）"
     },
     {
       "skill_id": "merlan_001",
@@ -775,7 +808,7 @@
       "category": "attack_plus_effect",
       "element": "none",
       "cost": 5,
-      "damage_type": "magical",
+      "damage_type": "magic",
       "power": 110,
       "power_rank": "A",
       "accuracy": 100,
@@ -825,21 +858,22 @@
     },
     {
       "skill_id": "ult_merlan",
-      "name": "全属性魔法",
-      "name_en": "All-Element Magic",
+      "name": "七色の極光",
+      "name_en": "Rainbow Aurora",
       "category": "damage_only",
       "element": "none",
-      "cost": 4,
-      "damage_type": "magical",
-      "power": 80,
-      "power_rank": "B",
+      "cost": 5,
+      "damage_type": "magic",
+      "power": 200,
+      "power_rank": "SS",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "【奥義】最も有利な属性で攻撃",
-      "special_effects": [{"effect_type": "best_element", "value": true}],
+      "description": "【奥義】SS威力の無属性攻撃",
+      "special_effects": [],
       "owner_id": "merlan",
-      "is_ultimate": true
+      "is_ultimate": true,
+      "balance_note": "v10.3: Monster正として修正（B→SS、効果削除）"
     },
     {
       "skill_id": "sera_001",
@@ -854,9 +888,9 @@
       "accuracy": 100,
       "priority": 0,
       "target": "self",
-      "description": "自分HP40%回復+防御↑↑",
+      "description": "自分HP60回復+防御↑↑",
       "special_effects": [
-        {"effect_type": "heal", "heal_percentage": 40, "target": "self"},
+        {"effect_type": "heal", "heal_fixed": 60, "target": "self"},
         {"effect_type": "stat_change", "stat": "defense", "modifier": 2, "target": "self"}
       ],
       "owner_id": "sera"
@@ -879,25 +913,50 @@
       "owner_id": "sera"
     },
     {
-      "skill_id": "ult_sera",
-      "name": "聖なる癒し",
-      "name_en": "Holy Healing",
+      "skill_id": "sera_003",
+      "name": "守護結界",
+      "name_en": "Guardian Barrier",
       "category": "support_only",
       "element": "light",
-      "cost": 4,
+      "cost": 3,
+      "damage_type": "none",
+      "power": 0,
+      "power_rank": "-",
+      "accuracy": 100,
+      "priority": 0,
+      "target": "field",
+      "description": "3T自分の場にいるモンスターの被ダメ-25%（交代しても効果継続）",
+      "special_effects": [{
+        "effect_type": "field_barrier",
+        "damage_reduction_percentage": 25,
+        "duration": 3,
+        "persist_on_switch": true
+      }],
+      "owner_id": "sera",
+      "balance_note": "v12.0: 味方→自分の場表記に修正"
+    },
+    {
+      "skill_id": "ult_sera",
+      "name": "癒しの聖光",
+      "name_en": "Holy Light of Healing",
+      "category": "support_only",
+      "element": "light",
+      "cost": 5,
       "damage_type": "none",
       "power": 0,
       "power_rank": "-",
       "accuracy": 100,
       "priority": 0,
       "target": "self",
-      "description": "【奥義】全回復+全状態異常解除",
+      "description": "【奥義】自分HP80+控えHP30回復、状態異常解除",
       "special_effects": [
-        {"effect_type": "heal", "heal_percentage": 100, "target": "self"},
+        {"effect_type": "heal", "heal_fixed": 80, "target": "self"},
+        {"effect_type": "heal", "heal_fixed": 30, "target": "bench"},
         {"effect_type": "cure_status", "target": "self"}
       ],
       "owner_id": "sera",
-      "is_ultimate": true
+      "is_ultimate": true,
+      "balance_note": "v10.3: Monster正として修正（HP80+控え30+状態異常解除）"
     },
     {
       "skill_id": "talos_001",
@@ -931,9 +990,9 @@
       "accuracy": 100,
       "priority": 0,
       "target": "self",
-      "description": "30%回復+状態異常解除",
+      "description": "自分HP40回復+状態異常解除",
       "special_effects": [
-        {"effect_type": "heal", "heal_percentage": 30, "target": "self"},
+        {"effect_type": "heal", "heal_fixed": 40, "target": "self"},
         {"effect_type": "cure_status", "target": "self"}
       ],
       "owner_id": "talos"
@@ -945,7 +1004,7 @@
       "category": "attack_plus_effect",
       "element": "earth",
       "cost": 4,
-      "damage_type": "physical",
+      "damage_type": "attack",
       "power": 80,
       "power_rank": "B",
       "accuracy": 100,
@@ -957,24 +1016,22 @@
     },
     {
       "skill_id": "ult_talos",
-      "name": "要塞崩撃",
-      "name_en": "Fortress Crash",
-      "category": "attack_plus_effect",
+      "name": "要塞砲",
+      "name_en": "Fortress Cannon",
+      "category": "damage_only",
       "element": "earth",
       "cost": 5,
-      "damage_type": "physical",
-      "power": 110,
-      "power_rank": "A",
+      "damage_type": "attack",
+      "power": 200,
+      "power_rank": "SS",
       "accuracy": 100,
-      "priority": -1,
+      "priority": 0,
       "target": "opponent",
-      "description": "【奥義】後攻確定+後攻時威力1.5倍",
-      "special_effects": [
-        {"effect_type": "priority", "value": -1},
-        {"effect_type": "rear_guard_bonus", "multiplier": 1.5}
-      ],
+      "description": "【奥義】SS威力の土攻撃",
+      "special_effects": [],
       "owner_id": "talos",
-      "is_ultimate": true
+      "is_ultimate": true,
+      "balance_note": "v10.3: Monster正として修正（A→SS、効果削除）"
     },
     {
       "skill_id": "zela_001",
@@ -983,7 +1040,7 @@
       "category": "attack_plus_effect",
       "element": "water",
       "cost": 3,
-      "damage_type": "magical",
+      "damage_type": "magic",
       "power": 30,
       "power_rank": "D",
       "accuracy": 100,
@@ -1021,7 +1078,7 @@
       "category": "attack_plus_effect",
       "element": "water",
       "cost": 4,
-      "damage_type": "magical",
+      "damage_type": "magic",
       "power": 80,
       "power_rank": "B",
       "accuracy": 100,
@@ -1036,23 +1093,25 @@
     },
     {
       "skill_id": "ult_zela",
-      "name": "深淵の支配",
-      "name_en": "Abyss Domination",
+      "name": "深淵の終焉",
+      "name_en": "Abyss Ending",
       "category": "attack_plus_effect",
-      "element": "water",
-      "cost": 4,
-      "damage_type": "magical",
-      "power": 80,
-      "power_rank": "B",
+      "element": "dark",
+      "cost": 5,
+      "damage_type": "magic",
+      "power": 55,
+      "power_rank": "C",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "【奥義】拘束確定（1T）",
+      "description": "【奥義】悪夢確定、瘴気確定",
       "special_effects": [
-        {"effect_type": "status_condition", "status": "restraint", "probability": 100, "duration": 1}
+        {"effect_type": "status_condition", "status": "nightmare", "probability": 100},
+        {"effect_type": "status_condition", "status": "miasma", "probability": 100}
       ],
       "owner_id": "zela",
-      "is_ultimate": true
+      "is_ultimate": true,
+      "balance_note": "v10.3: Monster正として修正（B→C、悪夢+瘴気）"
     },
     {
       "skill_id": "sheela_001",
@@ -1061,7 +1120,7 @@
       "category": "attack_plus_effect",
       "element": "water",
       "cost": 3,
-      "damage_type": "magical",
+      "damage_type": "magic",
       "power": 30,
       "power_rank": "D",
       "accuracy": 100,
@@ -1078,7 +1137,7 @@
       "category": "attack_plus_effect",
       "element": "water",
       "cost": 3,
-      "damage_type": "magical",
+      "damage_type": "magic",
       "power": 55,
       "power_rank": "C",
       "accuracy": 100,
@@ -1111,24 +1170,25 @@
     },
     {
       "skill_id": "ult_sheela",
-      "name": "深海の誘惑",
-      "name_en": "Abyssal Seduction",
+      "name": "深海の支配",
+      "name_en": "Abyss Dominion",
       "category": "attack_plus_effect",
       "element": "water",
-      "cost": 4,
-      "damage_type": "magical",
-      "power": 80,
-      "power_rank": "B",
+      "cost": 5,
+      "damage_type": "magic",
+      "power": 55,
+      "power_rank": "C",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "【奥義】魅了確定+瘴気確定",
+      "description": "【奥義】拘束確定、瘴気確定",
       "special_effects": [
-        {"effect_type": "status_condition", "status": "charm", "probability": 100},
+        {"effect_type": "status_condition", "status": "restraint", "probability": 100},
         {"effect_type": "status_condition", "status": "miasma", "probability": 100}
       ],
       "owner_id": "sheela",
-      "is_ultimate": true
+      "is_ultimate": true,
+      "balance_note": "v10.3: Monster正として修正（B→C、拘束+瘴気）"
     },
     {
       "skill_id": "kagura_001",
@@ -1154,15 +1214,14 @@
       "category": "attack_plus_effect",
       "element": "fire",
       "cost": 3,
-      "damage_type": "magical",
+      "damage_type": "magic",
       "power": 30,
       "power_rank": "D",
       "accuracy": 100,
-      "priority": 1,
+      "priority": 0,
       "target": "opponent",
-      "description": "先制+火傷確定",
+      "description": "火傷確定",
       "special_effects": [
-        {"effect_type": "priority", "value": 1},
         {"effect_type": "status_condition", "status": "burn", "probability": 100}
       ],
       "owner_id": "kagura"
@@ -1173,20 +1232,21 @@
       "name_en": "Sacred Kagura Flame",
       "category": "attack_plus_effect",
       "element": "fire",
-      "cost": 4,
-      "damage_type": "magical",
-      "power": 80,
-      "power_rank": "B",
+      "cost": 5,
+      "damage_type": "magic",
+      "power": 55,
+      "power_rank": "C",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "【奥義】火傷確定+攻撃↑",
+      "description": "【奥義】火傷確定、封印確定",
       "special_effects": [
         {"effect_type": "status_condition", "status": "burn", "probability": 100},
-        {"effect_type": "stat_change", "stat": "attack", "modifier": 1, "target": "self"}
+        {"effect_type": "status_condition", "status": "seal", "probability": 100}
       ],
       "owner_id": "kagura",
-      "is_ultimate": true
+      "is_ultimate": true,
+      "balance_note": "v10.3: Monster正として修正（B→C、火傷+封印）"
     },
     {
       "skill_id": "scorpion_001",
@@ -1195,15 +1255,14 @@
       "category": "attack_plus_effect",
       "element": "thunder",
       "cost": 2,
-      "damage_type": "physical",
-      "power": 55,
-      "power_rank": "C",
+      "damage_type": "attack",
+      "power": 30,
+      "power_rank": "D",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "必中+急所に当たりやすい",
+      "description": "急所に当たりやすい",
       "special_effects": [
-        {"effect_type": "sure_hit", "value": true},
         {"effect_type": "critical_boost", "modifier": 1}
       ],
       "owner_id": "scorpion"
@@ -1215,7 +1274,7 @@
       "category": "attack_plus_effect",
       "element": "thunder",
       "cost": 3,
-      "damage_type": "physical",
+      "damage_type": "attack",
       "power": 55,
       "power_rank": "C",
       "accuracy": 100,
@@ -1238,33 +1297,31 @@
       "accuracy": 100,
       "priority": 0,
       "target": "self",
-      "description": "次攻撃必中+クリ確定",
+      "description": "次攻撃クリ確定",
       "special_effects": [
-        {"effect_type": "sure_hit_next", "value": true},
         {"effect_type": "guaranteed_critical_next", "value": true}
       ],
-      "owner_id": "scorpion"
+      "owner_id": "scorpion",
+      "balance_note": "v10.2: 必中削除（技は外れない仕様）"
     },
     {
       "skill_id": "ult_scorpion",
       "name": "必殺の一撃",
       "name_en": "Lethal Strike",
-      "category": "attack_plus_effect",
+      "category": "damage_only",
       "element": "thunder",
-      "cost": 4,
-      "damage_type": "physical",
-      "power": 80,
-      "power_rank": "B",
+      "cost": 5,
+      "damage_type": "attack",
+      "power": 200,
+      "power_rank": "SS",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "【奥義】必クリ+防御20%無視",
-      "special_effects": [
-        {"effect_type": "guaranteed_critical", "value": true},
-        {"effect_type": "defense_ignore", "percentage": 20}
-      ],
+      "description": "【奥義】SS威力の雷攻撃",
+      "special_effects": [],
       "owner_id": "scorpion",
-      "is_ultimate": true
+      "is_ultimate": true,
+      "balance_note": "v10.3: Monster正として修正（B→SS、効果削除）"
     },
     {
       "skill_id": "chrome_001",
@@ -1293,7 +1350,7 @@
       "category": "attack_plus_effect",
       "element": "earth",
       "cost": 3,
-      "damage_type": "physical",
+      "damage_type": "attack",
       "power": 55,
       "power_rank": "C",
       "accuracy": 100,
@@ -1307,22 +1364,20 @@
       "skill_id": "ult_chrome",
       "name": "鋼殻砲",
       "name_en": "Steel Shell Cannon",
-      "category": "attack_plus_effect",
+      "category": "damage_only",
       "element": "earth",
-      "cost": 4,
-      "damage_type": "physical",
-      "power": 80,
-      "power_rank": "B",
+      "cost": 5,
+      "damage_type": "attack",
+      "power": 200,
+      "power_rank": "SS",
       "accuracy": 100,
-      "priority": -1,
+      "priority": 0,
       "target": "opponent",
-      "description": "【奥義】後攻確定+後攻時威力1.5倍",
-      "special_effects": [
-        {"effect_type": "priority", "value": -1},
-        {"effect_type": "rear_guard_bonus", "multiplier": 1.5}
-      ],
+      "description": "【奥義】SS威力の土攻撃",
+      "special_effects": [],
       "owner_id": "chrome",
-      "is_ultimate": true
+      "is_ultimate": true,
+      "balance_note": "v10.3: Monster正として修正（B→SS、効果削除）"
     },
     {
       "skill_id": "noel_000",
@@ -1351,7 +1406,7 @@
       "category": "attack_plus_effect",
       "element": "light",
       "cost": 6,
-      "damage_type": "magical",
+      "damage_type": "magic",
       "power": 200,
       "power_rank": "SS",
       "accuracy": 100,
@@ -1370,18 +1425,19 @@
       "category": "attack_plus_effect",
       "element": "light",
       "cost": 3,
-      "damage_type": "none",
-      "power": 0,
+      "damage_type": "fixed",
+      "power": 40,
       "power_rank": "-",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "相手に40固定ダメージ+自分40固定回復",
+      "description": "相手に40固定ダメージ+自分HP40回復",
       "special_effects": [
         {"effect_type": "fixed_damage", "damage": 40},
-        {"effect_type": "fixed_heal", "heal": 40, "target": "self"}
+        {"effect_type": "heal", "heal_fixed": 40, "target": "self"}
       ],
-      "owner_id": "noel"
+      "owner_id": "noel",
+      "balance_note": "v12.0: damage_type none→fixedに統一"
     },
     {
       "skill_id": "noel_005",
@@ -1390,7 +1446,7 @@
       "category": "attack_plus_effect",
       "element": "light",
       "cost": 3,
-      "damage_type": "magical",
+      "damage_type": "magic",
       "power": 55,
       "power_rank": "C",
       "accuracy": 100,
@@ -1406,20 +1462,22 @@
       "name_en": "Holy Miracle",
       "category": "support_only",
       "element": "light",
-      "cost": 4,
+      "cost": 5,
       "damage_type": "none",
       "power": 0,
       "power_rank": "-",
       "accuracy": 100,
       "priority": 0,
       "target": "self",
-      "description": "【奥義】HP全回復+全状態異常解除",
+      "description": "【奥義】自分HP80+控えHP30回復、自分防御↑↑",
       "special_effects": [
-        {"effect_type": "heal", "heal_percentage": 100, "target": "self"},
-        {"effect_type": "cure_status", "target": "self"}
+        {"effect_type": "heal", "heal_fixed": 80, "target": "self"},
+        {"effect_type": "heal", "heal_fixed": 30, "target": "bench"},
+        {"effect_type": "stat_change", "stat": "defense", "modifier": 2, "target": "self"}
       ],
       "owner_id": "noel",
-      "is_ultimate": true
+      "is_ultimate": true,
+      "balance_note": "v10.3: Monster正として修正（HP80+控え30+防御↑↑）"
     },
     {
       "skill_id": "kaito_001",
@@ -1428,7 +1486,7 @@
       "category": "attack_plus_effect",
       "element": "none",
       "cost": 3,
-      "damage_type": "physical",
+      "damage_type": "attack",
       "power": 55,
       "power_rank": "C",
       "accuracy": 100,
@@ -1445,33 +1503,32 @@
       "category": "attack_plus_effect",
       "element": "none",
       "cost": 4,
-      "damage_type": "physical",
+      "damage_type": "attack",
       "power": 80,
       "power_rank": "B",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "HP30%消費",
-      "special_effects": [{"effect_type": "hp_cost", "cost_percentage": 30}],
+      "description": "自分HP40消費",
+      "special_effects": [{"effect_type": "hp_cost", "cost_fixed": 40}],
       "owner_id": "kaito"
     },
     {
       "skill_id": "kaito_004",
       "name": "抜刀術",
       "name_en": "Iaido Slash",
-      "category": "attack_plus_effect",
+      "category": "damage_only",
       "element": "none",
       "cost": 3,
-      "damage_type": "physical",
+      "damage_type": "attack",
       "power": 55,
       "power_rank": "C",
       "accuracy": 100,
       "priority": 1,
       "target": "opponent",
-      "description": "先制+急所率↑",
+      "description": "先制",
       "special_effects": [
-        {"effect_type": "priority", "value": 1},
-        {"effect_type": "critical_boost", "modifier": 1}
+        {"effect_type": "priority", "value": 1}
       ],
       "owner_id": "kaito"
     },
@@ -1479,22 +1536,20 @@
       "skill_id": "ult_kaito",
       "name": "秘剣・流星",
       "name_en": "Secret Sword: Meteor",
-      "category": "attack_plus_effect",
+      "category": "damage_only",
       "element": "none",
-      "cost": 4,
-      "damage_type": "physical",
-      "power": 80,
-      "power_rank": "B",
+      "cost": 5,
+      "damage_type": "attack",
+      "power": 200,
+      "power_rank": "SS",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "【奥義】必クリ+攻撃↑",
-      "special_effects": [
-        {"effect_type": "guaranteed_critical", "value": true},
-        {"effect_type": "stat_change", "stat": "attack", "modifier": 1, "target": "self"}
-      ],
+      "description": "【奥義】SS威力の無属性攻撃",
+      "special_effects": [],
       "owner_id": "kaito",
-      "is_ultimate": true
+      "is_ultimate": true,
+      "balance_note": "v10.3: Monster正として修正（B→SS、効果削除）"
     },
     {
       "skill_id": "im_001",
@@ -1520,7 +1575,7 @@
       "category": "attack_plus_effect",
       "element": "dark",
       "cost": 3,
-      "damage_type": "magical",
+      "damage_type": "magic",
       "power": 55,
       "power_rank": "C",
       "accuracy": 100,
@@ -1537,16 +1592,15 @@
       "category": "attack_plus_effect",
       "element": "dark",
       "cost": 3,
-      "damage_type": "magical",
+      "damage_type": "magic",
       "power": 30,
       "power_rank": "D",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "魅了確定+HP20%回復",
+      "description": "魅了確定",
       "special_effects": [
-        {"effect_type": "status_condition", "status": "charm", "probability": 100},
-        {"effect_type": "heal", "heal_percentage": 20, "target": "self"}
+        {"effect_type": "status_condition", "status": "charm", "probability": 100}
       ],
       "owner_id": "im"
     },
@@ -1556,20 +1610,21 @@
       "name_en": "Little Devil's Serious",
       "category": "attack_plus_effect",
       "element": "dark",
-      "cost": 4,
-      "damage_type": "magical",
-      "power": 80,
-      "power_rank": "B",
+      "cost": 5,
+      "damage_type": "magic",
+      "power": 55,
+      "power_rank": "C",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "【奥義】相手全デバフ+瘴気確定",
+      "description": "【奥義】恐怖確定、瘴気確定",
       "special_effects": [
-        {"effect_type": "stat_change_all", "modifier": -1, "target": "opponent"},
+        {"effect_type": "status_condition", "status": "fear", "probability": 100},
         {"effect_type": "status_condition", "status": "miasma", "probability": 100}
       ],
       "owner_id": "im",
-      "is_ultimate": true
+      "is_ultimate": true,
+      "balance_note": "v10.3: Monster正として修正（B→C、恐怖+瘴気）"
     },
     {
       "skill_id": "mof_001",
@@ -1578,7 +1633,7 @@
       "category": "attack_plus_effect",
       "element": "earth",
       "cost": 2,
-      "damage_type": "magical",
+      "damage_type": "magic",
       "power": 30,
       "power_rank": "D",
       "accuracy": 100,
@@ -1601,11 +1656,12 @@
       "accuracy": 100,
       "priority": 0,
       "target": "self",
-      "description": "回避↑↑",
+      "description": "次攻撃回避",
       "special_effects": [
-        {"effect_type": "stat_change", "stat": "evasion", "modifier": 2, "target": "self"}
+        {"effect_type": "evade_next", "value": true}
       ],
-      "owner_id": "mof"
+      "owner_id": "mof",
+      "balance_note": "v10.2: evasionステータス削除→evade_nextに変更"
     },
     {
       "skill_id": "mof_003",
@@ -1614,7 +1670,7 @@
       "category": "attack_plus_effect",
       "element": "earth",
       "cost": 3,
-      "damage_type": "magical",
+      "damage_type": "magic",
       "power": 55,
       "power_rank": "C",
       "accuracy": 100,
@@ -1630,26 +1686,37 @@
       "name_en": "Spore Explosion",
       "category": "attack_plus_effect",
       "element": "earth",
-      "cost": 4,
-      "damage_type": "magical",
-      "power": 80,
-      "power_rank": "B",
+      "cost": 5,
+      "damage_type": "magic",
+      "power": 55,
+      "power_rank": "C",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "【奥義】毒確定+相手速さ↓↓",
+      "description": "【奥義】毒確定、相手速さ↓↓",
       "special_effects": [
         {"effect_type": "status_condition", "status": "poison", "probability": 100},
         {"effect_type": "stat_change", "stat": "speed", "modifier": -2, "target": "opponent"}
       ],
       "owner_id": "mof",
-      "is_ultimate": true
+      "is_ultimate": true,
+      "balance_note": "v10.3: Monster正として修正（B→C）"
     }
   ],
   "metadata": {
     "total_skills": 83,
     "ultimate_count": 22,
     "changelog": {
+      "v12.0.0": [
+        "味方→控え表記に統一（bitman_003）",
+        "大地の守りの説明文を明確化（sera_003）",
+        "奇跡の祈りのdamage_typeをfixedに統一（noel_002）",
+        "闘魂→激昂に変更（garm_002、重複回避）"
+      ],
+      "v11.0.0": [
+        "damage_type用語変更: physical→attack, magical→magic",
+        "damage_type_reference追加"
+      ],
       "v9.0.0": [
         "【カテゴリシステム移行】旧★2/★3を統合し「一般種」として管理",
         "ファイル名変更: skill_masters_star2/star3.json → skill_masters_common.json",

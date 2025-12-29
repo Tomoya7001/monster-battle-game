@@ -2,8 +2,8 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Legendary Species Unique Skills - Phase 1 v9.0",
   "description": "幻種モンスター専用技マスターデータ（カテゴリシステム移行版）",
-  "version": "10.0.0",
-  "last_updated": "2025-12-20",
+  "version": "12.0.0",
+  "last_updated": "2025-12-29",
   "category": "legendary",
   "category_description": "幻種（入手難易度：非常に難）- カテゴリは入手難易度であり強さではない",
   "design_philosophy": {
@@ -11,7 +11,21 @@
     "power_difference": "希少種・一般種との性能差は最大5%",
     "ultimate_rule": "同コストなら同等の強さ（カテゴリ無関係）"
   },
-  "monsters": ["mika", "vel", "gram", "tyr", "arthur", "tamamo", "slime"],
+  "damage_type_reference": {
+    "attack": "攻撃技（攻撃ステータス参照）",
+    "magic": "魔力技（魔力ステータス参照）",
+    "adaptive": "適応型（攻撃と魔力の高い方）",
+    "none": "ダメージなし"
+  },
+  "monsters": [
+    "mika",
+    "vel",
+    "gram",
+    "tyr",
+    "arthur",
+    "tamamo",
+    "slime"
+  ],
   "monster_count": 7,
   "monster_roles": {
     "mika": "サポート型（回復・状態異常解除）",
@@ -36,10 +50,17 @@
       "accuracy": 100,
       "priority": 0,
       "target": "self",
-      "description": "自分の状態異常解除+HP15%回復",
+      "description": "自分の状態異常解除+HP20回復",
       "special_effects": [
-        {"effect_type": "cure_status", "target": "self"},
-        {"effect_type": "heal", "heal_percentage": 15, "target": "self"}
+        {
+          "effect_type": "cure_status",
+          "target": "self"
+        },
+        {
+          "effect_type": "heal",
+          "heal_fixed": 20,
+          "target": "self"
+        }
       ],
       "owner_id": "mika"
     },
@@ -50,36 +71,76 @@
       "category": "attack_plus_effect",
       "element": "light",
       "cost": 4,
-      "damage_type": "magical",
+      "damage_type": "magic",
       "power": 0,
       "power_rank": "-",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "相手と自分のHP差×0.5ダメージ",
-      "special_effects": [{"effect_type": "hp_difference_damage", "multiplier": 0.5}],
-      "owner_id": "mika"
+      "description": "(|相手HP-自分HP|)×0.5ダメージ、最低30ダメージ保証",
+      "special_effects": [
+        {
+          "effect_type": "hp_difference_damage",
+          "multiplier": 0.5,
+          "minimum_damage": 30
+        }
+      ],
+      "owner_id": "mika",
+      "balance_note": "v12.0: HP差が0以下でも最低30ダメージ保証追加"
+    },
+    {
+      "skill_id": "mika_003",
+      "name": "神威",
+      "name_en": "Divine Authority",
+      "category": "attack_plus_effect",
+      "element": "light",
+      "cost": 3,
+      "damage_type": "magic",
+      "power": 55,
+      "power_rank": "C",
+      "accuracy": 100,
+      "priority": 0,
+      "target": "opponent",
+      "description": "麻痺確定",
+      "special_effects": [
+        {"effect_type": "status_condition", "status": "paralysis", "probability": 100}
+      ],
+      "owner_id": "mika",
+      "balance_note": "v10.4: モンスターファイルから追加（サポート型に有用な状態異常）"
     },
     {
       "skill_id": "ult_mika",
       "name": "天界の裁き",
       "name_en": "Divine Judgment",
-      "category": "attack_plus_effect",
+      "category": "support_only",
       "element": "light",
       "cost": 5,
-      "damage_type": "magical",
-      "power": 110,
-      "power_rank": "A",
+      "damage_type": "none",
+      "power": 0,
+      "power_rank": "-",
       "accuracy": 100,
       "priority": 0,
-      "target": "opponent",
-      "description": "【奥義】味方全員HP30%回復",
+      "target": "self",
+      "description": "【奥義】自分HP80+控えHP30回復、状態異常全解除",
       "special_effects": [
-        {"effect_type": "heal", "heal_percentage": 30, "target": "party"}
+        {
+          "effect_type": "heal",
+          "heal_fixed": 80,
+          "target": "self"
+        },
+        {
+          "effect_type": "heal",
+          "heal_fixed": 30,
+          "target": "bench"
+        },
+        {
+          "effect_type": "cure_status",
+          "target": "self"
+        }
       ],
       "owner_id": "mika",
       "is_ultimate": true,
-      "balance_note": "v10.0: コスト6→5、SS→A、味方全員回復に変更"
+      "balance_note": "v10.3: Monster正として修正（HP80+控え30+状態異常全解除）"
     },
     {
       "skill_id": "vel_001",
@@ -88,15 +149,21 @@
       "category": "attack_plus_effect",
       "element": "dark",
       "cost": 1,
-      "damage_type": "none",
-      "power": 0,
+      "damage_type": "fixed",
+      "power": 30,
       "power_rank": "-",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
       "description": "固定30ダメージ",
-      "special_effects": [{"effect_type": "fixed_damage", "damage": 30}],
-      "owner_id": "vel"
+      "special_effects": [
+        {
+          "effect_type": "fixed_damage",
+          "damage": 30
+        }
+      ],
+      "owner_id": "vel",
+      "balance_note": "v12.0: damage_type none→fixedに統一"
     },
     {
       "skill_id": "vel_002",
@@ -105,7 +172,7 @@
       "category": "attack_plus_effect",
       "element": "dark",
       "cost": 4,
-      "damage_type": "physical",
+      "damage_type": "attack",
       "power": 80,
       "power_rank": "B",
       "accuracy": 100,
@@ -113,8 +180,14 @@
       "target": "opponent",
       "description": "与ダメ25%回復（連続使用不可）",
       "special_effects": [
-        {"effect_type": "drain", "drain_percentage": 25},
-        {"effect_type": "no_consecutive_use", "value": true}
+        {
+          "effect_type": "drain",
+          "drain_percentage": 25
+        },
+        {
+          "effect_type": "no_consecutive_use",
+          "value": true
+        }
       ],
       "owner_id": "vel",
       "balance_note": "v10.0: 50%→25%に弱体化"
@@ -133,27 +206,54 @@
       "priority": 0,
       "target": "opponent",
       "description": "3T相手に毎T固定30ダメージ",
-      "special_effects": [{"effect_type": "dot", "damage": 30, "duration": 3}],
+      "special_effects": [
+        {
+          "effect_type": "dot",
+          "damage": 30,
+          "duration": 3
+        }
+      ],
       "owner_id": "vel"
+    },
+    {
+      "skill_id": "vel_004",
+      "name": "暗黒宴",
+      "name_en": "Dark Feast",
+      "category": "attack_plus_effect",
+      "element": "dark",
+      "cost": 3,
+      "damage_type": "magic",
+      "power": 55,
+      "power_rank": "C",
+      "accuracy": 100,
+      "priority": 0,
+      "target": "opponent",
+      "description": "瘴気確定+HP30回復",
+      "special_effects": [
+        {"effect_type": "status_condition", "status": "miasma", "probability": 100},
+        {"effect_type": "heal", "heal_fixed": 30, "target": "self"}
+      ],
+      "owner_id": "vel",
+      "balance_note": "v12.0: %回復→固定值30に変更"
     },
     {
       "skill_id": "ult_vel",
       "name": "飢餓地獄",
       "name_en": "Hunger Hell",
-      "category": "attack_plus_effect",
+      "category": "damage_only",
       "element": "dark",
       "cost": 5,
-      "damage_type": "magical",
-      "power": 110,
-      "power_rank": "A",
+      "damage_type": "magic",
+      "power": 200,
+      "power_rank": "SS",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "【奥義】HP20%回復",
-      "special_effects": [{"effect_type": "heal", "heal_percentage": 20, "target": "self"}],
+      "description": "【奥義】SS威力の闇攻撃",
+      "special_effects": [],
       "owner_id": "vel",
       "is_ultimate": true,
-      "balance_note": "v10.0: コスト6→5、SS→A、回復30%→20%"
+      "balance_note": "v10.3: Monster正として修正（A→SS、効果削除）"
     },
     {
       "skill_id": "gram_001",
@@ -162,14 +262,19 @@
       "category": "attack_plus_effect",
       "element": "thunder",
       "cost": 5,
-      "damage_type": "magical",
+      "damage_type": "magic",
       "power": 55,
       "power_rank": "C",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
       "description": "相手を強制交代させる",
-      "special_effects": [{"effect_type": "force_switch", "target": "opponent"}],
+      "special_effects": [
+        {
+          "effect_type": "force_switch",
+          "target": "opponent"
+        }
+      ],
       "owner_id": "gram"
     },
     {
@@ -187,8 +292,15 @@
       "target": "opponent",
       "description": "相手アビリティ3T無効+相手バフコピー",
       "special_effects": [
-        {"effect_type": "ability_seal", "duration": 3, "target": "opponent"},
-        {"effect_type": "copy_buffs", "target": "opponent"}
+        {
+          "effect_type": "ability_seal",
+          "duration": 3,
+          "target": "opponent"
+        },
+        {
+          "effect_type": "copy_buffs",
+          "target": "opponent"
+        }
       ],
       "owner_id": "gram"
     },
@@ -199,7 +311,7 @@
       "category": "attack_plus_effect",
       "element": "thunder",
       "cost": 3,
-      "damage_type": "magical",
+      "damage_type": "magic",
       "power": 30,
       "power_rank": "D",
       "accuracy": 100,
@@ -207,9 +319,33 @@
       "target": "opponent",
       "description": "麻痺確定",
       "special_effects": [
-        {"effect_type": "status_condition", "status": "paralysis", "probability": 100}
+        {
+          "effect_type": "status_condition",
+          "status": "paralysis",
+          "probability": 100
+        }
       ],
       "owner_id": "gram"
+    },
+    {
+      "skill_id": "gram_004",
+      "name": "機械連携",
+      "name_en": "Machine Coordination",
+      "category": "attack_plus_effect",
+      "element": "thunder",
+      "cost": 2,
+      "damage_type": "magic",
+      "power": 55,
+      "power_rank": "C",
+      "accuracy": 100,
+      "priority": 0,
+      "target": "opponent",
+      "description": "控えにメカノイドがいると威力+50%",
+      "special_effects": [
+        {"effect_type": "bench_species_bonus", "species": "mechanoid", "power_multiplier": 1.5}
+      ],
+      "owner_id": "gram",
+      "balance_note": "v12.0: 味方→控え表記に修正"
     },
     {
       "skill_id": "ult_gram",
@@ -218,19 +354,23 @@
       "category": "attack_plus_effect",
       "element": "thunder",
       "cost": 5,
-      "damage_type": "magical",
-      "power": 110,
-      "power_rank": "A",
+      "damage_type": "magic",
+      "power": 80,
+      "power_rank": "B",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "【奥義】相手の全能力↓1",
+      "description": "【奥義】相手コスト-2",
       "special_effects": [
-        {"effect_type": "stat_change_all", "modifier": -1, "target": "opponent"}
+        {
+          "effect_type": "cost_reduction",
+          "value": -2,
+          "target": "opponent"
+        }
       ],
       "owner_id": "gram",
       "is_ultimate": true,
-      "balance_note": "v10.0: コスト6→5、B→A、デバフ-3→-1"
+      "balance_note": "v10.3: Monster正として修正（A→B、コスト-2）"
     },
     {
       "skill_id": "tyr_001",
@@ -239,14 +379,19 @@
       "category": "attack_plus_effect",
       "element": "fire",
       "cost": 2,
-      "damage_type": "physical",
+      "damage_type": "attack",
       "power": 30,
       "power_rank": "D",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
       "description": "急所に当たりやすい",
-      "special_effects": [{"effect_type": "critical_boost", "modifier": 1}],
+      "special_effects": [
+        {
+          "effect_type": "critical_boost",
+          "modifier": 1
+        }
+      ],
       "owner_id": "tyr"
     },
     {
@@ -264,9 +409,23 @@
       "target": "opponent",
       "description": "相手攻撃↓+防御↓+恐怖確定",
       "special_effects": [
-        {"effect_type": "stat_change", "stat": "attack", "modifier": -1, "target": "opponent"},
-        {"effect_type": "stat_change", "stat": "defense", "modifier": -1, "target": "opponent"},
-        {"effect_type": "status_condition", "status": "fear", "probability": 100}
+        {
+          "effect_type": "stat_change",
+          "stat": "attack",
+          "modifier": -1,
+          "target": "opponent"
+        },
+        {
+          "effect_type": "stat_change",
+          "stat": "defense",
+          "modifier": -1,
+          "target": "opponent"
+        },
+        {
+          "effect_type": "status_condition",
+          "status": "fear",
+          "probability": 100
+        }
       ],
       "owner_id": "tyr"
     },
@@ -277,39 +436,59 @@
       "category": "attack_plus_effect",
       "element": "fire",
       "cost": 4,
-      "damage_type": "physical",
+      "damage_type": "attack",
       "power": 110,
       "power_rank": "A",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "HP30%消費+必中",
+      "description": "自分HP40消費",
       "special_effects": [
-        {"effect_type": "hp_cost", "cost_percentage": 30},
-        {"effect_type": "sure_hit", "value": true}
+        {
+          "effect_type": "hp_cost",
+          "cost_fixed": 40
+        }
       ],
       "owner_id": "tyr"
+    },
+    {
+      "skill_id": "tyr_004",
+      "name": "竜の息吹",
+      "name_en": "Dragon's Breath",
+      "category": "attack_plus_effect",
+      "element": "fire",
+      "cost": 3,
+      "damage_type": "attack",
+      "power": 55,
+      "power_rank": "C",
+      "accuracy": 100,
+      "priority": 0,
+      "target": "opponent",
+      "description": "火傷確定",
+      "special_effects": [
+        {"effect_type": "status_condition", "status": "burn", "probability": 100}
+      ],
+      "owner_id": "tyr",
+      "balance_note": "v10.4: モンスターファイルから追加（火力型に有用な状態異常）"
     },
     {
       "skill_id": "ult_tyr",
       "name": "暴君の蹂躙",
       "name_en": "Tyrant's Rampage",
-      "category": "attack_plus_effect",
+      "category": "damage_only",
       "element": "fire",
-      "cost": 6,
-      "damage_type": "physical",
-      "power": 150,
-      "power_rank": "S",
+      "cost": 5,
+      "damage_type": "attack",
+      "power": 200,
+      "power_rank": "SS",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "【奥義】必中",
-      "special_effects": [
-        {"effect_type": "sure_hit", "value": true}
-      ],
+      "description": "【奥義】SS威力の炎攻撃",
+      "special_effects": [],
       "owner_id": "tyr",
       "is_ultimate": true,
-      "balance_note": "v10.0: SSS→S、HP消費削除、必中追加"
+      "balance_note": "v10.3: Monster正として修正（C→SS、効果削除）"
     },
     {
       "skill_id": "arthur_001",
@@ -318,16 +497,20 @@
       "category": "attack_plus_effect",
       "element": "none",
       "cost": 4,
-      "damage_type": "physical",
+      "damage_type": "attack",
       "power": 80,
       "power_rank": "B",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "回避無視+防御↑",
+      "description": "防御↑",
       "special_effects": [
-        {"effect_type": "ignore_evasion", "value": true},
-        {"effect_type": "stat_change", "stat": "defense", "modifier": 1, "target": "self"}
+        {
+          "effect_type": "stat_change",
+          "stat": "defense",
+          "modifier": 1,
+          "target": "self"
+        }
       ],
       "owner_id": "arthur"
     },
@@ -346,10 +529,39 @@
       "target": "opponent",
       "description": "相手アビリティ3T無効+相手攻撃↓",
       "special_effects": [
-        {"effect_type": "ability_seal", "duration": 3, "target": "opponent"},
-        {"effect_type": "stat_change", "stat": "attack", "modifier": -1, "target": "opponent"}
+        {
+          "effect_type": "ability_seal",
+          "duration": 3,
+          "target": "opponent"
+        },
+        {
+          "effect_type": "stat_change",
+          "stat": "attack",
+          "modifier": -1,
+          "target": "opponent"
+        }
       ],
       "owner_id": "arthur"
+    },
+    {
+      "skill_id": "arthur_003",
+      "name": "聖剣",
+      "name_en": "Holy Sword",
+      "category": "attack_plus_effect",
+      "element": "light",
+      "cost": 3,
+      "damage_type": "attack",
+      "power": 80,
+      "power_rank": "B",
+      "accuracy": 100,
+      "priority": 0,
+      "target": "opponent",
+      "description": "闇属性に威力2倍",
+      "special_effects": [
+        {"effect_type": "element_bonus", "target_element": "dark", "multiplier": 2.0}
+      ],
+      "owner_id": "arthur",
+      "balance_note": "v10.4: モンスターファイルから追加（クリティカル型に特効は有用）"
     },
     {
       "skill_id": "arthur_004",
@@ -358,7 +570,7 @@
       "category": "attack_plus_effect",
       "element": "light",
       "cost": 4,
-      "damage_type": "physical",
+      "damage_type": "attack",
       "power": 55,
       "power_rank": "C",
       "accuracy": 100,
@@ -366,8 +578,16 @@
       "target": "opponent",
       "description": "先制+相手防御↓",
       "special_effects": [
-        {"effect_type": "priority", "value": 1},
-        {"effect_type": "stat_change", "stat": "defense", "modifier": -1, "target": "opponent"}
+        {
+          "effect_type": "priority",
+          "value": 1
+        },
+        {
+          "effect_type": "stat_change",
+          "stat": "defense",
+          "modifier": -1,
+          "target": "opponent"
+        }
       ],
       "owner_id": "arthur"
     },
@@ -375,22 +595,20 @@
       "skill_id": "ult_arthur",
       "name": "聖剣エクスカリバー",
       "name_en": "Excalibur",
-      "category": "attack_plus_effect",
-      "element": "light",
+      "category": "damage_only",
+      "element": "none",
       "cost": 5,
-      "damage_type": "physical",
-      "power": 110,
-      "power_rank": "A",
+      "damage_type": "attack",
+      "power": 200,
+      "power_rank": "SS",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "【奥義】必ず急所に当たる",
-      "special_effects": [
-        {"effect_type": "guaranteed_critical", "value": true}
-      ],
+      "description": "【奥義】SS威力の無属性攻撃",
+      "special_effects": [],
       "owner_id": "arthur",
       "is_ultimate": true,
-      "balance_note": "v10.0: コスト6→5、無属性→光属性、コスト回復削除"
+      "balance_note": "v10.3: Monster正として修正（A→SS、効果削除、無属性）"
     },
     {
       "skill_id": "tamamo_001",
@@ -406,7 +624,13 @@
       "priority": 0,
       "target": "opponent",
       "description": "火傷確定",
-      "special_effects": [{"effect_type": "status_condition", "status": "burn", "probability": 100}],
+      "special_effects": [
+        {
+          "effect_type": "status_condition",
+          "status": "burn",
+          "probability": 100
+        }
+      ],
       "owner_id": "tamamo"
     },
     {
@@ -424,26 +648,51 @@
       "target": "self",
       "description": "次攻撃回避",
       "special_effects": [
-        {"effect_type": "evade_next", "value": true}
+        {
+          "effect_type": "evade_next",
+          "value": true
+        }
       ],
       "owner_id": "tamamo"
     },
     {
-      "skill_id": "tamamo_004",
+      "skill_id": "tamamo_003",
       "name": "九尾乱舞",
       "name_en": "Nine-Tail Dance",
       "category": "damage_only",
       "element": "fire",
+      "cost": 5,
+      "damage_type": "magic",
+      "power": 110,
+      "power_rank": "A",
+      "accuracy": 100,
+      "priority": 0,
+      "target": "opponent",
+      "description": "A威力の炎攻撃",
+      "special_effects": [],
+      "owner_id": "tamamo",
+      "balance_note": "v12.0: 威力B→A、複雑な効果削除（シンプル化）"
+    },
+    {
+      "skill_id": "tamamo_004",
+      "name": "妖艶の舞",
+      "name_en": "Enchanting Dance",
+      "category": "attack_plus_effect",
+      "element": "fire",
       "cost": 4,
-      "damage_type": "magical",
+      "damage_type": "magic",
       "power": 55,
       "power_rank": "C",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "3回攻撃",
-      "special_effects": [{"effect_type": "multi_hit", "hits": 3}],
-      "owner_id": "tamamo"
+      "description": "魅了確定+自分回避↑",
+      "special_effects": [
+        {"effect_type": "status_condition", "status": "charm", "probability": 100},
+        {"effect_type": "stat_change", "stat": "evasion", "modifier": 1, "target": "self"}
+      ],
+      "owner_id": "tamamo",
+      "balance_note": "v10.5: 重複していた九尾乱舞を妖艶の舞に変更（状態異常型コンセプト強化）"
     },
     {
       "skill_id": "ult_tamamo",
@@ -452,19 +701,28 @@
       "category": "attack_plus_effect",
       "element": "fire",
       "cost": 5,
-      "damage_type": "magical",
-      "power": 110,
-      "power_rank": "A",
+      "damage_type": "magic",
+      "power": 55,
+      "power_rank": "C",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "【奥義】火傷確定",
+      "description": "【奥義】火傷確定、魅了確定",
       "special_effects": [
-        {"effect_type": "status_condition", "status": "burn", "probability": 100}
+        {
+          "effect_type": "status_condition",
+          "status": "burn",
+          "probability": 100
+        },
+        {
+          "effect_type": "status_condition",
+          "status": "charm",
+          "probability": 100
+        }
       ],
       "owner_id": "tamamo",
       "is_ultimate": true,
-      "balance_note": "v10.0: コスト6→5、C→A、3回攻撃削除"
+      "balance_note": "v10.3: Monster正として修正（A→C、火傷+魅了）"
     },
     {
       "skill_id": "slime_001",
@@ -473,14 +731,21 @@
       "category": "attack_plus_effect",
       "element": "none",
       "cost": 1,
-      "damage_type": "physical",
+      "damage_type": "attack",
       "power": 30,
       "power_rank": "D",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
       "description": "速さ↓",
-      "special_effects": [{"effect_type": "stat_change", "stat": "speed", "modifier": -1, "target": "opponent"}],
+      "special_effects": [
+        {
+          "effect_type": "stat_change",
+          "stat": "speed",
+          "modifier": -1,
+          "target": "opponent"
+        }
+      ],
       "owner_id": "slime"
     },
     {
@@ -490,18 +755,26 @@
       "category": "damage_only",
       "element": "none",
       "cost": 4,
-      "damage_type": "physical",
+      "damage_type": "attack",
       "power": 150,
       "power_rank": "S",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "連続使用不可",
+      "description": "連続使用不可、使用後次ターンのコスト回復-1",
       "special_effects": [
-        {"effect_type": "no_consecutive_use", "value": true}
+        {
+          "effect_type": "no_consecutive_use",
+          "value": true
+        },
+        {
+          "effect_type": "cost_recovery_penalty",
+          "penalty": -1,
+          "duration": 1
+        }
       ],
       "owner_id": "slime",
-      "balance_note": "v10.0: 吸収10%削除"
+      "balance_note": "v12.0: 次ターンコスト回復-1追加（S威力コスト4のバランス調整）"
     },
     {
       "skill_id": "slime_003",
@@ -517,7 +790,12 @@
       "priority": 0,
       "target": "opponent",
       "description": "相手のバフを全て奪う",
-      "special_effects": [{"effect_type": "steal_buffs", "target": "opponent"}],
+      "special_effects": [
+        {
+          "effect_type": "steal_buffs",
+          "target": "opponent"
+        }
+      ],
       "owner_id": "slime"
     },
     {
@@ -533,33 +811,68 @@
       "accuracy": 100,
       "priority": 0,
       "target": "self",
-      "description": "自分HP30%消費+ダミー生成（1回攻撃代替）",
+      "description": "自分HP40消費+ダミー生成（1回攻撃代替）",
       "special_effects": [
-        {"effect_type": "hp_cost", "cost_percentage": 30},
-        {"effect_type": "create_dummy", "absorb_hits": 1}
+        {
+          "effect_type": "hp_cost",
+          "cost_fixed": 40
+        },
+        {
+          "effect_type": "create_dummy",
+          "absorb_hits": 1
+        }
       ],
       "owner_id": "slime"
     },
     {
-      "skill_id": "slime_006",
-      "name": "飲み込む",
-      "name_en": "Swallow",
+      "skill_id": "slime_005",
+      "name": "溶解液",
+      "name_en": "Dissolving Acid",
       "category": "attack_plus_effect",
       "element": "none",
-      "cost": 5,
-      "damage_type": "physical",
-      "power": 110,
-      "power_rank": "A",
+      "cost": 3,
+      "damage_type": "attack",
+      "power": 80,
+      "power_rank": "B",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "与ダメ20%回復（連続使用不可）",
+      "description": "防御↓↓",
       "special_effects": [
-        {"effect_type": "drain", "drain_percentage": 20},
-        {"effect_type": "no_consecutive_use", "value": true}
+        {"effect_type": "stat_change", "stat": "defense", "modifier": -2, "target": "opponent"}
       ],
       "owner_id": "slime",
-      "balance_note": "v10.0: 30%→20%に弱体化"
+      "balance_note": "v10.4: モンスターファイルから追加（耐久型にデバフは有用）"
+    },
+    {
+      "skill_id": "slime_006",
+      "name": "粘性捕縛",
+      "name_en": "Viscous Capture",
+      "category": "attack_plus_effect",
+      "element": "none",
+      "cost": 4,
+      "damage_type": "attack",
+      "power": 80,
+      "power_rank": "B",
+      "accuracy": 100,
+      "priority": 0,
+      "target": "opponent",
+      "description": "拘束確定+相手速さ↓",
+      "special_effects": [
+        {
+          "effect_type": "status_condition",
+          "status": "restraint",
+          "probability": 100
+        },
+        {
+          "effect_type": "stat_change",
+          "stat": "speed",
+          "modifier": -1,
+          "target": "opponent"
+        }
+      ],
+      "owner_id": "slime",
+      "balance_note": "v12.0: 飲み込む(重複)→粘性捕縛に変更（吸収型に拘束は有用）"
     },
     {
       "skill_id": "ult_slime",
@@ -568,25 +881,46 @@
       "category": "attack_plus_effect",
       "element": "none",
       "cost": 5,
-      "damage_type": "physical",
+      "damage_type": "attack",
       "power": 110,
       "power_rank": "A",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "【奥義】HP25%回復",
+      "description": "【奥義】自分HP50回復、相手バフ全解除",
       "special_effects": [
-        {"effect_type": "heal", "heal_percentage": 25, "target": "self"}
+        {
+          "effect_type": "heal",
+          "heal_fixed": 50,
+          "target": "self"
+        },
+        {
+          "effect_type": "remove_buffs",
+          "target": "opponent"
+        }
       ],
       "owner_id": "slime",
       "is_ultimate": true,
-      "balance_note": "v10.0: コスト6→5、S→A、回夏50%→25%"
+      "balance_note": "v10.3: Monster正として修正（HP50+バフ全解除）"
     }
   ],
   "metadata": {
-    "total_skills": 29,
+    "total_skills": 36,
     "ultimate_count": 7,
     "changelog": {
+      "v12.0.0": [
+        "味方→控え表記に統一（gram_004）",
+        "瘆気確定+HP15%回復→HP30回復（vel_004）",
+        "裁きの天秤に最低30ダメージ保証追加（mika_002）",
+        "国喰いに次ターンコスト回復-1追加（slime_002）",
+        "九尾乱舞を威力Aに調整（tamamo_003）",
+        "飲み込む→粘性捕縛に変更（slime_006、重複回避）",
+        "飢餓のdamage_typeをfixedに統一（vel_001）"
+      ],
+      "v11.0.0": [
+        "damage_type用語変更: physical→attack, magical→magic",
+        "damage_type_reference追加"
+      ],
       "v9.0.0": [
         "【カテゴリシステム移行】旧★5を「幻種」として管理",
         "ファイル名変更: skill_masters_star5.json → skill_masters_legendary.json",

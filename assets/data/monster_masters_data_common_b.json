@@ -1,41 +1,29 @@
 {
-  "version": "9.4",
+  "version": "10.1",
   "created_at": "2025-12-04",
-  "updated_at": "2025-12-20",
-  "description": "一般種モンスター（パートB）7体（個体値パターン追加版）",
+  "updated_at": "2025-12-28",
+  "description": "一般種モンスター（パートB）7体（技プール拡張版）",
   "category": "common",
   "category_description": "一般種（入手難易度：標準）- 合計240-245、個体値3-5パターン（外れなし設計）",
   "changelog": {
-    "v9.4": [
-      "【物理技追加】ジェイド: 裂爪・剛腕撃・集中追加",
-      "【物理技追加】アスモ: 裂爪・剛拳・剛腕撃追加",
-      "【サポート技追加】カラス: 集中追加"
-    ],
-    "v9.3": [
-      "【アビリティプール再設計】全モンスターのアビリティプールをシナジー重視で再構築",
-      "【シロネ変更】凍てつく美貌: 速さ↓2→登場時恐怖（冷気の纏いと差別化）",
-      "【シルフィ変更】風の加護: 速さ↑2→サポート技で5%回復（号令の旗と差別化）",
-      "ファフナ: 雷鱗を効果1つに（雷半減のみ）、反射の鎧→守りの構え",
-      "ジェイド: 翡翠の加護を効果1つに（回復強化のみ）"
-    ],
-    "v9.2": [
-      "【奥義コスト統一】全一般種の奥義コストを4→5に変更"
-    ],
-    "v9.0": [
-      "【個体値パターン追加】全モンスターに3-5パターンの個体値を追加"
+    "v10.0": [
+      "【技プール大幅拡張】全モンスターの技数を15技に拡張",
+      "【習得レベル調整】4レベル刻みに統一",
+      "【サブ属性追加】各モンスターに2-3種類のサブ属性技を追加"
     ]
   },
   "design_rules": {
     "base_stats_range": "15-96",
     "common_total_range": "240-245",
-    "iv_pattern_count": "3-5（役割に応じて変動）",
-    "iv_design": "主力ステは絶対に下降しない。不要ステのみ-12。どのパターンも使える設計",
-    "balance_principle": "一般種でも十分戦える設計"
+    "iv_pattern_count": "3-5",
+    "skill_count_target": "15技",
+    "skill_learn_interval": "4レベル刻み"
   },
   "monsters": [
     {
-      "monster_id": "mon_017",
+      "monster_id": "mon_025",
       "name": "夜叉天狗カラス",
+      "lore": "山に棲む伝説の天狗。風を操り雷のごとく空を駆け、その翼は音を置き去る。",
       "category": "common",
       "species": "spirit",
       "element": "wind",
@@ -68,25 +56,36 @@
       },
       "skill_pool": {
         "initial_skills": [
-          {"id": "var_wind_001", "name": "烈風", "learn_level": 1},
-          {"id": "cmn_phy_003", "name": "疾風撃", "learn_level": 1}
+          {"id": "wind_003", "name": "烈風", "learn_level": 1},
+          {"id": "cmn_phy_003", "name": "疾風撃", "learn_level": 1},
+          {"id": "cmn_sup_003", "name": "集中", "learn_level": 1}
         ],
         "learnable_skills": [
-          {"id": "karasu_001", "name": "神速斬り", "learn_level": 5, "cost": 3, "power": "D", "effect": "先制+クリ率30%"},
-          {"id": "spc_wind_002", "name": "疾空斬", "learn_level": 10},
-          {"id": "karasu_002", "name": "疾風怒濤", "learn_level": 15, "cost": 4, "power": "B", "effect": "強力な風の一撃"},
-          {"id": "swp_002", "name": "追撃", "learn_level": 20},
-          {"id": "karasu_003", "name": "烈風の構え", "learn_level": 25, "cost": 2, "effect": "次の風属性技威力1.5倍+先制権付与"},
-          {"id": "var_none_001", "name": "剛拳", "learn_level": 30},
-          {"id": "cmn_sup_003", "name": "集中", "learn_level": 35},
-          {"id": "var_dark_001", "name": "ナイトメア", "learn_level": 50}
+          {"id": "karasu_001", "name": "神速斬り", "learn_level": 4, "cost": 3, "power": "D", "effect": "先制+クリ率30%"},
+          {"id": "wind_006", "name": "風纏い", "learn_level": 8},
+          {"id": "wind_002", "name": "疾空斬", "learn_level": 12},
+          {"id": "karasu_002", "name": "疾風怒濤", "learn_level": 16, "cost": 4, "power": "B", "effect": "強力な風の一撃"},
+          {"id": "dark_002", "name": "影縫い", "learn_level": 20},
+          {"id": "karasu_003", "name": "烈風の構え", "learn_level": 24, "cost": 2, "effect": "次の風属性技威力1.5倍+先制権付与"},
+          {"id": "dark_007", "name": "冥府拳", "learn_level": 28},
+          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 32},
+          {"id": "wind_007", "name": "旋風拳", "learn_level": 36},
+          {"id": "wind_010", "name": "真空波", "learn_level": 44},
+          {"id": "dark_008", "name": "ナイトメア", "learn_level": 48}
         ],
-        "ultimate": {"id": "ult_karasu", "name": "夜叉旋風", "learn_level": 40, "cost": 5, "power_rank": "A", "element": "wind", "effect": "先制+必クリ"}
+        "ultimate": {"id": "ult_karasu", "name": "夜叉旋風", "learn_level": 40, "cost": 5, "power_rank": "SS", "element": "wind", "type": "attack", "effect": null}
+      },
+      "skill_summary": {
+        "total_skills": 15,
+        "main_element": "wind",
+        "sub_elements": ["dark"],
+        "skill_types": {"attack": 10, "support": 4, "ultimate": 1}
       }
     },
     {
-      "monster_id": "mon_018",
+      "monster_id": "mon_026",
       "name": "雷竜ファフナ",
+      "lore": "雷を纏う古竜。その鱗は電撃をはじき、触れた者に麻痺を与える。",
       "category": "common",
       "species": "dragon",
       "element": "thunder",
@@ -120,22 +119,36 @@
       },
       "skill_pool": {
         "initial_skills": [
-          {"id": "var_thunder_001", "name": "天雷", "learn_level": 1},
-          {"id": "cmn_phy_002", "name": "裂爪", "learn_level": 1}
+          {"id": "thunder_008", "name": "天雷", "learn_level": 1},
+          {"id": "cmn_phy_002", "name": "裂爪", "learn_level": 1},
+          {"id": "cmn_sup_001", "name": "威圧", "learn_level": 1}
         ],
         "learnable_skills": [
-          {"id": "fafna_001", "name": "雷鳴", "learn_level": 5, "cost": 3, "power": "C", "effect": "麻痺確定+防御↓"},
-          {"id": "fafna_002", "name": "サンダーブレス", "learn_level": 15, "cost": 4, "power": "B", "effect": "麻痺確定+使用後素早さ↓"},
-          {"id": "cmn_sup_003", "name": "集中", "learn_level": 25},
-          {"id": "sts_thunder_001", "name": "痺撃波", "learn_level": 30},
-          {"id": "var_earth_001", "name": "ストーンショット", "learn_level": 50}
+          {"id": "fafna_001", "name": "電撃波", "learn_level": 4, "cost": 3, "power": "C", "effect": "麻痺確定"},
+          {"id": "thunder_006", "name": "帯電", "learn_level": 8},
+          {"id": "thunder_007", "name": "雷鳴拳", "learn_level": 12},
+          {"id": "earth_008", "name": "ストーンショット", "learn_level": 16},
+          {"id": "fafna_002", "name": "サンダーブレス", "learn_level": 20, "cost": 4, "power": "B", "effect": "麻痺確定+使用後素早さ↓"},
+          {"id": "earth_006", "name": "堅守", "learn_level": 24},
+          {"id": "thunder_002", "name": "痺撃波", "learn_level": 28},
+          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 32},
+          {"id": "earth_007", "name": "剛岩拳", "learn_level": 36},
+          {"id": "thunder_009", "name": "雷鳴", "learn_level": 44},
+          {"id": "thunder_010", "name": "疾雷", "learn_level": 48}
         ],
-        "ultimate": {"id": "ult_fafna", "name": "雷竜咆哮", "learn_level": 40, "cost": 5, "power_rank": "A", "element": "thunder", "effect": "麻痺確定+防御↓2段階+恐怖確定"}
+        "ultimate": {"id": "ult_fafna", "name": "雷竜咆哮", "learn_level": 40, "cost": 5, "power_rank": "C", "element": "thunder", "type": "control", "effect": "麻痺確定、恐怖確定"}
+      },
+      "skill_summary": {
+        "total_skills": 15,
+        "main_element": "thunder",
+        "sub_elements": ["earth"],
+        "skill_types": {"attack": 10, "support": 4, "ultimate": 1}
       }
     },
     {
-      "monster_id": "mon_019",
+      "monster_id": "mon_027",
       "name": "翡翠竜ジェイド",
+      "lore": "翡翠色の鱗を持つ貌き竜。温厚な性格で、傷ついた者を微笑みで癒す。",
       "category": "common",
       "species": "dragon",
       "element": "wind",
@@ -170,87 +183,109 @@
       },
       "skill_pool": {
         "initial_skills": [
-          {"id": "var_wind_001", "name": "烈風", "learn_level": 1},
-          {"id": "cmn_phy_001", "name": "猛進", "learn_level": 1}
+          {"id": "wind_003", "name": "烈風", "learn_level": 1},
+          {"id": "cmn_phy_001", "name": "猛進", "learn_level": 1},
+          {"id": "cmn_sup_003", "name": "集中", "learn_level": 1}
         ],
         "learnable_skills": [
-          {"id": "jade_001", "name": "翠風", "learn_level": 5, "cost": 2, "effect": "素早さ↑↑+次T先制権確定"},
+          {"id": "jade_001", "name": "翠風", "learn_level": 4, "cost": 2, "effect": "素早さ↑↑+次T先制権確定"},
           {"id": "cmn_phy_002", "name": "裂爪", "learn_level": 8},
-          {"id": "spc_wind_002", "name": "疾空斬", "learn_level": 12},
+          {"id": "wind_002", "name": "疾空斬", "learn_level": 12},
           {"id": "jade_002", "name": "疾風のブレス", "learn_level": 16, "cost": 3, "power": "C", "effect": "先制"},
-          {"id": "buff_wind_002", "name": "翼の休息", "learn_level": 20},
-          {"id": "cmn_phy_004", "name": "剛腕撃", "learn_level": 24},
-          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 28},
-          {"id": "cmn_sup_003", "name": "集中", "learn_level": 32},
-          {"id": "var_earth_001", "name": "ストーンショット", "learn_level": 50}
+          {"id": "earth_001", "name": "砂礫弾", "learn_level": 20},
+          {"id": "wind_005", "name": "翼の休息", "learn_level": 24},
+          {"id": "earth_008", "name": "ストーンショット", "learn_level": 28},
+          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 32},
+          {"id": "wind_007", "name": "旋風拳", "learn_level": 36},
+          {"id": "wind_008", "name": "畏怖の風", "learn_level": 44},
+          {"id": "fire_004", "name": "業炎", "learn_level": 48}
         ],
-        "ultimate": {"id": "ult_jade", "name": "翡翠嵐", "learn_level": 40, "cost": 5, "power_rank": "A", "element": "wind", "effect": "HP30%回復+魅了確定"}
+        "ultimate": {"id": "ult_jade", "name": "翡翠嵐", "learn_level": 40, "cost": 5, "power_rank": "B", "element": "wind", "type": "control", "effect": "魅了確定"}
+      },
+      "skill_summary": {
+        "total_skills": 15,
+        "main_element": "wind",
+        "sub_elements": ["earth"],
+        "skill_types": {"attack": 9, "support": 5, "ultimate": 1}
       }
     },
     {
-      "monster_id": "mon_020",
+      "monster_id": "mon_028",
       "name": "雪女シロネ",
+      "lore": "雪山に現れる氷の精霊。その美しさは人を惑わし、冷たい息は魂まで凍てつかせる。",
       "category": "common",
       "species": "spirit",
       "element": "water",
-      "role": "状態異常型（恐怖・速度低下特化）",
-      "design_concept": "【魔力+速度デバフ特化】魔力80で攻撃を捨てた。登場時に恐怖",
+      "role": "状態異常型（デバフ・恐怖特化）",
+      "design_concept": "【デバフ特化】魔力72で物理を捨てた。登場時恐怖で先制妨害",
       "base_stats": {
         "attack": 15,
         "defense": 40,
-        "magic": 80,
-        "magic_defense": 55,
-        "speed": 52
+        "magic": 72,
+        "magic_defense": 58,
+        "speed": 55
       },
-      "total": 242,
+      "total": 240,
       "iv_patterns": [
         {"name": "魔力特化", "attack": -12, "defense": 0, "magic": 12, "magic_defense": 0, "speed": 0, "recommended": "火力最大化（推奨）"},
         {"name": "速さ特化", "attack": -12, "defense": 0, "magic": 0, "magic_defense": 0, "speed": 12, "recommended": "先制デバフ型"},
         {"name": "魔防特化", "attack": -12, "defense": 0, "magic": 0, "magic_defense": 12, "speed": 0, "recommended": "魔法耐久型"}
       ],
-      "strengths": ["魔力がトップクラス", "登場時恐怖で行動制限", "霊体で物理軽減"],
-      "weaknesses": ["物理攻撃完全不可", "物理防御は霊体頼み"],
+      "strengths": ["登場時恐怖が強力", "霊体で物理軽減", "デバフが豊富"],
+      "weaknesses": ["物理攻撃は完全に不可能", "耐久は普通"],
       "ability_pool": {
         "rare": [
-          {"id": "ex_com_shirone", "name": "凍てつく美貌", "effect": "登場時、相手を恐怖状態にする"},
+          {"id": "ex_com_shirone", "name": "凍てつく美貌", "effect": "登場時、相手に恐怖を付与"},
           {"id": "sp_spirit", "name": "霊体", "effect": "攻撃技のダメージを軽減"}
         ],
         "common": [
-          {"id": "com_002", "name": "冷気の纏い", "effect": "登場時、相手の素早さ↓1"},
-          {"id": "com_001", "name": "畏怖の波動", "effect": "登場時、相手の攻撃↓1"}
+          {"id": "com_004", "name": "冷気の纏い", "effect": "攻撃技を受けた時、相手の速さ↓1"},
+          {"id": "com_019", "name": "守りの構え", "effect": "HP半分以上で被ダメージ軽減"}
         ]
       },
       "skill_pool": {
         "initial_skills": [
-          {"id": "var_water_001", "name": "アクアボール", "learn_level": 1},
-          {"id": "cmn_sup_001", "name": "威圧", "learn_level": 1}
+          {"id": "water_008", "name": "アクアボール", "learn_level": 1},
+          {"id": "cmn_sup_001", "name": "威圧", "learn_level": 1},
+          {"id": "cmn_sup_007", "name": "精神統一", "learn_level": 1}
         ],
         "learnable_skills": [
-          {"id": "shirone_001", "name": "凍てつく吐息", "learn_level": 5, "cost": 3, "power": "C", "effect": "素早さ↓↓+恐怖確定"},
-          {"id": "shirone_004", "name": "氷槍", "learn_level": 10, "cost": 3, "power": "C", "effect": "先制+素早さ↓"},
-          {"id": "buff_water_001", "name": "水鏡", "learn_level": 15},
-          {"id": "shirone_002", "name": "氷の棺", "learn_level": 20, "cost": 4, "power": "B", "effect": "恐怖確定+使用後自分速さ↓↓"},
-          {"id": "shirone_003", "name": "氷嵐", "learn_level": 25, "cost": 3, "effect": "フィールド「吹雪」設置（5T水技+30%、炎技-30%）"},
-          {"id": "field_time_001", "name": "時空歪曲", "learn_level": 32},
-          {"id": "sts_dark_001", "name": "呪詛", "learn_level": 50}
+          {"id": "shirone_001", "name": "凍てつく吐息", "learn_level": 4, "cost": 3, "power": "C", "effect": "素早さ↓↓"},
+          {"id": "water_006", "name": "水鏡", "learn_level": 8},
+          {"id": "shirone_002", "name": "氷の棺", "learn_level": 12, "cost": 4, "power": "B", "effect": "恐怖確定+使用後自分速さ↓↓"},
+          {"id": "dark_006", "name": "暗幕", "learn_level": 16},
+          {"id": "water_009", "name": "凍結波", "learn_level": 20},
+          {"id": "shirone_003", "name": "氷嵐", "learn_level": 24, "cost": 3, "effect": "フィールド「吹雪」設置（5T水技+30%、炎技-30%）"},
+          {"id": "dark_005", "name": "呪詛", "learn_level": 28},
+          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 32},
+          {"id": "water_011", "name": "粘液水", "learn_level": 36},
+          {"id": "water_007", "name": "氷砕拳", "learn_level": 44},
+          {"id": "dark_008", "name": "ナイトメア", "learn_level": 48}
         ],
-        "ultimate": {"id": "ult_shirone", "name": "絶対零度", "learn_level": 40, "cost": 5, "power_rank": "A", "element": "water", "effect": "恐怖確定+速さ3段階↓+拘束確定"}
+        "ultimate": {"id": "ult_shirone", "name": "極寒の抱擁", "learn_level": 40, "cost": 5, "power_rank": "C", "element": "water", "type": "control", "effect": "恐怖確定、拘束確定"}
+      },
+      "skill_summary": {
+        "total_skills": 15,
+        "main_element": "water",
+        "sub_elements": ["dark"],
+        "skill_types": {"attack": 8, "support": 5, "debuff": 1, "ultimate": 1}
       }
     },
     {
-      "monster_id": "mon_021",
+      "monster_id": "mon_029",
       "name": "風唄シルフィ",
+      "lore": "天を舞う神聖な鷲。その翼は祝福を運び、傷ついた者を癒す力を持つ。",
       "category": "common",
       "species": "angel",
       "element": "wind",
-      "role": "サポート型（バリア・回復）",
-      "design_concept": "【速度サポート特化】速さ71で攻撃を捨てた。サポート技で自己回復",
+      "role": "サポート型（速度バフ・回復特化）",
+      "design_concept": "【高速サポート】速さ75で回復・バフを先に撒く",
       "base_stats": {
-        "attack": 18,
-        "defense": 45,
-        "magic": 58,
+        "attack": 20,
+        "defense": 42,
+        "magic": 55,
         "magic_defense": 50,
-        "speed": 71
+        "speed": 75
       },
       "total": 242,
       "iv_patterns": [
@@ -259,8 +294,8 @@
         {"name": "魔防特化", "attack": -12, "defense": 0, "magic": 0, "magic_defense": 12, "speed": 0, "recommended": "魔法耐久型"},
         {"name": "防御特化", "attack": -12, "defense": 12, "magic": 0, "magic_defense": 0, "speed": 0, "recommended": "物理耐久型"}
       ],
-      "strengths": ["速さが高い", "サポート技で自己回復", "先手でバフを撒ける"],
-      "weaknesses": ["攻撃は完全に不可", "耐久は普通"],
+      "strengths": ["高速でサポート可能", "サポート技で自己回復", "風の加護で速さバフ"],
+      "weaknesses": ["攻撃は完全に不可能", "耐久が低め"],
       "ability_pool": {
         "rare": [
           {"id": "ex_com_sylphy", "name": "風の加護", "effect": "サポート技を使った時、自分を5%回復"},
@@ -268,87 +303,46 @@
         ],
         "common": [
           {"id": "com_003", "name": "号令の旗", "effect": "登場時、自分の素早さ↑1"},
-          {"id": "com_019", "name": "守りの構え", "effect": "HP半分以上で被ダメージ軽減"}
+          {"id": "com_011", "name": "浄化の息吹", "effect": "毎ターン終了時、状態異常を1つ回復"}
         ]
       },
       "skill_pool": {
         "initial_skills": [
-          {"id": "var_wind_001", "name": "烈風", "learn_level": 1},
-          {"id": "buff_wind_002", "name": "翼の休息", "learn_level": 1}
+          {"id": "wind_003", "name": "烈風", "learn_level": 1},
+          {"id": "wind_005", "name": "翼の休息", "learn_level": 1},
+          {"id": "cmn_sup_001", "name": "威圧", "learn_level": 1}
         ],
         "learnable_skills": [
-          {"id": "sylphy_001", "name": "風の守護", "learn_level": 5, "cost": 2, "effect": "3T味方物理ダメージ-30%"},
-          {"id": "buff_wind_001", "name": "順風", "learn_level": 10},
-          {"id": "sylphy_002", "name": "風の加護", "learn_level": 15, "cost": 3, "effect": "味方全体速さ↑+次T先制権付与"},
-          {"id": "sylphy_003", "name": "風の暴力", "learn_level": 25, "cost": 3, "power": "C", "effect": "クリ率20%"},
-          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 30},
-          {"id": "spd_001", "name": "順風（全体）", "learn_level": 35},
-          {"id": "buff_light_001", "name": "癒月", "learn_level": 50}
+          {"id": "sylphy_001", "name": "風の守護", "learn_level": 4, "cost": 2, "effect": "3T自分の場にいるモンスターが受ける攻撃技ダメージを軽減"},
+          {"id": "wind_006", "name": "風纏い", "learn_level": 8},
+          {"id": "light_005", "name": "癒月", "learn_level": 12},
+          {"id": "sylphy_002", "name": "風の加護", "learn_level": 16, "cost": 3, "effect": "次T先制権付与+控えと交代する事もできる"},
+          {"id": "light_006", "name": "光の障壁", "learn_level": 20},
+          {"id": "cmn_sup_006", "name": "浄化", "learn_level": 24},
+          {"id": "wind_002", "name": "疾空斬", "learn_level": 28},
+          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 32},
+          {"id": "light_008", "name": "魅惑の光", "learn_level": 36},
+          {"id": "wind_010", "name": "真空波", "learn_level": 44},
+          {"id": "light_004", "name": "裁きの光", "learn_level": 48}
         ],
-        "ultimate": {"id": "ult_sylphy", "name": "精霊の祝福", "learn_level": 40, "cost": 5, "power_rank": "-", "element": "wind", "effect": "味方HP40%回復+状態異常解除+速さ↑1"}
+        "ultimate": {"id": "ult_sylphy", "name": "天翔の祝福", "learn_level": 40, "cost": 5, "power_rank": "-", "element": "wind", "type": "support", "effect": "自分HP50回復、次T先制権付与+控えと交代可能"}
+      },
+      "skill_summary": {
+        "total_skills": 15,
+        "main_element": "wind",
+        "sub_elements": ["light"],
+        "skill_types": {"attack": 4, "support": 10, "ultimate": 1}
       }
     },
     {
-      "monster_id": "mon_022",
-      "name": "煉獄アスモ",
-      "category": "common",
-      "species": "demon",
-      "element": "fire",
-      "role": "状態異常型（火傷・フィールド特化）",
-      "design_concept": "【両刀型】攻撃65/魔力58で物理魔法どちらも可能。火傷相手に強化",
-      "base_stats": {
-        "attack": 65,
-        "defense": 42,
-        "magic": 58,
-        "magic_defense": 35,
-        "speed": 45
-      },
-      "total": 245,
-      "iv_patterns": [
-        {"name": "攻撃特化", "attack": 12, "defense": 0, "magic": 0, "magic_defense": -12, "speed": 0, "recommended": "物理型"},
-        {"name": "魔力特化", "attack": 0, "defense": 0, "magic": 12, "magic_defense": -12, "speed": 0, "recommended": "魔法型"},
-        {"name": "速さ特化", "attack": 0, "defense": 0, "magic": 0, "magic_defense": -12, "speed": 12, "recommended": "先制火傷型"},
-        {"name": "防御特化", "attack": 0, "defense": 12, "magic": 0, "magic_defense": -12, "speed": 0, "recommended": "物理耐久型"},
-        {"name": "魔防特化", "attack": -12, "defense": 0, "magic": 0, "magic_defense": 12, "speed": 0, "recommended": "魔法耐久型"}
-      ],
-      "strengths": ["物理魔法どちらも可能", "火傷相手に強化", "フィールドで味方も強化"],
-      "weaknesses": ["魔防が低い", "特化型には劣る", "器用貧乏になりやすい"],
-      "ability_pool": {
-        "rare": [
-          {"id": "ex_com_asmo", "name": "煉獄の炎", "effect": "火傷状態の相手に攻撃強化"},
-          {"id": "sp_demon", "name": "魂喰らい", "effect": "相手を倒した時、全ステータス↑1"}
-        ],
-        "common": [
-          {"id": "com_016", "name": "猪突猛進", "effect": "攻撃強化、被ダメージも増加"},
-          {"id": "com_017", "name": "背水の陣", "effect": "HP半分以下で攻撃大幅強化"}
-        ]
-      },
-      "skill_pool": {
-        "initial_skills": [
-          {"id": "var_fire_001", "name": "業炎", "learn_level": 1},
-          {"id": "cmn_phy_002", "name": "裂爪", "learn_level": 1}
-        ],
-        "learnable_skills": [
-          {"id": "asmo_001", "name": "地獄の業火", "learn_level": 5, "cost": 4, "power": "C", "effect": "火傷確定+相手炎耐性無視"},
-          {"id": "sts_fire_001", "name": "焦熱獄", "learn_level": 10},
-          {"id": "asmo_002", "name": "煉獄招来", "learn_level": 15, "cost": 4, "effect": "フィールド「煉獄」設置（5T炎技+30%）"},
-          {"id": "var_fire_002", "name": "獄炎", "learn_level": 20},
-          {"id": "cmn_sup_003", "name": "集中", "learn_level": 25},
-          {"id": "cmn_phy_004", "name": "剛腕撃", "learn_level": 30},
-          {"id": "var_none_001", "name": "剛拳", "learn_level": 35},
-          {"id": "var_dark_001", "name": "ナイトメア", "learn_level": 50}
-        ],
-        "ultimate": {"id": "ult_asmo", "name": "煉獄業火", "learn_level": 40, "cost": 5, "power_rank": "A", "element": "fire", "effect": "火傷確定+魅了確定+魔力↑1"}
-      }
-    },
-    {
-      "monster_id": "mon_023",
+      "monster_id": "mon_030",
       "name": "拳闘士ガルム",
+      "lore": "炎を纏う拳で戦う格闘家。逆境に追い込まれるほど闘志が燃え上がり、真の力を発揮する。",
       "category": "common",
       "species": "human",
       "element": "fire",
       "role": "火力型（逆境特化）",
-      "design_concept": "【逆境物理特化】攻撃85で魔法を捨てた。HP減少で軽減+火力上昇の両立",
+      "design_concept": "【逆境特化】攻撃85で耐久を捨てた。HP半分以下で真価発揮",
       "base_stats": {
         "attack": 85,
         "defense": 40,
@@ -362,8 +356,8 @@
         {"name": "速さ特化", "attack": 0, "defense": 0, "magic": -12, "magic_defense": 0, "speed": 12, "recommended": "先制逆境型"},
         {"name": "防御特化", "attack": 0, "defense": 12, "magic": -12, "magic_defense": 0, "speed": 0, "recommended": "耐久逆境型"}
       ],
-      "strengths": ["逆境時の火力と耐久が両立", "攻撃がトップクラス", "適応力で長期戦も可能"],
-      "weaknesses": ["HP管理が難しい", "魔法攻撃完全不可", "魔法に弱い"],
+      "strengths": ["逆境時の火力が最強クラス", "HP半分以下で被ダメ軽減", "反射ダメージも可能"],
+      "weaknesses": ["魔法攻撃は完全に不可能", "魔防が低い", "HP管理が難しい"],
       "ability_pool": {
         "rare": [
           {"id": "ex_com_garm", "name": "反骨の魂", "effect": "HP半分以下で被ダメージ軽減"},
@@ -377,36 +371,108 @@
       "skill_pool": {
         "initial_skills": [
           {"id": "cmn_phy_002", "name": "裂爪", "learn_level": 1},
+          {"id": "cmn_sup_003", "name": "集中", "learn_level": 1},
+          {"id": "fire_007", "name": "紅蓮拳", "learn_level": 1}
+        ],
+        "learnable_skills": [
+          {"id": "garm_001", "name": "怒りの拳", "learn_level": 4, "cost": 3, "power": "C", "effect": "HP50%以下で威力2倍"},
+          {"id": "fire_006", "name": "炎舞", "learn_level": 8},
+          {"id": "garm_002", "name": "闘魂", "learn_level": 12, "cost": 2, "effect": "攻撃↑↑"},
+          {"id": "cmn_phy_004", "name": "剛腕撃", "learn_level": 16},
+          {"id": "earth_008", "name": "ストーンショット", "learn_level": 20},
+          {"id": "garm_003", "name": "カウンター", "learn_level": 24, "cost": 3, "effect": "そのT受けた攻撃技ダメージを2倍返し"},
+          {"id": "earth_007", "name": "剛岩拳", "learn_level": 28},
+          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 32},
+          {"id": "cmn_phy_005", "name": "猛襲", "learn_level": 36},
+          {"id": "fire_008", "name": "獄炎", "learn_level": 44},
+          {"id": "fire_005", "name": "焦熱獄", "learn_level": 48}
+        ],
+        "ultimate": {"id": "ult_garm", "name": "爆炎拳", "learn_level": 40, "cost": 5, "power_rank": "SS", "element": "fire", "type": "attack", "effect": null}
+      },
+      "skill_summary": {
+        "total_skills": 15,
+        "main_element": "fire",
+        "sub_elements": ["earth"],
+        "skill_types": {"attack": 10, "support": 4, "ultimate": 1}
+      }
+    },
+    {
+      "monster_id": "mon_031",
+      "name": "煉獄アスモ",
+      "lore": "炎の剣を操る熱血の剣士。正義のために戦い、悪を炎で焼き払う。",
+      "category": "common",
+      "species": "human",
+      "element": "fire",
+      "role": "火力型（物理・火傷特化）",
+      "design_concept": "【物理火力特化】攻撃75で物理火技を使いこなす",
+      "base_stats": {
+        "attack": 75,
+        "defense": 40,
+        "magic": 30,
+        "magic_defense": 38,
+        "speed": 60
+      },
+      "total": 243,
+      "iv_patterns": [
+        {"name": "攻撃特化", "attack": 12, "defense": 0, "magic": -12, "magic_defense": 0, "speed": 0, "recommended": "火力最大化（推奨）"},
+        {"name": "速さ特化", "attack": 0, "defense": 0, "magic": -12, "magic_defense": 0, "speed": 12, "recommended": "先制物理型"},
+        {"name": "防御特化", "attack": 0, "defense": 12, "magic": -12, "magic_defense": 0, "speed": 0, "recommended": "耐久物理型"},
+        {"name": "魔防特化", "attack": 0, "defense": 0, "magic": -12, "magic_defense": 12, "speed": 0, "recommended": "対魔法型"}
+      ],
+      "strengths": ["物理火力が高い", "火傷付与で持続ダメージ", "適応力で耐久"],
+      "weaknesses": ["魔法攻撃は控えめ", "耐久は普通"],
+      "ability_pool": {
+        "rare": [
+          {"id": "ex_com_asmo", "name": "炎の剣技", "effect": "攻撃技に火傷付与効果を追加（30%）"},
+          {"id": "sp_human", "name": "適応力", "effect": "同じ技を2回受けると、その技のダメージ半減"}
+        ],
+        "common": [
+          {"id": "com_014", "name": "先陣の誉れ", "effect": "先発で登場した時、攻撃強化（1ターン）"},
+          {"id": "com_015", "name": "必殺の型", "effect": "急所に当たりやすい"}
+        ]
+      },
+      "skill_pool": {
+        "initial_skills": [
+          {"id": "fire_007", "name": "紅蓮拳", "learn_level": 1},
+          {"id": "cmn_phy_002", "name": "裂爪", "learn_level": 1},
           {"id": "cmn_sup_003", "name": "集中", "learn_level": 1}
         ],
         "learnable_skills": [
-          {"id": "garm_001", "name": "怒りの拳", "learn_level": 5, "cost": 3, "power": "C", "effect": "HP50%以下で威力2倍"},
-          {"id": "var_fire_001", "name": "業炎", "learn_level": 10},
-          {"id": "garm_002", "name": "闘魂", "learn_level": 15, "cost": 2, "effect": "攻撃↑↑"},
-          {"id": "cmn_phy_004", "name": "威圧撃", "learn_level": 20},
-          {"id": "garm_003", "name": "カウンター", "learn_level": 25, "cost": 3, "effect": "そのT受けた攻撃ダメージを2倍返し"},
-          {"id": "var_none_001", "name": "剛拳", "learn_level": 30},
-          {"id": "var_earth_001", "name": "ストーンショット", "learn_level": 50}
+          {"id": "asmo_001", "name": "地獄の業火", "learn_level": 4, "cost": 4, "power": "C", "effect": "火傷確定+相手炎耐性無視"},
+          {"id": "fire_006", "name": "炎舞", "learn_level": 8},
+          {"id": "asmo_002", "name": "煉獄招来", "learn_level": 12, "cost": 4, "effect": "フィールド「煉獄」設置（5T炎技+30%）"},
+          {"id": "cmn_phy_004", "name": "剛腕撃", "learn_level": 16},
+          {"id": "wind_002", "name": "疾空斬", "learn_level": 20},
+          {"id": "asmo_003", "name": "炎の気迫", "learn_level": 24, "cost": 2, "effect": "自分攻撃↑↑+火傷無効（3T）"},
+          {"id": "wind_007", "name": "旋風拳", "learn_level": 28},
+          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 32},
+          {"id": "fire_004", "name": "業炎", "learn_level": 36},
+          {"id": "fire_008", "name": "獄炎", "learn_level": 44},
+          {"id": "wind_003", "name": "烈風", "learn_level": 48}
         ],
-        "ultimate": {"id": "ult_garm", "name": "爆炎拳", "learn_level": 40, "cost": 5, "power_rank": "A", "element": "fire", "effect": "自分攻撃↑2段階+恐怖確定"}
+        "ultimate": {"id": "ult_asmo", "name": "灼熱の剣舞", "learn_level": 40, "cost": 5, "power_rank": "SS", "element": "fire", "type": "attack", "effect": null}
+      },
+      "skill_summary": {
+        "total_skills": 15,
+        "main_element": "fire",
+        "sub_elements": ["wind"],
+        "skill_types": {"attack": 10, "support": 4, "ultimate": 1}
       }
     }
   ],
   "category_summary": {
     "total_monsters": 7,
-    "stat_totals": [242, 242, 240, 242, 242, 245, 242],
-    "average_total": 242.1,
-    "stat_range": "240-245（差5）",
-    "iv_pattern_count": "3-5",
-    "role_distribution": {
-      "カラス": "超高速ガラスキャノン（攻78/速96）- 魔力-12固定、3パターン",
-      "ファフナ": "物理耐久+麻痺（防72/攻68）- 魔力-12固定、4パターン",
-      "ジェイド": "万能バランス（全ステ約48）- 育成自由度最高、5パターン",
-      "シロネ": "速度デバフ魔法（魔80/速52）- 攻撃-12固定、3パターン",
-      "シルフィ": "高速サポート（速71/魔58）- 攻撃-12固定、4パターン",
-      "アスモ": "両刀火傷（攻65/魔58）- 育成自由度高、5パターン",
-      "ガルム": "逆境物理（攻85/速67）- 魔力-12固定、3パターン"
+    "stat_totals": [242, 242, 240, 240, 242, 242, 243],
+    "average_total": 241.6,
+    "skill_count": {
+      "カラス": 15,
+      "ファフナ": 15,
+      "ジェイド": 15,
+      "シロネ": 15,
+      "シルフィ": 15,
+      "ガルム": 15,
+      "アスモ": 15
     },
-    "design_philosophy": "万能型・両刀型は5パターンで多様な育成を許容、特化型は3パターンでシンプルに"
+    "design_philosophy": "一般種でも15技、4レベル刻み習得、2サブ属性"
   }
 }

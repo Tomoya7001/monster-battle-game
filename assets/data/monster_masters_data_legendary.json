@@ -1,40 +1,34 @@
 {
-  "version": "9.3",
+  "version": "10.1",
   "created_at": "2025-12-04",
-  "updated_at": "2025-12-20",
-  "description": "幻種モンスター7体（個体値パターン追加版）",
+  "updated_at": "2025-12-27",
+  "description": "幻種モンスター7体（技プール拡張版・技ファイル整合済）",
   "category": "legendary",
   "category_description": "幻種（入手難易度：非常に難）- 合計245-252、個体値3パターン（外れなし設計）",
   "changelog": {
-    "v9.3": [
-      "【アビリティプール再設計】全モンスターのアビリティプールをシナジー重視で再構築",
-      "ミカ: 再生細胞→守りの構え（angelパッシブで毎T回復あり）",
-      "グラム: 畏怖の波動→コスト浸食（デバフ特化）",
-      "スライム: 再生細胞→反射の鎧（攻撃的耐久）"
+    "v10.1": [
+      "【技ファイル整合】skill_masters_legendary.jsonとの整合性を確保",
+      "【専用技名称統一】技ファイルの定義を正として修正"
     ],
-    "v9.2": [
-      "【奥義コスト統一】全幻種の奥義コストを6→5に変更",
-      "威力調整: S→Aに変更（コスト下減に伴うバランス調整）"
-    ],
-    "v9.1": [
-      "【バランス調整】テュールの暴君のオーラ: 攻撃×1.3→×1.2、被ダメ×1.15→×1.2",
-      "【状態異常制限】タマモの魅了の炎: 魅了+火傷→火傷+攻撃↓1"
-    ],
-    "v9.0": [
-      "【個体値パターン追加】全モンスターに3パターンの個体値を追加"
+    "v10.0": [
+      "【技プール大幅拡張】全モンスターの技数を15-17技に拡張",
+      "【習得レベル調整】4レベル刻みに統一",
+      "【サブ属性追加】各モンスターに2-3種類のサブ属性技を追加"
     ]
   },
   "design_rules": {
     "base_stats_range": "12-90",
     "legendary_total_range": "245-252",
     "iv_pattern_count": 3,
-    "iv_design": "主力ステは絶対に下降しない。不要ステのみ-12。どのパターンも使える設計",
-    "balance_principle": "合計値差を最大14以内に抑え、各モンスターの役割を明確化"
+    "skill_count_target": "15技（ミュータントは17技）",
+    "skill_learn_interval": "4レベル刻み",
+    "sub_element_count": "2-3属性（ミュータントは5属性以上）"
   },
   "monsters": [
     {
       "monster_id": "mon_001",
       "name": "三大天ミカ",
+      "lore": "天界を統べる三柱の一角。慈愛の光で味方を守り、堕落した魂を浄化する役目を担う。",
       "category": "legendary",
       "species": "angel",
       "element": "light",
@@ -67,27 +61,36 @@
       },
       "skill_pool": {
         "initial_skills": [
-          {"id": "var_light_001", "name": "裁きの光", "learn_level": 1},
+          {"id": "light_004", "name": "裁きの光", "learn_level": 1},
           {"id": "cmn_sup_001", "name": "威圧", "learn_level": 1},
-          {"id": "buff_light_001", "name": "癒月", "learn_level": 1}
+          {"id": "light_005", "name": "癒月", "learn_level": 1}
         ],
         "learnable_skills": [
-          {"id": "spc_light_001", "name": "閃光", "learn_level": 5},
-          {"id": "mika_001", "name": "天恵", "learn_level": 10, "cost": 2, "effect": "味方HP20%回復+状態異常解除"},
-          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 15},
-          {"id": "mika_002", "name": "聖域展開", "learn_level": 25, "cost": 3, "effect": "3T味方被ダメ-20%"},
-          {"id": "buff_light_002", "name": "光の障壁", "learn_level": 30},
-          {"id": "pri_light_002", "name": "閃光撃", "learn_level": 32},
-          {"id": "mika_003", "name": "神威", "learn_level": 35, "cost": 3, "power": "C", "effect": "麻痺確定"},
-          {"id": "rear_mag_001", "name": "魔力返し", "learn_level": 38},
-          {"id": "var_wind_001", "name": "烈風", "learn_level": 55}
+          {"id": "light_002", "name": "閃光", "learn_level": 4},
+          {"id": "cmn_sup_008", "name": "活力の息吹", "learn_level": 8},
+          {"id": "mika_001", "name": "天使の微笑み", "learn_level": 12, "cost": 3, "effect": "自分の状態異常解除+HP20回復"},
+          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 16},
+          {"id": "light_006", "name": "光の障壁", "learn_level": 20},
+          {"id": "mika_002", "name": "裁きの天秤", "learn_level": 24, "cost": 4, "effect": "相手と自分のHP差×0.5ダメージ"},
+          {"id": "light_008", "name": "魅惑の光", "learn_level": 28},
+          {"id": "cmn_sup_006", "name": "浄化", "learn_level": 32},
+          {"id": "mika_003", "name": "神威", "learn_level": 36, "cost": 3, "power": "C", "effect": "麻痺確定"},
+          {"id": "wind_005", "name": "翼の休息", "learn_level": 44},
+          {"id": "wind_003", "name": "烈風", "learn_level": 48}
         ],
-        "ultimate": {"id": "ult_mika", "name": "天界の裁き", "learn_level": 40, "cost": 5, "power_rank": "A", "element": "light", "effect": "麻痺確定+光属性ダメージ"}
+        "ultimate": {"id": "ult_mika", "name": "天界の裁き", "learn_level": 40, "cost": 5, "power_rank": "-", "element": "light", "type": "support", "effect": "自分HP80+控えHP30回復、状態異常全解除"}
+      },
+      "skill_summary": {
+        "total_skills": 15,
+        "main_element": "light",
+        "sub_elements": ["wind"],
+        "skill_types": {"attack": 4, "support": 8, "buff": 2, "ultimate": 1}
       }
     },
     {
       "monster_id": "mon_002",
       "name": "暴食ヴェル",
+      "lore": "かつて神に仕えた天使だったが、飽くなき飢えに堕ち、今は深淵で無限の虚無を抱えて彷徨う。",
       "category": "legendary",
       "species": "demon",
       "element": "dark",
@@ -120,25 +123,36 @@
       },
       "skill_pool": {
         "initial_skills": [
-          {"id": "var_dark_001", "name": "ナイトメア", "learn_level": 1},
-          {"id": "vel_001", "name": "飢餓", "learn_level": 1, "cost": 1, "power": "D", "effect": "与ダメ15%回復"},
-          {"id": "cmn_sup_003", "name": "集中", "learn_level": 1}
+          {"id": "dark_008", "name": "ナイトメア", "learn_level": 1},
+          {"id": "vel_001", "name": "飢餓", "learn_level": 1, "cost": 1, "effect": "固定30ダメージ"},
+          {"id": "cmn_sup_007", "name": "精神統一", "learn_level": 1}
         ],
         "learnable_skills": [
-          {"id": "sts_dark_001", "name": "呪詛", "learn_level": 5},
-          {"id": "vel_002", "name": "捕食", "learn_level": 10, "cost": 4, "power": "B", "effect": "与ダメ25%回復、連続使用不可"},
-          {"id": "vel_003", "name": "飢餓の呪い", "learn_level": 20, "cost": 3, "effect": "相手回復50%吸収（3T）"},
-          {"id": "swp_002", "name": "追撃", "learn_level": 28},
-          {"id": "vel_004", "name": "暗黒宴", "learn_level": 30, "cost": 3, "power": "C", "effect": "瘴気確定+HP15%回復"},
-          {"id": "var_none_001", "name": "剛拳", "learn_level": 35},
-          {"id": "var_fire_001", "name": "業炎", "learn_level": 55}
+          {"id": "dark_005", "name": "呪詛", "learn_level": 4},
+          {"id": "dark_006", "name": "暗幕", "learn_level": 8},
+          {"id": "vel_002", "name": "捕食", "learn_level": 12, "cost": 4, "power": "B", "effect": "与ダメ25%回復、連続使用不可"},
+          {"id": "dark_009", "name": "冥府の呪い", "learn_level": 16},
+          {"id": "vel_003", "name": "飢餓の呪い", "learn_level": 20, "cost": 3, "effect": "3T相手に毎T固定30ダメージ"},
+          {"id": "fire_004", "name": "業炎", "learn_level": 24},
+          {"id": "vel_004", "name": "暗黒宴", "learn_level": 28, "cost": 3, "power": "C", "effect": "瘴気確定+HP15%回復"},
+          {"id": "spc_mag_002", "name": "侵蝕の刻印", "learn_level": 32},
+          {"id": "fire_008", "name": "獄炎", "learn_level": 36},
+          {"id": "dark_004", "name": "深淵", "learn_level": 44},
+          {"id": "fire_005", "name": "焦熱獄", "learn_level": 48}
         ],
-        "ultimate": {"id": "ult_vel", "name": "飢餓地獄", "learn_level": 40, "cost": 5, "power_rank": "A", "element": "dark", "effect": "HP30%回復+相手回復封印2T"}
+        "ultimate": {"id": "ult_vel", "name": "飢餓地獄", "learn_level": 40, "cost": 5, "power_rank": "SS", "element": "dark", "type": "attack", "effect": null}
+      },
+      "skill_summary": {
+        "total_skills": 15,
+        "main_element": "dark",
+        "sub_elements": ["fire"],
+        "skill_types": {"attack": 10, "support": 3, "debuff": 1, "ultimate": 1}
       }
     },
     {
       "monster_id": "mon_003",
       "name": "裏の支配者グラム",
+      "lore": "世界を影から支配する機械知性。全ての情報を掌握し、人知れず歴史を操る存在。",
       "category": "legendary",
       "species": "mechanoid",
       "element": "thunder",
@@ -171,24 +185,36 @@
       },
       "skill_pool": {
         "initial_skills": [
-          {"id": "var_thunder_001", "name": "天雷", "learn_level": 1},
-          {"id": "sts_thunder_001", "name": "痺撃波", "learn_level": 1},
+          {"id": "thunder_008", "name": "天雷", "learn_level": 1},
+          {"id": "thunder_002", "name": "痺撃波", "learn_level": 1},
           {"id": "cmn_sup_002", "name": "煽動", "learn_level": 1}
         ],
         "learnable_skills": [
-          {"id": "gram_001", "name": "データ解析", "learn_level": 5, "cost": 1, "effect": "相手バフ1段階↓"},
-          {"id": "gram_002", "name": "システムハック", "learn_level": 15, "cost": 4, "effect": "相手バフコピー+デバフ1段階"},
-          {"id": "gram_003", "name": "電磁パルス", "learn_level": 25, "cost": 3, "power": "C", "effect": "全状態異常解除（両者）"},
-          {"id": "swp_001", "name": "棘の罠", "learn_level": 32},
-          {"id": "gram_004", "name": "機械連携", "learn_level": 35, "cost": 2, "power": "C", "effect": "味方メカノイドがいると威力+50%"},
-          {"id": "field_time_001", "name": "時空歪曲", "learn_level": 38}
+          {"id": "gram_001", "name": "強制交代", "learn_level": 4, "cost": 5, "power": "C", "effect": "相手を強制交代させる"},
+          {"id": "thunder_006", "name": "帯電", "learn_level": 8},
+          {"id": "thunder_009", "name": "雷鳴", "learn_level": 12},
+          {"id": "gram_002", "name": "システムハック", "learn_level": 16, "cost": 4, "effect": "相手アビリティ3T無効+相手バフコピー"},
+          {"id": "dark_002", "name": "影縫い", "learn_level": 20},
+          {"id": "gram_003", "name": "電磁パルス", "learn_level": 24, "cost": 3, "power": "D", "effect": "麻痺確定"},
+          {"id": "dark_005", "name": "呪詛", "learn_level": 28},
+          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 32},
+          {"id": "gram_004", "name": "機械連携", "learn_level": 36, "cost": 2, "power": "C", "effect": "味方メカノイドがいると威力+50%"},
+          {"id": "thunder_007", "name": "雷鳴拳", "learn_level": 44},
+          {"id": "dark_009", "name": "冥府の呪い", "learn_level": 48}
         ],
-        "ultimate": {"id": "ult_gram", "name": "完全掌握", "learn_level": 40, "cost": 5, "power_rank": "A", "element": "thunder", "effect": "相手コスト0化+デバフ2段階"}
+        "ultimate": {"id": "ult_gram", "name": "完全掌握", "learn_level": 40, "cost": 5, "power_rank": "B", "element": "thunder", "type": "control", "effect": "相手コスト-2"}
+      },
+      "skill_summary": {
+        "total_skills": 15,
+        "main_element": "thunder",
+        "sub_elements": ["dark"],
+        "skill_types": {"attack": 7, "support": 4, "debuff": 3, "ultimate": 1}
       }
     },
     {
       "monster_id": "mon_004",
       "name": "竜帝テュール",
+      "lore": "竜族の頂点に君臨する暴君。その咆哮は山を崩し、一睨みで軍勢を焼き尽くすと言われる。",
       "category": "legendary",
       "species": "dragon",
       "element": "fire",
@@ -221,24 +247,36 @@
       },
       "skill_pool": {
         "initial_skills": [
-          {"id": "fire_002", "name": "焔牙", "learn_level": 1},
+          {"id": "fire_004", "name": "業炎", "learn_level": 1},
           {"id": "cmn_phy_001", "name": "猛進", "learn_level": 1},
           {"id": "cmn_sup_003", "name": "集中", "learn_level": 1}
         ],
         "learnable_skills": [
-          {"id": "tyr_001", "name": "竜爪", "learn_level": 5, "cost": 2, "power": "C", "effect": "急所率↑"},
-          {"id": "var_fire_001", "name": "業炎", "learn_level": 10},
-          {"id": "tyr_002", "name": "暴君の咆哮", "learn_level": 15, "cost": 2, "effect": "自分攻撃↑↑+恐怖確定"},
-          {"id": "var_none_001", "name": "剛拳", "learn_level": 20},
-          {"id": "tyr_003", "name": "蹂躙", "learn_level": 30, "cost": 4, "power": "B", "effect": "HP10%消費+必中"},
-          {"id": "tyr_004", "name": "竜の息吹", "learn_level": 35, "cost": 3, "power": "C", "effect": "火傷確定"}
+          {"id": "tyr_001", "name": "竜爪", "learn_level": 4, "cost": 2, "power": "D", "effect": "急所率↑"},
+          {"id": "fire_007", "name": "紅蓮拳", "learn_level": 8},
+          {"id": "cmn_phy_004", "name": "剛腕撃", "learn_level": 12},
+          {"id": "tyr_002", "name": "帝王の咆哮", "learn_level": 16, "cost": 4, "effect": "相手攻撃↓+防御↓+恐怖確定"},
+          {"id": "earth_008", "name": "ストーンショット", "learn_level": 20},
+          {"id": "tyr_003", "name": "蹂躙", "learn_level": 24, "cost": 4, "power": "A", "effect": "自分HP40消費"},
+          {"id": "earth_007", "name": "剛岩拳", "learn_level": 28},
+          {"id": "tyr_004", "name": "竜の息吹", "learn_level": 32, "cost": 3, "power": "C", "effect": "火傷確定"},
+          {"id": "cmn_phy_005", "name": "破砕拳", "learn_level": 36},
+          {"id": "fire_008", "name": "獄炎", "learn_level": 44},
+          {"id": "earth_006", "name": "堅守", "learn_level": 48}
         ],
-        "ultimate": {"id": "ult_tyr", "name": "暴君の蹂躙", "learn_level": 40, "cost": 5, "power_rank": "A", "element": "fire", "effect": "自分HP15%消費+恐怖確定"}
+        "ultimate": {"id": "ult_tyr", "name": "暴君の蹂躙", "learn_level": 40, "cost": 5, "power_rank": "SS", "element": "fire", "type": "attack", "effect": null}
+      },
+      "skill_summary": {
+        "total_skills": 15,
+        "main_element": "fire",
+        "sub_elements": ["earth", "none"],
+        "skill_types": {"attack": 11, "support": 2, "buff": 1, "ultimate": 1}
       }
     },
     {
       "monster_id": "mon_005",
       "name": "剣聖アーサー",
+      "lore": "聖剣を手に国を救った伝説の王。今は剣の道を極めるため、世界を巡り修行を続ける。",
       "category": "legendary",
       "species": "human",
       "element": "none",
@@ -276,22 +314,31 @@
           {"id": "cmn_sup_003", "name": "集中", "learn_level": 1}
         ],
         "learnable_skills": [
-          {"id": "arthur_001", "name": "剣閃", "learn_level": 5, "cost": 2, "power": "C", "effect": "急所率↑↑"},
-          {"id": "arthur_002", "name": "カウンター", "learn_level": 10, "cost": 2, "power": "B", "effect": "後攻時威力+50%"},
-          {"id": "cmn_phy_004", "name": "破砕撃", "learn_level": 15},
-          {"id": "arthur_003", "name": "聖剣", "learn_level": 20, "cost": 3, "power": "B", "effect": "闇特効"},
-          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 25},
-          {"id": "prot_002", "name": "先読み", "learn_level": 28},
-          {"id": "arthur_004", "name": "一閃", "learn_level": 30, "cost": 3, "power": "B", "effect": "必中+先制"},
-          {"id": "pri_none_002", "name": "神速斬", "learn_level": 32},
-          {"id": "var_none_001", "name": "剛拳", "learn_level": 35}
+          {"id": "arthur_001", "name": "聖剣の輝き", "learn_level": 4, "cost": 4, "power": "B", "effect": "防御↑"},
+          {"id": "wind_002", "name": "疾空斬", "learn_level": 8},
+          {"id": "arthur_002", "name": "王の覇気", "learn_level": 12, "cost": 3, "effect": "相手アビリティ3T無効+相手攻撃↓"},
+          {"id": "cmn_phy_004", "name": "剛腕撃", "learn_level": 16},
+          {"id": "arthur_003", "name": "聖剣", "learn_level": 20, "cost": 3, "power": "B", "effect": "闇属性に威力2倍"},
+          {"id": "light_007", "name": "聖拳", "learn_level": 24},
+          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 28},
+          {"id": "arthur_004", "name": "閃光突き", "learn_level": 32, "cost": 4, "power": "C", "effect": "先制+相手防御↓"},
+          {"id": "wind_007", "name": "旋風拳", "learn_level": 36},
+          {"id": "light_004", "name": "裁きの光", "learn_level": 44},
+          {"id": "wind_003", "name": "烈風", "learn_level": 48}
         ],
-        "ultimate": {"id": "ult_arthur", "name": "聖剣エクスカリバー", "learn_level": 40, "cost": 5, "power_rank": "A", "element": "none", "effect": "必クリ+アビリティ無効1T"}
+        "ultimate": {"id": "ult_arthur", "name": "聖剣エクスカリバー", "learn_level": 40, "cost": 5, "power_rank": "SS", "element": "none", "type": "attack", "effect": null}
+      },
+      "skill_summary": {
+        "total_skills": 15,
+        "main_element": "none",
+        "sub_elements": ["light", "wind"],
+        "skill_types": {"attack": 11, "support": 3, "ultimate": 1}
       }
     },
     {
       "monster_id": "mon_006",
       "name": "九尾タマモ",
+      "lore": "千年を生きた妖狐の化身。美しさと妖艶さで人を惑わし、その狐火は魂までも焼き焦がす。",
       "category": "legendary",
       "species": "spirit",
       "element": "fire",
@@ -324,24 +371,36 @@
       },
       "skill_pool": {
         "initial_skills": [
-          {"id": "var_fire_001", "name": "業炎", "learn_level": 1},
-          {"id": "tamamo_001", "name": "狐火", "learn_level": 1, "cost": 1, "power": "D", "effect": "火傷確定"},
-          {"id": "cmn_sup_001", "name": "威圧", "learn_level": 1}
+          {"id": "fire_004", "name": "業炎", "learn_level": 1},
+          {"id": "tamamo_001", "name": "狐火", "learn_level": 1, "cost": 2, "effect": "火傷確定"},
+          {"id": "cmn_sup_001", "name": "威嚇", "learn_level": 1}
         ],
         "learnable_skills": [
-          {"id": "buff_fire_001", "name": "炎舞", "learn_level": 5},
-          {"id": "tamamo_002", "name": "幻惑", "learn_level": 10, "cost": 2, "effect": "魅了確定+回避↑"},
+          {"id": "fire_006", "name": "炎舞", "learn_level": 4},
+          {"id": "dark_006", "name": "暗幕", "learn_level": 8},
+          {"id": "tamamo_002", "name": "幻影分身", "learn_level": 12, "cost": 3, "effect": "次攻撃回避"},
+          {"id": "fire_005", "name": "焦熱獄", "learn_level": 16},
           {"id": "tamamo_003", "name": "九尾乱舞", "learn_level": 20, "cost": 3, "power": "B", "effect": "3連撃"},
-          {"id": "tamamo_004", "name": "魅了の炎", "learn_level": 30, "cost": 2, "power": "D", "effect": "火傷確定+相手攻撃↓1"},
-          {"id": "sts_fire_001", "name": "焦熱獄", "learn_level": 35},
-          {"id": "sts_dark_001", "name": "呪詛", "learn_level": 55}
+          {"id": "dark_005", "name": "呪詛", "learn_level": 24},
+          {"id": "tamamo_004", "name": "妖艶の舞", "learn_level": 28, "cost": 4, "power": "C", "effect": "魅了確定+自分回避↑"},
+          {"id": "fire_008", "name": "獄炎", "learn_level": 32},
+          {"id": "spc_mag_002", "name": "侵蝕の刻印", "learn_level": 36},
+          {"id": "fire_007", "name": "紅蓮拳", "learn_level": 44},
+          {"id": "dark_008", "name": "ナイトメア", "learn_level": 48}
         ],
-        "ultimate": {"id": "ult_tamamo", "name": "狐火・九重", "learn_level": 40, "cost": 5, "power_rank": "A", "element": "fire", "effect": "火傷確定+6連続攻撃"}
+        "ultimate": {"id": "ult_tamamo", "name": "狐火・九重", "learn_level": 40, "cost": 5, "power_rank": "C", "element": "fire", "type": "control", "effect": "火傷確定、魅了確定"}
+      },
+      "skill_summary": {
+        "total_skills": 15,
+        "main_element": "fire",
+        "sub_elements": ["dark"],
+        "skill_types": {"attack": 9, "support": 3, "debuff": 2, "ultimate": 1}
       }
     },
     {
       "monster_id": "mon_007",
       "name": "国喰いスライム",
+      "lore": "あらゆるものを吸収し進化を続けた究極の生命体。一つの国を飲み込んだことからその名がついた。",
       "category": "legendary",
       "species": "mutant",
       "element": "none",
@@ -375,23 +434,31 @@
       "skill_pool": {
         "initial_skills": [
           {"id": "slime_001", "name": "粘液弾", "learn_level": 1, "cost": 1, "power": "D", "effect": "速さ↓"},
-          {"id": "cmn_sup_005", "name": "活力の息吹", "learn_level": 1},
-          {"id": "cmn_sup_001", "name": "威圧", "learn_level": 1}
+          {"id": "cmn_sup_008", "name": "活力賦活", "learn_level": 1},
+          {"id": "cmn_sup_001", "name": "威嚇", "learn_level": 1}
         ],
         "learnable_skills": [
-          {"id": "slime_002", "name": "吸収", "learn_level": 5, "cost": 2, "power": "D", "effect": "与ダメ50%回復"},
-          {"id": "slime_003", "name": "分裂", "learn_level": 10, "cost": 2, "effect": "次被ダメ50%軽減"},
-          {"id": "cmn_phy_004", "name": "破砕撃", "learn_level": 15},
-          {"id": "slime_004", "name": "擬態", "learn_level": 20, "cost": 3, "effect": "相手の最後の技をコピー"},
-          {"id": "slime_005", "name": "溶解液", "learn_level": 25, "cost": 3, "power": "B", "effect": "防御↓↓"},
-          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 30},
-          {"id": "slime_006", "name": "飲み込み", "learn_level": 35, "cost": 4, "power": "B", "effect": "拘束確定（2T）+与ダメ30%回復"},
-          {"id": "var_water_001", "name": "アクアボール", "learn_level": 50},
-          {"id": "var_fire_001", "name": "業炎", "learn_level": 52},
-          {"id": "var_thunder_001", "name": "天雷", "learn_level": 54},
-          {"id": "var_wind_001", "name": "烈風", "learn_level": 56}
+          {"id": "slime_002", "name": "国喰い", "learn_level": 4, "cost": 4, "power": "S", "effect": "連続使用不可"},
+          {"id": "water_008", "name": "アクアボール", "learn_level": 8},
+          {"id": "slime_003", "name": "吸収同化", "learn_level": 12, "cost": 2, "effect": "相手のバフを全て奪う"},
+          {"id": "fire_004", "name": "業炎", "learn_level": 16},
+          {"id": "slime_004", "name": "分裂", "learn_level": 20, "cost": 4, "effect": "自分HP40消費+ダミー生成"},
+          {"id": "thunder_008", "name": "天雷", "learn_level": 24},
+          {"id": "slime_005", "name": "溶解液", "learn_level": 28, "cost": 3, "power": "B", "effect": "防御↓↓"},
+          {"id": "earth_008", "name": "ストーンショット", "learn_level": 32},
+          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 36},
+          {"id": "water_009", "name": "凍結波", "learn_level": 44},
+          {"id": "wind_003", "name": "烈風", "learn_level": 46},
+          {"id": "light_004", "name": "裁きの光", "learn_level": 48},
+          {"id": "dark_008", "name": "ナイトメア", "learn_level": 50}
         ],
-        "ultimate": {"id": "ult_slime", "name": "完全吸収", "learn_level": 40, "cost": 5, "power_rank": "A", "element": "none", "effect": "与ダメ50%回復+相手ステコピー"}
+        "ultimate": {"id": "ult_slime", "name": "完全吸収", "learn_level": 40, "cost": 5, "power_rank": "A", "element": "none", "type": "control", "effect": "自分HP50回復、相手バフ全解除"}
+      },
+      "skill_summary": {
+        "total_skills": 17,
+        "main_element": "none",
+        "sub_elements": ["water", "fire", "thunder", "earth", "wind", "light", "dark"],
+        "skill_types": {"attack": 11, "support": 4, "debuff": 1, "ultimate": 1}
       }
     }
   ],
@@ -399,17 +466,15 @@
     "total_monsters": 7,
     "stat_totals": [250, 245, 250, 252, 248, 250, 252],
     "average_total": 249.6,
-    "stat_range": "245-252（差7）",
-    "iv_pattern_count": 3,
-    "role_distribution": {
-      "ミカ": "純サポーター（攻15/魔68）- 攻撃-12固定",
-      "ヴェル": "魔法ガラスキャノン（魔85/速70）- 防御-12固定",
-      "グラム": "デバフ特化（魔72/速61）- 攻撃-12固定",
-      "テュール": "物理最高火力（攻90）- 魔力-12固定",
-      "アーサー": "高速クリティカル（攻80/速88）- 魔力-12固定",
-      "タマモ": "状態異常（魔82/速75）- 攻撃-12固定",
-      "スライム": "超耐久（防85/魔防82）- 速さ-12固定"
+    "skill_count": {
+      "ミカ": 15,
+      "ヴェル": 15,
+      "グラム": 15,
+      "テュール": 15,
+      "アーサー": 15,
+      "タマモ": 15,
+      "スライム": 17
     },
-    "design_philosophy": "幻種は3パターン全てが使える設計。どれを引いても外れなし"
+    "design_philosophy": "幻種は15技（ミュータントは17技）、4レベル刻み習得、2-3サブ属性"
   }
 }

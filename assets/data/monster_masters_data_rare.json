@@ -1,47 +1,38 @@
 {
-  "version": "9.4",
+  "version": "10.1",
   "created_at": "2025-12-04",
-  "updated_at": "2025-12-20",
-  "description": "希少種モンスター10体（個体値パターン追加版）",
+  "updated_at": "2025-12-27",
+  "description": "希少種モンスター10体（技プール拡張版・技ファイル整合済）",
   "category": "rare",
   "category_description": "希少種（入手難易度：やや難）- 合計240-245、個体値4パターン（外れなし設計）",
   "changelog": {
-    "v9.4": [
-      "【Mutant種技プール拡張】ホノオ: 7技→1┉3技、2属性→5属性",
-      "【サポート技追加】リリス: 守護陣追加、業炎追加"
+    "v10.1": [
+      "【技ファイル整合】skill_masters_rare.jsonとの整合性を確保",
+      "【専用技名称統一】技ファイルの定義を正として修正"
     ],
-    "v9.2": [
-      "【アビリティプール再設計】全モンスターのアビリティプールをシナジー重視で再構築",
-      "【リリス弱体化】夢魔の誘惑: 登場時魅了確定→攻撃命中時25%魅了",
-      "ヴルム: 再生細胞→守りの構え（竜種で状態異常1種類制限あり）",
-      "ラム: 号令の旗→帯電被膜、再生細胞→守りの構え（angelパッシブで回復あり）",
-      "エヴァ: 再生細胞→守りの構え",
-      "ホノオ: 太陽の祝福を効果1つに（炎技強化のみ）",
-      "ルリア: 再生細胞→守りの構え"
-    ],
-    "v9.1": [
-      "【状態異常制限】ラムの天罰: 麻痺+恐怖→麻痺+速さ↓1"
-    ],
-    "v9.0": [
-      "【個体値パターン追加】全モンスターに4パターンの個体値を追加"
+    "v10.0": [
+      "【技プール大幅拡張】全モンスターの技数を15-17技に拡張",
+      "【習得レベル調整】4レベル刻みに統一",
+      "【サブ属性追加】各モンスターに2-3種類のサブ属性技を追加"
     ]
   },
   "design_rules": {
     "base_stats_range": "12-97",
     "rare_total_range": "240-245",
     "iv_pattern_count": 4,
-    "iv_design": "主力ステは絶対に下降しない。不要ステのみ-12。どのパターンも使える設計",
-    "balance_principle": "速度特化の価値を認め、合計値を均等化"
+    "skill_count_target": "15技（ミュータントは17技）",
+    "skill_learn_interval": "4レベル刻み"
   },
   "monsters": [
     {
       "monster_id": "mon_008",
-      "name": "メカ白竜リント",
+      "name": "白機竜リント",
+      "lore": "古代文明が遺した機械竜。ジェットエンジンを唸らせれば、何者もその速度には追いつけない。",
       "category": "rare",
       "species": "mechanoid",
       "element": "wind",
       "role": "火力型（先制・速度特化）",
-      "design_concept": "【加速型】初期速さは控えめだが、毎T加速で最速になる。バランス配分",
+      "design_concept": "【加速型】初期速さは控えめだが、毎T加速で最速になる",
       "base_stats": {
         "attack": 50,
         "defense": 42,
@@ -70,27 +61,41 @@
       },
       "skill_pool": {
         "initial_skills": [
-          {"id": "var_wind_001", "name": "烈風", "learn_level": 1},
-          {"id": "cmn_phy_003", "name": "疾風撃", "learn_level": 1}
+          {"id": "wind_003", "name": "烈風", "learn_level": 1},
+          {"id": "cmn_phy_003", "name": "疾風撃", "learn_level": 1},
+          {"id": "cmn_sup_003", "name": "集中", "learn_level": 1}
         ],
         "learnable_skills": [
-          {"id": "linto_001", "name": "ジェット突撃", "learn_level": 5, "cost": 2, "power": "C", "effect": "先制+自分速さ↑"},
-          {"id": "spc_wind_002", "name": "疾空斬", "learn_level": 10},
-          {"id": "var_thunder_001", "name": "天雷", "learn_level": 15},
-          {"id": "linto_002", "name": "機械咆哮", "learn_level": 25, "cost": 2, "effect": "相手速さ↓↓"},
-          {"id": "linto_003", "name": "超音速", "learn_level": 35, "cost": 3, "power": "B", "effect": "先制+命中↓付与"}
+          {"id": "linto_001", "name": "ジェットブレス", "learn_level": 4, "cost": 5, "power": "A", "effect": "先制攻撃"},
+          {"id": "wind_006", "name": "風纏い", "learn_level": 8},
+          {"id": "wind_002", "name": "疾空斬", "learn_level": 12},
+          {"id": "thunder_008", "name": "天雷", "learn_level": 16},
+          {"id": "linto_002", "name": "飛行モード", "learn_level": 20, "cost": 2, "effect": "3T大地技無効+速さ↑"},
+          {"id": "thunder_006", "name": "帯電", "learn_level": 24},
+          {"id": "wind_007", "name": "旋風拳", "learn_level": 28},
+          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 32},
+          {"id": "linto_003", "name": "超音速", "learn_level": 36, "cost": 3, "power": "B", "effect": "先制+相手命中↓"},
+          {"id": "wind_010", "name": "真空波", "learn_level": 44},
+          {"id": "thunder_009", "name": "雷鳴", "learn_level": 48}
         ],
-        "ultimate": {"id": "ult_linto", "name": "ジェットストリーム", "learn_level": 40, "cost": 5, "power_rank": "A", "element": "wind", "effect": "必ず先制+相手速さ↓↓"}
+        "ultimate": {"id": "ult_linto", "name": "ジェットストリーム", "learn_level": 40, "cost": 5, "power_rank": "SS", "element": "wind", "type": "attack", "effect": null}
+      },
+      "skill_summary": {
+        "total_skills": 15,
+        "main_element": "wind",
+        "sub_elements": ["thunder"],
+        "skill_types": {"attack": 9, "support": 4, "buff": 1, "ultimate": 1}
       }
     },
     {
       "monster_id": "mon_009",
       "name": "白竜ヴルム",
+      "lore": "神聖な光を纏う白き竜。傷ついた者を癒す力を持ち、試練の地で英雄を待ち受ける。",
       "category": "rare",
       "species": "dragon",
       "element": "light",
       "role": "サポート型（回復特化）",
-      "design_concept": "【回復特化】魔力と魔防に振った純ヒーラー。攻撃は捨てた",
+      "design_concept": "【回復特化】魔力と魔防に振った純ヒーラー",
       "base_stats": {
         "attack": 25,
         "defense": 52,
@@ -119,25 +124,36 @@
       },
       "skill_pool": {
         "initial_skills": [
-          {"id": "var_light_001", "name": "裁きの光", "learn_level": 1},
-          {"id": "buff_light_001", "name": "癒月", "learn_level": 1}
+          {"id": "light_004", "name": "裁きの光", "learn_level": 1},
+          {"id": "light_005", "name": "癒月", "learn_level": 1},
+          {"id": "cmn_sup_001", "name": "威圧", "learn_level": 1}
         ],
         "learnable_skills": [
-          {"id": "wurm_001", "name": "聖息", "learn_level": 5, "cost": 2, "power": "C", "effect": "味方HP10%回復"},
-          {"id": "cycle_light_001", "name": "光の帰還", "learn_level": 12},
-          {"id": "wurm_002", "name": "浄化の光", "learn_level": 15, "cost": 2, "effect": "味方状態異常解除"},
-          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 20},
-          {"id": "buff_light_002", "name": "光の障壁", "learn_level": 25},
-          {"id": "wurm_003", "name": "竜の威光", "learn_level": 30, "cost": 3, "power": "B", "effect": "相手攻撃↓↓"},
-          {"id": "pri_light_002", "name": "閃光撃", "learn_level": 32},
-          {"id": "var_wind_001", "name": "烈風", "learn_level": 55}
+          {"id": "wurm_001", "name": "聖なる鱗", "learn_level": 4, "cost": 3, "effect": "3T状態異常無効+被ダメ-20%"},
+          {"id": "light_006", "name": "光の障壁", "learn_level": 8},
+          {"id": "wurm_002", "name": "浄化のブレス", "learn_level": 12, "cost": 4, "power": "B", "effect": "自分と相手のバフ・デバフ全解除"},
+          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 16},
+          {"id": "wind_005", "name": "翼の休息", "learn_level": 20},
+          {"id": "wurm_003", "name": "聖竜の祝福", "learn_level": 24, "cost": 3, "effect": "自分と控え全員HP30回復+状態異常解除"},
+          {"id": "light_008", "name": "魅惑の光", "learn_level": 28},
+          {"id": "cmn_sup_006", "name": "浄化", "learn_level": 32},
+          {"id": "wind_008", "name": "畏怖の風", "learn_level": 36},
+          {"id": "light_009", "name": "魅惑の眼差し", "learn_level": 44},
+          {"id": "wind_003", "name": "烈風", "learn_level": 48}
         ],
-        "ultimate": {"id": "ult_wurm", "name": "聖竜の息吹", "learn_level": 40, "cost": 5, "power_rank": "-", "element": "light", "effect": "味方全体HP40%回復"}
+        "ultimate": {"id": "ult_wurm", "name": "聖竜の息吹", "learn_level": 40, "cost": 5, "power_rank": "-", "element": "light", "type": "support", "effect": "自分HP60回復、自分防御↑↑"}
+      },
+      "skill_summary": {
+        "total_skills": 15,
+        "main_element": "light",
+        "sub_elements": ["wind"],
+        "skill_types": {"attack": 5, "support": 8, "buff": 1, "ultimate": 1}
       }
     },
     {
       "monster_id": "mon_010",
       "name": "海賊王ジャック",
+      "lore": "七つの海を制した伝説の海賊。「自由」を求めて王座を捨てた元貴族。",
       "category": "rare",
       "species": "human",
       "element": "water",
@@ -171,25 +187,36 @@
       },
       "skill_pool": {
         "initial_skills": [
-          {"id": "pri_water_001", "name": "激流撃", "learn_level": 1},
-          {"id": "cmn_phy_003", "name": "疾風撃", "learn_level": 1}
+          {"id": "water_010", "name": "激流撃", "learn_level": 1},
+          {"id": "cmn_phy_003", "name": "疾風撃", "learn_level": 1},
+          {"id": "cmn_sup_003", "name": "集中", "learn_level": 1}
         ],
         "learnable_skills": [
-          {"id": "jack_001", "name": "海賊斬り", "learn_level": 5, "cost": 2, "power": "C", "effect": "急所率↑"},
-          {"id": "var_water_001", "name": "アクアボール", "learn_level": 10},
-          {"id": "jack_002", "name": "砲撃", "learn_level": 15, "cost": 3, "power": "C", "effect": "恐怖確定"},
-          {"id": "prot_002", "name": "先読み", "learn_level": 22},
-          {"id": "jack_003", "name": "略奪", "learn_level": 25, "cost": 2, "power": "D", "effect": "相手コスト-1"},
-          {"id": "swp_002", "name": "追撃", "learn_level": 28},
-          {"id": "var_none_001", "name": "剛拳", "learn_level": 30},
-          {"id": "jack_004", "name": "嵐の海", "learn_level": 35, "cost": 3, "power": "B", "effect": "相手全デバフ1段階"}
+          {"id": "jack_001", "name": "略奪", "learn_level": 4, "cost": 3, "power": "C", "effect": "相手のバフを1つ奪う"},
+          {"id": "water_007", "name": "氷砕拳", "learn_level": 8},
+          {"id": "cmn_phy_004", "name": "剛腕撃", "learn_level": 12},
+          {"id": "jack_002", "name": "海賊の流儀", "learn_level": 16, "cost": 3, "effect": "次攻撃クリ確定"},
+          {"id": "wind_002", "name": "疾空斬", "learn_level": 20},
+          {"id": "jack_003", "name": "荒波", "learn_level": 24, "cost": 4, "power": "B", "effect": "相手速さ↓"},
+          {"id": "wind_007", "name": "旋風拳", "learn_level": 28},
+          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 32},
+          {"id": "water_009", "name": "凍結波", "learn_level": 36},
+          {"id": "water_008", "name": "アクアボール", "learn_level": 44},
+          {"id": "wind_003", "name": "烈風", "learn_level": 48}
         ],
-        "ultimate": {"id": "ult_jack", "name": "海賊王の覇気", "learn_level": 40, "cost": 5, "power_rank": "A", "element": "water", "effect": "相手全デバフ+自分全バフ"}
+        "ultimate": {"id": "ult_jack", "name": "海賊王の覇気", "learn_level": 40, "cost": 5, "power_rank": "SS", "element": "water", "type": "attack", "effect": null}
+      },
+      "skill_summary": {
+        "total_skills": 15,
+        "main_element": "water",
+        "sub_elements": ["wind"],
+        "skill_types": {"attack": 11, "support": 3, "ultimate": 1}
       }
     },
     {
       "monster_id": "mon_011",
       "name": "雷霆ラム",
+      "lore": "雷を司る天使の一人。その槌が振り下ろされるとき、罪者には天罰が下る。",
       "category": "rare",
       "species": "angel",
       "element": "thunder",
@@ -223,23 +250,36 @@
       },
       "skill_pool": {
         "initial_skills": [
-          {"id": "var_thunder_001", "name": "天雷", "learn_level": 1},
-          {"id": "cmn_sup_003", "name": "集中", "learn_level": 1}
+          {"id": "thunder_008", "name": "天雷", "learn_level": 1},
+          {"id": "cmn_sup_007", "name": "精神統一", "learn_level": 1},
+          {"id": "thunder_002", "name": "痺撃波", "learn_level": 1}
         ],
         "learnable_skills": [
-          {"id": "ram_001", "name": "雷槍", "learn_level": 5, "cost": 2, "power": "D", "effect": "麻痺確定"},
-          {"id": "buff_light_001", "name": "癒月", "learn_level": 15},
-          {"id": "ram_002", "name": "疾雷", "learn_level": 20, "cost": 2, "power": "C", "effect": "先制"},
-          {"id": "ram_003", "name": "天罰", "learn_level": 30, "cost": 3, "power": "C", "effect": "麻痺確定+相手速さ↓1"},
-          {"id": "var_light_001", "name": "裁きの光", "learn_level": 35},
-          {"id": "var_wind_001", "name": "烈風", "learn_level": 55}
+          {"id": "ram_001", "name": "裁きの雷", "learn_level": 4, "cost": 5, "power": "B", "effect": "先制"},
+          {"id": "thunder_006", "name": "帯電", "learn_level": 8},
+          {"id": "light_005", "name": "月光", "learn_level": 12},
+          {"id": "ram_002", "name": "雷雲召喚", "learn_level": 16, "cost": 3, "effect": "3T雷属性技コスト-1"},
+          {"id": "light_006", "name": "光壁", "learn_level": 20},
+          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 24},
+          {"id": "ram_003", "name": "天罰", "learn_level": 28, "cost": 3, "power": "C", "effect": "麻痺確定+相手速さ↓"},
+          {"id": "light_004", "name": "裁きの光", "learn_level": 32},
+          {"id": "thunder_009", "name": "雷鳴", "learn_level": 36},
+          {"id": "thunder_007", "name": "雷鳴拳", "learn_level": 44},
+          {"id": "wind_003", "name": "烈風", "learn_level": 48}
         ],
-        "ultimate": {"id": "ult_ram", "name": "神雷一閃", "learn_level": 40, "cost": 5, "power_rank": "A", "element": "thunder", "effect": "必ず先制+麻痺確定"}
+        "ultimate": {"id": "ult_ram", "name": "神雷一閃", "learn_level": 40, "cost": 5, "power_rank": "-", "element": "thunder", "type": "support", "effect": "自分HP80+控えHP30回復、麻痺確定"}
+      },
+      "skill_summary": {
+        "total_skills": 15,
+        "main_element": "thunder",
+        "sub_elements": ["light", "wind"],
+        "skill_types": {"attack": 8, "support": 5, "buff": 1, "ultimate": 1}
       }
     },
     {
       "monster_id": "mon_012",
       "name": "竜姫エヴァ",
+      "lore": "竜の血を引く水の姫君。深い慈愛で傷ついた者を癒し、海と竜の加護を受ける。",
       "category": "rare",
       "species": "dragon",
       "element": "water",
@@ -273,27 +313,41 @@
       },
       "skill_pool": {
         "initial_skills": [
-          {"id": "var_water_001", "name": "アクアボール", "learn_level": 1},
-          {"id": "buff_water_001", "name": "水鏡", "learn_level": 1}
+          {"id": "water_008", "name": "アクアボール", "learn_level": 1},
+          {"id": "water_006", "name": "水鏡", "learn_level": 1},
+          {"id": "cmn_sup_001", "name": "威嚇", "learn_level": 1}
         ],
         "learnable_skills": [
-          {"id": "eva_001", "name": "癒しの水", "learn_level": 5, "cost": 2, "effect": "味方HP30%回復"},
-          {"id": "eva_002", "name": "龍の舞", "learn_level": 15, "cost": 2, "effect": "自分攻撃↑+速さ↑"},
-          {"id": "eva_003", "name": "清浄の霧", "learn_level": 25, "cost": 2, "effect": "味方状態異常解除+HP15%回復"},
-          {"id": "buff_light_001", "name": "癒月", "learn_level": 35},
-          {"id": "var_light_001", "name": "裁きの光", "learn_level": 55}
+          {"id": "eva_001", "name": "深海の歌", "learn_level": 4, "cost": 4, "power": "B", "effect": "速さ↓↓"},
+          {"id": "cmn_sup_008", "name": "活力の息吹", "learn_level": 8},
+          {"id": "water_009", "name": "凍結波", "learn_level": 12},
+          {"id": "eva_002", "name": "海竜の加護", "learn_level": 16, "cost": 2, "effect": "3T水属性ダメージ無効"},
+          {"id": "light_005", "name": "月光", "learn_level": 20},
+          {"id": "eva_003", "name": "清浄の霧", "learn_level": 24, "cost": 2, "effect": "味方状態異常解除+HP15%回復"},
+          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 28},
+          {"id": "light_006", "name": "光壁", "learn_level": 32},
+          {"id": "water_011", "name": "粘液水", "learn_level": 36},
+          {"id": "light_008", "name": "魅惑の光", "learn_level": 44},
+          {"id": "water_007", "name": "氷砕拳", "learn_level": 48}
         ],
-        "ultimate": {"id": "ult_eva", "name": "竜姫の慈愛", "learn_level": 40, "cost": 5, "power_rank": "-", "element": "water", "effect": "味方HP50%回復+全状態異常解除"}
+        "ultimate": {"id": "ult_eva", "name": "竜姫の慈愛", "learn_level": 40, "cost": 5, "power_rank": "-", "element": "water", "type": "support", "effect": "自分HP60回復、状態異常解除"}
+      },
+      "skill_summary": {
+        "total_skills": 15,
+        "main_element": "water",
+        "sub_elements": ["light"],
+        "skill_types": {"attack": 4, "support": 9, "buff": 1, "ultimate": 1}
       }
     },
     {
       "monster_id": "mon_013",
       "name": "太陽民ホノオ",
+      "lore": "太陽を崇める一族の末裔。焦熱の炎を操り、その身体は絶えず変化し進化を続ける。",
       "category": "rare",
       "species": "mutant",
       "element": "fire",
       "role": "状態異常型（火傷特化）",
-      "design_concept": "【多型対応】バランス型で物理魔法どちらも選択可能",
+      "design_concept": "【多型対応】バランス型で物理魔法どちらも選択可能。ミュータントなので多属性",
       "base_stats": {
         "attack": 48,
         "defense": 42,
@@ -322,28 +376,38 @@
       },
       "skill_pool": {
         "initial_skills": [
-          {"id": "var_fire_001", "name": "業炎", "learn_level": 1},
-          {"id": "buff_fire_001", "name": "炎舞", "learn_level": 1}
+          {"id": "fire_004", "name": "業炎", "learn_level": 1},
+          {"id": "fire_006", "name": "炎舞", "learn_level": 1},
+          {"id": "cmn_sup_003", "name": "集中", "learn_level": 1}
         ],
         "learnable_skills": [
-          {"id": "honoo_001", "name": "陽光撃", "learn_level": 5, "cost": 2, "power": "D", "effect": "火傷確定"},
+          {"id": "honoo_001", "name": "太陽光線", "learn_level": 4, "cost": 5, "power": "B", "effect": "火傷確定"},
           {"id": "cmn_phy_002", "name": "裂爪", "learn_level": 8},
-          {"id": "honoo_002", "name": "熱波", "learn_level": 12, "cost": 2, "power": "D", "effect": "相手速さ↓↓"},
-          {"id": "var_light_001", "name": "裁きの光", "learn_level": 16},
-          {"id": "cmn_sup_003", "name": "集中", "learn_level": 20},
-          {"id": "var_wind_001", "name": "烈風", "learn_level": 24},
-          {"id": "honoo_003", "name": "炎熱領域", "learn_level": 28, "cost": 3, "effect": "3T炎技威力+30%"},
-          {"id": "var_earth_001", "name": "ストーンショット", "learn_level": 32},
-          {"id": "sts_fire_001", "name": "焦熱獄", "learn_level": 36},
-          {"id": "var_thunder_001", "name": "天雷", "learn_level": 50},
-          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 55}
+          {"id": "honoo_002", "name": "太陽フレア", "learn_level": 12, "cost": 4, "effect": "フィールド「灼熱」設置（5T炎技+50%、水技-30%）"},
+          {"id": "light_004", "name": "裁きの光", "learn_level": 16},
+          {"id": "wind_003", "name": "烈風", "learn_level": 20},
+          {"id": "honoo_003", "name": "日光浴", "learn_level": 24, "cost": 3, "effect": "自分HP40回復"},
+          {"id": "earth_008", "name": "ストーンショット", "learn_level": 28},
+          {"id": "fire_005", "name": "焦熱獄", "learn_level": 32},
+          {"id": "thunder_008", "name": "天雷", "learn_level": 36},
+          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 44},
+          {"id": "fire_008", "name": "獄炎", "learn_level": 48},
+          {"id": "light_008", "name": "魅惑の光", "learn_level": 52},
+          {"id": "dark_008", "name": "ナイトメア", "learn_level": 56}
         ],
-        "ultimate": {"id": "ult_honoo", "name": "太陽の怒り", "learn_level": 40, "cost": 5, "power_rank": "A", "element": "fire", "effect": "灼熱フィールド設置+自分炎技+30%"}
+        "ultimate": {"id": "ult_honoo", "name": "太陽の怒り", "learn_level": 40, "cost": 5, "power_rank": "C", "element": "fire", "type": "control", "effect": "火傷確定、相手攻撃↓↓"}
+      },
+      "skill_summary": {
+        "total_skills": 17,
+        "main_element": "fire",
+        "sub_elements": ["light", "wind", "earth", "thunder", "dark"],
+        "skill_types": {"attack": 12, "support": 3, "buff": 1, "ultimate": 1}
       }
     },
     {
       "monster_id": "mon_014",
       "name": "夢魔リリス",
+      "lore": "夢の世界に棲む悪魔。眠りに落ちた者の精神を弄び、悪夢で魂を蝕む。",
       "category": "rare",
       "species": "demon",
       "element": "dark",
@@ -367,7 +431,7 @@
       "weaknesses": ["耐久が低い", "一発受けたら危険", "火力も控えめ"],
       "ability_pool": {
         "rare": [
-          {"id": "ex_rare_lilith", "name": "夢魔の誘惑", "effect": "攻撃命中時、25%の確率で魅了"},
+          {"id": "ex_rare_lilith", "name": "夢魔の誘惑", "effect": "登場時、相手はこのターンコスト4以上の技を使えない"},
           {"id": "sp_demon", "name": "魂喰らい", "effect": "相手を倒した時、全ステータス↑1"}
         ],
         "common": [
@@ -377,24 +441,36 @@
       },
       "skill_pool": {
         "initial_skills": [
-          {"id": "pri_dark_001", "name": "影縫い", "learn_level": 1},
-          {"id": "var_dark_001", "name": "ナイトメア", "learn_level": 1}
+          {"id": "dark_002", "name": "影縫い", "learn_level": 1},
+          {"id": "dark_008", "name": "ナイトメア", "learn_level": 1},
+          {"id": "cmn_sup_007", "name": "精神統一", "learn_level": 1}
         ],
         "learnable_skills": [
-          {"id": "lilith_001", "name": "魅了のキス", "learn_level": 5, "cost": 3, "effect": "魅了確定（2T）"},
-          {"id": "lilith_002", "name": "悪夢の囁き", "learn_level": 15, "cost": 2, "power": "E", "effect": "悪夢確定"},
-          {"id": "sts_dark_001", "name": "呪詛", "learn_level": 20},
-          {"id": "lilith_003", "name": "悪夢の檻", "learn_level": 25, "cost": 4, "effect": "悪夢確定（3T）"},
-          {"id": "lilith_004", "name": "夢喰い", "learn_level": 35, "cost": 3, "power": "B", "effect": "悪夢状態の相手に威力2倍"},
-          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 45},
-          {"id": "var_fire_001", "name": "業炎", "learn_level": 50}
+          {"id": "lilith_001", "name": "魅了のキス", "learn_level": 4, "cost": 3, "power": "D", "effect": "魅了確定"},
+          {"id": "dark_006", "name": "暗幕", "learn_level": 8},
+          {"id": "lilith_002", "name": "悪夢の囁き", "learn_level": 12, "cost": 2, "effect": "悪夢確定"},
+          {"id": "dark_005", "name": "呪詛", "learn_level": 16},
+          {"id": "fire_004", "name": "業炎", "learn_level": 20},
+          {"id": "lilith_003", "name": "悪夢の檻", "learn_level": 24, "cost": 4, "effect": "悪夢確定（3T）"},
+          {"id": "fire_005", "name": "焦熱獄", "learn_level": 28},
+          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 32},
+          {"id": "lilith_004", "name": "夢喰い", "learn_level": 36, "cost": 3, "power": "B", "effect": "悪夢状態の相手に威力2倍"},
+          {"id": "dark_009", "name": "冥府の呪い", "learn_level": 44},
+          {"id": "fire_008", "name": "獄炎", "learn_level": 48}
         ],
-        "ultimate": {"id": "ult_lilith", "name": "永遠の悪夢", "learn_level": 40, "cost": 5, "power_rank": "A", "element": "dark", "effect": "悪夢確定+3T毎T魔力10%ダメ"}
+        "ultimate": {"id": "ult_lilith", "name": "悪夢の誘い", "learn_level": 40, "cost": 5, "power_rank": "C", "element": "dark", "type": "control", "effect": "悪夢確定、封印確定"}
+      },
+      "skill_summary": {
+        "total_skills": 15,
+        "main_element": "dark",
+        "sub_elements": ["fire"],
+        "skill_types": {"attack": 8, "support": 4, "debuff": 2, "ultimate": 1}
       }
     },
     {
       "monster_id": "mon_015",
       "name": "歌姫ルリア",
+      "lore": "天上の歌声を持つ乙女。その歌は傷を癒し、味方に勇気と力を与える。",
       "category": "rare",
       "species": "human",
       "element": "wind",
@@ -428,23 +504,36 @@
       },
       "skill_pool": {
         "initial_skills": [
-          {"id": "var_wind_001", "name": "烈風", "learn_level": 1},
-          {"id": "buff_wind_002", "name": "翼の休息", "learn_level": 1}
+          {"id": "wind_003", "name": "烈風", "learn_level": 1},
+          {"id": "wind_005", "name": "羽休め", "learn_level": 1},
+          {"id": "cmn_sup_001", "name": "威嚇", "learn_level": 1}
         ],
         "learnable_skills": [
-          {"id": "luria_001", "name": "鼓舞の歌", "learn_level": 5, "cost": 2, "effect": "味方攻撃↑+魔力↑"},
-          {"id": "buff_wind_001", "name": "順風", "learn_level": 10},
-          {"id": "luria_002", "name": "守りの歌", "learn_level": 15, "cost": 2, "effect": "味方防御↑↑"},
-          {"id": "buff_light_001", "name": "癒月", "learn_level": 20},
-          {"id": "luria_003", "name": "眠りの歌", "learn_level": 25, "cost": 3, "effect": "恐怖確定"},
-          {"id": "luria_004", "name": "魂の癒し", "learn_level": 35, "cost": 4, "effect": "味方HP40%回復+状態異常解除"}
+          {"id": "luria_001", "name": "アイドルの魅力", "learn_level": 4, "cost": 4, "power": "D", "effect": "魅了確定"},
+          {"id": "wind_006", "name": "風纏い", "learn_level": 8},
+          {"id": "light_005", "name": "月光", "learn_level": 12},
+          {"id": "luria_002", "name": "守りの歌", "learn_level": 16, "cost": 2, "effect": "味方防御↑↑"},
+          {"id": "light_006", "name": "光壁", "learn_level": 20},
+          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 24},
+          {"id": "luria_003", "name": "破滅の歌", "learn_level": 28, "cost": 3, "effect": "体力の半分消費、2T後相手瀕死（交代でリセット）"},
+          {"id": "cmn_sup_006", "name": "浄化", "learn_level": 32},
+          {"id": "luria_004", "name": "シャウト", "learn_level": 36, "cost": 3, "power": "B", "effect": "恐怖確定"},
+          {"id": "wind_003", "name": "烈風", "learn_level": 44},
+          {"id": "light_004", "name": "裁きの光", "learn_level": 48}
         ],
-        "ultimate": {"id": "ult_luria", "name": "魂の歌声", "learn_level": 40, "cost": 5, "power_rank": "-", "element": "wind", "effect": "味方全体バフ2段階+HP30%回復"}
+        "ultimate": {"id": "ult_luria", "name": "魂の歌声", "learn_level": 40, "cost": 5, "power_rank": "-", "element": "wind", "type": "support", "effect": "自分攻撃↑↑、自分魔力↑↑、自分速さ↑↑"}
+      },
+      "skill_summary": {
+        "total_skills": 15,
+        "main_element": "wind",
+        "sub_elements": ["light"],
+        "skill_types": {"attack": 3, "support": 10, "buff": 1, "ultimate": 1}
       }
     },
     {
       "monster_id": "mon_016",
       "name": "呪符キョウカ",
+      "lore": "多くの呪いの符を従える陰陽師。符の一枚ごとに異なる呪を刻み、敵に罰を与える。",
       "category": "rare",
       "species": "spirit",
       "element": "dark",
@@ -478,23 +567,36 @@
       },
       "skill_pool": {
         "initial_skills": [
-          {"id": "var_dark_001", "name": "ナイトメア", "learn_level": 1},
-          {"id": "cmn_sup_001", "name": "威圧", "learn_level": 1},
-          {"id": "kyouka_001", "name": "呪符・束縛", "learn_level": 1, "cost": 1, "power": "E", "effect": "拘束確定"}
+          {"id": "dark_008", "name": "ナイトメア", "learn_level": 1},
+          {"id": "cmn_sup_001", "name": "威嚇", "learn_level": 1},
+          {"id": "kyouka_001", "name": "呪符渡し", "learn_level": 1, "cost": 3, "effect": "相手速さ↓↓"}
         ],
         "learnable_skills": [
-          {"id": "kyouka_002", "name": "呪符・封印", "learn_level": 5, "cost": 2, "power": "E", "effect": "封印確定"},
-          {"id": "kyouka_003", "name": "呪符・瘴気", "learn_level": 15, "cost": 2, "power": "D", "effect": "瘴気確定"},
-          {"id": "var_fire_001", "name": "業炎", "learn_level": 20},
-          {"id": "kyouka_004", "name": "呪符・爆炎", "learn_level": 25, "cost": 3, "power": "C", "effect": "火傷確定"},
-          {"id": "kyouka_005", "name": "呪符・結界", "learn_level": 35, "cost": 2, "effect": "1T無敵+先制"}
+          {"id": "kyouka_002", "name": "呪いの人形", "learn_level": 4, "cost": 4, "effect": "設置（相手攻撃時相手にも同ダメ30%）"},
+          {"id": "dark_006", "name": "暗幕", "learn_level": 8},
+          {"id": "kyouka_003", "name": "呪符・瘴気", "learn_level": 12, "cost": 2, "power": "D", "effect": "瘴気確定"},
+          {"id": "fire_004", "name": "業炎", "learn_level": 16},
+          {"id": "dark_005", "name": "呪詛", "learn_level": 20},
+          {"id": "kyouka_004", "name": "影縫い", "learn_level": 24, "cost": 3, "power": "D", "effect": "先制"},
+          {"id": "fire_005", "name": "焦熱獄", "learn_level": 28},
+          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 32},
+          {"id": "cmn_sup_006", "name": "浄化", "learn_level": 36},
+          {"id": "dark_009", "name": "冥府の呪い", "learn_level": 44},
+          {"id": "fire_008", "name": "獄炎", "learn_level": 48}
         ],
-        "ultimate": {"id": "ult_kyouka", "name": "呪符・万霊", "learn_level": 40, "cost": 5, "power_rank": "A", "element": "dark", "effect": "瘴気確定+相手アビリティ無効2T"}
+        "ultimate": {"id": "ult_kyouka", "name": "呪符・万霊", "learn_level": 40, "cost": 5, "power_rank": "C", "element": "dark", "type": "control", "effect": "瘴気確定、拘束確定"}
+      },
+      "skill_summary": {
+        "total_skills": 15,
+        "main_element": "dark",
+        "sub_elements": ["fire"],
+        "skill_types": {"attack": 9, "support": 4, "debuff": 1, "ultimate": 1}
       }
     },
     {
-      "monster_id": "mon_039",
+      "monster_id": "mon_017",
       "name": "聖騎士レオン",
+      "lore": "絶対の忠誠を誓う鉄壁の騎士。その盾は味方を守り、聖剣は悟りなき敵を払う。",
       "category": "rare",
       "species": "human",
       "element": "light",
@@ -528,19 +630,30 @@
       },
       "skill_pool": {
         "initial_skills": [
-          {"id": "var_light_001", "name": "裁きの光", "learn_level": 1},
-          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 1}
+          {"id": "light_004", "name": "裁きの光", "learn_level": 1},
+          {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 1},
+          {"id": "cmn_sup_001", "name": "威嚇", "learn_level": 1}
         ],
         "learnable_skills": [
-          {"id": "leon_001", "name": "シールドバッシュ", "learn_level": 5, "cost": 2, "power": "D", "effect": "相手攻撃↓+自分防御↑"},
-          {"id": "buff_light_002", "name": "光の障壁", "learn_level": 10},
-          {"id": "leon_002", "name": "聖なる守護", "learn_level": 15, "cost": 3, "effect": "3T被ダメ-40%+状態異常耐性↑"},
-          {"id": "prot_002", "name": "先読み", "learn_level": 20},
-          {"id": "leon_003", "name": "報復の聖剣", "learn_level": 28, "cost": 4, "power": "B", "effect": "後攻時威力+50%+HP10%回復"},
-          {"id": "rear_phy_002", "name": "報復", "learn_level": 32},
-          {"id": "cycle_light_001", "name": "光の帰還", "learn_level": 38}
+          {"id": "leon_001", "name": "聖騎士の守り", "learn_level": 4, "cost": 2, "effect": "防御↑+次T被ダメ-30%"},
+          {"id": "earth_006", "name": "堅守", "learn_level": 8},
+          {"id": "light_006", "name": "光壁", "learn_level": 12},
+          {"id": "leon_002", "name": "騎士の誓い", "learn_level": 16, "cost": 3, "effect": "防御↑↑速さ↓"},
+          {"id": "earth_008", "name": "ストーンショット", "learn_level": 20},
+          {"id": "spc_phy_001", "name": "力量転嫁", "learn_level": 24},
+          {"id": "leon_003", "name": "聖剣撃", "learn_level": 28, "cost": 4, "power": "B", "effect": "自分HP満タン時威力1.3倍"},
+          {"id": "light_007", "name": "聖拳", "learn_level": 32},
+          {"id": "earth_007", "name": "剛岩拳", "learn_level": 36},
+          {"id": "light_008", "name": "魅惑の光", "learn_level": 44},
+          {"id": "light_009", "name": "魅惑の眼差し", "learn_level": 48}
         ],
-        "ultimate": {"id": "ult_leon", "name": "聖騎士の守護", "learn_level": 40, "cost": 5, "power_rank": "B", "element": "light", "effect": "味方全体被ダメ-30%（3T）+自分HP30%回復+防御↑↑"}
+        "ultimate": {"id": "ult_leon", "name": "聖騎士の覚悟", "learn_level": 40, "cost": 5, "power_rank": "-", "element": "light", "type": "support", "effect": "次に受ける攻撃を1回無効、自分防御↑↑"}
+      },
+      "skill_summary": {
+        "total_skills": 15,
+        "main_element": "light",
+        "sub_elements": ["earth"],
+        "skill_types": {"attack": 7, "support": 6, "buff": 1, "ultimate": 1}
       }
     }
   ],
@@ -548,20 +661,18 @@
     "total_monsters": 10,
     "stat_totals": [242, 242, 242, 245, 242, 242, 240, 242, 242, 245],
     "average_total": 242.4,
-    "stat_range": "240-245（差5）",
-    "iv_pattern_count": 4,
-    "role_distribution": {
-      "リント": "加速型（速63→最速）- 魔防-12固定",
-      "ヴルム": "ヒーラー（魔70/魔防65）- 攻撃-12固定",
-      "ジャック": "超速攻型（速94/攻75）- 魔力-12固定",
-      "ラム": "麻痺特化（魔72/魔防62）- 攻撃-12固定",
-      "エヴァ": "ヒーラー（魔72/魔防68）- 攻撃-12固定",
-      "ホノオ": "バランス型（両刀可能）- 魔防-12固定",
-      "リリス": "最速妨害（速97/魔68）- 攻撃-12固定",
-      "ルリア": "高速サポ（速92）- 攻撃-12固定",
-      "キョウカ": "状態異常（魔70/速72）- 攻撃-12固定",
-      "レオン": "超耐久（防90/魔防68）- 魔力-12固定"
+    "skill_count": {
+      "リント": 15,
+      "ヴルム": 15,
+      "ジャック": 15,
+      "ラム": 15,
+      "エヴァ": 15,
+      "ホノオ": 17,
+      "リリス": 15,
+      "ルリア": 15,
+      "キョウカ": 15,
+      "レオン": 15
     },
-    "design_philosophy": "希少種は4パターン全てが使える設計。厳選に適度な選択肢"
+    "design_philosophy": "希少種は15技（ミュータントは17技）、4レベル刻み習得、2-3サブ属性"
   }
 }

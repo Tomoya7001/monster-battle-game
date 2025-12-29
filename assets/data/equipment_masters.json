@@ -1,0 +1,1010 @@
+{
+  "version": "1.2",
+  "lastUpdated": "2024-12-23",
+  "equipments": [
+    {
+      "id": "EQ001",
+      "name": "生命のお守り",
+      "rarity": "common",
+      "category": "stat_boost",
+      "effect": {
+        "type": "stat_increase",
+        "stat": "hp",
+        "value": 50
+      },
+      "description": "最大HPが50増加する",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ002",
+      "name": "闘士の腕輪",
+      "rarity": "common",
+      "category": "stat_boost",
+      "effect": {
+        "type": "stat_increase",
+        "stat": "attack",
+        "value": 15
+      },
+      "description": "攻撃技の火力が上がる",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ003",
+      "name": "守護の盾片",
+      "rarity": "common",
+      "category": "stat_boost",
+      "effect": {
+        "type": "stat_increase",
+        "stat": "defense",
+        "value": 15
+      },
+      "description": "攻撃技への耐久が上がる",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ004",
+      "name": "賢者の首飾り",
+      "rarity": "common",
+      "category": "stat_boost",
+      "effect": {
+        "type": "stat_increase",
+        "stat": "magic",
+        "value": 15
+      },
+      "description": "魔法技の火力が上がる",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ005",
+      "name": "聖霊の羽根",
+      "rarity": "common",
+      "category": "stat_boost",
+      "effect": {
+        "type": "stat_increase",
+        "stat": "magicDefense",
+        "value": 15
+      },
+      "description": "魔法技への耐久が上がる",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ101",
+      "name": "解毒の指輪",
+      "rarity": "rare",
+      "category": "status_immunity",
+      "effect": {
+        "type": "status_immunity",
+        "status": "poison"
+      },
+      "description": "毒状態にならない",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ102",
+      "name": "耐火の指輪",
+      "rarity": "rare",
+      "category": "status_immunity",
+      "effect": {
+        "type": "status_immunity",
+        "status": "burn"
+      },
+      "description": "火傷状態にならない",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ103",
+      "name": "絶縁の指輪",
+      "rarity": "rare",
+      "category": "status_immunity",
+      "effect": {
+        "type": "status_immunity",
+        "status": "paralysis"
+      },
+      "description": "麻痺状態にならない",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ104",
+      "name": "自由の指輪",
+      "rarity": "rare",
+      "category": "status_immunity",
+      "effect": {
+        "type": "status_immunity",
+        "status": "bind"
+      },
+      "description": "束縛状態にならない",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ105",
+      "name": "覚醒の指輪",
+      "rarity": "rare",
+      "category": "status_immunity",
+      "effect": {
+        "type": "status_immunity",
+        "status": "nightmare"
+      },
+      "description": "悪夢状態にならない",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ106",
+      "name": "勇気の指輪",
+      "rarity": "rare",
+      "category": "status_immunity",
+      "effect": {
+        "type": "status_immunity",
+        "status": "fear"
+      },
+      "description": "恐怖状態にならない",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ107",
+      "name": "理性の指輪",
+      "rarity": "rare",
+      "category": "status_immunity",
+      "effect": {
+        "type": "status_immunity",
+        "status": "charm"
+      },
+      "description": "魅了状態にならない",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ108",
+      "name": "浄化の護符",
+      "rarity": "epic",
+      "category": "status_protection",
+      "effect": {
+        "type": "status_block_once",
+        "status": "any"
+      },
+      "description": "状態異常を1回だけ無効にする（1回限り）",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ109",
+      "name": "状態反転の札",
+      "rarity": "epic",
+      "category": "status_protection",
+      "effect": {
+        "type": "status_reflect_once",
+        "status": "any"
+      },
+      "description": "状態異常を受けた時、代わりに相手に付与（1回限り）",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ201",
+      "name": "炎のエンブレム",
+      "rarity": "rare",
+      "category": "element_boost",
+      "effect": {
+        "type": "element_power_up",
+        "element": "fire",
+        "multiplier": 1.2
+      },
+      "description": "火属性技の威力が上がる",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ202",
+      "name": "水のエンブレム",
+      "rarity": "rare",
+      "category": "element_boost",
+      "effect": {
+        "type": "element_power_up",
+        "element": "water",
+        "multiplier": 1.2
+      },
+      "description": "水属性技の威力が上がる",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ203",
+      "name": "雷のエンブレム",
+      "rarity": "rare",
+      "category": "element_boost",
+      "effect": {
+        "type": "element_power_up",
+        "element": "thunder",
+        "multiplier": 1.2
+      },
+      "description": "雷属性技の威力が上がる",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ204",
+      "name": "風のエンブレム",
+      "rarity": "rare",
+      "category": "element_boost",
+      "effect": {
+        "type": "element_power_up",
+        "element": "wind",
+        "multiplier": 1.2
+      },
+      "description": "風属性技の威力が上がる",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ205",
+      "name": "地のエンブレム",
+      "rarity": "rare",
+      "category": "element_boost",
+      "effect": {
+        "type": "element_power_up",
+        "element": "earth",
+        "multiplier": 1.2
+      },
+      "description": "地属性技の威力が上がる",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ206",
+      "name": "光のエンブレム",
+      "rarity": "rare",
+      "category": "element_boost",
+      "effect": {
+        "type": "element_power_up",
+        "element": "light",
+        "multiplier": 1.2
+      },
+      "description": "光属性技の威力が上がる",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ207",
+      "name": "闇のエンブレム",
+      "rarity": "rare",
+      "category": "element_boost",
+      "effect": {
+        "type": "element_power_up",
+        "element": "dark",
+        "multiplier": 1.2
+      },
+      "description": "闇属性技の威力が上がる",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ208",
+      "name": "属性の結晶",
+      "rarity": "epic",
+      "category": "element_boost",
+      "effect": {
+        "type": "weakness_bonus_damage",
+        "value": 10
+      },
+      "description": "弱点を突いた時、追加で10ダメージ",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ301",
+      "name": "勝者の証",
+      "rarity": "epic",
+      "category": "cost_control",
+      "effect": {
+        "type": "on_defeat_enemy",
+        "action": "cost_up",
+        "value": 1
+      },
+      "description": "相手を倒した時、コストが1増える",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ302",
+      "name": "絆の勾玉",
+      "rarity": "epic",
+      "category": "cost_control",
+      "effect": {
+        "type": "on_switch_out",
+        "condition": "not_fainted",
+        "action": "ally_cost_up",
+        "value": 1
+      },
+      "description": "瀕死以外で交代した時、交代先のコストが1増える",
+      "speciesRestriction": ["human"],
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ303",
+      "name": "奥義の秘伝書",
+      "rarity": "epic",
+      "category": "cost_control",
+      "effect": {
+        "type": "ultimate_cost_reduction",
+        "value": 1
+      },
+      "description": "奥義の必要コストが1減る",
+      "speciesRestriction": ["human"],
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ304",
+      "name": "窮地の宝珠",
+      "rarity": "epic",
+      "category": "cost_control",
+      "effect": {
+        "type": "on_hp_threshold",
+        "condition": "hp_half_or_less",
+        "action": "cost_up",
+        "value": 1,
+        "once": true
+      },
+      "description": "HP50%以下になった時、コストが1増える（1回限り）",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ305",
+      "name": "貯蓄の壺",
+      "rarity": "epic",
+      "category": "cost_control",
+      "effect": {
+        "type": "on_wait",
+        "action": "cost_up",
+        "value": 1
+      },
+      "description": "待機を選択したターン、コストが1増える",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ306",
+      "name": "浪費の王冠",
+      "rarity": "epic",
+      "category": "cost_control",
+      "effect": {
+        "type": "skill_power_up_cost_increase",
+        "powerMultiplier": 1.2,
+        "costIncrease": 1
+      },
+      "description": "技の威力が上がる代わりに、コストが+1される",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ401",
+      "name": "再生の種",
+      "rarity": "epic",
+      "category": "battle_effect",
+      "effect": {
+        "type": "end_of_turn_heal",
+        "percentOfMaxHp": 6
+      },
+      "description": "ターン終了時、HPが少し回復する（最大HPの6%）",
+      "speciesRestriction": ["angel"],
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ402",
+      "name": "荊の鎧",
+      "rarity": "epic",
+      "category": "battle_effect",
+      "effect": {
+        "type": "on_receive_attack",
+        "skillType": "attack",
+        "action": "reflect_damage",
+        "percentOfMaxHp": 6
+      },
+      "description": "攻撃技を受けた時、相手に少しダメージ（最大HPの6%）",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ403",
+      "name": "呪いの鏡",
+      "rarity": "epic",
+      "category": "battle_effect",
+      "effect": {
+        "type": "on_receive_attack",
+        "skillType": "magic",
+        "action": "reflect_damage",
+        "percentOfMaxHp": 6
+      },
+      "description": "魔法技を受けた時、相手に少しダメージ（最大HPの6%）",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ404",
+      "name": "逆襲の印",
+      "rarity": "epic",
+      "category": "battle_effect",
+      "effect": {
+        "type": "on_receive_weakness",
+        "action": "stat_up",
+        "stats": ["attack", "magic"],
+        "stages": 1,
+        "once": true
+      },
+      "description": "弱点を突かれた時、攻撃と魔力が1段階上がる（1回限り）",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ405",
+      "name": "反射の盾",
+      "rarity": "epic",
+      "category": "battle_effect",
+      "effect": {
+        "type": "on_receive_debuff",
+        "action": "reflect",
+        "once": true
+      },
+      "description": "デバフを受けた時、それを相手に跳ね返す（1回限り）",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ406",
+      "name": "鉄壁の心得",
+      "rarity": "epic",
+      "category": "battle_effect",
+      "effect": {
+        "type": "debuff_block_once"
+      },
+      "description": "デバフを1回だけ無効にする（1回限り）",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ407",
+      "name": "模倣の鏡",
+      "rarity": "epic",
+      "category": "battle_effect",
+      "effect": {
+        "type": "on_enemy_buff",
+        "action": "copy_buff",
+        "once": true
+      },
+      "description": "相手がバフを得た時、同じバフを1つコピー（1回限り）",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ408",
+      "name": "起死回生の薬",
+      "rarity": "epic",
+      "category": "battle_effect",
+      "effect": {
+        "type": "on_hp_threshold",
+        "condition": "hp_half_or_less",
+        "action": "heal",
+        "value": 30,
+        "once": true
+      },
+      "description": "HP50%以下になった時、HPを30回復する（1回限り）",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ409",
+      "name": "後の先の極意",
+      "rarity": "epic",
+      "category": "battle_effect",
+      "effect": {
+        "type": "on_move_last",
+        "action": "damage_multiplier",
+        "multiplier": 1.15
+      },
+      "description": "後攻時、与ダメージが少し上がる（×1.15）",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ410",
+      "name": "連撃の心得",
+      "rarity": "epic",
+      "category": "battle_effect",
+      "effect": {
+        "type": "consecutive_skill_boost",
+        "maxStacks": 3,
+        "multipliers": [1.1, 1.2, 1.3]
+      },
+      "description": "同じ技を連続使用すると威力が少し上がる（最大3回）",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ411",
+      "name": "賭博師のダイス",
+      "rarity": "epic",
+      "category": "battle_effect",
+      "effect": {
+        "type": "random_damage_multiplier",
+        "minMultiplier": 0.7,
+        "maxMultiplier": 1.5
+      },
+      "description": "与ダメージが0.7倍〜1.5倍の間でランダムに変動",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ412",
+      "name": "鈍足の靴",
+      "rarity": "epic",
+      "category": "battle_effect",
+      "effect": {
+        "type": "always_move_last"
+      },
+      "description": "必ず後攻になる",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ501",
+      "name": "竜殺しの剣",
+      "rarity": "legendary",
+      "category": "species_killer",
+      "effect": {
+        "type": "species_damage_boost",
+        "targetSpecies": "dragon",
+        "multiplier": 1.3
+      },
+      "description": "ドラゴン種族への与ダメージが上がる",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ502",
+      "name": "魔封じの杖",
+      "rarity": "legendary",
+      "category": "species_killer",
+      "effect": {
+        "type": "species_damage_boost",
+        "targetSpecies": "demon",
+        "multiplier": 1.3
+      },
+      "description": "デーモン種族への与ダメージが上がる",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ503",
+      "name": "霊断ちの刃",
+      "rarity": "legendary",
+      "category": "species_killer",
+      "effect": {
+        "type": "species_damage_boost",
+        "targetSpecies": "spirit",
+        "multiplier": 1.3
+      },
+      "description": "スピリット種族への与ダメージが上がる",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ504",
+      "name": "堕天の弓",
+      "rarity": "legendary",
+      "category": "species_killer",
+      "effect": {
+        "type": "species_damage_boost",
+        "targetSpecies": "angel",
+        "multiplier": 1.3
+      },
+      "description": "エンジェル種族への与ダメージが上がる",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ505",
+      "name": "人斬りの刀",
+      "rarity": "legendary",
+      "category": "species_killer",
+      "effect": {
+        "type": "species_damage_boost",
+        "targetSpecies": "human",
+        "multiplier": 1.3
+      },
+      "description": "ヒューマン種族への与ダメージが上がる",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ506",
+      "name": "破壊のハンマー",
+      "rarity": "legendary",
+      "category": "species_killer",
+      "effect": {
+        "type": "species_damage_boost",
+        "targetSpecies": "mechanoid",
+        "multiplier": 1.3
+      },
+      "description": "メカノイド種族への与ダメージが上がる",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ507",
+      "name": "浄化の聖杯",
+      "rarity": "legendary",
+      "category": "species_killer",
+      "effect": {
+        "type": "species_damage_boost",
+        "targetSpecies": "mutant",
+        "multiplier": 1.3
+      },
+      "description": "ミュータント種族への与ダメージが上がる",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ508",
+      "name": "不滅の心臓",
+      "rarity": "legendary",
+      "category": "legendary_special",
+      "effect": {
+        "type": "survive_lethal",
+        "condition": "hp_full",
+        "remainingHp": 1,
+        "once": true
+      },
+      "description": "HP満タンで致死ダメージを受けた時、HP1で耐える（1回限り）",
+      "speciesRestriction": ["human"],
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ509",
+      "name": "覇者の兜",
+      "rarity": "legendary",
+      "category": "legendary_special",
+      "effect": {
+        "type": "on_defeat_enemy",
+        "action": "stat_up",
+        "stat": "attack",
+        "stages": 1
+      },
+      "description": "相手を倒した時、攻撃が1段階上がる",
+      "speciesRestriction": ["human"],
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ510",
+      "name": "最後の砦",
+      "rarity": "legendary",
+      "category": "legendary_special",
+      "effect": {
+        "type": "on_ally_fainted_count",
+        "requiredCount": 2,
+        "action": "all_stats_up",
+        "value": 10
+      },
+      "description": "味方が2体瀕死の時、全ステータス+10",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ601",
+      "name": "道連れの呪符",
+      "rarity": "epic",
+      "category": "on_faint",
+      "effect": {
+        "type": "on_faint",
+        "action": "damage_enemy",
+        "percentOfMaxHp": 25
+      },
+      "description": "倒れた時、相手に最大HPの25%ダメージ",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ602",
+      "name": "怨念の毒霧",
+      "rarity": "epic",
+      "category": "on_faint",
+      "effect": {
+        "type": "on_faint",
+        "action": "inflict_status",
+        "status": "poison"
+      },
+      "description": "倒れた時、相手に毒を付与",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ603",
+      "name": "怨念の炎",
+      "rarity": "epic",
+      "category": "on_faint",
+      "effect": {
+        "type": "on_faint",
+        "action": "inflict_status",
+        "status": "burn"
+      },
+      "description": "倒れた時、相手に火傷を付与",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ604",
+      "name": "怨念の雷",
+      "rarity": "epic",
+      "category": "on_faint",
+      "effect": {
+        "type": "on_faint",
+        "action": "inflict_status",
+        "status": "paralysis"
+      },
+      "description": "倒れた時、相手に麻痺を付与",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ605",
+      "name": "怨念の鎖",
+      "rarity": "epic",
+      "category": "on_faint",
+      "effect": {
+        "type": "on_faint",
+        "action": "inflict_status",
+        "status": "bind"
+      },
+      "description": "倒れた時、相手に束縛を付与",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ606",
+      "name": "怨念の夢",
+      "rarity": "epic",
+      "category": "on_faint",
+      "effect": {
+        "type": "on_faint",
+        "action": "inflict_status",
+        "status": "nightmare"
+      },
+      "description": "倒れた時、相手に悪夢を付与",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ607",
+      "name": "怨念の恐怖",
+      "rarity": "epic",
+      "category": "on_faint",
+      "effect": {
+        "type": "on_faint",
+        "action": "inflict_status",
+        "status": "fear"
+      },
+      "description": "倒れた時、相手に恐怖を付与",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ608",
+      "name": "怨念の魅惑",
+      "rarity": "epic",
+      "category": "on_faint",
+      "effect": {
+        "type": "on_faint",
+        "action": "inflict_status",
+        "status": "charm"
+      },
+      "description": "倒れた時、相手に魅了を付与",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ701",
+      "name": "脱出の羽根",
+      "rarity": "epic",
+      "category": "switch",
+      "effect": {
+        "type": "on_receive_attack",
+        "action": "optional_switch",
+        "once": true
+      },
+      "description": "攻撃を受けた時、任意で交代できる（1回限り）",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ702",
+      "name": "追撃の爪",
+      "rarity": "epic",
+      "category": "switch",
+      "effect": {
+        "type": "on_enemy_switch",
+        "action": "damage_switch_target",
+        "value": 20
+      },
+      "description": "相手が交代した時、交代先に20ダメージ",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ703",
+      "name": "犠牲の魂",
+      "rarity": "epic",
+      "category": "switch",
+      "effect": {
+        "type": "on_faint",
+        "action": "heal_switch_target",
+        "value": 30
+      },
+      "description": "倒れた時、交代先のHPを30回復",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ704",
+      "name": "撤退の護符",
+      "rarity": "epic",
+      "category": "switch",
+      "effect": {
+        "type": "on_receive_debuff",
+        "action": "optional_switch",
+        "once": true
+      },
+      "description": "デバフを受けた時、任意で交代できる（1回限り）",
+      "speciesRestriction": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ801",
+      "name": "修練の腕輪",
+      "rarity": "common",
+      "category": "pve_only",
+      "effect": {
+        "type": "exp_boost",
+        "percentBonus": 20
+      },
+      "description": "獲得経験値が20%増加する",
+      "speciesRestriction": null,
+      "pvpEnabled": false,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ802",
+      "name": "幸運のコイン",
+      "rarity": "common",
+      "category": "pve_only",
+      "effect": {
+        "type": "gold_boost",
+        "percentBonus": 20
+      },
+      "description": "獲得ゴールドが20%増加する",
+      "speciesRestriction": null,
+      "pvpEnabled": false,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ803",
+      "name": "探索者の眼鏡",
+      "rarity": "rare",
+      "category": "pve_only",
+      "effect": {
+        "type": "drop_rate_boost",
+        "percentBonus": 15
+      },
+      "description": "素材ドロップ率が15%増加する",
+      "speciesRestriction": null,
+      "pvpEnabled": false,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ804",
+      "name": "財宝の羅針盤",
+      "rarity": "rare",
+      "category": "pve_only",
+      "effect": {
+        "type": "rare_drop_boost",
+        "percentBonus": 10
+      },
+      "description": "レアドロップ率が10%増加する",
+      "speciesRestriction": null,
+      "pvpEnabled": false,
+      "pveEnabled": true
+    }
+  ],
+  "metadata": {
+    "totalCount": 64,
+    "byRarity": {
+      "common": 7,
+      "rare": 16,
+      "epic": 31,
+      "legendary": 10
+    },
+    "byCategory": {
+      "stat_boost": 5,
+      "status_immunity": 7,
+      "status_protection": 2,
+      "element_boost": 8,
+      "cost_control": 6,
+      "battle_effect": 12,
+      "species_killer": 7,
+      "legendary_special": 3,
+      "on_faint": 8,
+      "switch": 4,
+      "pve_only": 4
+    }
+  }
+}
