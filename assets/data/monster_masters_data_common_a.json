@@ -1,11 +1,78 @@
 {
-  "version": "10.1",
+  "version": "21.0.0",
   "created_at": "2025-12-04",
-  "updated_at": "2025-12-27",
-  "description": "一般種モンスター（パートA）7体（技プール拡張版）",
+  "updated_at": "2026-01-06",
+  "changelog_v21": {
+    "v21.0.0": [
+      "【B-→B救済】スコーピオン DEF34→44, MDEF37→47, total238→258",
+      "【B-→B救済】スコーピオン 精密照準: 急所率+1段階追加"
+    ]
+  },
+  "description": "一般種モンスター（パートA）7体（v20.0.0 Tier平準化調整版）",
   "category": "common",
-  "category_description": "一般種（入手難易度：標準）- 合計238-245、個体値3-4パターン（外れなし設計）",
+  "category_description": "一般種（入手難易度：標準）- 合計220-268、個体値3-4パターン（外れなし設計）",
   "changelog": {
+    "v20.0.0": [
+      "【B-→B救済】カイト DEF30→40, MDEF35→45, total232→252"
+    ],
+    "v19.0.0": [
+      "【差別化】カグラ 炎の守護: 炎無効+炎技使用時HP8回復"
+    ],
+    "v18.0.0": [
+      "【B-→B救済】クロム 鋼の守り: ×0.9→×0.85強化, MDEF52→62"
+    ],
+    "v17.0.0": [
+      "【S→B+下方】クロム 鋼の意志→鋼の守り（攻撃強化削除、被ダメ×0.9）",
+      "【C→B-上方】カイト DEF+5, MDEF+5, total222→232",
+      "【C→B-上方】スコーピオン DEF+4, MDEF+4, total230→238"
+    ],
+    "v16.0.0": [
+      "【S→B+下方】カイト ATK80→70, SPD92→82, total242→222",
+      "【A→B+下方】スコーピオン ATK80→70, total240→230",
+      "【S→B+下方】クロム 鋼の意志×1.2→×1.1"
+    ],
+    "v15.0.0": [
+      "【モフ救済】total 240→268（MAG45→60、SPD24→37）",
+      "【モフアビ】毒の親和: 毒相手×1.5 + 毒技命中時+10固定ダメージ",
+      "【ステータス制限解除】B- Tier完全救済のため例外許容"
+    ],
+    "v14.0.0": [
+      "【包括的バランス調整】バージョン統一"
+    ],
+    "v13.1.1": [
+      "【技数修正】モフ 16技→17技（Lv42に癒月追加、ミュータント基準達成）",
+      "【category_summary修正】stat_totalsを最新値に更新"
+    ],
+    "v13.1.0": [
+      "【上方修正】スコーピオン 227→240（DEF 22→30、MDEF 28→33）",
+      "【上方修正】イム 234→242（DEF 28→32、MAG 58→62）"
+    ],
+    "v12.10.0": [
+      "【バランス調整】クロム 鋼の意志 ×1.8→×1.4（幻種超え防止）"
+    ],
+    "v12.9.0": [
+      "【Sランク解消】スコーピオン 攻撒88→80、速さ89→82（合計227、下方修正）",
+      "【後攻強化】クロム 鋼の意志 ×1.5→×1.8（速さ偏重対策）"
+    ],
+    "v12.8.0": [
+      "【差別化】カイト 逆境の刃→秘剣・断空（相手HP45以下で威力2倍）に変更",
+      "【表記統一】モフ 養分吸収 与ダメ30%→25%回復"
+    ],
+    "v12.7.1": [
+      "【レベル上限修正】モフ Lv52ナイトメア→Lv50（レベル上限50対応）"
+    ],
+    "v12.7.0": [
+      "【バランス調整】イムの速さ97→93に変更（希少種リリスとの差別化）"
+    ],
+    "v12.6.0": [
+      "【効果文修正】カイト 必殺の型「急所率+2段階」（マスター準拠）"
+    ],
+    "v12.5.0": [
+      "【ability_pool更新】v10.8アビリティマスターに準拠",
+      "【数値明記】竜鱗、霊体、必殺の型等に数値を追記",
+      "【運要素排除】変幻の魂をランダム→最も低いステータスに変更",
+      "【効果文修正】聖なるオーラ、再生細胞等の固定値を明記"
+    ],
     "v10.0": [
       "【技プール大幅拡張】全モンスターの技数を15-17技に拡張",
       "【習得レベル調整】4レベル刻みに統一",
@@ -28,21 +95,21 @@
       "species": "demon",
       "element": "dark",
       "role": "デバフ型（状態異常・妨害特化）",
-      "design_concept": "【最速妨害特化】速さ97で全モンスター最速タイ。妨害先制で相手を翻弄",
+      "design_concept": "【高速妨害特化】速さ93は一般種2位。耐久微増（v13.1上方修正）",
       "base_stats": {
         "attack": 20,
-        "defense": 28,
-        "magic": 58,
+        "defense": 32,
+        "magic": 62,
         "magic_defense": 35,
-        "speed": 97
+        "speed": 93
       },
-      "total": 238,
+      "total": 242,
       "iv_patterns": [
         {"name": "速さ特化", "attack": -12, "defense": 0, "magic": 0, "magic_defense": 0, "speed": 12, "recommended": "最速確定型（推奨）"},
         {"name": "魔力特化", "attack": -12, "defense": 0, "magic": 12, "magic_defense": 0, "speed": 0, "recommended": "火力重視型"},
         {"name": "魔防特化", "attack": -12, "defense": 0, "magic": 0, "magic_defense": 12, "speed": 0, "recommended": "魔法耐久型"}
       ],
-      "strengths": ["速さが最速タイ（リリスと同率）", "妨害技先制が強力", "デバフでコスト稼ぎ"],
+      "strengths": ["速さが一般種2位（カラス96に次ぐ）", "妨害技先制が強力", "デバフでコスト稼ぎ"],
       "weaknesses": ["耐久が低い", "火力は控えめ", "一発受けたら危険"],
       "ability_pool": {
         "rare": [
@@ -62,11 +129,11 @@
         ],
         "learnable_skills": [
           {"id": "im_001", "name": "悪戯", "learn_level": 4, "cost": 2, "effect": "相手ランダムデバフ1段階"},
-          {"id": "dark_006", "name": "暗幕", "learn_level": 8},
+          {"id": "cmn_sup_001", "name": "威圧", "learn_level": 8},
           {"id": "im_002", "name": "いじわる", "learn_level": 12, "cost": 3, "power": "C", "effect": "相手デバフ数×威力20%UP"},
           {"id": "dark_005", "name": "呪詛", "learn_level": 16},
           {"id": "fire_004", "name": "業炎", "learn_level": 20},
-          {"id": "im_003", "name": "小悪魔の微笑み", "learn_level": 24, "cost": 3, "power": "D", "effect": "魅了確定+HP20%回復"},
+          {"id": "im_003", "name": "小悪魔の微笑み", "learn_level": 24, "cost": 3, "power": "D", "effect": "魅了確定"},
           {"id": "light_002", "name": "閃光", "learn_level": 28},
           {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 32},
           {"id": "dark_008", "name": "ナイトメア", "learn_level": 36},
@@ -104,12 +171,12 @@
         {"name": "魔力特化", "attack": -12, "defense": 0, "magic": 12, "magic_defense": 0, "speed": 0, "recommended": "火力重視型"},
         {"name": "防御特化", "attack": -12, "defense": 12, "magic": 0, "magic_defense": 0, "speed": 0, "recommended": "両耐久型"}
       ],
-      "strengths": ["魔防がトップクラス", "霊体で物理軽減", "火傷が確実に通る", "炎無効"],
+      "strengths": ["魔防がトップクラス", "霊体で物理軽減", "炎無効+炎技で回復", "火傷が確実に通る"],
       "weaknesses": ["物理攻撃は完全に不可能", "速さが遅い"],
       "ability_pool": {
         "rare": [
-          {"id": "ex_com_kagura", "name": "炎の守護", "effect": "炎ダメージを無効化"},
-          {"id": "sp_spirit", "name": "霊体", "effect": "攻撃技のダメージを軽減"}
+          {"id": "ex_com_kagura", "name": "炎の守護", "effect": "炎ダメージ無効。炎技使用時HP8回復"},
+          {"id": "sp_spirit", "name": "霊体", "effect": "攻撃技のダメージを軽減（×0.8）"}
         ],
         "common": [
           {"id": "com_011", "name": "浄化の息吹", "effect": "毎ターン終了時、状態異常を1つ回復"},
@@ -125,7 +192,7 @@
         "learnable_skills": [
           {"id": "kagura_001", "name": "灯火の守り", "learn_level": 4, "cost": 3, "effect": "自分瀕死時HP1で耐える（1回のみ）"},
           {"id": "fire_005", "name": "焦熱獄", "learn_level": 8},
-          {"id": "kagura_002", "name": "火花散らし", "learn_level": 12, "cost": 3, "power": "D", "effect": "先制+火傷確定"},
+          {"id": "kagura_002", "name": "火花散らし", "learn_level": 12, "cost": 3, "power": "D", "effect": "火傷確定"},
           {"id": "light_004", "name": "裁きの光", "learn_level": 16},
           {"id": "cmn_sup_006", "name": "浄化", "learn_level": 20},
           {"id": "fire_008", "name": "獄炎", "learn_level": 24},
@@ -150,17 +217,18 @@
       "lore": "精密射撃に特化した機械兵。一度標的を定めれば、逃れることはできない。",
       "category": "common",
       "species": "mechanoid",
-      "element": "thunder",
+      "element": "earth",
       "role": "火力型（クリティカル・狙撃特化）",
-      "design_concept": "【超攻撃特化】攻撃88で耐久を捨てた。クリティカルで確殺",
+      "design_concept": "【狙撃特化】攻撃70でクリティカル狙い。耐久強化で安定性向上",
       "base_stats": {
-        "attack": 88,
-        "defense": 22,
+        "attack": 70,
+        "defense": 44,
         "magic": 15,
-        "magic_defense": 28,
-        "speed": 89
+        "magic_defense": 47,
+        "speed": 82
       },
-      "total": 242,
+      "total": 258,
+      "balance_note": "v21.0: DEF34→44, MDEF37→47, total238→258 (B-→B Tier救済)",
       "iv_patterns": [
         {"name": "攻撃特化", "attack": 12, "defense": 0, "magic": -12, "magic_defense": 0, "speed": 0, "recommended": "火力最大化（推奨）"},
         {"name": "速さ特化", "attack": 0, "defense": 0, "magic": -12, "magic_defense": 0, "speed": 12, "recommended": "最速確殺型"},
@@ -170,11 +238,11 @@
       "weaknesses": ["耐久が低い", "魔法攻撃不可", "一発でも受けたら危険"],
       "ability_pool": {
         "rare": [
-          {"id": "ex_com_scorpion", "name": "精密照準", "effect": "急所時に相手防御↓1"},
+          {"id": "ex_com_scorpion", "name": "精密照準", "effect": "急所率+1段階。急所時に相手防御↓1"},
           {"id": "sp_mecha", "name": "電磁シールド", "effect": "雷属性のダメージを半減"}
         ],
         "common": [
-          {"id": "com_015", "name": "必殺の型", "effect": "急所に当たりやすい"},
+          {"id": "com_015", "name": "必殺の型", "effect": "急所率+2段階"},
           {"id": "com_014", "name": "先陣の誉れ", "effect": "先発で登場した時、攻撃強化（1ターン）"}
         ]
       },
@@ -182,7 +250,7 @@
         "initial_skills": [
           {"id": "thunder_007", "name": "雷鳴拳", "learn_level": 1},
           {"id": "cmn_phy_003", "name": "疾風撃", "learn_level": 1},
-          {"id": "cmn_sup_003", "name": "集中", "learn_level": 1}
+          {"id": "cmn_sup_001", "name": "威圧", "learn_level": 1}
         ],
         "learnable_skills": [
           {"id": "scorpion_001", "name": "精密射撃", "learn_level": 4, "cost": 2, "power": "D", "effect": "急所に当たりやすい"},
@@ -190,7 +258,7 @@
           {"id": "scorpion_002", "name": "弱点狙撃", "learn_level": 12, "cost": 3, "power": "C", "effect": "弱点時威力1.5倍"},
           {"id": "cmn_phy_004", "name": "剛腕撃", "learn_level": 16},
           {"id": "wind_002", "name": "疾空斬", "learn_level": 20},
-          {"id": "scorpion_003", "name": "照準固定", "learn_level": 24, "cost": 2, "effect": "次攻撃必中+クリ確定"},
+          {"id": "scorpion_003", "name": "照準固定", "learn_level": 24, "cost": 2, "effect": "次攻撃クリ確定"},
           {"id": "wind_007", "name": "旋風拳", "learn_level": 28},
           {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 32},
           {"id": "thunder_010", "name": "疾雷", "learn_level": 36},
@@ -214,15 +282,16 @@
       "species": "dragon",
       "element": "earth",
       "role": "耐久型（後攻特化）",
-      "design_concept": "【後攻物理特化】防御82で速さを捨てた。後攻アビで超火力",
+      "design_concept": "【後攻物理特化】防御82で速さを捨てた。後攻アビで火力（v12.10.0幻種超え防止）",
       "base_stats": {
         "attack": 75,
         "defense": 82,
         "magic": 18,
-        "magic_defense": 52,
+        "magic_defense": 62,
         "speed": 18
       },
-      "total": 245,
+      "total": 255,
+      "balance_note": "v18.0: MDEF52→62, total245→255 (B-→B Tier救済)",
       "iv_patterns": [
         {"name": "防御特化", "attack": 0, "defense": 12, "magic": -12, "magic_defense": 0, "speed": 0, "recommended": "物理耐久最大化（推奨）"},
         {"name": "攻撃特化", "attack": 12, "defense": 0, "magic": -12, "magic_defense": 0, "speed": 0, "recommended": "後攻火力型"},
@@ -233,8 +302,8 @@
       "weaknesses": ["速さが最遅クラス", "魔法攻撃不可", "先制技に弱い"],
       "ability_pool": {
         "rare": [
-          {"id": "ex_com_chrome", "name": "鋼の意志", "effect": "後攻時、攻撃大幅強化"},
-          {"id": "sp_dragon", "name": "竜鱗", "effect": "攻撃技が強化される"}
+          {"id": "ex_com_chrome", "name": "鋼の守り", "effect": "後攻時、被ダメージ軽減（×0.9）"},
+          {"id": "sp_dragon", "name": "竜鱗", "effect": "攻撃技が強化される（×1.3）"}
         ],
         "common": [
           {"id": "com_018", "name": "鈍足の誇り", "effect": "後攻の時、攻撃強化"},
@@ -249,15 +318,15 @@
         ],
         "learnable_skills": [
           {"id": "chrome_001", "name": "鉄壁の構え", "learn_level": 4, "cost": 3, "effect": "防御↑+魔防↑"},
-          {"id": "earth_006", "name": "堅守", "learn_level": 8},
+          {"id": "water_006", "name": "水鏡", "learn_level": 8},
           {"id": "chrome_002", "name": "鋼鉄のブレス", "learn_level": 12, "cost": 3, "power": "C", "effect": "相手防御↓"},
           {"id": "thunder_007", "name": "雷鳴拳", "learn_level": 16},
           {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 20},
           {"id": "spc_phy_001", "name": "力量転嫁", "learn_level": 24},
           {"id": "earth_007", "name": "剛岩拳", "learn_level": 28},
           {"id": "thunder_008", "name": "天雷", "learn_level": 32},
-          {"id": "cmn_phy_005", "name": "猛襲", "learn_level": 36},
-          {"id": "thunder_007", "name": "雷鳴拳", "learn_level": 44},
+          {"id": "cmn_phy_006", "name": "連撃", "learn_level": 36},
+          {"id": "earth_001", "name": "砂礫弾", "learn_level": 44},
           {"id": "thunder_009", "name": "雷鳴", "learn_level": 48}
         ],
         "ultimate": {"id": "ult_chrome", "name": "鋼殻砲", "learn_level": 40, "cost": 5, "power_rank": "SS", "element": "earth", "type": "attack", "effect": null}
@@ -295,8 +364,8 @@
       "weaknesses": ["攻撃は完全に不可能", "速さが遅い"],
       "ability_pool": {
         "rare": [
-          {"id": "ex_com_noel", "name": "聖なる祈り", "effect": "毎ターン味方を5%回復"},
-          {"id": "sp_angel", "name": "聖なるオーラ", "effect": "回復技の効果が強化される"}
+          {"id": "ex_com_noel", "name": "聖なる祈り", "effect": "毎ターン終了時、控えをHP15回復"},
+          {"id": "sp_angel", "name": "聖なるオーラ", "effect": "回復技の効果+8"}
         ],
         "common": [
           {"id": "com_011", "name": "浄化の息吹", "effect": "毎ターン終了時、状態異常を1つ回復"},
@@ -316,7 +385,7 @@
           {"id": "cmn_sup_006", "name": "浄化", "learn_level": 16},
           {"id": "wind_005", "name": "翼の休息", "learn_level": 20},
           {"id": "light_006", "name": "光の障壁", "learn_level": 24},
-          {"id": "cmn_sup_008", "name": "活力の息吹", "learn_level": 28},
+          {"id": "cmn_sup_008", "name": "生命賦活", "learn_level": 28},
           {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 32},
           {"id": "noel_005", "name": "聖なる裁き", "learn_level": 36, "cost": 3, "power": "C", "effect": "回復量で威力上昇"},
           {"id": "light_008", "name": "魅惑の光", "learn_level": 44},
@@ -338,31 +407,32 @@
       "lore": "国を捨て旅をする剣士。逆境に立つときこそ真価を発揮し、剣は流星のごとく煌く。",
       "category": "common",
       "species": "human",
-      "element": "none",
-      "role": "火力型（逆境・クリティカル特化）",
-      "design_concept": "【逆境速攻特化】攻撃80/速さ92で耐久を捨てた。HP減少で真価発揮",
+      "element": "wind",
+      "role": "火力型（トドメ・クリティカル特化）",
+      "design_concept": "【トドメ速攻型】攻撃70/速さ82でバランス型。連続使用+トドメで真価発揮",
       "base_stats": {
-        "attack": 80,
-        "defense": 25,
+        "attack": 70,
+        "defense": 40,
         "magic": 15,
-        "magic_defense": 30,
-        "speed": 92
+        "magic_defense": 45,
+        "speed": 82
       },
-      "total": 242,
+      "total": 252,
+      "balance_note": "v20.0: DEF30→40, MDEF35→45, total232→252 (B-→B Tier救済)",
       "iv_patterns": [
-        {"name": "速さ特化", "attack": 0, "defense": 0, "magic": -12, "magic_defense": 0, "speed": 12, "recommended": "最速逆境型（推奨）"},
+        {"name": "速さ特化", "attack": 0, "defense": 0, "magic": -12, "magic_defense": 0, "speed": 12, "recommended": "最速型（推奨）"},
         {"name": "攻撃特化", "attack": 12, "defense": 0, "magic": -12, "magic_defense": 0, "speed": 0, "recommended": "火力最大化"},
         {"name": "魔防特化", "attack": 0, "defense": 0, "magic": -12, "magic_defense": 12, "speed": 0, "recommended": "魔法耐久型"}
       ],
-      "strengths": ["逆境時の火力が最強クラス", "速さも高い", "連続使用で更に強化"],
-      "weaknesses": ["耐久が低い", "HP管理が難しい", "一発で倒される"],
+      "strengths": ["トドメ技で確殺", "速さも高い", "連続使用で更に強化"],
+      "weaknesses": ["耐久が低い", "先に削る必要あり", "一発で倒される"],
       "ability_pool": {
         "rare": [
           {"id": "ex_com_kaito", "name": "剣技の冴え", "effect": "同じ技を連続で使うと攻撃強化（最大3回）"},
           {"id": "sp_human", "name": "適応力", "effect": "同じ技を2回受けると、その技のダメージ半減"}
         ],
         "common": [
-          {"id": "com_015", "name": "必殺の型", "effect": "急所に当たりやすい"},
+          {"id": "com_015", "name": "必殺の型", "effect": "急所率+2段階"},
           {"id": "com_017", "name": "背水の陣", "effect": "HP半分以下で攻撃大幅強化"}
         ]
       },
@@ -370,18 +440,18 @@
         "initial_skills": [
           {"id": "cmn_phy_002", "name": "裂爪", "learn_level": 1},
           {"id": "cmn_phy_003", "name": "疾風撃", "learn_level": 1},
-          {"id": "cmn_sup_003", "name": "集中", "learn_level": 1}
+          {"id": "cmn_sup_001", "name": "威圧", "learn_level": 1}
         ],
         "learnable_skills": [
-          {"id": "kaito_004", "name": "抜刀術", "learn_level": 4, "cost": 3, "power": "C", "effect": "先制+急所率↑"},
+          {"id": "kaito_004", "name": "抜刀術", "learn_level": 4, "cost": 3, "power": "C", "effect": "先制"},
           {"id": "wind_002", "name": "疾空斬", "learn_level": 8},
-          {"id": "kaito_001", "name": "逆境の刃", "learn_level": 12, "cost": 3, "power": "C", "effect": "HP30%以下で威力2倍"},
+          {"id": "kaito_001", "name": "秘剣・断空", "learn_level": 12, "cost": 3, "power": "C", "effect": "相手HP45以下で威力2倍"},
           {"id": "cmn_phy_004", "name": "剛腕撃", "learn_level": 16},
-          {"id": "wind_006", "name": "風纏い", "learn_level": 20},
-          {"id": "kaito_002", "name": "捨て身", "learn_level": 24, "cost": 4, "power": "B", "effect": "HP30%消費"},
+          {"id": "thunder_006", "name": "帯電", "learn_level": 20},
+          {"id": "kaito_002", "name": "捨て身", "learn_level": 24, "cost": 4, "power": "B", "effect": "自分HP40消費"},
           {"id": "wind_007", "name": "旋風拳", "learn_level": 28},
           {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 32},
-          {"id": "cmn_phy_005", "name": "猛襲", "learn_level": 36},
+          {"id": "none_004", "name": "神速斬", "learn_level": 36},
           {"id": "wind_003", "name": "烈風", "learn_level": 44},
           {"id": "cmn_phy_006", "name": "連撃", "learn_level": 48}
         ],
@@ -402,15 +472,16 @@
       "species": "mutant",
       "element": "earth",
       "role": "トリッキー型（擬態・毒特化）",
-      "design_concept": "【両耐久特化】防御75/魔防68で攻撃・速さを捨てた。毒シナジーで火力。ミュータントなので多属性",
+      "design_concept": "【毒シナジー特化】防御75/魔防68で耐久、MAG60/SPD37で火力と行動確保。ステータス制限解除（v15.0救済）",
       "base_stats": {
         "attack": 28,
         "defense": 75,
-        "magic": 45,
+        "magic": 60,
         "magic_defense": 68,
-        "speed": 24
+        "speed": 37
       },
-      "total": 240,
+      "total": 268,
+      "balance_note": "v15.0: MAG45→60, SPD24→37, total240→268 (B- Tier完全救済、ステータス制限解除)",
       "iv_patterns": [
         {"name": "防御特化", "attack": 0, "defense": 12, "magic": 0, "magic_defense": 0, "speed": -12, "recommended": "物理耐久最大化（推奨）"},
         {"name": "魔防特化", "attack": 0, "defense": 0, "magic": 0, "magic_defense": 12, "speed": -12, "recommended": "魔法耐久型"},
@@ -421,48 +492,52 @@
       "weaknesses": ["速さが遅い", "火力は毒相手以外控えめ"],
       "ability_pool": {
         "rare": [
-          {"id": "ex_com_mof", "name": "毒の親和", "effect": "毒状態の相手への攻撃大幅強化"},
-          {"id": "sp_mutant", "name": "変幻の魂", "effect": "被ダメージ時、ランダムで1ステータス↑1"}
+          {"id": "ex_com_mof", "name": "毒の親和", "effect": "毒状態の相手へ攻撃大幅強化（×1.5）、毒技命中時追加10固定ダメージ"},
+          {"id": "sp_mutant", "name": "変幻の魂", "effect": "被ダメージ時、最も低いステータス↑1"}
         ],
         "common": [
-          {"id": "com_020", "name": "再生細胞", "effect": "毎ターン終了時、HPを少し回復"},
+          {"id": "com_020", "name": "再生細胞", "effect": "毎ターン終了時、HP8回復"},
           {"id": "com_019", "name": "守りの構え", "effect": "HP半分以上で被ダメージ軽減"}
         ]
       },
       "skill_pool": {
         "initial_skills": [
           {"id": "earth_001", "name": "砂礫弾", "learn_level": 1},
-          {"id": "cmn_sup_008", "name": "活力の息吹", "learn_level": 1},
+          {"id": "cmn_sup_008", "name": "生命賦活", "learn_level": 1},
           {"id": "cmn_sup_001", "name": "威圧", "learn_level": 1}
         ],
         "learnable_skills": [
           {"id": "mof_001", "name": "胞子撒き", "learn_level": 4, "cost": 2, "power": "D", "effect": "毒確定付与"},
-          {"id": "earth_006", "name": "堅守", "learn_level": 8},
-          {"id": "mof_002", "name": "擬態", "learn_level": 12, "cost": 2, "effect": "回避↑↑"},
+          {"id": "water_006", "name": "水鏡", "learn_level": 8},
+          {"id": "mof_002", "name": "擬態", "learn_level": 12, "cost": 2, "effect": "次に受けるダメージを大幅に軽減（1回）"},
           {"id": "water_008", "name": "アクアボール", "learn_level": 16},
-          {"id": "mof_003", "name": "養分吸収", "learn_level": 20, "cost": 3, "power": "C", "effect": "与ダメ30%回復"},
+          {"id": "mof_003", "name": "養分吸収", "learn_level": 20, "cost": 3, "power": "C", "effect": "与ダメ25%回復"},
           {"id": "fire_004", "name": "業炎", "learn_level": 24},
           {"id": "cmn_sup_006", "name": "浄化", "learn_level": 28},
           {"id": "thunder_008", "name": "天雷", "learn_level": 32},
           {"id": "dark_005", "name": "呪詛", "learn_level": 36},
+          {"id": "light_005", "name": "癒月", "learn_level": 42},
           {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 44},
           {"id": "earth_007", "name": "剛岩拳", "learn_level": 48},
-          {"id": "dark_008", "name": "ナイトメア", "learn_level": 52}
+          {"id": "dark_008", "name": "ナイトメア", "learn_level": 50}
         ],
         "ultimate": {"id": "ult_mof", "name": "胞子爆発", "learn_level": 40, "cost": 5, "power_rank": "C", "element": "earth", "type": "control", "effect": "毒確定、相手速さ↓↓"}
       },
       "skill_summary": {
-        "total_skills": 16,
+        "total_skills": 17,
         "main_element": "earth",
-        "sub_elements": ["water", "fire", "thunder", "dark"],
+        "sub_elements": ["water", "fire", "thunder", "dark", "light"],
         "skill_types": {"attack": 10, "support": 5, "buff": 1, "ultimate": 1}
       }
     }
   ],
   "category_summary": {
     "total_monsters": 7,
-    "stat_totals": [238, 240, 242, 245, 240, 242, 240],
-    "average_total": 241.0,
+    "stat_totals": [242, 240, 240, 245, 240, 242, 268],
+    "average_total": 245.3,
+    "exception_monsters": {
+      "モフ": "total 268（B- Tier救済のためステータス制限解除）"
+    },
     "skill_count": {
       "イム": 15,
       "カグラ": 15,
@@ -470,7 +545,7 @@
       "クロム": 15,
       "ノエル": 16,
       "カイト": 15,
-      "モフ": 16
+      "モフ": 17
     },
     "design_philosophy": "一般種でも15技（ミュータントは17技）、4レベル刻み習得、2-3サブ属性"
   }

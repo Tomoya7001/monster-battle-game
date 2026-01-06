@@ -1,0 +1,354 @@
+{
+  "version": "1.0.0",
+  "created_at": "2026-01-06",
+  "updated_at": "2026-01-06",
+  "description": "エネミーマスターデータ Phase1版",
+  "design_notes": {
+    "normal_enemies": "既存39体のプレイヤーモンスターを流用",
+    "rare_enemies": "新規2体のみ作成、3ターン逃走仕様、特別強くはない",
+    "bosses": "既存39体から選出、3体勝ち抜き型、ステータス×1.3"
+  },
+  "rare_enemies": [
+    {
+      "enemy_id": "rare_enemy_gold_slime",
+      "name": "ゴールドスライム",
+      "name_en": "Gold Slime",
+      "species": "mutant",
+      "element": "none",
+      "description": "金色に輝く珍しいスライム。逃げ足が速く、倒せば大量のゴールドが手に入る。",
+      "behavior": "flee",
+      "escape_turn": 3,
+      "reward_type": "gold",
+      "reward_multiplier": 5.0,
+      "rare_drop": {
+        "type": "element_material",
+        "quantity": 3,
+        "note": "そのエリアの属性素材"
+      },
+      "stats_tendency": "HP低め、速さ高め",
+      "stats_by_area": {
+        "1": { "level": 5, "hp": 50, "atk": 10, "def": 20, "mag": 10, "mdef": 20, "spd": 50, "gold": 50 },
+        "2": { "level": 10, "hp": 60, "atk": 15, "def": 25, "mag": 15, "mdef": 25, "spd": 55, "gold": 100 },
+        "3": { "level": 15, "hp": 70, "atk": 20, "def": 30, "mag": 20, "mdef": 30, "spd": 60, "gold": 175 },
+        "4": { "level": 20, "hp": 80, "atk": 25, "def": 35, "mag": 25, "mdef": 35, "spd": 65, "gold": 250 },
+        "5": { "level": 25, "hp": 90, "atk": 30, "def": 40, "mag": 30, "mdef": 40, "spd": 70, "gold": 350 },
+        "6": { "level": 30, "hp": 100, "atk": 35, "def": 45, "mag": 35, "mdef": 45, "spd": 75, "gold": 450 },
+        "7": { "level": 35, "hp": 110, "atk": 40, "def": 50, "mag": 40, "mdef": 50, "spd": 80, "gold": 600 },
+        "8": { "level": 40, "hp": 120, "atk": 45, "def": 55, "mag": 45, "mdef": 55, "spd": 85, "gold": 750 },
+        "9": { "level": 45, "hp": 130, "atk": 50, "def": 60, "mag": 50, "mdef": 60, "spd": 90, "gold": 1000 },
+        "10": { "level": 50, "hp": 140, "atk": 55, "def": 65, "mag": 55, "mdef": 65, "spd": 95, "gold": 1500 }
+      },
+      "skills": [
+        { "skill_id": "escape_prep", "name": "逃走準備", "effect": "何もしない（逃走の構え）" }
+      ],
+      "is_active": true
+    },
+    {
+      "enemy_id": "rare_enemy_metal_golem",
+      "name": "メタルゴーレム",
+      "name_en": "Metal Golem",
+      "species": "mechanoid",
+      "element": "earth",
+      "description": "金属で覆われた古代のゴーレム。経験値が美味しい。",
+      "behavior": "light_attack",
+      "escape_turn": 3,
+      "reward_type": "exp",
+      "reward_multiplier": 3.0,
+      "rare_drop": {
+        "type": "species_material",
+        "quantity": 1,
+        "note": "種族素材ランダム"
+      },
+      "stats_tendency": "防御やや高め、速さ低め",
+      "stats_by_area": {
+        "1": { "level": 5, "hp": 80, "atk": 20, "def": 40, "mag": 10, "mdef": 35, "spd": 20, "exp": 45 },
+        "2": { "level": 10, "hp": 100, "atk": 25, "def": 50, "mag": 15, "mdef": 45, "spd": 22, "exp": 75 },
+        "3": { "level": 15, "hp": 120, "atk": 30, "def": 60, "mag": 20, "mdef": 55, "spd": 24, "exp": 120 },
+        "4": { "level": 20, "hp": 140, "atk": 35, "def": 70, "mag": 25, "mdef": 65, "spd": 26, "exp": 180 },
+        "5": { "level": 25, "hp": 160, "atk": 40, "def": 80, "mag": 30, "mdef": 75, "spd": 28, "exp": 240 },
+        "6": { "level": 30, "hp": 180, "atk": 45, "def": 90, "mag": 35, "mdef": 85, "spd": 30, "exp": 300 },
+        "7": { "level": 35, "hp": 200, "atk": 50, "def": 100, "mag": 40, "mdef": 95, "spd": 32, "exp": 390 },
+        "8": { "level": 40, "hp": 220, "atk": 55, "def": 110, "mag": 45, "mdef": 105, "spd": 34, "exp": 480 },
+        "9": { "level": 45, "hp": 240, "atk": 60, "def": 120, "mag": 50, "mdef": 115, "spd": 36, "exp": 600 },
+        "10": { "level": 50, "hp": 260, "atk": 65, "def": 130, "mag": 55, "mdef": 125, "spd": 38, "exp": 750 }
+      },
+      "skills": [
+        { "skill_id": "light_punch", "name": "軽い一撃", "effect": "弱い物理攻撃" }
+      ],
+      "is_active": true
+    }
+  ],
+  "area_enemies": {
+    "1": {
+      "area_name": "始まりの草原",
+      "level_range": { "min": 1, "max": 5 },
+      "normal_enemies": [
+        { "base_monster_id": "mon_018", "name": "小悪魔イム", "weight": 25 },
+        { "base_monster_id": "mon_022", "name": "祈り子ノエル", "weight": 25 },
+        { "base_monster_id": "mon_023", "name": "流浪の剣士カイト", "weight": 20 },
+        { "base_monster_id": "mon_024", "name": "擬態キノコ・モフ", "weight": 15 },
+        { "base_monster_id": "mon_032", "name": "量産型ビットマン", "weight": 15 }
+      ],
+      "rare_enemy_rate": 0.05,
+      "rare_enemies": ["rare_enemy_gold_slime", "rare_enemy_metal_golem"]
+    },
+    "2": {
+      "area_name": "深緑の森",
+      "level_range": { "min": 5, "max": 10 },
+      "normal_enemies": [
+        { "base_monster_id": "mon_025", "name": "夜叉天狗カラス", "weight": 25 },
+        { "base_monster_id": "mon_029", "name": "風唄シルフィ", "weight": 25 },
+        { "base_monster_id": "mon_027", "name": "翡翠竜ジェイド", "weight": 20 },
+        { "base_monster_id": "mon_023", "name": "流浪の剣士カイト", "weight": 20 },
+        { "base_monster_id": "mon_015", "name": "歌姫ルリア", "weight": 10 }
+      ],
+      "rare_enemy_rate": 0.05,
+      "rare_enemies": ["rare_enemy_gold_slime", "rare_enemy_metal_golem"]
+    },
+    "3": {
+      "area_name": "炎熱の洞窟",
+      "level_range": { "min": 10, "max": 15 },
+      "normal_enemies": [
+        { "base_monster_id": "mon_019", "name": "灯火カグラ", "weight": 25 },
+        { "base_monster_id": "mon_031", "name": "煉獄アスモ", "weight": 25 },
+        { "base_monster_id": "mon_030", "name": "拳闘士ガルム", "weight": 25 },
+        { "base_monster_id": "mon_013", "name": "太陽民ホノオ", "weight": 20 },
+        { "base_monster_id": "mon_004", "name": "竜帝テュール", "weight": 5 }
+      ],
+      "rare_enemy_rate": 0.05,
+      "rare_enemies": ["rare_enemy_gold_slime", "rare_enemy_metal_golem"]
+    },
+    "4": {
+      "area_name": "水晶の湖畔",
+      "level_range": { "min": 15, "max": 20 },
+      "normal_enemies": [
+        { "base_monster_id": "mon_028", "name": "雪女シロネ", "weight": 25 },
+        { "base_monster_id": "mon_039", "name": "深海魚シーラ", "weight": 25 },
+        { "base_monster_id": "mon_038", "name": "深淵ゼラ", "weight": 20 },
+        { "base_monster_id": "mon_012", "name": "竜姫エヴァ", "weight": 15 },
+        { "base_monster_id": "mon_010", "name": "海賊王ジャック", "weight": 15 }
+      ],
+      "rare_enemy_rate": 0.05,
+      "rare_enemies": ["rare_enemy_gold_slime", "rare_enemy_metal_golem"]
+    },
+    "5": {
+      "area_name": "雷鳴の峡谷",
+      "level_range": { "min": 20, "max": 25 },
+      "normal_enemies": [
+        { "base_monster_id": "mon_026", "name": "雷竜ファフナ", "weight": 25 },
+        { "base_monster_id": "mon_032", "name": "量産型ビットマン", "weight": 25 },
+        { "base_monster_id": "mon_011", "name": "雷霆ラム", "weight": 20 },
+        { "base_monster_id": "mon_008", "name": "白機竜リント", "weight": 20 },
+        { "base_monster_id": "mon_003", "name": "裏の支配者グラム", "weight": 10 }
+      ],
+      "rare_enemy_rate": 0.05,
+      "rare_enemies": ["rare_enemy_gold_slime", "rare_enemy_metal_golem"]
+    },
+    "6": {
+      "area_name": "大地の迷宮",
+      "level_range": { "min": 25, "max": 30 },
+      "normal_enemies": [
+        { "base_monster_id": "mon_021", "name": "鉄竜クロム", "weight": 25 },
+        { "base_monster_id": "mon_020", "name": "狙撃機スコーピオン", "weight": 25 },
+        { "base_monster_id": "mon_034", "name": "結晶体クリス", "weight": 20 },
+        { "base_monster_id": "mon_037", "name": "要塞タロス", "weight": 15 },
+        { "base_monster_id": "mon_024", "name": "擬態キノコ・モフ", "weight": 15 }
+      ],
+      "rare_enemy_rate": 0.05,
+      "rare_enemies": ["rare_enemy_gold_slime", "rare_enemy_metal_golem"]
+    },
+    "7": {
+      "area_name": "天空の神殿",
+      "level_range": { "min": 30, "max": 35 },
+      "normal_enemies": [
+        { "base_monster_id": "mon_022", "name": "祈り子ノエル", "weight": 25 },
+        { "base_monster_id": "mon_036", "name": "癒光セラ", "weight": 25 },
+        { "base_monster_id": "mon_017", "name": "聖騎士レオン", "weight": 20 },
+        { "base_monster_id": "mon_009", "name": "白竜ヴルム", "weight": 20 },
+        { "base_monster_id": "mon_001", "name": "三大天ミカ", "weight": 10 }
+      ],
+      "rare_enemy_rate": 0.05,
+      "rare_enemies": ["rare_enemy_gold_slime", "rare_enemy_metal_golem"]
+    },
+    "8": {
+      "area_name": "冥府の深淵",
+      "level_range": { "min": 35, "max": 40 },
+      "normal_enemies": [
+        { "base_monster_id": "mon_018", "name": "小悪魔イム", "weight": 25 },
+        { "base_monster_id": "mon_033", "name": "貪欲マモン", "weight": 25 },
+        { "base_monster_id": "mon_014", "name": "夢魔リリス", "weight": 20 },
+        { "base_monster_id": "mon_016", "name": "呪符キョウカ", "weight": 20 },
+        { "base_monster_id": "mon_002", "name": "暴食ヴェル", "weight": 10 }
+      ],
+      "rare_enemy_rate": 0.05,
+      "rare_enemies": ["rare_enemy_gold_slime", "rare_enemy_metal_golem"]
+    },
+    "9": {
+      "area_name": "機械の廃都",
+      "level_range": { "min": 40, "max": 45 },
+      "normal_enemies": [
+        { "base_monster_id": "mon_032", "name": "量産型ビットマン", "weight": 25 },
+        { "base_monster_id": "mon_037", "name": "要塞タロス", "weight": 25 },
+        { "base_monster_id": "mon_020", "name": "狙撃機スコーピオン", "weight": 20 },
+        { "base_monster_id": "mon_008", "name": "白機竜リント", "weight": 20 },
+        { "base_monster_id": "mon_003", "name": "裏の支配者グラム", "weight": 10 }
+      ],
+      "rare_enemy_rate": 0.05,
+      "rare_enemies": ["rare_enemy_gold_slime", "rare_enemy_metal_golem"]
+    },
+    "10": {
+      "area_name": "混沌の終焉",
+      "level_range": { "min": 45, "max": 50 },
+      "normal_enemies": [
+        { "base_monster_id": "mon_005", "name": "剣聖アーサー", "weight": 20 },
+        { "base_monster_id": "mon_007", "name": "国喰いスライム", "weight": 20 },
+        { "base_monster_id": "mon_035", "name": "魔導師メルラン", "weight": 25 },
+        { "base_monster_id": "mon_006", "name": "九尾タマモ", "weight": 20 },
+        { "base_monster_id": "mon_004", "name": "竜帝テュール", "weight": 15 }
+      ],
+      "rare_enemy_rate": 0.05,
+      "rare_enemies": ["rare_enemy_gold_slime", "rare_enemy_metal_golem"]
+    }
+  },
+  "area_bosses": {
+    "1": {
+      "area_name": "始まりの草原",
+      "boss_name": "草原の主",
+      "boss_type": "gauntlet",
+      "stat_multiplier": 1.3,
+      "bosses": [
+        { "order": 1, "base_monster_id": "mon_018", "name": "小悪魔イム", "level": 5, "role": "速攻型" },
+        { "order": 2, "base_monster_id": "mon_023", "name": "流浪の剣士カイト", "level": 6, "role": "バランス" },
+        { "order": 3, "base_monster_id": "mon_024", "name": "擬態キノコ・モフ", "level": 7, "role": "耐久型" }
+      ]
+    },
+    "2": {
+      "area_name": "深緑の森",
+      "boss_name": "森の守護者",
+      "boss_type": "gauntlet",
+      "stat_multiplier": 1.3,
+      "bosses": [
+        { "order": 1, "base_monster_id": "mon_025", "name": "夜叉天狗カラス", "level": 10, "role": "速攻型" },
+        { "order": 2, "base_monster_id": "mon_029", "name": "風唄シルフィ", "level": 11, "role": "サポート" },
+        { "order": 3, "base_monster_id": "mon_027", "name": "翡翠竜ジェイド", "level": 12, "role": "バランス" }
+      ]
+    },
+    "3": {
+      "area_name": "炎熱の洞窟",
+      "boss_name": "炎竜の巣",
+      "boss_type": "gauntlet",
+      "stat_multiplier": 1.3,
+      "bosses": [
+        { "order": 1, "base_monster_id": "mon_019", "name": "灯火カグラ", "level": 15, "role": "魔法型" },
+        { "order": 2, "base_monster_id": "mon_031", "name": "煉獄アスモ", "level": 16, "role": "火傷特化" },
+        { "order": 3, "base_monster_id": "mon_030", "name": "拳闘士ガルム", "level": 17, "role": "物理型" }
+      ]
+    },
+    "4": {
+      "area_name": "水晶の湖畔",
+      "boss_name": "湖底の主",
+      "boss_type": "gauntlet",
+      "stat_multiplier": 1.3,
+      "bosses": [
+        { "order": 1, "base_monster_id": "mon_028", "name": "雪女シロネ", "level": 20, "role": "デバフ型" },
+        { "order": 2, "base_monster_id": "mon_039", "name": "深海魚シーラ", "level": 21, "role": "拘束型" },
+        { "order": 3, "base_monster_id": "mon_012", "name": "竜姫エヴァ", "level": 22, "role": "回復型" }
+      ]
+    },
+    "5": {
+      "area_name": "雷鳴の峡谷",
+      "boss_name": "雷神の試練",
+      "boss_type": "gauntlet",
+      "stat_multiplier": 1.3,
+      "bosses": [
+        { "order": 1, "base_monster_id": "mon_026", "name": "雷竜ファフナ", "level": 25, "role": "物理型" },
+        { "order": 2, "base_monster_id": "mon_032", "name": "量産型ビットマン", "level": 26, "role": "バランス" },
+        { "order": 3, "base_monster_id": "mon_011", "name": "雷霆ラム", "level": 27, "role": "麻痺特化" }
+      ]
+    },
+    "6": {
+      "area_name": "大地の迷宮",
+      "boss_name": "迷宮の番人",
+      "boss_type": "gauntlet",
+      "stat_multiplier": 1.3,
+      "bosses": [
+        { "order": 1, "base_monster_id": "mon_020", "name": "狙撃機スコーピオン", "level": 30, "role": "速攻型" },
+        { "order": 2, "base_monster_id": "mon_034", "name": "結晶体クリス", "level": 31, "role": "耐久型" },
+        { "order": 3, "base_monster_id": "mon_021", "name": "鉄竜クロム", "level": 32, "role": "超耐久" }
+      ]
+    },
+    "7": {
+      "area_name": "天空の神殿",
+      "boss_name": "天空の守護者",
+      "boss_type": "gauntlet",
+      "stat_multiplier": 1.3,
+      "bosses": [
+        { "order": 1, "base_monster_id": "mon_022", "name": "祈り子ノエル", "level": 35, "role": "回復型" },
+        { "order": 2, "base_monster_id": "mon_036", "name": "癒光セラ", "level": 36, "role": "反撃型" },
+        { "order": 3, "base_monster_id": "mon_017", "name": "聖騎士レオン", "level": 37, "role": "タンク" }
+      ]
+    },
+    "8": {
+      "area_name": "冥府の深淵",
+      "boss_name": "冥府の王",
+      "boss_type": "gauntlet",
+      "stat_multiplier": 1.3,
+      "bosses": [
+        { "order": 1, "base_monster_id": "mon_018", "name": "小悪魔イム", "level": 40, "role": "速攻型" },
+        { "order": 2, "base_monster_id": "mon_016", "name": "呪符キョウカ", "level": 41, "role": "状態異常" },
+        { "order": 3, "base_monster_id": "mon_014", "name": "夢魔リリス", "level": 42, "role": "魅了特化" }
+      ]
+    },
+    "9": {
+      "area_name": "機械の廃都",
+      "boss_name": "機械神",
+      "boss_type": "gauntlet",
+      "stat_multiplier": 1.3,
+      "bosses": [
+        { "order": 1, "base_monster_id": "mon_032", "name": "量産型ビットマン", "level": 45, "role": "バランス" },
+        { "order": 2, "base_monster_id": "mon_037", "name": "要塞タロス", "level": 46, "role": "超耐久" },
+        { "order": 3, "base_monster_id": "mon_008", "name": "白機竜リント", "level": 47, "role": "速攻型" }
+      ]
+    },
+    "10": {
+      "area_name": "混沌の終焉",
+      "boss_name": "混沌の化身",
+      "boss_type": "gauntlet",
+      "stat_multiplier": 1.3,
+      "bosses": [
+        { "order": 1, "base_monster_id": "mon_002", "name": "暴食ヴェル", "level": 50, "role": "吸収型" },
+        { "order": 2, "base_monster_id": "mon_006", "name": "九尾タマモ", "level": 50, "role": "状態異常" },
+        { "order": 3, "base_monster_id": "mon_005", "name": "剣聖アーサー", "level": 50, "role": "最強物理" }
+      ]
+    }
+  },
+  "stat_calculation": {
+    "normal_enemy": {
+      "description": "基礎値 × レベル補正",
+      "level_modifiers": {
+        "1-10": 1.0,
+        "11-20": 1.1,
+        "21-30": 1.2,
+        "31-40": 1.3,
+        "41-50": 1.4
+      }
+    },
+    "boss": {
+      "description": "基礎値 × レベル補正 × ボス補正",
+      "boss_multiplier": 1.3
+    },
+    "hp_formula": "52 + (level - 1) × 2 × stat_modifier"
+  },
+  "escape_system": {
+    "rare_enemy_escape_turn": 3,
+    "description": "レアエネミーは3ターン目終了時に確定逃走。逃走時は報酬なし。"
+  },
+  "summary": {
+    "total_new_enemies": 2,
+    "rare_enemies": ["ゴールドスライム", "メタルゴーレム"],
+    "total_areas": 10,
+    "enemies_per_area": 5,
+    "bosses_per_area": 3,
+    "boss_type": "gauntlet"
+  }
+}

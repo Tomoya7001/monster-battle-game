@@ -1,0 +1,58 @@
+{
+  "version": "1.0.0",
+  "created_at": "2026-01-07",
+  "updated_at": "2026-01-07",
+  "description": "激昂システム設定（battle_system_v12.4.0準拠）",
+  "source_document": "docs/battle_system_v8.7.md",
+  "purpose": "長期戦を防止し、決着を促すシステム",
+  "levels": [
+    {
+      "level": 0,
+      "name": "通常",
+      "trigger_turn": 0,
+      "damage_dealt_modifier": 1.0,
+      "damage_received_modifier": 1.0,
+      "description": "通常状態"
+    },
+    {
+      "level": 1,
+      "name": "激昂Lv1",
+      "trigger_turn": 8,
+      "damage_dealt_modifier": 1.10,
+      "damage_received_modifier": 1.10,
+      "description": "与ダメ+10%、被ダメ+10%"
+    },
+    {
+      "level": 2,
+      "name": "激昂Lv2",
+      "trigger_turn": 12,
+      "damage_dealt_modifier": 1.25,
+      "damage_received_modifier": 1.25,
+      "description": "与ダメ+25%、被ダメ+25%"
+    },
+    {
+      "level": 3,
+      "name": "激昂Lv3",
+      "trigger_turn": 16,
+      "damage_dealt_modifier": 1.50,
+      "damage_received_modifier": 1.50,
+      "description": "与ダメ+50%、被ダメ+50%"
+    }
+  ],
+  "activation_timing": "ターン終了処理",
+  "affects_both_players": true,
+  "excluded_damage_types": [
+    {
+      "type": "status_ailment_slip",
+      "reason": "最大HP基準の固定%"
+    },
+    {
+      "type": "healing",
+      "reason": "与ダメ/被ダメではない"
+    },
+    {
+      "type": "fixed_damage",
+      "reason": "固定値は変動しない"
+    }
+  ]
+}

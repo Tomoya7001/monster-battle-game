@@ -1,0 +1,162 @@
+{
+  "version": "1.0.0",
+  "created_at": "2026-01-07",
+  "updated_at": "2026-01-07",
+  "description": "種族パッシブ・種族アビリティ設定（game_system_v12.5.0準拠）",
+  "source_document": "docs/game_system_v9.7.md",
+  "design_rules": {
+    "passive_effect_count": 1,
+    "passive_always_active": true,
+    "passive_cannot_be_disabled": true,
+    "passive_disabled_by_ability_seal": false,
+    "note": "グラムの「アビリティ封じ」でも種族パッシブは無効化されない"
+  },
+  "species": [
+    {
+      "id": "human",
+      "name": "ヒューマン",
+      "name_en": "Human",
+      "passive": {
+        "id": "sp_human_passive",
+        "name": "装備の達人",
+        "effect": "装備枠+1",
+        "description": "装備を1つ多く付けられる",
+        "equipment_slot_bonus": 1
+      },
+      "species_ability": {
+        "id": "sp_human",
+        "name": "適応力",
+        "effect": "同じ技を2回受けると×0.5",
+        "damage_reduction_on_repeat": 0.5
+      }
+    },
+    {
+      "id": "angel",
+      "name": "エンジェル",
+      "name_en": "Angel",
+      "passive": {
+        "id": "sp_angel_passive",
+        "name": "天の恵み",
+        "effect": "毎ターンHP5%回復",
+        "description": "毎ターン終了時、HPが少し回復する",
+        "hp_recovery_percent": 0.05,
+        "hp_recovery_at_150": 8,
+        "trigger": "turn_end"
+      },
+      "species_ability": {
+        "id": "sp_angel",
+        "name": "聖なるオーラ",
+        "effect": "回復技×1.3",
+        "heal_skill_multiplier": 1.3
+      }
+    },
+    {
+      "id": "demon",
+      "name": "デーモン",
+      "name_en": "Demon",
+      "passive": {
+        "id": "sp_demon_passive",
+        "name": "略奪本能",
+        "effect": "攻撃命中時バフ1つ奪う",
+        "description": "攻撃を当てると相手の強化を1つ奪う",
+        "steal_buff_on_hit": true,
+        "steal_count": 1
+      },
+      "species_ability": {
+        "id": "sp_demon",
+        "name": "魂喰らい",
+        "effect": "相手を倒した時、全ステ↑1",
+        "trigger": "on_defeat_opponent",
+        "all_stats_up": 1
+      }
+    },
+    {
+      "id": "dragon",
+      "name": "ドラゴン",
+      "name_en": "Dragon",
+      "passive": {
+        "id": "sp_dragon_passive",
+        "name": "竜の威厳",
+        "effect": "状態異常は1種類まで",
+        "description": "同時に2つ以上の状態異常にならない",
+        "max_status_ailments": 1,
+        "overlap_behavior": "overwrite",
+        "note": "新しい状態異常を受けると古い状態異常が上書きされる"
+      },
+      "species_ability": {
+        "id": "sp_dragon",
+        "name": "竜鱗",
+        "effect": "攻撃技×1.3",
+        "attack_skill_multiplier": 1.3
+      }
+    },
+    {
+      "id": "mechanoid",
+      "name": "メカノイド",
+      "name_en": "Mechanoid",
+      "passive": {
+        "id": "sp_mechanoid_passive",
+        "name": "機械の体",
+        "effect": "状態異常-1ターン",
+        "description": "状態異常の持続が1ターン短くなる",
+        "status_ailment_duration_modifier": -1
+      },
+      "species_ability": {
+        "id": "sp_mechanoid",
+        "name": "電磁シールド",
+        "effect": "雷属性×0.5",
+        "thunder_damage_multiplier": 0.5
+      }
+    },
+    {
+      "id": "spirit",
+      "name": "スピリット",
+      "name_en": "Spirit",
+      "passive": {
+        "id": "sp_spirit_passive",
+        "name": "霊気",
+        "effect": "状態異常+1ターン",
+        "description": "与える状態異常が1ターン長く続く",
+        "inflicted_status_duration_modifier": 1
+      },
+      "species_ability": {
+        "id": "sp_spirit",
+        "name": "霊体",
+        "effect": "攻撃技（物理）×0.8",
+        "physical_damage_multiplier": 0.8
+      }
+    },
+    {
+      "id": "mutant",
+      "name": "ミュータント",
+      "name_en": "Mutant",
+      "passive": {
+        "id": "sp_mutant_passive",
+        "name": "変異体",
+        "effect": "技スロット+1",
+        "description": "技を1つ多くセットできる",
+        "skill_slot_bonus": 1,
+        "base_skill_slots": 4,
+        "total_skill_slots": 5
+      },
+      "species_ability": {
+        "id": "sp_mutant",
+        "name": "変幻の魂",
+        "effect": "被ダメ時ランダムステ↑1",
+        "trigger": "on_damage_received",
+        "random_stat_up": 1,
+        "note": "v10.5変更: ランダム→最も低いステータス↑1"
+      }
+    }
+  ],
+  "slot_defaults": {
+    "equipment_slots": {
+      "human": 2,
+      "other": 1
+    },
+    "skill_slots": {
+      "mutant": 5,
+      "other": 4
+    }
+  }
+}

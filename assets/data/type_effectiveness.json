@@ -1,0 +1,160 @@
+{
+  "version": "1.0.0",
+  "created_at": "2026-01-07",
+  "updated_at": "2026-01-07",
+  "description": "属性相性マスターデータ（battle_system_v12.4.0準拠）",
+  "source_document": "docs/battle_system_v8.7.md",
+  "multipliers": {
+    "super_effective": 2.0,
+    "normal": 1.0,
+    "not_very_effective": 0.5
+  },
+  "type_match_bonus": {
+    "same_type": 1.5,
+    "different_type": 1.0,
+    "none_type_skill_base_bonus": 1.15,
+    "description": "モンスターの属性と技の属性が一致 → ダメージ×1.5、無属性技は基礎威力×1.15"
+  },
+  "elements": [
+    {
+      "id": "fire",
+      "name": "炎",
+      "name_en": "Fire",
+      "icon": "fire"
+    },
+    {
+      "id": "water",
+      "name": "水",
+      "name_en": "Water",
+      "icon": "water"
+    },
+    {
+      "id": "thunder",
+      "name": "雷",
+      "name_en": "Thunder",
+      "icon": "thunder"
+    },
+    {
+      "id": "wind",
+      "name": "風",
+      "name_en": "Wind",
+      "icon": "wind"
+    },
+    {
+      "id": "earth",
+      "name": "大地",
+      "name_en": "Earth",
+      "icon": "earth"
+    },
+    {
+      "id": "light",
+      "name": "光",
+      "name_en": "Light",
+      "icon": "light"
+    },
+    {
+      "id": "dark",
+      "name": "闇",
+      "name_en": "Dark",
+      "icon": "dark"
+    },
+    {
+      "id": "none",
+      "name": "無",
+      "name_en": "None",
+      "icon": "none"
+    }
+  ],
+  "effectiveness_chart": {
+    "fire": {
+      "fire": 1.0,
+      "water": 0.5,
+      "thunder": 1.0,
+      "wind": 2.0,
+      "earth": 1.0,
+      "light": 1.0,
+      "dark": 1.0,
+      "none": 1.0
+    },
+    "water": {
+      "fire": 2.0,
+      "water": 1.0,
+      "thunder": 0.5,
+      "wind": 1.0,
+      "earth": 1.0,
+      "light": 1.0,
+      "dark": 1.0,
+      "none": 1.0
+    },
+    "thunder": {
+      "fire": 1.0,
+      "water": 2.0,
+      "thunder": 1.0,
+      "wind": 1.0,
+      "earth": 0.5,
+      "light": 1.0,
+      "dark": 1.0,
+      "none": 1.0
+    },
+    "wind": {
+      "fire": 0.5,
+      "water": 1.0,
+      "thunder": 1.0,
+      "wind": 1.0,
+      "earth": 2.0,
+      "light": 1.0,
+      "dark": 1.0,
+      "none": 1.0
+    },
+    "earth": {
+      "fire": 1.0,
+      "water": 1.0,
+      "thunder": 2.0,
+      "wind": 0.5,
+      "earth": 1.0,
+      "light": 1.0,
+      "dark": 1.0,
+      "none": 1.0
+    },
+    "light": {
+      "fire": 1.0,
+      "water": 1.0,
+      "thunder": 1.0,
+      "wind": 1.0,
+      "earth": 1.0,
+      "light": 1.0,
+      "dark": 2.0,
+      "none": 1.0
+    },
+    "dark": {
+      "fire": 1.0,
+      "water": 1.0,
+      "thunder": 1.0,
+      "wind": 1.0,
+      "earth": 1.0,
+      "light": 2.0,
+      "dark": 1.0,
+      "none": 1.0
+    },
+    "none": {
+      "fire": 1.0,
+      "water": 1.0,
+      "thunder": 1.0,
+      "wind": 1.0,
+      "earth": 1.0,
+      "light": 1.0,
+      "dark": 1.0,
+      "none": 1.0
+    }
+  },
+  "cycle_description": {
+    "main_cycle": "炎 → 風 → 大地 → 雷 → 水 → 炎",
+    "opposition": "光 ⇔ 闇（相互に有利）",
+    "none_element": "無属性は全て等倍"
+  },
+  "effectiveness_text": {
+    "super_effective": "効果抜群！",
+    "normal": "",
+    "not_very_effective": "今ひとつ..."
+  }
+}

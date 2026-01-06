@@ -1,0 +1,174 @@
+{
+  "version": "1.0.0",
+  "created_at": "2026-01-07",
+  "updated_at": "2026-01-07",
+  "description": "状態異常マスターデータ（battle_system_v12.4.0準拠）",
+  "source_document": "docs/battle_system_v8.7.md",
+  "base_hp": 150,
+  "design_rules": {
+    "inflict_probability": 100,
+    "probability_note": "100%確定（運要素排除）",
+    "max_simultaneous": 2,
+    "third_ailment_behavior": "最も古い状態異常が解除される",
+    "same_ailment_overlap": false,
+    "same_ailment_behavior": "ターンカウントがリセット",
+    "damage_base": "max_hp",
+    "rounding": "ceil"
+  },
+  "ailments": [
+    {
+      "id": "poison",
+      "name": "毒",
+      "name_en": "Poison",
+      "effect": "毎ターン最大HP4%ダメージ",
+      "damage_type": "slip",
+      "damage_percent": 0.04,
+      "damage_at_hp150": 6,
+      "stat_modifier": null,
+      "duration": 3,
+      "clears_on_switch": false,
+      "icon": "poison"
+    },
+    {
+      "id": "burn",
+      "name": "火傷",
+      "name_en": "Burn",
+      "effect": "毎ターン最大HP3%ダメージ + 攻撃-10%",
+      "damage_type": "slip",
+      "damage_percent": 0.03,
+      "damage_at_hp150": 5,
+      "stat_modifier": {
+        "attack": -0.10
+      },
+      "duration": 3,
+      "clears_on_switch": false,
+      "icon": "burn"
+    },
+    {
+      "id": "miasma",
+      "name": "瘴気",
+      "name_en": "Miasma",
+      "effect": "毎ターン最大HP3%ダメージ + 魔力-10%",
+      "damage_type": "slip",
+      "damage_percent": 0.03,
+      "damage_at_hp150": 5,
+      "stat_modifier": {
+        "magic": -0.10
+      },
+      "duration": 3,
+      "clears_on_switch": false,
+      "icon": "miasma"
+    },
+    {
+      "id": "paralysis",
+      "name": "麻痺",
+      "name_en": "Paralysis",
+      "effect": "素早さ-20%",
+      "damage_type": "none",
+      "damage_percent": 0,
+      "damage_at_hp150": 0,
+      "stat_modifier": {
+        "speed": -0.20
+      },
+      "duration": 3,
+      "clears_on_switch": false,
+      "icon": "paralysis"
+    },
+    {
+      "id": "restraint",
+      "name": "拘束",
+      "name_en": "Restraint",
+      "effect": "このターンと次のターン交代不可",
+      "damage_type": "none",
+      "damage_percent": 0,
+      "damage_at_hp150": 0,
+      "stat_modifier": null,
+      "special_effect": "switch_blocked",
+      "duration": 2,
+      "clears_on_switch": false,
+      "icon": "restraint",
+      "note": "発動ターンと次ターンの両方で交代不可"
+    },
+    {
+      "id": "seal",
+      "name": "封印",
+      "name_en": "Seal",
+      "effect": "最高コスト技使用不可",
+      "damage_type": "none",
+      "damage_percent": 0,
+      "damage_at_hp150": 0,
+      "stat_modifier": null,
+      "special_effect": "highest_cost_skill_blocked",
+      "duration": 2,
+      "clears_on_switch": false,
+      "icon": "seal"
+    },
+    {
+      "id": "charm",
+      "name": "魅了",
+      "name_en": "Charm",
+      "effect": "被ダメージ+15%",
+      "damage_type": "none",
+      "damage_percent": 0,
+      "damage_at_hp150": 0,
+      "stat_modifier": null,
+      "damage_received_modifier": 1.15,
+      "duration": 2,
+      "clears_on_switch": false,
+      "icon": "charm"
+    },
+    {
+      "id": "fear",
+      "name": "恐怖",
+      "name_en": "Fear",
+      "effect": "与ダメージ-15%",
+      "damage_type": "none",
+      "damage_percent": 0,
+      "damage_at_hp150": 0,
+      "stat_modifier": null,
+      "damage_dealt_modifier": 0.85,
+      "duration": 2,
+      "clears_on_switch": false,
+      "icon": "fear"
+    },
+    {
+      "id": "nightmare",
+      "name": "悪夢",
+      "name_en": "Nightmare",
+      "effect": "毎ターン最大HP3%ダメージ + 回復効果-50%",
+      "damage_type": "slip",
+      "damage_percent": 0.03,
+      "damage_at_hp150": 5,
+      "stat_modifier": null,
+      "healing_modifier": 0.50,
+      "duration": 3,
+      "clears_on_switch": false,
+      "icon": "nightmare"
+    }
+  ],
+  "species_passive_effects": {
+    "dragon": {
+      "passive_name": "竜の威厳",
+      "effect": "状態異常は1種類まで。新しい状態異常で上書き",
+      "max_simultaneous": 1,
+      "overlap_behavior": "overwrite"
+    },
+    "mechanoid": {
+      "passive_name": "機械の体",
+      "effect": "状態異常の持続-1ターン",
+      "duration_modifier": -1
+    },
+    "spirit": {
+      "passive_name": "霊気",
+      "effect": "与える状態異常の持続+1ターン",
+      "duration_modifier_on_inflict": 1
+    }
+  },
+  "turn_count_rules": {
+    "slip_damage_start": "付与ターン終了時から",
+    "stat_modifier_start": "付与直後から",
+    "expiry_timing": "持続ターン終了時",
+    "bench_counting": false,
+    "bench_note": "控えにいる間はターン経過しない"
+  }
+}

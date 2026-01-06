@@ -1,0 +1,1347 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2026-01-06",
+  "changelog": {
+    "v1.0.0": [
+      "【新規作成】装備錬成システム用レシピマスター",
+      "【全78装備】common7種、rare19種、epic42種、legendary10種",
+      "【素材差別化】物理系は鉱石多め、魔法系は有機素材多め",
+      "【特殊素材】種族キラーに種族素材、高レアに幻種の証必須"
+    ]
+  },
+  "recipes": [
+    {
+      "id": "RECIPE_EQ001",
+      "equipmentId": "EQ001",
+      "name": "生命のお守り",
+      "rarity": "common",
+      "category": "stat_boost",
+      "cost": {
+        "gold": 300,
+        "materials": [
+          { "id": "MAT_BASE_01", "count": 3 },
+          { "id": "MAT_BASE_02", "count": 2 },
+          { "id": "MAT_CAT_01", "count": 2 }
+        ],
+        "crystal": 0
+      }
+    },
+    {
+      "id": "RECIPE_EQ002",
+      "equipmentId": "EQ002",
+      "name": "闘士の腕輪",
+      "rarity": "common",
+      "category": "stat_boost",
+      "cost": {
+        "gold": 300,
+        "materials": [
+          { "id": "MAT_BASE_01", "count": 4 },
+          { "id": "MAT_BASE_02", "count": 1 },
+          { "id": "MAT_CAT_01", "count": 2 }
+        ],
+        "crystal": 0
+      }
+    },
+    {
+      "id": "RECIPE_EQ003",
+      "equipmentId": "EQ003",
+      "name": "守護の盾片",
+      "rarity": "common",
+      "category": "stat_boost",
+      "cost": {
+        "gold": 300,
+        "materials": [
+          { "id": "MAT_BASE_01", "count": 4 },
+          { "id": "MAT_BASE_02", "count": 1 },
+          { "id": "MAT_CAT_01", "count": 2 }
+        ],
+        "crystal": 0
+      }
+    },
+    {
+      "id": "RECIPE_EQ004",
+      "equipmentId": "EQ004",
+      "name": "賢者の首飾り",
+      "rarity": "common",
+      "category": "stat_boost",
+      "cost": {
+        "gold": 300,
+        "materials": [
+          { "id": "MAT_BASE_01", "count": 2 },
+          { "id": "MAT_BASE_02", "count": 3 },
+          { "id": "MAT_CAT_01", "count": 2 }
+        ],
+        "crystal": 0
+      }
+    },
+    {
+      "id": "RECIPE_EQ005",
+      "equipmentId": "EQ005",
+      "name": "聖霊の羽根",
+      "rarity": "common",
+      "category": "stat_boost",
+      "cost": {
+        "gold": 300,
+        "materials": [
+          { "id": "MAT_BASE_01", "count": 2 },
+          { "id": "MAT_BASE_02", "count": 3 },
+          { "id": "MAT_CAT_01", "count": 2 }
+        ],
+        "crystal": 0
+      }
+    },
+    {
+      "id": "RECIPE_EQ801",
+      "equipmentId": "EQ801",
+      "name": "修練の腕輪",
+      "rarity": "common",
+      "category": "pve_only",
+      "cost": {
+        "gold": 300,
+        "materials": [
+          { "id": "MAT_BASE_01", "count": 3 },
+          { "id": "MAT_BASE_02", "count": 2 },
+          { "id": "MAT_CAT_09", "count": 2 }
+        ],
+        "crystal": 0
+      }
+    },
+    {
+      "id": "RECIPE_EQ802",
+      "equipmentId": "EQ802",
+      "name": "幸運のコイン",
+      "rarity": "common",
+      "category": "pve_only",
+      "cost": {
+        "gold": 300,
+        "materials": [
+          { "id": "MAT_BASE_01", "count": 2 },
+          { "id": "MAT_BASE_02", "count": 3 },
+          { "id": "MAT_CAT_09", "count": 2 }
+        ],
+        "crystal": 0
+      }
+    },
+    {
+      "id": "RECIPE_EQ101",
+      "equipmentId": "EQ101",
+      "name": "解毒の指輪",
+      "rarity": "rare",
+      "category": "status_immunity",
+      "cost": {
+        "gold": 1500,
+        "materials": [
+          { "id": "MAT_BASE_03", "count": 3 },
+          { "id": "MAT_BASE_04", "count": 2 },
+          { "id": "MAT_CAT_02", "count": 3 }
+        ],
+        "crystal": 10
+      }
+    },
+    {
+      "id": "RECIPE_EQ102",
+      "equipmentId": "EQ102",
+      "name": "耐火の指輪",
+      "rarity": "rare",
+      "category": "status_immunity",
+      "cost": {
+        "gold": 1500,
+        "materials": [
+          { "id": "MAT_BASE_03", "count": 4 },
+          { "id": "MAT_BASE_04", "count": 1 },
+          { "id": "MAT_CAT_02", "count": 3 }
+        ],
+        "crystal": 10
+      }
+    },
+    {
+      "id": "RECIPE_EQ103",
+      "equipmentId": "EQ103",
+      "name": "絶縁の指輪",
+      "rarity": "rare",
+      "category": "status_immunity",
+      "cost": {
+        "gold": 1500,
+        "materials": [
+          { "id": "MAT_BASE_03", "count": 4 },
+          { "id": "MAT_BASE_04", "count": 1 },
+          { "id": "MAT_CAT_02", "count": 3 }
+        ],
+        "crystal": 10
+      }
+    },
+    {
+      "id": "RECIPE_EQ104",
+      "equipmentId": "EQ104",
+      "name": "自由の指輪",
+      "rarity": "rare",
+      "category": "status_immunity",
+      "cost": {
+        "gold": 1500,
+        "materials": [
+          { "id": "MAT_BASE_03", "count": 3 },
+          { "id": "MAT_BASE_04", "count": 2 },
+          { "id": "MAT_CAT_02", "count": 3 }
+        ],
+        "crystal": 10
+      }
+    },
+    {
+      "id": "RECIPE_EQ105",
+      "equipmentId": "EQ105",
+      "name": "覚醒の指輪",
+      "rarity": "rare",
+      "category": "status_immunity",
+      "cost": {
+        "gold": 1500,
+        "materials": [
+          { "id": "MAT_BASE_03", "count": 2 },
+          { "id": "MAT_BASE_04", "count": 3 },
+          { "id": "MAT_CAT_02", "count": 3 }
+        ],
+        "crystal": 10
+      }
+    },
+    {
+      "id": "RECIPE_EQ106",
+      "equipmentId": "EQ106",
+      "name": "勇気の指輪",
+      "rarity": "rare",
+      "category": "status_immunity",
+      "cost": {
+        "gold": 1500,
+        "materials": [
+          { "id": "MAT_BASE_03", "count": 3 },
+          { "id": "MAT_BASE_04", "count": 2 },
+          { "id": "MAT_CAT_02", "count": 3 }
+        ],
+        "crystal": 10
+      }
+    },
+    {
+      "id": "RECIPE_EQ107",
+      "equipmentId": "EQ107",
+      "name": "理性の指輪",
+      "rarity": "rare",
+      "category": "status_immunity",
+      "cost": {
+        "gold": 1500,
+        "materials": [
+          { "id": "MAT_BASE_03", "count": 2 },
+          { "id": "MAT_BASE_04", "count": 3 },
+          { "id": "MAT_CAT_02", "count": 3 }
+        ],
+        "crystal": 10
+      }
+    },
+    {
+      "id": "RECIPE_EQ110",
+      "equipmentId": "EQ110",
+      "name": "清浄の指輪",
+      "rarity": "rare",
+      "category": "status_immunity",
+      "cost": {
+        "gold": 1500,
+        "materials": [
+          { "id": "MAT_BASE_03", "count": 2 },
+          { "id": "MAT_BASE_04", "count": 3 },
+          { "id": "MAT_CAT_02", "count": 3 }
+        ],
+        "crystal": 10
+      }
+    },
+    {
+      "id": "RECIPE_EQ111",
+      "equipmentId": "EQ111",
+      "name": "解放の指輪",
+      "rarity": "rare",
+      "category": "status_immunity",
+      "cost": {
+        "gold": 1500,
+        "materials": [
+          { "id": "MAT_BASE_03", "count": 3 },
+          { "id": "MAT_BASE_04", "count": 2 },
+          { "id": "MAT_CAT_02", "count": 3 }
+        ],
+        "crystal": 10
+      }
+    },
+    {
+      "id": "RECIPE_EQ201",
+      "equipmentId": "EQ201",
+      "name": "炎のエンブレム",
+      "rarity": "rare",
+      "category": "element_boost",
+      "cost": {
+        "gold": 1500,
+        "materials": [
+          { "id": "MAT_BASE_03", "count": 3 },
+          { "id": "MAT_BASE_04", "count": 2 },
+          { "id": "MAT_CAT_03", "count": 3 },
+          { "id": "MAT_ELEM_02", "count": 3 }
+        ],
+        "crystal": 10
+      }
+    },
+    {
+      "id": "RECIPE_EQ202",
+      "equipmentId": "EQ202",
+      "name": "水のエンブレム",
+      "rarity": "rare",
+      "category": "element_boost",
+      "cost": {
+        "gold": 1500,
+        "materials": [
+          { "id": "MAT_BASE_03", "count": 2 },
+          { "id": "MAT_BASE_04", "count": 3 },
+          { "id": "MAT_CAT_03", "count": 3 },
+          { "id": "MAT_ELEM_03", "count": 3 }
+        ],
+        "crystal": 10
+      }
+    },
+    {
+      "id": "RECIPE_EQ203",
+      "equipmentId": "EQ203",
+      "name": "雷のエンブレム",
+      "rarity": "rare",
+      "category": "element_boost",
+      "cost": {
+        "gold": 1500,
+        "materials": [
+          { "id": "MAT_BASE_03", "count": 4 },
+          { "id": "MAT_BASE_04", "count": 1 },
+          { "id": "MAT_CAT_03", "count": 3 },
+          { "id": "MAT_ELEM_04", "count": 3 }
+        ],
+        "crystal": 10
+      }
+    },
+    {
+      "id": "RECIPE_EQ204",
+      "equipmentId": "EQ204",
+      "name": "風のエンブレム",
+      "rarity": "rare",
+      "category": "element_boost",
+      "cost": {
+        "gold": 1500,
+        "materials": [
+          { "id": "MAT_BASE_03", "count": 1 },
+          { "id": "MAT_BASE_04", "count": 4 },
+          { "id": "MAT_CAT_03", "count": 3 },
+          { "id": "MAT_ELEM_01", "count": 3 }
+        ],
+        "crystal": 10
+      }
+    },
+    {
+      "id": "RECIPE_EQ205",
+      "equipmentId": "EQ205",
+      "name": "地のエンブレム",
+      "rarity": "rare",
+      "category": "element_boost",
+      "cost": {
+        "gold": 1500,
+        "materials": [
+          { "id": "MAT_BASE_03", "count": 4 },
+          { "id": "MAT_BASE_04", "count": 1 },
+          { "id": "MAT_CAT_03", "count": 3 },
+          { "id": "MAT_ELEM_05", "count": 3 }
+        ],
+        "crystal": 10
+      }
+    },
+    {
+      "id": "RECIPE_EQ206",
+      "equipmentId": "EQ206",
+      "name": "光のエンブレム",
+      "rarity": "rare",
+      "category": "element_boost",
+      "cost": {
+        "gold": 1500,
+        "materials": [
+          { "id": "MAT_BASE_03", "count": 2 },
+          { "id": "MAT_BASE_04", "count": 3 },
+          { "id": "MAT_CAT_03", "count": 3 },
+          { "id": "MAT_ELEM_06", "count": 3 }
+        ],
+        "crystal": 10
+      }
+    },
+    {
+      "id": "RECIPE_EQ207",
+      "equipmentId": "EQ207",
+      "name": "闇のエンブレム",
+      "rarity": "rare",
+      "category": "element_boost",
+      "cost": {
+        "gold": 1500,
+        "materials": [
+          { "id": "MAT_BASE_03", "count": 3 },
+          { "id": "MAT_BASE_04", "count": 2 },
+          { "id": "MAT_CAT_03", "count": 3 },
+          { "id": "MAT_ELEM_07", "count": 3 }
+        ],
+        "crystal": 10
+      }
+    },
+    {
+      "id": "RECIPE_EQ902",
+      "equipmentId": "EQ902",
+      "name": "重力の腕輪",
+      "rarity": "rare",
+      "category": "battle_effect",
+      "cost": {
+        "gold": 1500,
+        "materials": [
+          { "id": "MAT_BASE_03", "count": 4 },
+          { "id": "MAT_BASE_04", "count": 1 },
+          { "id": "MAT_CAT_05", "count": 3 }
+        ],
+        "crystal": 10
+      }
+    },
+    {
+      "id": "RECIPE_EQ803",
+      "equipmentId": "EQ803",
+      "name": "探索者の眼鏡",
+      "rarity": "rare",
+      "category": "pve_only",
+      "cost": {
+        "gold": 1500,
+        "materials": [
+          { "id": "MAT_BASE_03", "count": 2 },
+          { "id": "MAT_BASE_04", "count": 3 },
+          { "id": "MAT_CAT_09", "count": 3 }
+        ],
+        "crystal": 10
+      }
+    },
+    {
+      "id": "RECIPE_EQ804",
+      "equipmentId": "EQ804",
+      "name": "財宝の羅針盤",
+      "rarity": "rare",
+      "category": "pve_only",
+      "cost": {
+        "gold": 1500,
+        "materials": [
+          { "id": "MAT_BASE_03", "count": 3 },
+          { "id": "MAT_BASE_04", "count": 2 },
+          { "id": "MAT_CAT_09", "count": 3 }
+        ],
+        "crystal": 10
+      }
+    },
+    {
+      "id": "RECIPE_EQ108",
+      "equipmentId": "EQ108",
+      "name": "浄化の護符",
+      "rarity": "epic",
+      "category": "status_protection",
+      "cost": {
+        "gold": 6000,
+        "materials": [
+          { "id": "MAT_BASE_05", "count": 3 },
+          { "id": "MAT_BASE_06", "count": 2 },
+          { "id": "MAT_CAT_01", "count": 5 },
+          { "id": "MAT_RARE_03", "count": 1 }
+        ],
+        "crystal": 30
+      }
+    },
+    {
+      "id": "RECIPE_EQ109",
+      "equipmentId": "EQ109",
+      "name": "状態反転の札",
+      "rarity": "epic",
+      "category": "status_protection",
+      "cost": {
+        "gold": 6000,
+        "materials": [
+          { "id": "MAT_BASE_05", "count": 2 },
+          { "id": "MAT_BASE_06", "count": 3 },
+          { "id": "MAT_CAT_01", "count": 5 },
+          { "id": "MAT_RARE_03", "count": 1 }
+        ],
+        "crystal": 30
+      }
+    },
+    {
+      "id": "RECIPE_EQ208",
+      "equipmentId": "EQ208",
+      "name": "属性の結晶",
+      "rarity": "epic",
+      "category": "element_boost",
+      "cost": {
+        "gold": 6000,
+        "materials": [
+          { "id": "MAT_BASE_05", "count": 2 },
+          { "id": "MAT_BASE_06", "count": 3 },
+          { "id": "MAT_CAT_03", "count": 5 },
+          { "id": "MAT_RARE_03", "count": 1 }
+        ],
+        "crystal": 30
+      }
+    },
+    {
+      "id": "RECIPE_EQ301",
+      "equipmentId": "EQ301",
+      "name": "勝者の証",
+      "rarity": "epic",
+      "category": "cost_control",
+      "cost": {
+        "gold": 6000,
+        "materials": [
+          { "id": "MAT_BASE_05", "count": 4 },
+          { "id": "MAT_BASE_06", "count": 1 },
+          { "id": "MAT_CAT_04", "count": 5 }
+        ],
+        "crystal": 30
+      }
+    },
+    {
+      "id": "RECIPE_EQ302",
+      "equipmentId": "EQ302",
+      "name": "絆の勾玉",
+      "rarity": "epic",
+      "category": "cost_control",
+      "cost": {
+        "gold": 6000,
+        "materials": [
+          { "id": "MAT_BASE_05", "count": 2 },
+          { "id": "MAT_BASE_06", "count": 3 },
+          { "id": "MAT_CAT_04", "count": 5 }
+        ],
+        "crystal": 30
+      }
+    },
+    {
+      "id": "RECIPE_EQ303",
+      "equipmentId": "EQ303",
+      "name": "奥義の秘伝書",
+      "rarity": "epic",
+      "category": "cost_control",
+      "cost": {
+        "gold": 6000,
+        "materials": [
+          { "id": "MAT_BASE_05", "count": 3 },
+          { "id": "MAT_BASE_06", "count": 2 },
+          { "id": "MAT_CAT_04", "count": 5 }
+        ],
+        "crystal": 30
+      }
+    },
+    {
+      "id": "RECIPE_EQ304",
+      "equipmentId": "EQ304",
+      "name": "窮地の宝珠",
+      "rarity": "epic",
+      "category": "cost_control",
+      "cost": {
+        "gold": 6000,
+        "materials": [
+          { "id": "MAT_BASE_05", "count": 2 },
+          { "id": "MAT_BASE_06", "count": 3 },
+          { "id": "MAT_CAT_04", "count": 5 }
+        ],
+        "crystal": 30
+      }
+    },
+    {
+      "id": "RECIPE_EQ305",
+      "equipmentId": "EQ305",
+      "name": "貯蓄の壺",
+      "rarity": "epic",
+      "category": "cost_control",
+      "cost": {
+        "gold": 6000,
+        "materials": [
+          { "id": "MAT_BASE_05", "count": 3 },
+          { "id": "MAT_BASE_06", "count": 2 },
+          { "id": "MAT_CAT_04", "count": 5 }
+        ],
+        "crystal": 30
+      }
+    },
+    {
+      "id": "RECIPE_EQ306",
+      "equipmentId": "EQ306",
+      "name": "浪費の王冠",
+      "rarity": "epic",
+      "category": "cost_control",
+      "cost": {
+        "gold": 6000,
+        "materials": [
+          { "id": "MAT_BASE_05", "count": 1 },
+          { "id": "MAT_BASE_06", "count": 4 },
+          { "id": "MAT_CAT_04", "count": 5 }
+        ],
+        "crystal": 30
+      }
+    },
+    {
+      "id": "RECIPE_EQ401",
+      "equipmentId": "EQ401",
+      "name": "再生の種",
+      "rarity": "epic",
+      "category": "battle_effect",
+      "cost": {
+        "gold": 6000,
+        "materials": [
+          { "id": "MAT_BASE_05", "count": 2 },
+          { "id": "MAT_BASE_06", "count": 3 },
+          { "id": "MAT_CAT_05", "count": 5 }
+        ],
+        "crystal": 30
+      }
+    },
+    {
+      "id": "RECIPE_EQ402",
+      "equipmentId": "EQ402",
+      "name": "荊の鎧",
+      "rarity": "epic",
+      "category": "battle_effect",
+      "cost": {
+        "gold": 6000,
+        "materials": [
+          { "id": "MAT_BASE_05", "count": 4 },
+          { "id": "MAT_BASE_06", "count": 1 },
+          { "id": "MAT_CAT_05", "count": 5 }
+        ],
+        "crystal": 30
+      }
+    },
+    {
+      "id": "RECIPE_EQ403",
+      "equipmentId": "EQ403",
+      "name": "呪いの鏡",
+      "rarity": "epic",
+      "category": "battle_effect",
+      "cost": {
+        "gold": 6000,
+        "materials": [
+          { "id": "MAT_BASE_05", "count": 2 },
+          { "id": "MAT_BASE_06", "count": 3 },
+          { "id": "MAT_CAT_05", "count": 5 }
+        ],
+        "crystal": 30
+      }
+    },
+    {
+      "id": "RECIPE_EQ404",
+      "equipmentId": "EQ404",
+      "name": "逆襲の印",
+      "rarity": "epic",
+      "category": "battle_effect",
+      "cost": {
+        "gold": 6000,
+        "materials": [
+          { "id": "MAT_BASE_05", "count": 3 },
+          { "id": "MAT_BASE_06", "count": 2 },
+          { "id": "MAT_CAT_05", "count": 5 }
+        ],
+        "crystal": 30
+      }
+    },
+    {
+      "id": "RECIPE_EQ405",
+      "equipmentId": "EQ405",
+      "name": "反射の盾",
+      "rarity": "epic",
+      "category": "battle_effect",
+      "cost": {
+        "gold": 6000,
+        "materials": [
+          { "id": "MAT_BASE_05", "count": 4 },
+          { "id": "MAT_BASE_06", "count": 1 },
+          { "id": "MAT_CAT_05", "count": 5 }
+        ],
+        "crystal": 30
+      }
+    },
+    {
+      "id": "RECIPE_EQ406",
+      "equipmentId": "EQ406",
+      "name": "鉄壁の心得",
+      "rarity": "epic",
+      "category": "battle_effect",
+      "cost": {
+        "gold": 6000,
+        "materials": [
+          { "id": "MAT_BASE_05", "count": 4 },
+          { "id": "MAT_BASE_06", "count": 1 },
+          { "id": "MAT_CAT_05", "count": 5 }
+        ],
+        "crystal": 30
+      }
+    },
+    {
+      "id": "RECIPE_EQ407",
+      "equipmentId": "EQ407",
+      "name": "模倣の鏡",
+      "rarity": "epic",
+      "category": "battle_effect",
+      "cost": {
+        "gold": 6000,
+        "materials": [
+          { "id": "MAT_BASE_05", "count": 2 },
+          { "id": "MAT_BASE_06", "count": 3 },
+          { "id": "MAT_CAT_05", "count": 5 }
+        ],
+        "crystal": 30
+      }
+    },
+    {
+      "id": "RECIPE_EQ408",
+      "equipmentId": "EQ408",
+      "name": "起死回生の薬",
+      "rarity": "epic",
+      "category": "battle_effect",
+      "cost": {
+        "gold": 6000,
+        "materials": [
+          { "id": "MAT_BASE_05", "count": 1 },
+          { "id": "MAT_BASE_06", "count": 4 },
+          { "id": "MAT_CAT_05", "count": 5 },
+          { "id": "MAT_RARE_03", "count": 1 }
+        ],
+        "crystal": 30
+      }
+    },
+    {
+      "id": "RECIPE_EQ409",
+      "equipmentId": "EQ409",
+      "name": "後の先の極意",
+      "rarity": "epic",
+      "category": "battle_effect",
+      "cost": {
+        "gold": 6000,
+        "materials": [
+          { "id": "MAT_BASE_05", "count": 3 },
+          { "id": "MAT_BASE_06", "count": 2 },
+          { "id": "MAT_CAT_05", "count": 5 }
+        ],
+        "crystal": 30
+      }
+    },
+    {
+      "id": "RECIPE_EQ410",
+      "equipmentId": "EQ410",
+      "name": "連撃の心得",
+      "rarity": "epic",
+      "category": "battle_effect",
+      "cost": {
+        "gold": 6000,
+        "materials": [
+          { "id": "MAT_BASE_05", "count": 3 },
+          { "id": "MAT_BASE_06", "count": 2 },
+          { "id": "MAT_CAT_05", "count": 5 }
+        ],
+        "crystal": 30
+      }
+    },
+    {
+      "id": "RECIPE_EQ411",
+      "equipmentId": "EQ411",
+      "name": "賭博師のダイス",
+      "rarity": "epic",
+      "category": "battle_effect",
+      "cost": {
+        "gold": 6000,
+        "materials": [
+          { "id": "MAT_BASE_05", "count": 2 },
+          { "id": "MAT_BASE_06", "count": 3 },
+          { "id": "MAT_CAT_05", "count": 5 }
+        ],
+        "crystal": 30
+      }
+    },
+    {
+      "id": "RECIPE_EQ412",
+      "equipmentId": "EQ412",
+      "name": "鈍足の靴",
+      "rarity": "epic",
+      "category": "battle_effect",
+      "cost": {
+        "gold": 6000,
+        "materials": [
+          { "id": "MAT_BASE_05", "count": 3 },
+          { "id": "MAT_BASE_06", "count": 2 },
+          { "id": "MAT_CAT_05", "count": 5 }
+        ],
+        "crystal": 30
+      }
+    },
+    {
+      "id": "RECIPE_EQ901",
+      "equipmentId": "EQ901",
+      "name": "時空の砂時計",
+      "rarity": "epic",
+      "category": "battle_effect",
+      "cost": {
+        "gold": 6000,
+        "materials": [
+          { "id": "MAT_BASE_05", "count": 1 },
+          { "id": "MAT_BASE_06", "count": 4 },
+          { "id": "MAT_CAT_05", "count": 5 },
+          { "id": "MAT_RARE_03", "count": 1 }
+        ],
+        "crystal": 30
+      }
+    },
+    {
+      "id": "RECIPE_EQ903",
+      "equipmentId": "EQ903",
+      "name": "先制封じの札",
+      "rarity": "epic",
+      "category": "battle_effect",
+      "cost": {
+        "gold": 6000,
+        "materials": [
+          { "id": "MAT_BASE_05", "count": 3 },
+          { "id": "MAT_BASE_06", "count": 2 },
+          { "id": "MAT_CAT_05", "count": 5 },
+          { "id": "MAT_RARE_03", "count": 1 }
+        ],
+        "crystal": 30
+      }
+    },
+    {
+      "id": "RECIPE_EQ904",
+      "equipmentId": "EQ904",
+      "name": "鈍重の誓い",
+      "rarity": "epic",
+      "category": "battle_effect",
+      "cost": {
+        "gold": 6000,
+        "materials": [
+          { "id": "MAT_BASE_05", "count": 4 },
+          { "id": "MAT_BASE_06", "count": 1 },
+          { "id": "MAT_CAT_05", "count": 5 }
+        ],
+        "crystal": 30
+      }
+    },
+    {
+      "id": "RECIPE_EQ905",
+      "equipmentId": "EQ905",
+      "name": "不動の構え",
+      "rarity": "epic",
+      "category": "battle_effect",
+      "cost": {
+        "gold": 6000,
+        "materials": [
+          { "id": "MAT_BASE_05", "count": 4 },
+          { "id": "MAT_BASE_06", "count": 1 },
+          { "id": "MAT_CAT_05", "count": 5 }
+        ],
+        "crystal": 30
+      }
+    },
+    {
+      "id": "RECIPE_EQ906",
+      "equipmentId": "EQ906",
+      "name": "逆転の兆し",
+      "rarity": "epic",
+      "category": "battle_effect",
+      "cost": {
+        "gold": 6000,
+        "materials": [
+          { "id": "MAT_BASE_05", "count": 2 },
+          { "id": "MAT_BASE_06", "count": 3 },
+          { "id": "MAT_CAT_05", "count": 5 },
+          { "id": "MAT_RARE_03", "count": 1 }
+        ],
+        "crystal": 30
+      }
+    },
+    {
+      "id": "RECIPE_EQ907",
+      "equipmentId": "EQ907",
+      "name": "不屈の心得",
+      "rarity": "epic",
+      "category": "battle_effect",
+      "cost": {
+        "gold": 6000,
+        "materials": [
+          { "id": "MAT_BASE_05", "count": 3 },
+          { "id": "MAT_BASE_06", "count": 2 },
+          { "id": "MAT_CAT_05", "count": 5 }
+        ],
+        "crystal": 30
+      }
+    },
+    {
+      "id": "RECIPE_EQ908",
+      "equipmentId": "EQ908",
+      "name": "反撃の刃",
+      "rarity": "epic",
+      "category": "battle_effect",
+      "cost": {
+        "gold": 6000,
+        "materials": [
+          { "id": "MAT_BASE_05", "count": 4 },
+          { "id": "MAT_BASE_06", "count": 1 },
+          { "id": "MAT_CAT_05", "count": 5 }
+        ],
+        "crystal": 30
+      }
+    },
+    {
+      "id": "RECIPE_EQ601",
+      "equipmentId": "EQ601",
+      "name": "道連れの呪符",
+      "rarity": "epic",
+      "category": "on_faint",
+      "cost": {
+        "gold": 6000,
+        "materials": [
+          { "id": "MAT_BASE_05", "count": 3 },
+          { "id": "MAT_BASE_06", "count": 2 },
+          { "id": "MAT_CAT_06", "count": 5 }
+        ],
+        "crystal": 30
+      }
+    },
+    {
+      "id": "RECIPE_EQ602",
+      "equipmentId": "EQ602",
+      "name": "怨念の毒霧",
+      "rarity": "epic",
+      "category": "on_faint",
+      "cost": {
+        "gold": 6000,
+        "materials": [
+          { "id": "MAT_BASE_05", "count": 2 },
+          { "id": "MAT_BASE_06", "count": 3 },
+          { "id": "MAT_CAT_06", "count": 5 }
+        ],
+        "crystal": 30
+      }
+    },
+    {
+      "id": "RECIPE_EQ603",
+      "equipmentId": "EQ603",
+      "name": "怨念の炎",
+      "rarity": "epic",
+      "category": "on_faint",
+      "cost": {
+        "gold": 6000,
+        "materials": [
+          { "id": "MAT_BASE_05", "count": 4 },
+          { "id": "MAT_BASE_06", "count": 1 },
+          { "id": "MAT_CAT_06", "count": 5 }
+        ],
+        "crystal": 30
+      }
+    },
+    {
+      "id": "RECIPE_EQ604",
+      "equipmentId": "EQ604",
+      "name": "怨念の雷",
+      "rarity": "epic",
+      "category": "on_faint",
+      "cost": {
+        "gold": 6000,
+        "materials": [
+          { "id": "MAT_BASE_05", "count": 4 },
+          { "id": "MAT_BASE_06", "count": 1 },
+          { "id": "MAT_CAT_06", "count": 5 }
+        ],
+        "crystal": 30
+      }
+    },
+    {
+      "id": "RECIPE_EQ605",
+      "equipmentId": "EQ605",
+      "name": "怨念の鎖",
+      "rarity": "epic",
+      "category": "on_faint",
+      "cost": {
+        "gold": 6000,
+        "materials": [
+          { "id": "MAT_BASE_05", "count": 3 },
+          { "id": "MAT_BASE_06", "count": 2 },
+          { "id": "MAT_CAT_06", "count": 5 }
+        ],
+        "crystal": 30
+      }
+    },
+    {
+      "id": "RECIPE_EQ606",
+      "equipmentId": "EQ606",
+      "name": "怨念の夢",
+      "rarity": "epic",
+      "category": "on_faint",
+      "cost": {
+        "gold": 6000,
+        "materials": [
+          { "id": "MAT_BASE_05", "count": 1 },
+          { "id": "MAT_BASE_06", "count": 4 },
+          { "id": "MAT_CAT_06", "count": 5 }
+        ],
+        "crystal": 30
+      }
+    },
+    {
+      "id": "RECIPE_EQ607",
+      "equipmentId": "EQ607",
+      "name": "怨念の恐怖",
+      "rarity": "epic",
+      "category": "on_faint",
+      "cost": {
+        "gold": 6000,
+        "materials": [
+          { "id": "MAT_BASE_05", "count": 2 },
+          { "id": "MAT_BASE_06", "count": 3 },
+          { "id": "MAT_CAT_06", "count": 5 }
+        ],
+        "crystal": 30
+      }
+    },
+    {
+      "id": "RECIPE_EQ608",
+      "equipmentId": "EQ608",
+      "name": "怨念の魅惑",
+      "rarity": "epic",
+      "category": "on_faint",
+      "cost": {
+        "gold": 6000,
+        "materials": [
+          { "id": "MAT_BASE_05", "count": 2 },
+          { "id": "MAT_BASE_06", "count": 3 },
+          { "id": "MAT_CAT_06", "count": 5 }
+        ],
+        "crystal": 30
+      }
+    },
+    {
+      "id": "RECIPE_EQ609",
+      "equipmentId": "EQ609",
+      "name": "怨念の瘴気",
+      "rarity": "epic",
+      "category": "on_faint",
+      "cost": {
+        "gold": 6000,
+        "materials": [
+          { "id": "MAT_BASE_05", "count": 3 },
+          { "id": "MAT_BASE_06", "count": 2 },
+          { "id": "MAT_CAT_06", "count": 5 }
+        ],
+        "crystal": 30
+      }
+    },
+    {
+      "id": "RECIPE_EQ610",
+      "equipmentId": "EQ610",
+      "name": "怨念の封印",
+      "rarity": "epic",
+      "category": "on_faint",
+      "cost": {
+        "gold": 6000,
+        "materials": [
+          { "id": "MAT_BASE_05", "count": 2 },
+          { "id": "MAT_BASE_06", "count": 3 },
+          { "id": "MAT_CAT_06", "count": 5 }
+        ],
+        "crystal": 30
+      }
+    },
+    {
+      "id": "RECIPE_EQ701",
+      "equipmentId": "EQ701",
+      "name": "脱出の羽根",
+      "rarity": "epic",
+      "category": "switch",
+      "cost": {
+        "gold": 6000,
+        "materials": [
+          { "id": "MAT_BASE_05", "count": 1 },
+          { "id": "MAT_BASE_06", "count": 4 },
+          { "id": "MAT_CAT_08", "count": 5 }
+        ],
+        "crystal": 30
+      }
+    },
+    {
+      "id": "RECIPE_EQ702",
+      "equipmentId": "EQ702",
+      "name": "追撃の爪",
+      "rarity": "epic",
+      "category": "switch",
+      "cost": {
+        "gold": 6000,
+        "materials": [
+          { "id": "MAT_BASE_05", "count": 4 },
+          { "id": "MAT_BASE_06", "count": 1 },
+          { "id": "MAT_CAT_08", "count": 5 }
+        ],
+        "crystal": 30
+      }
+    },
+    {
+      "id": "RECIPE_EQ703",
+      "equipmentId": "EQ703",
+      "name": "犠牲の魂",
+      "rarity": "epic",
+      "category": "switch",
+      "cost": {
+        "gold": 6000,
+        "materials": [
+          { "id": "MAT_BASE_05", "count": 2 },
+          { "id": "MAT_BASE_06", "count": 3 },
+          { "id": "MAT_CAT_08", "count": 5 }
+        ],
+        "crystal": 30
+      }
+    },
+    {
+      "id": "RECIPE_EQ704",
+      "equipmentId": "EQ704",
+      "name": "撤退の護符",
+      "rarity": "epic",
+      "category": "switch",
+      "cost": {
+        "gold": 6000,
+        "materials": [
+          { "id": "MAT_BASE_05", "count": 3 },
+          { "id": "MAT_BASE_06", "count": 2 },
+          { "id": "MAT_CAT_08", "count": 5 }
+        ],
+        "crystal": 30
+      }
+    },
+    {
+      "id": "RECIPE_EQ501",
+      "equipmentId": "EQ501",
+      "name": "竜殺しの剣",
+      "rarity": "legendary",
+      "category": "species_killer",
+      "cost": {
+        "gold": 25000,
+        "materials": [
+          { "id": "MAT_BASE_07", "count": 3 },
+          { "id": "MAT_BASE_09", "count": 2 },
+          { "id": "MAT_CAT_07", "count": 8 },
+          { "id": "MAT_RACE_01", "count": 3 },
+          { "id": "MAT_RARE_01", "count": 2 },
+          { "id": "MAT_RARE_02", "count": 1 }
+        ],
+        "crystal": 100
+      }
+    },
+    {
+      "id": "RECIPE_EQ502",
+      "equipmentId": "EQ502",
+      "name": "魔封じの杖",
+      "rarity": "legendary",
+      "category": "species_killer",
+      "cost": {
+        "gold": 25000,
+        "materials": [
+          { "id": "MAT_BASE_07", "count": 3 },
+          { "id": "MAT_BASE_09", "count": 2 },
+          { "id": "MAT_CAT_07", "count": 8 },
+          { "id": "MAT_RACE_03", "count": 3 },
+          { "id": "MAT_RARE_01", "count": 2 },
+          { "id": "MAT_RARE_02", "count": 1 }
+        ],
+        "crystal": 100
+      }
+    },
+    {
+      "id": "RECIPE_EQ503",
+      "equipmentId": "EQ503",
+      "name": "霊断ちの刃",
+      "rarity": "legendary",
+      "category": "species_killer",
+      "cost": {
+        "gold": 25000,
+        "materials": [
+          { "id": "MAT_BASE_07", "count": 3 },
+          { "id": "MAT_BASE_09", "count": 2 },
+          { "id": "MAT_CAT_07", "count": 8 },
+          { "id": "MAT_RACE_04", "count": 3 },
+          { "id": "MAT_RARE_01", "count": 2 },
+          { "id": "MAT_RARE_02", "count": 1 }
+        ],
+        "crystal": 100
+      }
+    },
+    {
+      "id": "RECIPE_EQ504",
+      "equipmentId": "EQ504",
+      "name": "堕天の弓",
+      "rarity": "legendary",
+      "category": "species_killer",
+      "cost": {
+        "gold": 25000,
+        "materials": [
+          { "id": "MAT_BASE_07", "count": 3 },
+          { "id": "MAT_BASE_09", "count": 2 },
+          { "id": "MAT_CAT_07", "count": 8 },
+          { "id": "MAT_RACE_02", "count": 3 },
+          { "id": "MAT_RARE_01", "count": 2 },
+          { "id": "MAT_RARE_02", "count": 1 }
+        ],
+        "crystal": 100
+      }
+    },
+    {
+      "id": "RECIPE_EQ505",
+      "equipmentId": "EQ505",
+      "name": "人斬りの刀",
+      "rarity": "legendary",
+      "category": "species_killer",
+      "cost": {
+        "gold": 25000,
+        "materials": [
+          { "id": "MAT_BASE_07", "count": 3 },
+          { "id": "MAT_BASE_09", "count": 2 },
+          { "id": "MAT_CAT_07", "count": 8 },
+          { "id": "MAT_RACE_06", "count": 3 },
+          { "id": "MAT_RARE_01", "count": 2 },
+          { "id": "MAT_RARE_02", "count": 1 }
+        ],
+        "crystal": 100
+      }
+    },
+    {
+      "id": "RECIPE_EQ506",
+      "equipmentId": "EQ506",
+      "name": "破壊のハンマー",
+      "rarity": "legendary",
+      "category": "species_killer",
+      "cost": {
+        "gold": 25000,
+        "materials": [
+          { "id": "MAT_BASE_07", "count": 3 },
+          { "id": "MAT_BASE_09", "count": 2 },
+          { "id": "MAT_CAT_07", "count": 8 },
+          { "id": "MAT_RACE_05", "count": 3 },
+          { "id": "MAT_RARE_01", "count": 2 },
+          { "id": "MAT_RARE_02", "count": 1 }
+        ],
+        "crystal": 100
+      }
+    },
+    {
+      "id": "RECIPE_EQ507",
+      "equipmentId": "EQ507",
+      "name": "浄化の聖杯",
+      "rarity": "legendary",
+      "category": "species_killer",
+      "cost": {
+        "gold": 25000,
+        "materials": [
+          { "id": "MAT_BASE_07", "count": 3 },
+          { "id": "MAT_BASE_09", "count": 2 },
+          { "id": "MAT_CAT_07", "count": 8 },
+          { "id": "MAT_RACE_07", "count": 3 },
+          { "id": "MAT_RARE_01", "count": 2 },
+          { "id": "MAT_RARE_02", "count": 1 }
+        ],
+        "crystal": 100
+      }
+    },
+    {
+      "id": "RECIPE_EQ508",
+      "equipmentId": "EQ508",
+      "name": "不滅の心臓",
+      "rarity": "legendary",
+      "category": "legendary_special",
+      "cost": {
+        "gold": 25000,
+        "materials": [
+          { "id": "MAT_BASE_07", "count": 2 },
+          { "id": "MAT_BASE_09", "count": 2 },
+          { "id": "MAT_BASE_10", "count": 1 },
+          { "id": "MAT_CAT_10", "count": 8 },
+          { "id": "MAT_RARE_03", "count": 5 },
+          { "id": "MAT_RARE_02", "count": 2 }
+        ],
+        "crystal": 100
+      }
+    },
+    {
+      "id": "RECIPE_EQ509",
+      "equipmentId": "EQ509",
+      "name": "覇者の兜",
+      "rarity": "legendary",
+      "category": "legendary_special",
+      "cost": {
+        "gold": 25000,
+        "materials": [
+          { "id": "MAT_BASE_07", "count": 2 },
+          { "id": "MAT_BASE_09", "count": 2 },
+          { "id": "MAT_BASE_10", "count": 1 },
+          { "id": "MAT_CAT_10", "count": 8 },
+          { "id": "MAT_RARE_03", "count": 5 },
+          { "id": "MAT_RARE_02", "count": 2 }
+        ],
+        "crystal": 100
+      }
+    },
+    {
+      "id": "RECIPE_EQ510",
+      "equipmentId": "EQ510",
+      "name": "最後の砦",
+      "rarity": "legendary",
+      "category": "legendary_special",
+      "cost": {
+        "gold": 25000,
+        "materials": [
+          { "id": "MAT_BASE_07", "count": 2 },
+          { "id": "MAT_BASE_09", "count": 2 },
+          { "id": "MAT_BASE_10", "count": 1 },
+          { "id": "MAT_CAT_10", "count": 8 },
+          { "id": "MAT_RARE_03", "count": 5 },
+          { "id": "MAT_RARE_02", "count": 2 }
+        ],
+        "crystal": 100
+      }
+    }
+  ],
+  "metadata": {
+    "totalRecipes": 78,
+    "byRarity": {
+      "common": 7,
+      "rare": 19,
+      "epic": 42,
+      "legendary": 10
+    },
+    "costSummary": {
+      "common": {
+        "gold": 300,
+        "baseMaterial": 5,
+        "categoryMaterial": 2,
+        "crystal": 0
+      },
+      "rare": {
+        "gold": 1500,
+        "baseMaterial": 5,
+        "categoryMaterial": 3,
+        "elementMaterial": "3 (属性系のみ)",
+        "crystal": 10
+      },
+      "epic": {
+        "gold": 6000,
+        "baseMaterial": 5,
+        "categoryMaterial": 5,
+        "championMedal": "1 (一部装備)",
+        "crystal": 30
+      },
+      "legendary": {
+        "gold": 25000,
+        "baseMaterial": "5 (ミスリル3+オリハルコン2 or 混沌の核1)",
+        "categoryMaterial": 8,
+        "speciesMaterial": "3 (種族キラー)",
+        "rareSpeciesProof": "2 (種族キラー)",
+        "legendarySpeciesProof": "1-2",
+        "championMedal": "5 (伝説特殊)",
+        "crystal": 100
+      }
+    }
+  }
+}

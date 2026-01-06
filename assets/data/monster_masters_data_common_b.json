@@ -1,11 +1,64 @@
 {
-  "version": "10.1",
+  "version": "21.0.0",
   "created_at": "2025-12-04",
-  "updated_at": "2025-12-28",
-  "description": "一般種モンスター（パートB）7体（技プール拡張版）",
+  "updated_at": "2026-01-06",
+  "description": "一般種モンスター（パートB）7体（v20.0.0 Tier平準化調整版）",
   "category": "common",
-  "category_description": "一般種（入手難易度：標準）- 合計240-245、個体値3-5パターン（外れなし設計）",
+  "category_description": "一般種（入手難易度：標準）- 合計227-250、個体値3-5パターン（外れなし設計）",
   "changelog": {
+    "v21.0.0": [
+      "【B-→B救済】カラス DEF28→38, MDEF33→43, total237→257",
+      "【B-→B救済】カラス 神速の翼: ×1.1→×1.2"
+    ],
+    "v20.0.0": [
+      "【B-→B救済】ファフナ SPD22→35, total242→255",
+      "【B-→B救済】ジェイド 翡翠の守護×0.85→×0.80, SPD44→52, total250→258",
+      "【B-→B救済】ガルム DEF45→52, MDEF39→47, total238→253",
+      "【B-→B救済】アスモ 煉獄の炎: 火傷相手に×1.3→攻撃命中時火傷付与(1バトル2回)+火傷相手×1.3"
+    ],
+    "v19.0.0": [
+      "【差別化】ガルム 反骨の魂: HP消費技使用時ATK↑1追加"
+    ],
+    "v18.0.0": [
+      "【B-→B救済】シロネ 凍てつく美貌: 恐怖+SPD↓1追加, SPD55→58"
+    ],
+    "v17.0.0": [
+      "【C→B-上方】カラス DEF+5, MDEF+5, total227→237",
+      "【C→B-上方】ガルム DEF+5, MDEF+4, total229→238"
+    ],
+    "v16.0.0": [
+      "【A→B+下方】カラス ATK75→70, SPD88→78, total242→227",
+      "【A→B+下方】カラスアビ: 神速の翼 急所に当たりやすい→与ダメ×1.1",
+      "【A→B+下方】ガルム ATK85→72, total242→229"
+    ],
+    "v15.0.0": [
+      "【バージョン統一】v15.0.0に更新"
+    ],
+    "v14.0.0": [
+      "【包括的バランス調整】B- Tier解消のため上方修正",
+      "【ジェイド上方】total 240→250（DEF50→55、MDEF50→55）",
+      "【ジェイドアビ】翡翠の加護→翡翠の守護（HP半分以上で被ダメ×0.85）"
+    ],
+    "v13.1.0": [
+      "【上方修正】カラス 231→242（DEF 18→23、MDEF 22→28）"
+    ],
+    "v12.9.0": [
+      "【Sランク解消】カラス 速さ96→88、攻撒78→75（合計231、幻種を超えない）"
+    ],
+    "v12.8.0": [
+      "【表記統一】ガルム 怒りの拳 HP50%以下→HP75以下で威力2倍"
+    ],
+    "v12.6.0": [
+      "【効果文修正】シロネ com_004→com_002「登場時、相手の素早さ↓1」",
+      "【効果文修正】カラス 奇襲の心得「交代で登場後、次の技が必ず先制」",
+      "【バランス調整】カラス 必殺の型→先陣の誉れ（クリ率過剰問題解消）"
+    ],
+    "v12.5.0": [
+      "【ability_pool更新】v10.8アビリティマスターに準拠",
+      "【重複解消】翡翠の加護を回復技使用時状態異常回復に変更",
+      "【効果変更】凍てつく美貌→恐怖付与、風纏い→先制権付与",
+      "【数値明記】竜鱗、霊体、必殺の型等に数値を追記"
+    ],
     "v10.0": [
       "【技プール大幅拡張】全モンスターの技数を15技に拡張",
       "【習得レベル調整】4レベル刻みに統一",
@@ -28,15 +81,16 @@
       "species": "spirit",
       "element": "wind",
       "role": "火力型（先制・クリティカル特化）",
-      "design_concept": "【超高速ガラスキャノン】攻撃78/速さ96で耐久を捨てた",
+      "design_concept": "【高速アタッカー】攻撃70/速さ78。先制火力型として耐久も改善",
       "base_stats": {
-        "attack": 78,
-        "defense": 18,
+        "attack": 70,
+        "defense": 38,
         "magic": 28,
-        "magic_defense": 22,
-        "speed": 96
+        "magic_defense": 43,
+        "speed": 78
       },
-      "total": 242,
+      "total": 257,
+      "balance_note": "v21.0: DEF28→38, MDEF33→43, total237→257 (B-→B Tier救済)",
       "iv_patterns": [
         {"name": "速さ特化", "attack": 0, "defense": 0, "magic": -12, "magic_defense": 0, "speed": 12, "recommended": "最速確殺型（推奨）"},
         {"name": "攻撃特化", "attack": 12, "defense": 0, "magic": -12, "magic_defense": 0, "speed": 0, "recommended": "火力最大化"},
@@ -46,11 +100,11 @@
       "weaknesses": ["耐久が最低クラス", "一発でも受けたら危険", "魔法攻撃不可"],
       "ability_pool": {
         "rare": [
-          {"id": "ex_com_karasu", "name": "神速の翼", "effect": "先制攻撃時、急所に当たりやすい"},
-          {"id": "rare_011", "name": "奇襲の心得", "effect": "交代で登場したターン、必ず先制"}
+          {"id": "ex_com_karasu", "name": "神速の翼", "effect": "先制攻撃時、与ダメージ強化（×1.2）"},
+          {"id": "rare_011", "name": "奇襲の心得", "effect": "交代で登場後、次の技が必ず先制"}
         ],
         "common": [
-          {"id": "com_015", "name": "必殺の型", "effect": "急所に当たりやすい"},
+          {"id": "com_014", "name": "先陣の誉れ", "effect": "先発で登場した時、攻撃強化（1ターン）"},
           {"id": "com_016", "name": "猪突猛進", "effect": "攻撃強化、被ダメージも増加"}
         ]
       },
@@ -58,11 +112,11 @@
         "initial_skills": [
           {"id": "wind_003", "name": "烈風", "learn_level": 1},
           {"id": "cmn_phy_003", "name": "疾風撃", "learn_level": 1},
-          {"id": "cmn_sup_003", "name": "集中", "learn_level": 1}
+          {"id": "cmn_sup_001", "name": "威圧", "learn_level": 1}
         ],
         "learnable_skills": [
           {"id": "karasu_001", "name": "神速斬り", "learn_level": 4, "cost": 3, "power": "D", "effect": "先制+クリ率30%"},
-          {"id": "wind_006", "name": "風纏い", "learn_level": 8},
+          {"id": "thunder_006", "name": "帯電", "learn_level": 8},
           {"id": "wind_002", "name": "疾空斬", "learn_level": 12},
           {"id": "karasu_002", "name": "疾風怒濤", "learn_level": 16, "cost": 4, "power": "B", "effect": "強力な風の一撃"},
           {"id": "dark_002", "name": "影縫い", "learn_level": 20},
@@ -96,9 +150,10 @@
         "defense": 72,
         "magic": 32,
         "magic_defense": 48,
-        "speed": 22
+        "speed": 35
       },
-      "total": 242,
+      "total": 255,
+      "balance_note": "v20.0: SPD22→35, total242→255 (B-→B Tier救済)",
       "iv_patterns": [
         {"name": "防御特化", "attack": 0, "defense": 12, "magic": -12, "magic_defense": 0, "speed": 0, "recommended": "物理耐久最大化（推奨）"},
         {"name": "攻撃特化", "attack": 12, "defense": 0, "magic": -12, "magic_defense": 0, "speed": 0, "recommended": "火力重視型"},
@@ -110,7 +165,7 @@
       "ability_pool": {
         "rare": [
           {"id": "ex_com_fafna", "name": "雷鱗", "effect": "雷ダメージを半減"},
-          {"id": "sp_dragon", "name": "竜鱗", "effect": "攻撃技が強化される"}
+          {"id": "sp_dragon", "name": "竜鱗", "effect": "攻撃技が強化される（×1.3）"}
         ],
         "common": [
           {"id": "com_008", "name": "帯電被膜", "effect": "攻撃技を受けた時、相手を麻痺にする"},
@@ -129,7 +184,7 @@
           {"id": "thunder_007", "name": "雷鳴拳", "learn_level": 12},
           {"id": "earth_008", "name": "ストーンショット", "learn_level": 16},
           {"id": "fafna_002", "name": "サンダーブレス", "learn_level": 20, "cost": 4, "power": "B", "effect": "麻痺確定+使用後素早さ↓"},
-          {"id": "earth_006", "name": "堅守", "learn_level": 24},
+          {"id": "water_006", "name": "水鏡", "learn_level": 24},
           {"id": "thunder_002", "name": "痺撃波", "learn_level": 28},
           {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 32},
           {"id": "earth_007", "name": "剛岩拳", "learn_level": 36},
@@ -153,15 +208,16 @@
       "species": "dragon",
       "element": "wind",
       "role": "バランス型（先制・耐久）",
-      "design_concept": "【多型対応バランス】全ステ平均的で物理/魔法どちらも選択可能",
+      "design_concept": "【耐久バランス型】防御55/魔防 55で耐久力強化（v14.0上方修正）",
       "base_stats": {
         "attack": 48,
-        "defense": 50,
+        "defense": 55,
         "magic": 48,
-        "magic_defense": 50,
-        "speed": 44
+        "magic_defense": 55,
+        "speed": 52
       },
-      "total": 240,
+      "total": 258,
+      "balance_note": "v20.0: SPD44→52, total250→258 (B-→B Tier救済)",
       "iv_patterns": [
         {"name": "攻撃特化", "attack": 12, "defense": 0, "magic": 0, "magic_defense": -12, "speed": 0, "recommended": "物理型"},
         {"name": "魔力特化", "attack": 0, "defense": 0, "magic": 12, "magic_defense": -12, "speed": 0, "recommended": "魔法型"},
@@ -173,19 +229,19 @@
       "weaknesses": ["特化型には劣る", "飛び抜けた強みがない", "器用貧乏になりやすい"],
       "ability_pool": {
         "rare": [
-          {"id": "ex_com_jade", "name": "翡翠の加護", "effect": "回復技の効果が強化される"},
-          {"id": "sp_dragon", "name": "竜鱗", "effect": "攻撃技が強化される"}
+          {"id": "ex_com_jade", "name": "翡翠の守護", "effect": "HP半分以上の時、被ダメージ軽減（×0.80）"},
+          {"id": "sp_dragon", "name": "竜鱗", "effect": "攻撃技が強化される（×1.3）"}
         ],
         "common": [
           {"id": "com_019", "name": "守りの構え", "effect": "HP半分以上で被ダメージ軽減"},
-          {"id": "com_020", "name": "再生細胞", "effect": "毎ターン終了時、HPを少し回復"}
+          {"id": "com_020", "name": "再生細胞", "effect": "毎ターン終了時、HP8回復"}
         ]
       },
       "skill_pool": {
         "initial_skills": [
           {"id": "wind_003", "name": "烈風", "learn_level": 1},
           {"id": "cmn_phy_001", "name": "猛進", "learn_level": 1},
-          {"id": "cmn_sup_003", "name": "集中", "learn_level": 1}
+          {"id": "cmn_sup_001", "name": "威圧", "learn_level": 1}
         ],
         "learnable_skills": [
           {"id": "jade_001", "name": "翠風", "learn_level": 4, "cost": 2, "effect": "素早さ↑↑+次T先制権確定"},
@@ -223,9 +279,10 @@
         "defense": 40,
         "magic": 72,
         "magic_defense": 58,
-        "speed": 55
+        "speed": 58
       },
-      "total": 240,
+      "total": 243,
+      "balance_note": "v18.0: SPD55→58, total240→243 (B-→B Tier救済)",
       "iv_patterns": [
         {"name": "魔力特化", "attack": -12, "defense": 0, "magic": 12, "magic_defense": 0, "speed": 0, "recommended": "火力最大化（推奨）"},
         {"name": "速さ特化", "attack": -12, "defense": 0, "magic": 0, "magic_defense": 0, "speed": 12, "recommended": "先制デバフ型"},
@@ -235,11 +292,11 @@
       "weaknesses": ["物理攻撃は完全に不可能", "耐久は普通"],
       "ability_pool": {
         "rare": [
-          {"id": "ex_com_shirone", "name": "凍てつく美貌", "effect": "登場時、相手に恐怖を付与"},
-          {"id": "sp_spirit", "name": "霊体", "effect": "攻撃技のダメージを軽減"}
+          {"id": "ex_com_shirone", "name": "凍てつく美貌", "effect": "登場時、相手を恐怖状態にする"},
+          {"id": "sp_spirit", "name": "霊体", "effect": "攻撃技のダメージを軽減（×0.8）"}
         ],
         "common": [
-          {"id": "com_004", "name": "冷気の纏い", "effect": "攻撃技を受けた時、相手の速さ↓1"},
+          {"id": "com_002", "name": "冷気の纏い", "effect": "登場時、相手の素早さ↓1"},
           {"id": "com_019", "name": "守りの構え", "effect": "HP半分以上で被ダメージ軽減"}
         ]
       },
@@ -253,7 +310,7 @@
           {"id": "shirone_001", "name": "凍てつく吐息", "learn_level": 4, "cost": 3, "power": "C", "effect": "素早さ↓↓"},
           {"id": "water_006", "name": "水鏡", "learn_level": 8},
           {"id": "shirone_002", "name": "氷の棺", "learn_level": 12, "cost": 4, "power": "B", "effect": "恐怖確定+使用後自分速さ↓↓"},
-          {"id": "dark_006", "name": "暗幕", "learn_level": 16},
+          {"id": "cmn_sup_002", "name": "煽動", "learn_level": 16},
           {"id": "water_009", "name": "凍結波", "learn_level": 20},
           {"id": "shirone_003", "name": "氷嵐", "learn_level": 24, "cost": 3, "effect": "フィールド「吹雪」設置（5T水技+30%、炎技-30%）"},
           {"id": "dark_005", "name": "呪詛", "learn_level": 28},
@@ -298,8 +355,8 @@
       "weaknesses": ["攻撃は完全に不可能", "耐久が低め"],
       "ability_pool": {
         "rare": [
-          {"id": "ex_com_sylphy", "name": "風の加護", "effect": "サポート技を使った時、自分を5%回復"},
-          {"id": "sp_angel", "name": "聖なるオーラ", "effect": "回復技の効果が強化される"}
+          {"id": "ex_com_sylphy", "name": "風纏い", "effect": "登場時、このターン自分の技が先制になる"},
+          {"id": "sp_angel", "name": "聖なるオーラ", "effect": "回復技の効果+8"}
         ],
         "common": [
           {"id": "com_003", "name": "号令の旗", "effect": "登場時、自分の素早さ↑1"},
@@ -314,7 +371,7 @@
         ],
         "learnable_skills": [
           {"id": "sylphy_001", "name": "風の守護", "learn_level": 4, "cost": 2, "effect": "3T自分の場にいるモンスターが受ける攻撃技ダメージを軽減"},
-          {"id": "wind_006", "name": "風纏い", "learn_level": 8},
+          {"id": "thunder_006", "name": "帯電", "learn_level": 8},
           {"id": "light_005", "name": "癒月", "learn_level": 12},
           {"id": "sylphy_002", "name": "風の加護", "learn_level": 16, "cost": 3, "effect": "次T先制権付与+控えと交代する事もできる"},
           {"id": "light_006", "name": "光の障壁", "learn_level": 20},
@@ -342,48 +399,49 @@
       "species": "human",
       "element": "fire",
       "role": "火力型（逆境特化）",
-      "design_concept": "【逆境特化】攻撃85で耐久を捨てた。HP半分以下で真価発揮",
+      "design_concept": "【自傷活用型】攻撃72でHP半分以下から真価発揮。HP消費技で能動的にATK強化（v19.0）",
       "base_stats": {
-        "attack": 85,
-        "defense": 40,
+        "attack": 72,
+        "defense": 52,
         "magic": 15,
-        "magic_defense": 35,
+        "magic_defense": 47,
         "speed": 67
       },
-      "total": 242,
+      "total": 253,
+      "balance_note": "v20.0: DEF45→52, MDEF39→47, total238→253 (B-→B Tier救済)",
       "iv_patterns": [
         {"name": "攻撃特化", "attack": 12, "defense": 0, "magic": -12, "magic_defense": 0, "speed": 0, "recommended": "火力最大化（推奨）"},
         {"name": "速さ特化", "attack": 0, "defense": 0, "magic": -12, "magic_defense": 0, "speed": 12, "recommended": "先制逆境型"},
         {"name": "防御特化", "attack": 0, "defense": 12, "magic": -12, "magic_defense": 0, "speed": 0, "recommended": "耐久逆境型"}
       ],
-      "strengths": ["逆境時の火力が最強クラス", "HP半分以下で被ダメ軽減", "反射ダメージも可能"],
+      "strengths": ["逆境時の火力が最強クラス", "HP消費技でATK強化", "HP半分以下で被ダメ軽減"],
       "weaknesses": ["魔法攻撃は完全に不可能", "魔防が低い", "HP管理が難しい"],
       "ability_pool": {
         "rare": [
-          {"id": "ex_com_garm", "name": "反骨の魂", "effect": "HP半分以下で被ダメージ軽減"},
+          {"id": "ex_com_garm", "name": "反骨の魂", "effect": "HP半分以下で被ダメ軽減（×0.8）、HP消費技使用時ATK↑1"},
           {"id": "sp_human", "name": "適応力", "effect": "同じ技を2回受けると、その技のダメージ半減"}
         ],
         "common": [
           {"id": "com_017", "name": "背水の陣", "effect": "HP半分以下で攻撃大幅強化"},
-          {"id": "com_012", "name": "反射の鎧", "effect": "攻撃を受けた時、相手にもダメージ"}
+          {"id": "com_012", "name": "反射の鎧", "effect": "攻撃を受けた時、相手に15ダメージ"}
         ]
       },
       "skill_pool": {
         "initial_skills": [
           {"id": "cmn_phy_002", "name": "裂爪", "learn_level": 1},
-          {"id": "cmn_sup_003", "name": "集中", "learn_level": 1},
+          {"id": "cmn_sup_002", "name": "煽動", "learn_level": 1},
           {"id": "fire_007", "name": "紅蓮拳", "learn_level": 1}
         ],
         "learnable_skills": [
-          {"id": "garm_001", "name": "怒りの拳", "learn_level": 4, "cost": 3, "power": "C", "effect": "HP50%以下で威力2倍"},
+          {"id": "garm_001", "name": "怒りの拳", "learn_level": 4, "cost": 3, "power": "C", "effect": "HP75以下で威力2倍"},
           {"id": "fire_006", "name": "炎舞", "learn_level": 8},
-          {"id": "garm_002", "name": "闘魂", "learn_level": 12, "cost": 2, "effect": "攻撃↑↑"},
+          {"id": "garm_002", "name": "激昂", "learn_level": 12, "cost": 2, "effect": "自分HP30消費+攻撃↑↑+速さ↑"},
           {"id": "cmn_phy_004", "name": "剛腕撃", "learn_level": 16},
           {"id": "earth_008", "name": "ストーンショット", "learn_level": 20},
           {"id": "garm_003", "name": "カウンター", "learn_level": 24, "cost": 3, "effect": "そのT受けた攻撃技ダメージを2倍返し"},
           {"id": "earth_007", "name": "剛岩拳", "learn_level": 28},
           {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 32},
-          {"id": "cmn_phy_005", "name": "猛襲", "learn_level": 36},
+          {"id": "cmn_phy_006", "name": "連撃", "learn_level": 36},
           {"id": "fire_008", "name": "獄炎", "learn_level": 44},
           {"id": "fire_005", "name": "焦熱獄", "learn_level": 48}
         ],
@@ -401,7 +459,7 @@
       "name": "煉獄アスモ",
       "lore": "炎の剣を操る熱血の剣士。正義のために戦い、悪を炎で焼き払う。",
       "category": "common",
-      "species": "human",
+      "species": "demon",
       "element": "fire",
       "role": "火力型（物理・火傷特化）",
       "design_concept": "【物理火力特化】攻撃75で物理火技を使いこなす",
@@ -423,7 +481,7 @@
       "weaknesses": ["魔法攻撃は控えめ", "耐久は普通"],
       "ability_pool": {
         "rare": [
-          {"id": "ex_com_asmo", "name": "炎の剣技", "effect": "攻撃技に火傷付与効果を追加（30%）"},
+          {"id": "ex_com_asmo", "name": "煉獄の炎", "effect": "攻撃命中時、火傷でない相手を火傷にする（毎バトル2回）。火傷状態の相手に攻撃強化（×1.3）"},
           {"id": "sp_human", "name": "適応力", "effect": "同じ技を2回受けると、その技のダメージ半減"}
         ],
         "common": [
@@ -435,7 +493,7 @@
         "initial_skills": [
           {"id": "fire_007", "name": "紅蓮拳", "learn_level": 1},
           {"id": "cmn_phy_002", "name": "裂爪", "learn_level": 1},
-          {"id": "cmn_sup_003", "name": "集中", "learn_level": 1}
+          {"id": "cmn_sup_002", "name": "煽動", "learn_level": 1}
         ],
         "learnable_skills": [
           {"id": "asmo_001", "name": "地獄の業火", "learn_level": 4, "cost": 4, "power": "C", "effect": "火傷確定+相手炎耐性無視"},

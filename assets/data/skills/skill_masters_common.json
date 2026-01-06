@@ -2,8 +2,8 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Common Species Unique Skills - Phase 1 v9.0",
   "description": "一般種モンスター専用技マスターデータ（カテゴリシステム移行版）",
-  "version": "12.0.0",
-  "last_updated": "2025-12-29",
+  "version": "17.0.0",
+  "last_updated": "2026-01-05",
   "category": "common",
   "category_description": "一般種（入手難易度：標準）- カテゴリは入手難易度であり強さではない",
   "design_philosophy": {
@@ -51,26 +51,29 @@
     {
       "skill_id": "karasu_001",
       "name": "神速斬り",
+      "name_reading": "しんそくぎり",
       "name_en": "Divine Speed Slash",
       "category": "attack_plus_effect",
       "element": "wind",
       "cost": 3,
       "damage_type": "attack",
-      "power": 30,
-      "power_rank": "D",
+      "power": 55,
+      "power_rank": "C",
       "accuracy": 100,
       "priority": 1,
       "target": "opponent",
-      "description": "先制+クリ率30%",
+      "description": "先制+相手HP50%以上でクリティカル確定",
       "special_effects": [
         {"effect_type": "priority", "value": 1},
-        {"effect_type": "critical_rate_boost", "boost_percentage": 30}
+        {"effect_type": "critical_on_high_hp", "threshold": 50}
       ],
-      "owner_id": "karasu"
+      "owner_id": "karasu",
+      "balance_note": "v12.2: 威力D→C、クリ率30%→HP50%以上クリ確定（運要素排除）"
     },
     {
       "skill_id": "karasu_002",
       "name": "疾風怒濤",
+      "name_reading": "しっぷうどとう",
       "name_en": "Swift Storm",
       "category": "damage_only",
       "element": "wind",
@@ -88,6 +91,7 @@
     {
       "skill_id": "karasu_003",
       "name": "烈風の構え",
+      "name_reading": "れっぷうのかまえ",
       "name_en": "Gale Stance",
       "category": "support_only",
       "element": "wind",
@@ -108,6 +112,7 @@
     {
       "skill_id": "ult_karasu",
       "name": "夜叉旋風",
+      "name_reading": "やしゃせんぷう",
       "name_en": "Yaksha Whirlwind",
       "category": "damage_only",
       "element": "wind",
@@ -127,6 +132,7 @@
     {
       "skill_id": "fafna_001",
       "name": "電撃波",
+      "name_reading": "でんげきは",
       "name_en": "Electric Wave",
       "category": "attack_plus_effect",
       "element": "thunder",
@@ -146,6 +152,7 @@
     {
       "skill_id": "fafna_002",
       "name": "サンダーブレス",
+      "name_reading": "サンダーブレス",
       "name_en": "Thunder Breath",
       "category": "attack_plus_effect",
       "element": "thunder",
@@ -166,6 +173,7 @@
     {
       "skill_id": "ult_fafna",
       "name": "雷竜咆哮",
+      "name_reading": "らいりゅうほうこう",
       "name_en": "Thunder Dragon Roar",
       "category": "attack_plus_effect",
       "element": "thunder",
@@ -188,6 +196,7 @@
     {
       "skill_id": "jade_001",
       "name": "翠風",
+      "name_reading": "すいふう",
       "name_en": "Jade Wind",
       "category": "support_only",
       "element": "wind",
@@ -208,6 +217,7 @@
     {
       "skill_id": "jade_002",
       "name": "疾風のブレス",
+      "name_reading": "しっぷうのブレス",
       "name_en": "Gale Breath",
       "category": "damage_only",
       "element": "wind",
@@ -225,6 +235,7 @@
     {
       "skill_id": "ult_jade",
       "name": "翡翠嵐",
+      "name_reading": "ひすいあらし",
       "name_en": "Jade Storm",
       "category": "attack_plus_effect",
       "element": "wind",
@@ -246,6 +257,7 @@
     {
       "skill_id": "shirone_001",
       "name": "凍てつく吐息",
+      "name_reading": "いてつくといき",
       "name_en": "Freezing Breath",
       "category": "attack_plus_effect",
       "element": "water",
@@ -265,6 +277,7 @@
     {
       "skill_id": "shirone_002",
       "name": "氷の棺",
+      "name_reading": "こおりのひつぎ",
       "name_en": "Ice Coffin",
       "category": "attack_plus_effect",
       "element": "water",
@@ -285,6 +298,7 @@
     {
       "skill_id": "shirone_003",
       "name": "氷嵐",
+      "name_reading": "ひょうらん",
       "name_en": "Ice Storm",
       "category": "support_only",
       "element": "water",
@@ -311,6 +325,7 @@
     {
       "skill_id": "shirone_004",
       "name": "氷槍",
+      "name_reading": "ひょうそう",
       "name_en": "Ice Lance",
       "category": "damage_only",
       "element": "water",
@@ -330,6 +345,7 @@
     {
       "skill_id": "ult_shirone",
       "name": "極寒の抱擁",
+      "name_reading": "ごっかんのほうよう",
       "name_en": "Freezing Embrace",
       "category": "attack_plus_effect",
       "element": "water",
@@ -352,6 +368,7 @@
     {
       "skill_id": "sylphy_001",
       "name": "風の守護",
+      "name_reading": "かぜのしゅご",
       "name_en": "Wind Protection",
       "category": "support_only",
       "element": "wind",
@@ -362,7 +379,7 @@
       "accuracy": 100,
       "priority": 0,
       "target": "field",
-      "description": "3T自分の場にいるモンスターが受ける攻撃技ダメージを軽減",
+      "description": "【フィールド】3T攻撃技ダメージを軽減",
       "special_effects": [{
         "effect_type": "field_barrier",
         "damage_type": "attack",
@@ -370,11 +387,13 @@
         "duration": 3,
         "persist_on_switch": true
       }],
-      "owner_id": "sylphy"
+      "owner_id": "sylphy",
+      "balance_note": "v12.3: description表記統一（軽減=25%）"
     },
     {
       "skill_id": "sylphy_002",
       "name": "風の加護",
+      "name_reading": "かぜのかご",
       "name_en": "Wind's Blessing",
       "category": "support_only",
       "element": "wind",
@@ -395,6 +414,7 @@
     {
       "skill_id": "sylphy_003",
       "name": "風の暴力",
+      "name_reading": "かぜのぼうりょく",
       "name_en": "Wind Violence",
       "category": "attack_plus_effect",
       "element": "wind",
@@ -405,13 +425,15 @@
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "クリ率20%",
-      "special_effects": [{"effect_type": "critical_rate_boost", "boost_percentage": 20}],
-      "owner_id": "sylphy"
+      "description": "拘束確定",
+      "special_effects": [{"effect_type": "status_condition", "status": "restraint", "probability": 100}],
+      "owner_id": "sylphy",
+      "balance_note": "v12.2: クリ率20%→拘束確定（運要素排除）"
     },
     {
       "skill_id": "ult_sylphy",
       "name": "天翔の祝福",
+      "name_reading": "てんしょうのしゅくふく",
       "name_en": "Heavenly Blessing",
       "category": "support_only",
       "element": "wind",
@@ -435,6 +457,7 @@
     {
       "skill_id": "asmo_001",
       "name": "地獄の業火",
+      "name_reading": "じごくのごうか",
       "name_en": "Hellfire",
       "category": "attack_plus_effect",
       "element": "fire",
@@ -455,6 +478,7 @@
     {
       "skill_id": "asmo_002",
       "name": "煉獄招来",
+      "name_reading": "れんごくしょうらい",
       "name_en": "Purgatory Summon",
       "category": "support_only",
       "element": "fire",
@@ -480,6 +504,7 @@
     {
       "skill_id": "asmo_003",
       "name": "炎の気迫",
+      "name_reading": "ほのおのきはく",
       "name_en": "Flame Spirit",
       "category": "support_only",
       "element": "fire",
@@ -501,6 +526,7 @@
     {
       "skill_id": "ult_asmo",
       "name": "灼熱の剣舞",
+      "name_reading": "しゃくねつのけんぶ",
       "name_en": "Blazing Sword Dance",
       "category": "damage_only",
       "element": "fire",
@@ -520,6 +546,7 @@
     {
       "skill_id": "garm_001",
       "name": "怒りの拳",
+      "name_reading": "いかりのこぶし",
       "name_en": "Rage Fist",
       "category": "attack_plus_effect",
       "element": "fire",
@@ -537,6 +564,7 @@
     {
       "skill_id": "garm_002",
       "name": "激昂",
+      "name_reading": "げっこう",
       "name_en": "Fury",
       "category": "support_only",
       "element": "fire",
@@ -559,6 +587,7 @@
     {
       "skill_id": "garm_003",
       "name": "カウンター",
+      "name_reading": "カウンター",
       "name_en": "Counter",
       "category": "support_only",
       "element": "none",
@@ -577,6 +606,7 @@
     {
       "skill_id": "ult_garm",
       "name": "爆炎拳",
+      "name_reading": "ばくえんけん",
       "name_en": "Explosive Flame Fist",
       "category": "damage_only",
       "element": "fire",
@@ -596,6 +626,7 @@
     {
       "skill_id": "bitman_001",
       "name": "自爆",
+      "name_reading": "じばく",
       "name_en": "Self-Destruct",
       "category": "attack_plus_effect",
       "element": "thunder",
@@ -613,6 +644,7 @@
     {
       "skill_id": "bitman_002",
       "name": "緊急複製",
+      "name_reading": "きんきゅうふくせい",
       "name_en": "Emergency Copy",
       "category": "support_only",
       "element": "none",
@@ -633,6 +665,7 @@
     {
       "skill_id": "bitman_003",
       "name": "連携攻撃",
+      "name_reading": "れんけいこうげき",
       "name_en": "Coordinated Attack",
       "category": "attack_plus_effect",
       "element": "thunder",
@@ -651,6 +684,7 @@
     {
       "skill_id": "ult_bitman",
       "name": "量産型の本気",
+      "name_reading": "りょうさんがたのほんき",
       "name_en": "Mass Production Serious",
       "category": "attack_plus_effect",
       "element": "thunder",
@@ -672,6 +706,7 @@
     {
       "skill_id": "mamon_001",
       "name": "金貨投げ",
+      "name_reading": "きんかなげ",
       "name_en": "Gold Toss",
       "category": "attack_plus_effect",
       "element": "earth",
@@ -689,6 +724,7 @@
     {
       "skill_id": "mamon_002",
       "name": "強欲の罠",
+      "name_reading": "ごうよくのわな",
       "name_en": "Greed Trap",
       "category": "support_only",
       "element": "earth",
@@ -708,6 +744,7 @@
     {
       "skill_id": "ult_mamon",
       "name": "強欲の極み",
+      "name_reading": "ごうよくのきわみ",
       "name_en": "Pinnacle of Greed",
       "category": "damage_only",
       "element": "earth",
@@ -727,6 +764,7 @@
     {
       "skill_id": "chris_001",
       "name": "結晶化",
+      "name_reading": "けっしょうか",
       "name_en": "Crystallize",
       "category": "support_only",
       "element": "earth",
@@ -746,6 +784,7 @@
     {
       "skill_id": "chris_002",
       "name": "結晶射出",
+      "name_reading": "けっしょうしゃしゅつ",
       "name_en": "Crystal Shot",
       "category": "attack_plus_effect",
       "element": "earth",
@@ -763,6 +802,7 @@
     {
       "skill_id": "chris_003",
       "name": "結晶障壁",
+      "name_reading": "けっしょうしょうへき",
       "name_en": "Crystal Barrier",
       "category": "support_only",
       "element": "earth",
@@ -773,15 +813,17 @@
       "accuracy": 100,
       "priority": 0,
       "target": "self",
-      "description": "2T被ダメ-20%",
+      "description": "次に受けるダメージを大幅に軽減（1回）",
       "special_effects": [
-        {"effect_type": "damage_reduction", "reduction_percentage": 20, "duration": 2}
+        {"effect_type": "damage_reduction_next", "reduction_percentage": 50, "uses": 1}
       ],
-      "owner_id": "chris"
+      "owner_id": "chris",
+      "balance_note": "v12.3: description表記統一（大幅に軽減=50%、1回限定）"
     },
     {
       "skill_id": "ult_chris",
       "name": "結晶要塞",
+      "name_reading": "けっしょうようさい",
       "name_en": "Crystal Fortress",
       "category": "support_only",
       "element": "earth",
@@ -804,6 +846,7 @@
     {
       "skill_id": "merlan_001",
       "name": "魔力暴走",
+      "name_reading": "まりょくぼうそう",
       "name_en": "Magic Rampage",
       "category": "attack_plus_effect",
       "element": "none",
@@ -823,6 +866,7 @@
     {
       "skill_id": "merlan_002",
       "name": "属性変換",
+      "name_reading": "ぞくせいへんかん",
       "name_en": "Element Shift",
       "category": "support_only",
       "element": "none",
@@ -840,6 +884,7 @@
     {
       "skill_id": "merlan_003",
       "name": "魔法増幅",
+      "name_reading": "まほうぞうふく",
       "name_en": "Magic Amplify",
       "category": "support_only",
       "element": "none",
@@ -859,6 +904,7 @@
     {
       "skill_id": "ult_merlan",
       "name": "七色の極光",
+      "name_reading": "なないろのきょっこう",
       "name_en": "Rainbow Aurora",
       "category": "damage_only",
       "element": "none",
@@ -878,6 +924,7 @@
     {
       "skill_id": "sera_001",
       "name": "癒しの抱擁",
+      "name_reading": "いやしのほうよう",
       "name_en": "Healing Embrace",
       "category": "support_only",
       "element": "light",
@@ -898,6 +945,7 @@
     {
       "skill_id": "sera_002",
       "name": "光の障壁",
+      "name_reading": "ひかりのしょうへき",
       "name_en": "Light Barrier",
       "category": "support_only",
       "element": "light",
@@ -915,6 +963,7 @@
     {
       "skill_id": "sera_003",
       "name": "守護結界",
+      "name_reading": "しゅごけっかい",
       "name_en": "Guardian Barrier",
       "category": "support_only",
       "element": "light",
@@ -925,7 +974,7 @@
       "accuracy": 100,
       "priority": 0,
       "target": "field",
-      "description": "3T自分の場にいるモンスターの被ダメ-25%（交代しても効果継続）",
+      "description": "【フィールド】3T被ダメージを軽減",
       "special_effects": [{
         "effect_type": "field_barrier",
         "damage_reduction_percentage": 25,
@@ -933,11 +982,12 @@
         "persist_on_switch": true
       }],
       "owner_id": "sera",
-      "balance_note": "v12.0: 味方→自分の場表記に修正"
+      "balance_note": "v12.3: description表記統一（軽減=25%）"
     },
     {
       "skill_id": "ult_sera",
       "name": "癒しの聖光",
+      "name_reading": "いやしのせいこう",
       "name_en": "Holy Light of Healing",
       "category": "support_only",
       "element": "light",
@@ -961,6 +1011,7 @@
     {
       "skill_id": "talos_001",
       "name": "鉄壁モード",
+      "name_reading": "てっぺきモード",
       "name_en": "Fortress Mode",
       "category": "support_only",
       "element": "earth",
@@ -980,6 +1031,7 @@
     {
       "skill_id": "talos_002",
       "name": "自己修復",
+      "name_reading": "じこしゅうふく",
       "name_en": "Self-Repair",
       "category": "support_only",
       "element": "none",
@@ -1000,6 +1052,7 @@
     {
       "skill_id": "talos_003",
       "name": "ミサイルポッド",
+      "name_reading": "ミサイルポッド",
       "name_en": "Missile Pod",
       "category": "attack_plus_effect",
       "element": "earth",
@@ -1017,6 +1070,7 @@
     {
       "skill_id": "ult_talos",
       "name": "要塞砲",
+      "name_reading": "ようさいほう",
       "name_en": "Fortress Cannon",
       "category": "damage_only",
       "element": "earth",
@@ -1036,6 +1090,7 @@
     {
       "skill_id": "zela_001",
       "name": "深淵の呼び声",
+      "name_reading": "しんえんのよびごえ",
       "name_en": "Abyss Call",
       "category": "attack_plus_effect",
       "element": "water",
@@ -1055,6 +1110,7 @@
     {
       "skill_id": "zela_002",
       "name": "深海の圧力",
+      "name_reading": "しんかいのあつりょく",
       "name_en": "Deep Sea Pressure",
       "category": "support_only",
       "element": "water",
@@ -1065,15 +1121,17 @@
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "素早さ↓↓",
+      "description": "防御↓↓",
       "special_effects": [
-        {"effect_type": "stat_change", "stat": "speed", "modifier": -2, "target": "opponent"}
+        {"effect_type": "stat_change", "stat": "defense", "modifier": -2, "target": "opponent"}
       ],
-      "owner_id": "zela"
+      "owner_id": "zela",
+      "balance_note": "v12.2: 速さ↓↓→防御↓↓（重複排除）"
     },
     {
       "skill_id": "zela_003",
       "name": "飲み込む",
+      "name_reading": "のみこむ",
       "name_en": "Swallow",
       "category": "attack_plus_effect",
       "element": "water",
@@ -1094,6 +1152,7 @@
     {
       "skill_id": "ult_zela",
       "name": "深淵の終焉",
+      "name_reading": "しんえんのしゅうえん",
       "name_en": "Abyss Ending",
       "category": "attack_plus_effect",
       "element": "dark",
@@ -1116,6 +1175,7 @@
     {
       "skill_id": "sheela_001",
       "name": "深海の歌声",
+      "name_reading": "しんかいのうたごえ",
       "name_en": "Deep Sea Siren",
       "category": "attack_plus_effect",
       "element": "water",
@@ -1133,6 +1193,7 @@
     {
       "skill_id": "sheela_002",
       "name": "暗黒水流",
+      "name_reading": "あんこくすいりゅう",
       "name_en": "Dark Torrent",
       "category": "attack_plus_effect",
       "element": "water",
@@ -1152,6 +1213,7 @@
     {
       "skill_id": "sheela_003",
       "name": "深海の呪い",
+      "name_reading": "しんかいののろい",
       "name_en": "Deep Sea Curse",
       "category": "support_only",
       "element": "dark",
@@ -1162,15 +1224,17 @@
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "相手速さ↓↓",
+      "description": "相手魔防↓↓",
       "special_effects": [
-        {"effect_type": "stat_change", "stat": "speed", "modifier": -2, "target": "opponent"}
+        {"effect_type": "stat_change", "stat": "magic_defense", "modifier": -2, "target": "opponent"}
       ],
-      "owner_id": "sheela"
+      "owner_id": "sheela",
+      "balance_note": "v12.2: 速さ↓↓→魔防↓↓（重複排除）"
     },
     {
       "skill_id": "ult_sheela",
       "name": "深海の支配",
+      "name_reading": "しんかいのしはい",
       "name_en": "Abyss Dominion",
       "category": "attack_plus_effect",
       "element": "water",
@@ -1193,6 +1257,7 @@
     {
       "skill_id": "kagura_001",
       "name": "灯火の守り",
+      "name_reading": "ともしびのまもり",
       "name_en": "Lantern Guard",
       "category": "support_only",
       "element": "fire",
@@ -1210,6 +1275,7 @@
     {
       "skill_id": "kagura_002",
       "name": "火花散らし",
+      "name_reading": "ひばなちらし",
       "name_en": "Spark Scatter",
       "category": "attack_plus_effect",
       "element": "fire",
@@ -1229,6 +1295,7 @@
     {
       "skill_id": "ult_kagura",
       "name": "神楽の炎",
+      "name_reading": "かぐらのほのお",
       "name_en": "Sacred Kagura Flame",
       "category": "attack_plus_effect",
       "element": "fire",
@@ -1251,6 +1318,7 @@
     {
       "skill_id": "scorpion_001",
       "name": "精密射撃",
+      "name_reading": "せいみつしゃげき",
       "name_en": "Precision Shot",
       "category": "attack_plus_effect",
       "element": "thunder",
@@ -1270,6 +1338,7 @@
     {
       "skill_id": "scorpion_002",
       "name": "弱点狙撃",
+      "name_reading": "じゃくてんそげき",
       "name_en": "Weak Point Snipe",
       "category": "attack_plus_effect",
       "element": "thunder",
@@ -1287,6 +1356,7 @@
     {
       "skill_id": "scorpion_003",
       "name": "照準固定",
+      "name_reading": "しょうじゅんこてい",
       "name_en": "Lock On",
       "category": "support_only",
       "element": "none",
@@ -1307,6 +1377,7 @@
     {
       "skill_id": "ult_scorpion",
       "name": "必殺の一撃",
+      "name_reading": "ひっさつのいちげき",
       "name_en": "Lethal Strike",
       "category": "damage_only",
       "element": "thunder",
@@ -1326,6 +1397,7 @@
     {
       "skill_id": "chrome_001",
       "name": "鉄壁の構え",
+      "name_reading": "てっぺきのかまえ",
       "name_en": "Iron Defense",
       "category": "support_only",
       "element": "earth",
@@ -1346,6 +1418,7 @@
     {
       "skill_id": "chrome_002",
       "name": "鋼鉄のブレス",
+      "name_reading": "こうてつのブレス",
       "name_en": "Steel Breath",
       "category": "attack_plus_effect",
       "element": "earth",
@@ -1363,6 +1436,7 @@
     {
       "skill_id": "ult_chrome",
       "name": "鋼殻砲",
+      "name_reading": "こうかくほう",
       "name_en": "Steel Shell Cannon",
       "category": "damage_only",
       "element": "earth",
@@ -1382,6 +1456,7 @@
     {
       "skill_id": "noel_000",
       "name": "女神への祈り",
+      "name_reading": "めがみへのいのり",
       "name_en": "Prayer to Goddess",
       "category": "support_only",
       "element": "light",
@@ -1402,6 +1477,7 @@
     {
       "skill_id": "noel_003",
       "name": "女神召喚",
+      "name_reading": "めがみしょうかん",
       "name_en": "Goddess Summon",
       "category": "attack_plus_effect",
       "element": "light",
@@ -1421,6 +1497,7 @@
     {
       "skill_id": "noel_002",
       "name": "奇跡の祈り",
+      "name_reading": "きせきのいのり",
       "name_en": "Miracle Prayer",
       "category": "attack_plus_effect",
       "element": "light",
@@ -1442,6 +1519,7 @@
     {
       "skill_id": "noel_005",
       "name": "聖なる裁き",
+      "name_reading": "せいなるさばき",
       "name_en": "Holy Judgment",
       "category": "attack_plus_effect",
       "element": "light",
@@ -1459,6 +1537,7 @@
     {
       "skill_id": "ult_noel",
       "name": "聖なる奇跡",
+      "name_reading": "せいなるきせき",
       "name_en": "Holy Miracle",
       "category": "support_only",
       "element": "light",
@@ -1482,6 +1561,7 @@
     {
       "skill_id": "kaito_001",
       "name": "逆境の刃",
+      "name_reading": "ぎゃっきょうのやいば",
       "name_en": "Adversity Blade",
       "category": "attack_plus_effect",
       "element": "none",
@@ -1499,6 +1579,7 @@
     {
       "skill_id": "kaito_002",
       "name": "捨て身",
+      "name_reading": "すてみ",
       "name_en": "Reckless",
       "category": "attack_plus_effect",
       "element": "none",
@@ -1516,6 +1597,7 @@
     {
       "skill_id": "kaito_004",
       "name": "抜刀術",
+      "name_reading": "ばっとうじゅつ",
       "name_en": "Iaido Slash",
       "category": "damage_only",
       "element": "none",
@@ -1535,6 +1617,7 @@
     {
       "skill_id": "ult_kaito",
       "name": "秘剣・流星",
+      "name_reading": "ひけん・りゅうせい",
       "name_en": "Secret Sword: Meteor",
       "category": "damage_only",
       "element": "none",
@@ -1554,6 +1637,7 @@
     {
       "skill_id": "im_001",
       "name": "悪戯",
+      "name_reading": "いたずら",
       "name_en": "Mischief",
       "category": "support_only",
       "element": "dark",
@@ -1571,6 +1655,7 @@
     {
       "skill_id": "im_002",
       "name": "いじわる",
+      "name_reading": "いじわる",
       "name_en": "Mean Spirited",
       "category": "attack_plus_effect",
       "element": "dark",
@@ -1588,6 +1673,7 @@
     {
       "skill_id": "im_003",
       "name": "小悪魔の微笑み",
+      "name_reading": "こあくまのほほえみ",
       "name_en": "Little Devil's Smile",
       "category": "attack_plus_effect",
       "element": "dark",
@@ -1607,6 +1693,7 @@
     {
       "skill_id": "ult_im",
       "name": "小悪魔の本気",
+      "name_reading": "こあくまのほんき",
       "name_en": "Little Devil's Serious",
       "category": "attack_plus_effect",
       "element": "dark",
@@ -1629,6 +1716,7 @@
     {
       "skill_id": "mof_001",
       "name": "胞子撒き",
+      "name_reading": "ほうしまき",
       "name_en": "Spore Scatter",
       "category": "attack_plus_effect",
       "element": "earth",
@@ -1646,6 +1734,7 @@
     {
       "skill_id": "mof_002",
       "name": "擬態",
+      "name_reading": "ぎたい",
       "name_en": "Mimicry",
       "category": "support_only",
       "element": "none",
@@ -1656,16 +1745,17 @@
       "accuracy": 100,
       "priority": 0,
       "target": "self",
-      "description": "次攻撃回避",
+      "description": "次に受けるダメージを大幅に軽減（1回）",
       "special_effects": [
-        {"effect_type": "evade_next", "value": true}
+        {"effect_type": "damage_reduction_next", "reduction_percentage": 50, "uses": 1}
       ],
       "owner_id": "mof",
-      "balance_note": "v10.2: evasionステータス削除→evade_nextに変更"
+      "balance_note": "v12.3: description表記統一（大幅に軽減=50%、1回限定）"
     },
     {
       "skill_id": "mof_003",
       "name": "養分吸収",
+      "name_reading": "ようぶんきゅうしゅう",
       "name_en": "Nutrient Drain",
       "category": "attack_plus_effect",
       "element": "earth",
@@ -1683,6 +1773,7 @@
     {
       "skill_id": "ult_mof",
       "name": "胞子爆発",
+      "name_reading": "ほうしばくはつ",
       "name_en": "Spore Explosion",
       "category": "attack_plus_effect",
       "element": "earth",
@@ -1707,6 +1798,25 @@
     "total_skills": 83,
     "ultimate_count": 22,
     "changelog": {
+      "v12.4.0": [
+        "バージョン同期（一般種該当なし）"
+      ],
+      "v12.3.0": [
+        "【軽減効果統一】軽減=25%（フィールドのみ）、大幅に軽減=50%（次1回のみ）",
+        "風の守護(sylphy_001): description表記統一（軽減=25%）",
+        "守護結界(sera_003): description表記統一（軽減=25%）",
+        "結晶障壁(chris_003): description表記統一（大幅に軽減=50%）",
+        "擬態(mof_002): description表記統一（大幅に軽減=50%）"
+      ],
+      "v12.2.0": [
+        "【運要素完全排除】",
+        "神速斬り(karasu_001): 威力D→C、クリ率30%→HP50%以上クリ確定",
+        "風の暴力(sylphy_003): クリ率20%→拘束確定",
+        "擬態(mof_002): 次回避→次被ダメ半減",
+        "深海の圧力(zela_002): 速さ↓↓→防御↓↓",
+        "深海の呪い(sheela_003): 速さ↓↓→魔防↓↓",
+        "結晶障壁(chris_003): 2T被ダメ-20%→次被ダメ半減（被ダメ-XX%はフィールド技のみ）"
+      ],
       "v12.0.0": [
         "味方→控え表記に統一（bitman_003）",
         "大地の守りの説明文を明確化（sera_003）",

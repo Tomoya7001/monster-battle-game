@@ -1,284 +1,272 @@
 {
-    "items": [
-        {
-            "item_id": "potion_small",
-            "name": "きずぐすり",
-            "name_en": "Potion",
-            "category": "consumable",
-            "sub_category": "healing",
-            "rarity": 1,
-            "description": "モンスターのHPを50回復する",
-            "effect": {
-                "type": "heal_hp",
-                "value": 50
-            },
-            "icon": "potion_small",
-            "sell_price": 100,
-            "buy_price": 200,
-            "max_stack": 99,
-            "is_usable_in_battle": false,
-            "drop_stages": [
-                "stage_001",
-                "stage_002"
-            ],
-            "drop_rate": 30,
-            "display_order": 1,
-            "is_active": true
-        },
-        {
-            "item_id": "potion_medium",
-            "name": "いいきずぐすり",
-            "name_en": "Super Potion",
-            "category": "consumable",
-            "sub_category": "healing",
-            "rarity": 2,
-            "description": "モンスターのHPを100回復する",
-            "effect": {
-                "type": "heal_hp",
-                "value": 100
-            },
-            "icon": "potion_medium",
-            "sell_price": 300,
-            "buy_price": 600,
-            "max_stack": 99,
-            "is_usable_in_battle": false,
-            "drop_stages": [
-                "stage_002"
-            ],
-            "drop_rate": 20,
-            "display_order": 2,
-            "is_active": true
-        },
-        {
-            "item_id": "potion_large",
-            "name": "すごいきずぐすり",
-            "name_en": "Hyper Potion",
-            "category": "consumable",
-            "sub_category": "healing",
-            "rarity": 3,
-            "description": "モンスターのHPを全回復する",
-            "effect": {
-                "type": "heal_hp_full",
-                "value": 100
-            },
-            "icon": "potion_large",
-            "sell_price": 700,
-            "buy_price": 1500,
-            "max_stack": 99,
-            "is_usable_in_battle": false,
-            "drop_stages": [],
-            "drop_rate": 10,
-            "display_order": 3,
-            "is_active": true
-        },
-        {
-            "item_id": "revive_half",
-            "name": "げんきのかけら",
-            "name_en": "Revive",
-            "category": "consumable",
-            "sub_category": "revive",
-            "rarity": 3,
-            "description": "瀕死のモンスターをHP50%で復活させる",
-            "effect": {
-                "type": "revive",
-                "value": 50
-            },
-            "icon": "revive_half",
-            "sell_price": 500,
-            "buy_price": 1000,
-            "max_stack": 99,
-            "is_usable_in_battle": false,
-            "drop_stages": [
-                "stage_002"
-            ],
-            "drop_rate": 8,
-            "display_order": 4,
-            "is_active": true
-        },
-        {
-            "item_id": "revive_full",
-            "name": "げんきのかたまり",
-            "name_en": "Max Revive",
-            "category": "consumable",
-            "sub_category": "revive",
-            "rarity": 4,
-            "description": "瀕死のモンスターをHP100%で復活させる",
-            "effect": {
-                "type": "revive",
-                "value": 100
-            },
-            "icon": "revive_full",
-            "sell_price": 1500,
-            "buy_price": 3000,
-            "max_stack": 99,
-            "is_usable_in_battle": false,
-            "drop_stages": [],
-            "drop_rate": 5,
-            "display_order": 5,
-            "is_active": true
-        },
-        {
-            "item_id": "status_heal",
-            "name": "なんでもなおし",
-            "name_en": "Full Heal",
-            "category": "consumable",
-            "sub_category": "healing",
-            "rarity": 2,
-            "description": "モンスターの状態異常を回復する",
-            "effect": {
-                "type": "cure_status",
-                "value": 0
-            },
-            "icon": "status_heal",
-            "sell_price": 250,
-            "buy_price": 500,
-            "max_stack": 99,
-            "is_usable_in_battle": false,
-            "drop_stages": [
-                "stage_001",
-                "stage_002"
-            ],
-            "drop_rate": 15,
-            "display_order": 6,
-            "is_active": true
-        },
-        {
-            "item_id": "exp_small",
-            "name": "けいけんちアメ（小）",
-            "name_en": "Exp Candy S",
-            "category": "consumable",
-            "sub_category": "growth",
-            "rarity": 1,
-            "description": "モンスターに経験値100を与える",
-            "effect": {
-                "type": "add_exp",
-                "value": 100
-            },
-            "icon": "exp_small",
-            "sell_price": 50,
-            "buy_price": 0,
-            "max_stack": 999,
-            "is_usable_in_battle": false,
-            "drop_stages": [
-                "stage_001"
-            ],
-            "drop_rate": 40,
-            "display_order": 10,
-            "is_active": true
-        },
-        {
-            "item_id": "exp_medium",
-            "name": "けいけんちアメ（中）",
-            "name_en": "Exp Candy M",
-            "category": "consumable",
-            "sub_category": "growth",
-            "rarity": 2,
-            "description": "モンスターに経験値500を与える",
-            "effect": {
-                "type": "add_exp",
-                "value": 500
-            },
-            "icon": "exp_medium",
-            "sell_price": 200,
-            "buy_price": 0,
-            "max_stack": 999,
-            "is_usable_in_battle": false,
-            "drop_stages": [
-                "stage_002"
-            ],
-            "drop_rate": 25,
-            "display_order": 11,
-            "is_active": true
-        },
-        {
-            "item_id": "exp_large",
-            "name": "けいけんちアメ（大）",
-            "name_en": "Exp Candy L",
-            "category": "consumable",
-            "sub_category": "growth",
-            "rarity": 3,
-            "description": "モンスターに経験値2000を与える",
-            "effect": {
-                "type": "add_exp",
-                "value": 2000
-            },
-            "icon": "exp_large",
-            "sell_price": 600,
-            "buy_price": 0,
-            "max_stack": 999,
-            "is_usable_in_battle": false,
-            "drop_stages": [],
-            "drop_rate": 12,
-            "display_order": 12,
-            "is_active": true
-        },
-        {
-            "item_id": "intimacy_treat",
-            "name": "なかよしおやつ",
-            "name_en": "Friendship Treat",
-            "category": "consumable",
-            "sub_category": "intimacy",
-            "rarity": 2,
-            "description": "モンスターの親密度経験値を50上げる",
-            "effect": {
-                "type": "add_intimacy",
-                "value": 50
-            },
-            "icon": "intimacy_treat",
-            "sell_price": 150,
-            "buy_price": 300,
-            "max_stack": 99,
-            "is_usable_in_battle": false,
-            "drop_stages": [
-                "stage_001"
-            ],
-            "drop_rate": 15,
-            "display_order": 20,
-            "is_active": true
-        },
-        {
-            "item_id": "trait_stone",
-            "name": "とくせいのいし",
-            "name_en": "Trait Stone",
-            "category": "consumable",
-            "sub_category": "special",
-            "rarity": 4,
-            "description": "モンスターのメイン特性を再抽選する",
-            "effect": {
-                "type": "reroll_trait",
-                "value": 0
-            },
-            "icon": "trait_stone",
-            "sell_price": 2000,
-            "buy_price": 5000,
-            "max_stack": 99,
-            "is_usable_in_battle": false,
-            "drop_stages": [],
-            "drop_rate": 0,
-            "display_order": 30,
-            "is_active": true
-        },
-        {
-            "item_id": "reset_points",
-            "name": "ふりなおしのみ",
-            "name_en": "Reset Berry",
-            "category": "consumable",
-            "sub_category": "special",
-            "rarity": 3,
-            "description": "振り分けたポイントを全てリセットする",
-            "effect": {
-                "type": "reset_points",
-                "value": 0
-            },
-            "icon": "reset_points",
-            "sell_price": 800,
-            "buy_price": 2000,
-            "max_stack": 99,
-            "is_usable_in_battle": false,
-            "drop_stages": [],
-            "drop_rate": 0,
-            "display_order": 31,
-            "is_active": true
-        }
-    ]
+  "version": "1.0.0",
+  "created_at": "2026-01-06",
+  "updated_at": "2026-01-06",
+  "description": "アイテムマスターデータ Phase1版",
+  "design_notes": {
+    "hp_base": "HP200固定（Lv50時）を基準に回復量設計",
+    "exp_total": "累計100,000でLv50到達",
+    "battle_use": "回復アイテムはバトル中使用不可",
+    "ability_unlock": "継承システムと併存、選択式解放"
+  },
+  "items": [
+    {
+      "item_id": "heal_small",
+      "name": "癒しの葉",
+      "name_en": "Healing Leaf",
+      "category": "consumable",
+      "sub_category": "healing",
+      "rarity": 1,
+      "description": "モンスターのHPを50回復する",
+      "effect": {
+        "type": "heal_hp",
+        "value": 50
+      },
+      "icon": "heal_small",
+      "sell_price": 50,
+      "buy_price": 200,
+      "max_stack": 99,
+      "is_usable_in_battle": false,
+      "drop_stages": ["area_1", "area_2", "area_3", "area_4"],
+      "drop_rate": 25,
+      "display_order": 1,
+      "is_active": true
+    },
+    {
+      "item_id": "heal_medium",
+      "name": "癒しの花",
+      "name_en": "Healing Flower",
+      "category": "consumable",
+      "sub_category": "healing",
+      "rarity": 2,
+      "description": "モンスターのHPを100回復する",
+      "effect": {
+        "type": "heal_hp",
+        "value": 100
+      },
+      "icon": "heal_medium",
+      "sell_price": 125,
+      "buy_price": 500,
+      "max_stack": 99,
+      "is_usable_in_battle": false,
+      "drop_stages": ["area_5", "area_6", "area_7", "area_8"],
+      "drop_rate": 20,
+      "display_order": 2,
+      "is_active": true
+    },
+    {
+      "item_id": "heal_full",
+      "name": "癒しの雫",
+      "name_en": "Healing Drop",
+      "category": "consumable",
+      "sub_category": "healing",
+      "rarity": 3,
+      "description": "モンスターのHPを全回復する",
+      "effect": {
+        "type": "heal_hp_full",
+        "value": 100
+      },
+      "icon": "heal_full",
+      "sell_price": 375,
+      "buy_price": 1500,
+      "max_stack": 99,
+      "is_usable_in_battle": false,
+      "drop_stages": ["area_9", "area_10"],
+      "drop_rate": 10,
+      "display_order": 3,
+      "is_active": true
+    },
+    {
+      "item_id": "exp_shard",
+      "name": "経験の欠片",
+      "name_en": "EXP Shard",
+      "category": "consumable",
+      "sub_category": "growth",
+      "rarity": 1,
+      "description": "モンスターに経験値200を与える",
+      "effect": {
+        "type": "add_exp",
+        "value": 200
+      },
+      "icon": "exp_shard",
+      "sell_price": 20,
+      "buy_price": 0,
+      "max_stack": 999,
+      "is_usable_in_battle": false,
+      "drop_stages": ["area_1", "area_2", "area_3", "area_4"],
+      "drop_rate": 30,
+      "display_order": 10,
+      "is_active": true
+    },
+    {
+      "item_id": "exp_crystal",
+      "name": "経験の結晶",
+      "name_en": "EXP Crystal",
+      "category": "consumable",
+      "sub_category": "growth",
+      "rarity": 2,
+      "description": "モンスターに経験値1,000を与える",
+      "effect": {
+        "type": "add_exp",
+        "value": 1000
+      },
+      "icon": "exp_crystal",
+      "sell_price": 100,
+      "buy_price": 0,
+      "max_stack": 999,
+      "is_usable_in_battle": false,
+      "drop_stages": ["area_5", "area_6", "area_7", "area_8"],
+      "drop_rate": 20,
+      "display_order": 11,
+      "is_active": true
+    },
+    {
+      "item_id": "exp_cluster",
+      "name": "経験の塊",
+      "name_en": "EXP Cluster",
+      "category": "consumable",
+      "sub_category": "growth",
+      "rarity": 3,
+      "description": "モンスターに経験値5,000を与える",
+      "effect": {
+        "type": "add_exp",
+        "value": 5000
+      },
+      "icon": "exp_cluster",
+      "sell_price": 500,
+      "buy_price": 0,
+      "max_stack": 999,
+      "is_usable_in_battle": false,
+      "drop_stages": ["area_9", "area_10"],
+      "drop_rate": 10,
+      "display_order": 12,
+      "is_active": true
+    },
+    {
+      "item_id": "exp_core",
+      "name": "経験の秘石",
+      "name_en": "EXP Core",
+      "category": "consumable",
+      "sub_category": "growth",
+      "rarity": 4,
+      "description": "モンスターに経験値20,000を与える",
+      "effect": {
+        "type": "add_exp",
+        "value": 20000
+      },
+      "icon": "exp_core",
+      "sell_price": 2000,
+      "buy_price": 0,
+      "max_stack": 999,
+      "is_usable_in_battle": false,
+      "drop_stages": [],
+      "drop_rate": 0,
+      "display_order": 13,
+      "is_active": true
+    },
+    {
+      "item_id": "ability_selector",
+      "name": "アビリティの書",
+      "name_en": "Ability Tome",
+      "category": "consumable",
+      "sub_category": "special",
+      "rarity": 4,
+      "description": "未習得のアビリティを1つ選んで解放する",
+      "effect": {
+        "type": "unlock_ability_select",
+        "value": 0
+      },
+      "icon": "ability_selector",
+      "sell_price": 5000,
+      "buy_price": 0,
+      "max_stack": 99,
+      "is_usable_in_battle": false,
+      "drop_stages": [],
+      "drop_rate": 0,
+      "display_order": 30,
+      "is_active": true
+    },
+    {
+      "item_id": "stat_reset",
+      "name": "振り直しの秘薬",
+      "name_en": "Stat Reset Potion",
+      "category": "consumable",
+      "sub_category": "special",
+      "rarity": 3,
+      "description": "振り分けたポイントを全てリセットする",
+      "effect": {
+        "type": "reset_stat_points",
+        "value": 0
+      },
+      "icon": "stat_reset",
+      "sell_price": 750,
+      "buy_price": 3000,
+      "max_stack": 99,
+      "is_usable_in_battle": false,
+      "drop_stages": [],
+      "drop_rate": 0,
+      "display_order": 31,
+      "is_active": true
+    },
+    {
+      "item_id": "ticket_rare",
+      "name": "希少種チケット",
+      "name_en": "Rare Monster Ticket",
+      "category": "ticket",
+      "sub_category": "gacha",
+      "rarity": 4,
+      "description": "希少種が1体確定で出る",
+      "effect": {
+        "type": "gacha_rare_guaranteed",
+        "value": 1
+      },
+      "icon": "ticket_rare",
+      "sell_price": 0,
+      "buy_price": 0,
+      "max_stack": 999,
+      "is_usable_in_battle": false,
+      "drop_stages": [],
+      "drop_rate": 0,
+      "display_order": 40,
+      "is_active": true
+    },
+    {
+      "item_id": "ticket_legendary",
+      "name": "幻種チケット",
+      "name_en": "Legendary Monster Ticket",
+      "category": "ticket",
+      "sub_category": "gacha",
+      "rarity": 5,
+      "description": "幻種が1体確定で出る",
+      "effect": {
+        "type": "gacha_legendary_guaranteed",
+        "value": 1
+      },
+      "icon": "ticket_legendary",
+      "sell_price": 0,
+      "buy_price": 0,
+      "max_stack": 999,
+      "is_usable_in_battle": false,
+      "drop_stages": [],
+      "drop_rate": 0,
+      "display_order": 41,
+      "is_active": true
+    }
+  ],
+  "category_summary": {
+    "total_items": 11,
+    "by_category": {
+      "healing": 3,
+      "growth": 4,
+      "special": 2,
+      "gacha": 2
+    },
+    "by_rarity": {
+      "1": 2,
+      "2": 2,
+      "3": 3,
+      "4": 3,
+      "5": 1
+    }
+  }
 }

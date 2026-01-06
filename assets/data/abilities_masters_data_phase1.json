@@ -1,9 +1,165 @@
 {
-    "version": "10.3",
+    "version": "21.0",
     "created_at": "2025-12-04",
-    "updated_at": "2025-12-22",
-    "description": "Phase1 アビリティマスターデータ v10.3（登場時効果統一版）",
+    "updated_at": "2026-01-06",
+    "balance_philosophy_v21": "B- Tier完全救済: スコーピオン/カラス/ビットマン/マモン/シーラの5体を救済",
+    "description": "Phase1 アビリティマスターデータ v21.0（B- Tier完全救済版）",
     "changelog": {
+        "v21.0": [
+            "【B-→B救済】スコーピオン 精密照準: 急所時防御↓1→急所率+1段階+急所時防御↓1",
+            "【B-→B救済】カラス 神速の翼: ×1.1→×1.2",
+            "【B-→B救済】ビットマン 量産型の意地: ×1.15/×1.1/×1.35→×1.2/×1.15/×1.4",
+            "【B-→B救済】マモン 強欲の力: 登場時ATK↑1→ATK↑2",
+            "【B-→B救済】シーラ 深海の支配: SPD↓1→SPD↓2"
+        ],
+        "v20.0": [
+            "【A→B+下方】スライム 絶対捕食: 20%→15%回復",
+            "【A→B+下方】レオン 聖盾の誓い: ×0.6→×0.7",
+            "【B-→B救済】アスモ 煉獄の炎: 火傷相手×1.3→攻撃命中時火傷付与(2回)+火傷相手×1.3",
+            "【B-→B救済】ゼラ 深淵の目覚め: 初期コスト+1→初期コスト+1+コスト5技使用後コスト+1"
+        ],
+        "v19.0": [
+            "【差別化】セラ 聖なる守護: 交代時HP20回復+次T被ダメ×0.8（ミカ＝自己復活との差別化）",
+            "【差別化】カグラ 炎の守護: 炎無効+炎技使用時HP8回復（タマモ＝状態異常火力との差別化）",
+            "【差別化】ビットマン 量産型の意地: 後攻時さらに×1.1追加（単体運用強化）",
+            "【差別化】ガルム 反骨の魂: HP消費技使用時ATK↑1追加（自傷活用明確化）"
+        ],
+        "v18.0": [
+            "【S→B+下方】スライム 絶対捕食: 25%→20%吸収、5回制限追加",
+            "【B+→B+復活】グラム アビリティ封じ: 2T→3Tに復活（過剰下方救済）",
+            "【S→B+下方】リリス 夢魔の誘惑: 自分も制限追加（公平化）",
+            "【B-→B救済】タロス 鉄壁: ×0.85→×0.80強化、後攻時状態異常回復追加",
+            "【B-→B救済】クロム 鋼の守り: ×0.9→×0.85強化",
+            "【B-→B救済】リント ジェットエンジン: 登場時SPD↑1追加",
+            "【B-→B救済】エヴァ 竜姫の献身: 自己回復8→15、控え回復8追加",
+            "【B-→B救済】シロネ 凍てつく美貌: 恐怖+SPD↓1に強化"
+        ],
+        "v17.0": [
+            "【S→B+下方】クロム 鋼の意志を削除（竜鱗のみで運用）",
+            "【S→B+下方】キョウカ 呪符術師: サポート技先制→優先度+1に変更",
+            "【A→B+下方】ミカ 女神の祝福: HP30→HP20復活",
+            "【A→B+下方】ヴェル MAG85→75, 終わりなき飢え15%→10%",
+            "【A→B+下方】グラム アビリティ封じ: 3T→2Tに短縮",
+            "【A→B+下方】タマモ MAG82→75, 狐火の魂×1.25→×1.2",
+            "【A→B+下方】ジャック SPD82→75, 海賊魂×1.25→×1.2",
+            "【A→B+下方】リリス SPD88→80",
+            "【A→B+下方】セラ total265→245, HP30→HP20回復",
+            "【C→B-上方】カイト total222→232 (DEF+5, MDEF+5)",
+            "【C→B-上方】カラス total227→237 (DEF+5, MDEF+5)",
+            "【C→B-上方】スコーピオン total230→238 (DEF+4, MDEF+4)",
+            "【C→B-上方】ガルム total229→238 (DEF+5, MDEF+4)",
+            "【C→B-上方】マモン 強欲の力: 登場時ATK↑1復活"
+        ],
+        "v16.0": [
+      "【一般種S→B+下方】マモン ATK90→75, SPD72→62, 強欲の力弱体化",
+      "【一般種S→B+下方】カイト ATK80→70, SPD92→82",
+      "【一般種S→B+下方】クロム 鋼の意志×1.2→×1.1",
+      "【一般種A→B+下方】カラス ATK75→70, SPD88→78, 神速の翼弱体化",
+      "【一般種A→B+下方】スコーピオン ATK80→70",
+      "【一般種A→B+下方】ガルム ATK85→72",
+      "【幻種B→A上方】ヴェル SPD70→75, 終わりなき飢え8%→15%",
+      "【幻種B→A上方】ミカ MAG68→75, SPD42→50",
+      "【幻種B→A上方】スライム 無限適応→絶対捕食（被ダメ25%回復+状態異常無効）",
+      "【幻種B+維持】テュール 暴君のオーラ×1.2/×1.3（攻撃ボーナス復活）"
+    ],
+        "v14.0": [
+            "【包括的バランス調整】A Tier 8体下方修正、B- Tier 3体上方修正",
+            "【A Tier下方】ジャック 海賊魂×1.3→×1.25",
+            "【A Tier下方】テュール 暴君のオーラ×1.15/×1.15→×1.1/×1.2",
+            "【A Tier下方】タマモ 狐火の魂×1.3→×1.25",
+            "【A Tier下方】ミカ 女神の祝福HP40→HP30復活",
+            "【A Tier下方】ヴェル 終わりなき飢え10%→8%吸収",
+            "【A Tier下方】スライム 無限適応×0.85/3属性→×0.9/2属性",
+            "【A Tier下方】レオン 聖盾の誓い×0.5→×0.6、聖なる護り×0.5→×0.75（専用アビ統合予定）",
+            "【B- Tier上方】ジェイド 翡翠の加護→翡翠の守護（HP半分以上で被ダメ×0.85）",
+            "【B- Tier上方】ビットマン 量産型の連携→量産型の意地（単体×1.15、メカ控え×1.35）",
+            "【B- Tier上方】シーラ 深海の束縛1T→2T+SPD↓1",
+            "【新規追加】com_027 逆襲の構え（後攻時急所率+2）",
+            "【新規追加】com_028 遅延戦術（毎T相手SPD↓1、最大2回）",
+            "【新規追加】com_029 堅守の型（被ダメ時次T被ダメ×0.9）",
+            "【新規追加】rare_021 逆転の一手（HP半分以下で技威力×1.3）"
+        ],
+        "v13.1": [
+            "【D tier解消】マモン 強欲の力: 攻撃命中↑→登場時↑1+攻撃命中↑1（1T1回）に強化"
+        ],
+        "v13.0": [
+            "【モンスターファイル同期】グラム アビリティ封じ: 常時→3T限定に変更",
+            "【モンスターファイル同期】レオン 聖盾の誓い: ×0.7→×0.5に変更",
+            "【モンスターファイル同期】ミカ 女神の祝福: HP25%→HP40固定に変更",
+            "【モンスターファイル同期】ヴェル 終わりなき飢え: HP8固定→与ダメ10%に変更",
+            "【モンスターファイル同期】アーサー 剣聖の極意: 攻撃↑1→防御バフ無視に変更",
+            "【モンスターファイル同期】クリス 結晶の鎧: ×0.8→×0.85に変更",
+            "【モンスターファイル同期】タロス 鉄壁: ×0.9→×0.85に変更",
+            "【S tier解消】クロム 鋼の意志: ×1.5→×1.2に変更（竜鱗乗算で過剰火力防止）",
+            "【S tier解消】スライム 無限適応: ×0.75→×0.85に変更"
+        ],
+        "v12.0": [
+            "【Sランク解消】テュール 暴君のオーラ: ×1.2→×1.15に変更",
+            "【Sランク解消】グラム アビリティ封じ: 常時→3T限定に変更",
+            "【Sランク解消】レオン 聖盾の誓い: ×0.7→×0.5に変更",
+            "【修正】ミカ 女神の祝福: HP25%→HP40固定で復活に変更",
+            "【新規追加】com_026 後の先: 後攻時被ダメージ軽減(×0.85)"
+        ],
+        "v11.0": [
+            "【バランス調整】Demonパッシブ: 奪う→解除に変更（バランス調整）"
+        ],
+        "v10.9": [
+            "【数値追加】ex_com_chris 結晶の銧: 効果文に（×0.8）を追記"
+        ],
+        "v10.8": [
+            "【重複解消】翡翠の加護: 回復技+8→回復技使用時に状態異常1つ回復（聖なるオーラと差別化）",
+            "【重複解消】鉄壁: HP半分以上×0.85→常時×0.9（守りの構えと差別化）",
+            "【定義明確化】属性吸収: ダメージを受けた後HP20回復と明記",
+            "【定義明確化】虚無の存在: 新たな能力変化を無効化と明記",
+            "【用語統一】呪縛の躯: bind→restraintに修正",
+            "【効果文明確化】霊体・竜鱗・必殺の型に数値追記"
+        ],
+        "v10.7": [
+            "【効果変更】凍てつく美貌: 速さ↓1→恐怖状態付与（専用らしさ強化）",
+            "【効果変更】風纏い: 速さ↑1→このターン自分の技が先制（専用らしさ強化）",
+            "【効果変更】最後の切り札: 奥義→最高コスト技（定義明確化）",
+            "【効果変更】支配の瞳: 先制技を除く旨を明記",
+            "【バランス調整】結晶の鎧: ×0.7→×0.8に弱体化",
+            "【効果明確化】前借り: 1ターン目のみコスト回復1になる旨を明記",
+            "【運要素排除】変幻の魂: ランダム→最も低いステータス↑1"
+        ],
+        "v10.6": [
+            "【バランス調整】アビリティ封じ: 場を離れたら解除に変更",
+            "【バランス調整】女神の祝福: 復活HP50%→25%に弱体化",
+            "【バランス調整】終わりなき飢え: 20回復→8回復に弱体化",
+            "【バランス調整】七色の力: 1バトル2回までに制限",
+            "【効果変更】捕縛の鎖→支配の瞳: 登場時、相手は次のターン最後に行動",
+            "【効果変更】虚無の存在: お互いの能力変化を無効化",
+            "【効果変更】枯渇の呪い: 相手の回復効果のみ無効に変更",
+            "【効果変更】貫通の眼: 防御と魔防のバフを無視に変更",
+            "【効果明確化】反射の鎧: 8→15ダメージに変更",
+            "【効果明確化】追撃本能: 20→30ダメージに変更",
+            "【効果明確化】最期の呪詛: 50固定ダメージに変更"
+        ],
+        "v10.5": [
+            "【効果明確化】反射の鎧: 固定8ダメージに変更",
+            "【効果明確化】追撃本能: 固定20ダメージに変更",
+            "【効果変更】呪縛の躯: 2T交代不可→拘束付与",
+            "【効果変更】無色の霧: 自分と相手の技を全て無属性に",
+            "【効果変更】威圧領域: コスト1の攻撃技と魔力技を無効化",
+            "【効果変更】貫通の眼: 相手のバフを無視して攻撃",
+            "【効果変更】虚無の存在: お互いの属性相性を無効化（全て等倍）",
+            "【効果変更】アビリティ封じ: 相手アビリティ無効（自分HP0で解除）",
+            "【効果変更】コスト浸食: コスト2の攻撃命中時に発動",
+            "【効果変更】奇襲の心得: 交代登場後、次の技が必ず先制",
+            "【効果変更】回復強化系: 回復量+8に統一（聖なるオーラ、翡翠の加護）",
+            "【移動】不屈の闘志: レオン専用→共通アビリティ",
+            "【新規追加】com_024 枯渇の呪い: お互いの回復効果を無効化"
+        ],
+        "v10.4": [
+            "【名称重複解消】深海の圧力→深海の束縛、深淵の呼び声→深淵の目覚め、風の加護→風纏い、竜姫の慈愛→竜姫の献身",
+            "【回復固定値化】全ての%回復を固定値に変更（5%→8、10%→15、15%→20）",
+            "【終わりなき飢え変更】与ダメ15%吸収→ダメージを与えたら20回復",
+            "【聖鱗変更】味方登場時回復→交代で登場した時、自分と控え全員の状態異常を1つ回復",
+            "【共鳴の波変更】味方全員→自分と控え全員を8回復",
+            "【聖なる祈り変更】味方5%回復→毎ターン控えを15回復（差別化）",
+            "【用語統一】味方→控え、味方全員→自分と控え全員"
+        ],
         "v10.3": [
             "【リリス変更】夢魔の誘惑: 登場時、相手はこのターン高コスト技を封じられる",
             "【シロネ変更】凍てつく美貌: 恐怖→速さ↓1",
@@ -31,14 +187,15 @@
             "効果は1つのみ（猪突猛進のみ例外）",
             "HP条件は3種類のみ（満タン/半分以上/半分以下）",
             "倍率は内部処理、プレイヤーには見せない",
-            "効果文は短く、直感的に"
+            "効果文は短く、直感的に",
+            "運要素は完全排除（ランダム効果禁止）"
         ]
     },
     "species_passive": {
         "description": "種族パッシブ（全員自動適用、選択不要、無効化されない）",
         "human": "装備枠+1",
-        "angel": "毎ターンHP5%回復",
-        "demon": "攻撃命中時、相手のバフを1つ奪う",
+        "angel": "毎ターンHP8回復",
+        "demon": "攻撃命中時、相手のバフを1つ解除する",
         "dragon": "状態異常は1種類までしか受けない（上書き方式）",
         "mechanoid": "受ける状態異常の効果時間-1ターン",
         "spirit": "相手に与える状態異常の効果時間+1ターン",
@@ -103,10 +260,11 @@
             {
                 "id": "com_005",
                 "name": "追撃本能",
-                "effect": "相手が交代する時、交代先にダメージ",
+                "effect": "相手が交代する時、交代先に30ダメージ",
                 "trigger": "on_opponent_switch",
                 "damage_type": "fixed",
-                "damage_value": 30
+                "damage_value": 30,
+                "change_note": "v10.6: 20→30ダメージ"
             },
             {
                 "id": "com_006",
@@ -155,18 +313,20 @@
             {
                 "id": "com_012",
                 "name": "反射の鎧",
-                "effect": "攻撃を受けた時、相手にもダメージ",
+                "effect": "攻撃を受けた時、相手に15ダメージ",
                 "trigger": "on_hit_received",
-                "reflect_damage": true,
-                "reflect_ratio": 0.25
+                "damage_type": "fixed",
+                "damage_value": 15,
+                "change_note": "v10.6: 8→15ダメージ"
             },
             {
                 "id": "com_013",
                 "name": "最期の呪詛",
-                "effect": "倒された時、相手に大ダメージ",
+                "effect": "倒された時、相手に50ダメージ",
                 "trigger": "on_death",
-                "damage_type": "percent_max_hp",
-                "damage_value": 25
+                "damage_type": "fixed",
+                "damage_value": 50,
+                "change_note": "v10.6: 大ダメージ→固定50ダメージ"
             },
             {
                 "id": "com_014",
@@ -180,9 +340,10 @@
             {
                 "id": "com_015",
                 "name": "必殺の型",
-                "effect": "急所に当たりやすい",
+                "effect": "急所率+2段階",
                 "trigger": "passive",
-                "critical_boost": 2
+                "critical_boost": 2,
+                "change_note": "v10.8: 効果文に数値追記"
             },
             {
                 "id": "com_016",
@@ -220,10 +381,10 @@
             {
                 "id": "com_020",
                 "name": "再生細胞",
-                "effect": "毎ターン終了時、HPを少し回復",
+                "effect": "毎ターン終了時、HP8回復",
                 "trigger": "turn_end",
-                "heal_type": "percent_max_hp",
-                "heal_value": 5
+                "heal_type": "fixed",
+                "heal_value": 8
             },
             {
                 "id": "com_021",
@@ -243,20 +404,82 @@
             },
             {
                 "id": "com_023",
-                "name": "魔力吸収",
+                "name": "魔力よどみ",
                 "effect": "魔力技を受けた時、相手を瘴気にする",
                 "trigger": "on_magic_received",
                 "inflict_status": "miasma",
                 "added_in": "v10.2"
+            },
+            {
+                "id": "com_024",
+                "name": "枯渇の呪い",
+                "effect": "相手の回復効果を無効化",
+                "trigger": "passive",
+                "effect_type": "heal_nullify_opponent",
+                "change_note": "v10.6: お互い→相手のみに変更"
+            },
+            {
+                "id": "com_025",
+                "name": "不屈の闘志",
+                "effect": "HP満タン時、一撃でHP1で耐える（1回）",
+                "trigger": "on_lethal_damage",
+                "condition": "hp_full",
+                "survive_hp": 1,
+                "usage_limit": 1,
+                "change_note": "v10.5: レオン専用→共通アビリティに移動"
+            },
+            {
+                "id": "com_026",
+                "name": "後の先",
+                "effect": "後攻時、被ダメージ軽減（×0.85）",
+                "trigger": "passive",
+                "condition": "move_last",
+                "damage_reduction": 0.85,
+                "added_in": "v12.0"
+            },
+            {
+                "id": "com_027",
+                "name": "逆襲の構え",
+                "effect": "後攻時、急所率+2段階",
+                "trigger": "passive",
+                "condition": "move_last",
+                "critical_boost": 2,
+                "added_in": "v14.0",
+                "design_note": "速度偏重対策、遅いモンスターにクリティカルのチャンスを与える"
+            },
+            {
+                "id": "com_028",
+                "name": "遅延戦術",
+                "effect": "毎ターン終了時、相手の素早さ↓1（最大2回）",
+                "trigger": "turn_end",
+                "target": "opponent",
+                "stat_change": {"speed": -1},
+                "max_stacks": 2,
+                "added_in": "v14.0",
+                "design_note": "速度偏重対策、遅いモンスターが戦いやすくなる"
+            },
+            {
+                "id": "com_029",
+                "name": "堅守の型",
+                "effect": "被ダメージ時、次ターン被ダメ×0.9",
+                "trigger": "on_hit_received",
+                "effect_type": "next_turn_damage_reduction",
+                "damage_reduction": 0.9,
+                "duration": 1,
+                "added_in": "v14.0",
+                "design_note": "耐久型モンスターの選択肢、殴られるほど硬くなる"
             }
         ],
         "rare": [
             {
                 "id": "rare_001",
-                "name": "捕縛の鎖",
-                "effect": "相手は交代できない",
-                "trigger": "passive",
-                "effect_type": "switch_block"
+                "name": "支配の瞳",
+                "effect": "登場時、相手は次のターン最後に行動する（先制技を除く）",
+                "trigger": "on_entry",
+                "effect_type": "force_last",
+                "duration": 1,
+                "priority_exception": true,
+                "change_note": "v10.7: 先制技を除く旨を明記"
             },
             {
                 "id": "rare_002",
@@ -276,31 +499,36 @@
             {
                 "id": "rare_004",
                 "name": "属性吸収",
-                "effect": "弱点属性の技を受けるとHP回復",
+                "effect": "弱点属性の技を受けた時、ダメージを受けた後HP20回復",
                 "trigger": "on_weakness_hit",
-                "heal_type": "percent_max_hp",
-                "heal_value": 15
+                "heal_type": "fixed",
+                "heal_value": 20,
+                "change_note": "v10.8: ダメージを受けた後と明記"
             },
             {
                 "id": "rare_005",
                 "name": "無色の霧",
-                "effect": "相手の技を全て無属性にする",
+                "effect": "自分と相手の技を全て無属性にする",
                 "trigger": "passive",
-                "effect_type": "type_nullify"
+                "effect_type": "type_nullify_both",
+                "change_note": "v10.5: 相手のみ→自分と相手に変更"
             },
             {
                 "id": "rare_006",
                 "name": "貫通の眼",
-                "effect": "相手のアビリティを無視して攻撃",
+                "effect": "相手の防御と魔防のバフを無視して攻撃",
                 "trigger": "on_attack",
-                "effect_type": "ability_ignore"
+                "effect_type": "def_buff_ignore",
+                "change_note": "v10.6: 全バフ→防御と魔防のバフのみに変更"
             },
             {
                 "id": "rare_007",
                 "name": "虚無の存在",
-                "effect": "お互いのアビリティが無効になる",
+                "effect": "場にいる間、お互いの新たな能力変化を無効化",
                 "trigger": "passive",
-                "effect_type": "ability_nullify_both"
+                "effect_type": "stat_change_nullify_both",
+                "existing_buffs": "keep",
+                "change_note": "v10.8: 新たな能力変化と明記（既存は維持）"
             },
             {
                 "id": "rare_008",
@@ -318,7 +546,7 @@
             },
             {
                 "id": "rare_010",
-                "name": "残響",
+                "name": "置き土産",
                 "effect": "交代する時、相手の素早さ↓1",
                 "trigger": "on_switch_out",
                 "target": "opponent",
@@ -327,27 +555,31 @@
             {
                 "id": "rare_011",
                 "name": "奇襲の心得",
-                "effect": "交代で登場したターン、必ず先制",
-                "trigger": "on_entry",
+                "effect": "交代で登場後、次の技が必ず先制",
+                "trigger": "on_switch_entry",
                 "effect_type": "priority_boost",
-                "duration": 1
+                "duration": 1,
+                "change_note": "v10.5: 登場ターン→次の技に変更"
             },
             {
                 "id": "rare_012",
                 "name": "コスト浸食",
-                "effect": "攻撃命中時、相手の次ターンのコスト回復-1",
+                "effect": "コスト2の攻撃命中時、相手の次ターンのコスト回復-1",
                 "trigger": "on_hit",
+                "condition": "cost_2",
                 "effect_type": "cost_debuff",
-                "value": -1
+                "value": -1,
+                "change_note": "v10.5: コスト2の攻撃限定に変更"
             },
             {
                 "id": "rare_013",
                 "name": "前借り",
-                "effect": "初期コスト+1、次の回復-1",
+                "effect": "バトル開始時コスト+1。1ターン目終了時のコスト回復が1になる",
                 "trigger": "passive",
                 "initial_cost_bonus": 1,
-                "recovery_penalty": -1,
-                "change_note": "v10.2: 暴走起動から名称変更、効果調整（+2/-1→+1/-1）"
+                "first_turn_recovery": 1,
+                "normal_recovery": 2,
+                "change_note": "v10.7: 効果文を明確化（1ターン目のみペナルティ）"
             },
             {
                 "id": "rare_014",
@@ -359,38 +591,41 @@
             {
                 "id": "rare_015",
                 "name": "威圧領域",
-                "effect": "相手のコスト1の技を無効化",
+                "effect": "相手のコスト1の攻撃技と魔力技を無効化",
                 "trigger": "passive",
-                "effect_type": "low_cost_nullify",
-                "cost_threshold": 1
+                "effect_type": "low_cost_attack_nullify",
+                "cost_threshold": 1,
+                "change_note": "v10.5: 全技→攻撃技と魔力技に限定"
             },
             {
                 "id": "rare_016",
                 "name": "呪縛の躯",
-                "effect": "攻撃技を受けた時、相手は2ターン交代不可",
+                "effect": "攻撃技を受けた時、相手に拘束を付与",
                 "trigger": "on_attack_received",
-                "effect_type": "switch_block",
-                "duration": 2
+                "inflict_status": "restraint",
+                "change_note": "v10.8: bind→restraintに用語統一"
             },
             {
                 "id": "rare_017",
                 "name": "最後の切り札",
-                "effect": "奥義が大幅強化、使用後HP1になる",
-                "trigger": "on_ultimate",
+                "effect": "最高コスト技が大幅強化（×1.5）、使用後HP1になる",
+                "trigger": "on_highest_cost_skill",
                 "damage_boost": 1.5,
-                "hp_after": 1
+                "hp_after": 1,
+                "change_note": "v10.7: 奥義→最高コスト技に変更（定義明確化）"
             },
             {
                 "id": "rare_018",
                 "name": "共鳴の波",
-                "effect": "毎ターン終了時、味方全員のHPを少し回復",
+                "effect": "毎ターン終了時、自分と控え全員のHPを8回復",
                 "trigger": "turn_end",
-                "heal_type": "party_percent",
-                "heal_value": 5
+                "heal_type": "fixed",
+                "heal_value": 8,
+                "target": "self_and_bench"
             },
             {
                 "id": "rare_019",
-                "name": "鈍重の覇気",
+                "name": "遅撃先制",
                 "effect": "後攻の時、コスト3以下の技で先制できる",
                 "trigger": "passive",
                 "condition": "speed_lower",
@@ -399,22 +634,33 @@
             },
             {
                 "id": "rare_020",
-                "name": "戦術指揮",
-                "effect": "バフ技を使った時、自分のHPを少し回復",
+                "name": "戦いの息吹",
+                "effect": "バフ技を使った時、自分のHPを15回復",
                 "trigger": "on_buff_skill",
-                "heal_type": "percent_max_hp",
-                "heal_value": 10
+                "heal_type": "fixed",
+                "heal_value": 15
+            },
+            {
+                "id": "rare_021",
+                "name": "逆転の一手",
+                "effect": "HP半分以下で技威力強化（×1.3）",
+                "trigger": "passive",
+                "condition": "hp_half_or_less",
+                "damage_boost": 1.3,
+                "added_in": "v14.0",
+                "design_note": "背水の陣との差別化：こちらは技威力、背水は攻撃ステータス強化"
             }
         ],
         "species": [
             {
                 "id": "sp_angel",
                 "name": "聖なるオーラ",
-                "effect": "回復技の効果が強化される",
+                "effect": "回復技の効果+8",
                 "species": "angel",
                 "trigger": "passive",
-                "healing_boost": 1.3,
-                "note": "種族パッシブ「毎ターンHP5%回復」とは別"
+                "healing_boost_fixed": 8,
+                "note": "種族パッシブ「毎ターンHP8回復」とは別",
+                "change_note": "v10.5: 1.3倍→+8固定に変更"
             },
             {
                 "id": "sp_demon",
@@ -439,11 +685,12 @@
             {
                 "id": "sp_spirit",
                 "name": "霊体",
-                "effect": "攻撃技のダメージを軽減",
+                "effect": "攻撃技のダメージを軽減（×0.8）",
                 "species": "spirit",
                 "trigger": "passive",
                 "damage_reduction": 0.8,
-                "note": "種族パッシブ「状態異常+1T」とは別"
+                "note": "種族パッシブ「状態異常+1T」とは別",
+                "change_note": "v10.8: 効果文に数値追記"
             },
             {
                 "id": "sp_mecha",
@@ -458,20 +705,23 @@
             {
                 "id": "sp_dragon",
                 "name": "竜鱗",
-                "effect": "攻撃技が強化される",
+                "effect": "攻撃技が強化される（×1.3）",
                 "species": "dragon",
                 "trigger": "passive",
                 "damage_boost": 1.3,
-                "note": "種族パッシブ「状態異常1種類まで」とは別"
+                "note": "種族パッシブ「状態異常1種類まで」とは別",
+                "change_note": "v10.8: 効果文に数値追記"
             },
             {
                 "id": "sp_mutant",
                 "name": "変幻の魂",
-                "effect": "被ダメージ時、ランダムで1ステータス↑1",
+                "effect": "被ダメージ時、最も低いステータス↑1",
                 "species": "mutant",
                 "trigger": "on_hit_received",
-                "effect_type": "random_stat_boost",
-                "note": "種族パッシブ「技スロット+1」とは別"
+                "effect_type": "lowest_stat_boost",
+                "stat_priority": ["attack", "defense", "magic", "speed"],
+                "note": "種族パッシブ「技スロット+1」とは別",
+                "change_note": "v10.7: ランダム→最も低いステータス（運要素排除）"
             }
         ],
         "exclusive": {
@@ -479,116 +729,129 @@
                 {
                     "id": "ex_leg_mika",
                     "name": "女神の祝福",
-                    "effect": "HP半分以上で倒される時、HP半分で復活（1回）",
+                    "effect": "HP半分以上で倒される時、HP20で復活（1回）",
                     "monster": "mika",
                     "monster_name": "三大天ミカ",
                     "category": "legendary",
                     "trigger": "on_lethal_damage",
                     "condition": "hp_half_or_more",
-                    "revive_hp_percent": 50,
-                    "usage_limit": 1
+                    "revive_hp_fixed": 20,
+                    "usage_limit": 1,
+                    "change_note": "v17.0: HP30→HP20に下方修正（A→B+ Tier解消）"
                 },
                 {
                     "id": "ex_leg_vel",
                     "name": "終わりなき飢え",
-                    "effect": "与ダメージの15%吸収",
+                    "effect": "攻撃技命中時、与ダメ10%回復",
                     "monster": "vel",
                     "monster_name": "暴食ヴェル",
                     "category": "legendary",
-                    "trigger": "on_attack",
-                    "drain_percent": 15,
-                    "change_note": "v10.2: 撃破時回復削除、吸収10%→15%"
+                    "trigger": "on_attack_hit",
+                    "heal_type": "damage_percent",
+                    "heal_percent": 10,
+                    "change_note": "v17.0: 与ダメ15%→10%に下方修正（A→B+ Tier解消）"
                 },
                 {
                     "id": "ex_leg_gram",
                     "name": "アビリティ封じ",
-                    "effect": "登場から4ターン、相手のアビリティ無効",
+                    "effect": "登場から3ターン、相手のアビリティを無効化",
                     "monster": "gram",
                     "monster_name": "裏の支配者グラム",
                     "category": "legendary",
                     "trigger": "on_entry",
                     "effect_type": "ability_seal",
-                    "duration": 4
+                    "duration": 3,
+                    "change_note": "v18.0: 2T→3Tに復活（過剰下方救済）"
                 },
                 {
                     "id": "ex_leg_tyr",
                     "name": "暴君のオーラ",
-                    "effect": "攻撃強化、被ダメージも増加",
+                    "effect": "攻撃強化（×1.2）、被ダメージ増加（×1.3）",
                     "monster": "tyr",
                     "monster_name": "竜帝テュール",
                     "category": "legendary",
                     "trigger": "passive",
                     "damage_boost": 1.2,
-                    "damage_received_boost": 1.2,
-                    "note": "猪突猛進と同様、デメリット付き強化のため2効果を許容"
+                    "damage_received_boost": 1.3,
+                    "note": "竜鱗×1.3と乗算で実質攻撃×1.56。ハイリスク・ハイリターンの竜王",
+                    "change_note": "v15.1: ×1.0/×1.3→×1.2/×1.3に変更（攻撃ボーナス復活）"
                 },
                 {
                     "id": "ex_leg_arthur",
                     "name": "剣聖の極意",
-                    "effect": "急所時に攻撃↑1",
+                    "effect": "急所時、相手の防御バフを無視してダメージを与える",
                     "monster": "arthur",
                     "monster_name": "剣聖アーサー",
                     "category": "legendary",
                     "trigger": "on_critical",
-                    "stat_change": {"attack": 1},
-                    "change_note": "v10.2: 急所+2削除（必殺の型と差別化）"
+                    "effect_type": "ignore_def_buff",
+                    "change_note": "v13.0: 攻撃↑1→防御バフ無視に変更（モンスターファイル準拠）"
                 },
                 {
                     "id": "ex_leg_tamamo",
                     "name": "狐火の魂",
-                    "effect": "状態異常の相手に攻撃強化",
+                    "effect": "状態異常の相手に攻撃強化（×1.2）",
                     "monster": "tamamo",
                     "monster_name": "九尾タマモ",
                     "category": "legendary",
                     "trigger": "passive",
                     "condition": "opponent_has_status",
-                    "damage_boost": 1.3
+                    "damage_boost": 1.2,
+                    "change_note": "v17.0: ×1.25→×1.2に下方修正（A→B+ Tier解消）"
                 },
                 {
                     "id": "ex_leg_slime",
-                    "name": "無限適応",
-                    "effect": "受けた属性のダメージを軽減（3属性まで）",
+                    "name": "絶対捕食",
+                    "effect": "被ダメージの15%をHP回復（1バトル5回まで）。状態異常無効",
                     "monster": "slime",
                     "monster_name": "国喰いスライム",
                     "category": "legendary",
                     "trigger": "on_hit_received",
-                    "resistance_gain": 0.75,
-                    "max_resistance_types": 3,
-                    "change_note": "v10.2: HP回復効果削除"
+                    "heal_type": "damage_percent",
+                    "heal_percent": 15,
+                    "max_activations": 5,
+                    "status_immunity": true,
+                    "change_note": "v20.0: 20%→15%に下方修正 (A→B+ Tier解消)"
                 }
             ],
             "rare": [
                 {
                     "id": "ex_rare_linto",
                     "name": "ジェットエンジン",
-                    "effect": "毎ターン素早さ↑1（最大3回）",
+                    "effect": "登場時SPD↑1、さらに毎ターン素早さ↑1（最大3回）",
                     "monster": "linto",
                     "monster_name": "機竜リント",
                     "category": "rare",
-                    "trigger": "turn_end",
-                    "stat_change": {"speed": 1},
-                    "max_stacks": 3
+                    "trigger": "on_entry_and_turn_end",
+                    "entry_buff": {"speed": 1},
+                    "turn_buff": {"speed": 1},
+                    "max_stacks": 3,
+                    "change_note": "v18.0: 登場時SPD↑1追加 (B-→B 救済)"
                 },
                 {
                     "id": "ex_rare_wurm",
-                    "name": "聖鱗",
-                    "effect": "味方が登場した時、その味方のHP5%回復",
+                    "name": "清めの光",
+                    "effect": "交代で登場した時、自分と控え全員の状態異常を1つ回復",
                     "monster": "wurm",
                     "monster_name": "白竜ヴルム",
                     "category": "rare",
-                    "trigger": "on_ally_entry",
-                    "heal_percent": 5
+                    "trigger": "on_switch_entry",
+                    "effect_type": "status_cure",
+                    "target": "self_and_bench",
+                    "cure_count": 1,
+                    "change_note": "v10.4: 味方登場時回復→交代登場時状態異常回復"
                 },
                 {
                     "id": "ex_rare_jack",
                     "name": "海賊魂",
-                    "effect": "先制攻撃時、攻撃強化",
+                    "effect": "先制攻撃時、攻撃強化（×1.2）",
                     "monster": "jack",
                     "monster_name": "海賊王ジャック",
                     "category": "rare",
                     "trigger": "passive",
                     "condition": "move_first",
-                    "damage_boost": 1.3
+                    "damage_boost": 1.2,
+                    "change_note": "v17.0: ×1.25→×1.2に下方修正（A→B+ Tier解消）"
                 },
                 {
                     "id": "ex_rare_ram",
@@ -603,13 +866,15 @@
                 },
                 {
                     "id": "ex_rare_eva",
-                    "name": "竜姫の慈愛",
-                    "effect": "回復技を使った時、自分も5%回復",
+                    "name": "竜姫の献身",
+                    "effect": "回復技を使った時、自分もHP15回復。さらに控えのHPも毎ターン終了8回復",
                     "monster": "eva",
                     "monster_name": "竜姫エヴァ",
                     "category": "rare",
-                    "trigger": "on_heal_skill",
-                    "self_heal_percent": 5
+                    "trigger": "on_heal_skill_and_turn_end",
+                    "self_heal_value": 15,
+                    "bench_heal_value": 8,
+                    "change_note": "v18.0: 自己回復8→15、控え回復8追加 (B-→B 救済)"
                 },
                 {
                     "id": "ex_rare_honoo",
@@ -626,7 +891,7 @@
                 {
                     "id": "ex_rare_lilith",
                     "name": "夢魔の誘惑",
-                    "effect": "登場時、相手はこのターンコスト4以上の技を使えない",
+                    "effect": "登場時、相手はこのターンコスト4以上の技を使えない。ただし自分もこのターンコスト4以上の技を使えない",
                     "monster": "lilith",
                     "monster_name": "夢魔リリス",
                     "category": "rare",
@@ -634,64 +899,71 @@
                     "effect_type": "high_cost_seal",
                     "cost_threshold": 4,
                     "duration": 1,
-                    "change_note": "v10.3: 攻撃命中25%魅了→登場時高コスト技封印（1T）"
+                    "self_restriction": true,
+                    "change_note": "v18.0: 自分も制限追加 (S→B+ 下方修正、公平化)"
                 },
                 {
                     "id": "ex_rare_luria",
                     "name": "癒しの歌声",
-                    "effect": "サポート技を使った時、自分を5%回復",
+                    "effect": "サポート技を使った時、自分のHPを8回復",
                     "monster": "luria",
                     "monster_name": "歌姫ルリア",
                     "category": "rare",
                     "trigger": "on_support_skill",
-                    "self_heal_percent": 5
+                    "heal_type": "fixed",
+                    "heal_value": 8,
+                    "change_note": "v10.4: 5%→固定8回復"
                 },
                 {
                     "id": "ex_rare_kyouka",
                     "name": "呪符術師",
-                    "effect": "サポート技が必ず先制になる",
+                    "effect": "サポート技の優先度+1（先制技には負ける）",
                     "monster": "kyouka",
                     "monster_name": "呪符キョウカ",
                     "category": "rare",
                     "trigger": "passive",
-                    "effect_type": "support_priority"
+                    "effect_type": "support_priority_plus1",
+                    "priority_boost": 1,
+                    "change_note": "v17.0: 先制確定→優先度+1に下方修正（S→B+ Tier解消）"
                 },
                 {
                     "id": "ex_rare_leon_1",
                     "name": "聖盾の誓い",
-                    "effect": "交代で登場した時、初撃を大幅軽減（1回）",
+                    "effect": "交代で登場した時、初撃のダメージを軽減（×0.7）",
                     "monster": "leon",
                     "monster_name": "聖騎士レオン",
                     "category": "rare",
                     "trigger": "on_switch_entry",
                     "effect_type": "damage_reduce",
                     "damage_reduction": 0.7,
-                    "usage_limit": 1
+                    "usage_limit": 1,
+                    "change_note": "v20.0: ×0.6→×0.7に下方修正（A→B+ Tier解消）"
                 },
                 {
                     "id": "ex_rare_leon_2",
-                    "name": "不屈の闘志",
-                    "effect": "HP満タン時、一撃でHP1で耐える（1回）",
+                    "name": "聖なる護り",
+                    "effect": "光属性のダメージを軽減（×0.75）",
                     "monster": "leon",
                     "monster_name": "聖騎士レオン",
                     "category": "rare",
-                    "trigger": "on_lethal_damage",
-                    "condition": "hp_full",
-                    "survive_hp": 1,
-                    "usage_limit": 1
+                    "trigger": "passive",
+                    "element": "light",
+                    "resistance": 0.75,
+                    "change_note": "v14.0: ×0.5→×0.75に下方修正（A Tier解消）"
                 }
             ],
             "common": [
                 {
                     "id": "ex_com_karasu",
                     "name": "神速の翼",
-                    "effect": "先制攻撃時、急所に当たりやすい",
+                    "effect": "先制攻撃時、与ダメージ強化（×1.2）",
                     "monster": "karasu",
                     "monster_name": "夜叉天狗カラス",
                     "category": "common",
                     "trigger": "passive",
                     "condition": "move_first",
-                    "critical_boost": 2
+                    "damage_boost": 1.2,
+                    "change_note": "v21.0: ×1.1→×1.2に強化 (B-→B Tier救済)"
                 },
                 {
                     "id": "ex_com_fafna",
@@ -707,203 +979,233 @@
                 },
                 {
                     "id": "ex_com_jade",
-                    "name": "翡翠の加護",
-                    "effect": "回復技の効果が強化される",
+                    "name": "翡翠の守護",
+                    "effect": "HP半分以上で被ダメージ軽減（×0.80）",
                     "monster": "jade",
                     "monster_name": "翡翠竜ジェイド",
                     "category": "common",
                     "trigger": "passive",
-                    "healing_boost": 1.3,
-                    "change_note": "v10.2: 被ダメ軽減削除（守りの構えと差別化）"
+                    "condition": "hp_half_or_more",
+                    "damage_reduction": 0.80,
+                    "change_note": "v20.0: ×0.85→×0.80に強化 (B-→B Tier救済)"
                 },
                 {
                     "id": "ex_com_shirone",
                     "name": "凍てつく美貌",
-                    "effect": "登場時、相手の素早さ↓1",
+                    "effect": "登場時、相手を恐怖状態にする。さらに相手のSPD↓1",
                     "monster": "shirone",
                     "monster_name": "雪女シロネ",
                     "category": "common",
                     "trigger": "on_entry",
                     "target": "opponent",
+                    "inflict_status": "fear",
                     "stat_change": {"speed": -1},
-                    "change_note": "v10.3: 恐怖→速さ↓1（デバフ統一）"
+                    "change_note": "v18.0: 恐怖+SPD↓1に強化 (B-→B 救済)"
                 },
                 {
                     "id": "ex_com_sylphy",
-                    "name": "風の加護",
-                    "effect": "登場時、自分の素早さ↑1",
+                    "name": "風纏い",
+                    "effect": "登場時、このターン自分の技が先制になる",
                     "monster": "sylphy",
                     "monster_name": "風唄シルフィ",
                     "category": "common",
                     "trigger": "on_entry",
-                    "target": "self",
-                    "stat_change": {"speed": 1},
-                    "change_note": "v10.3: サポート回復→速さ↑1（バフ統一）"
+                    "effect_type": "priority_boost",
+                    "duration": 1,
+                    "change_note": "v10.7: 速さ↑1→このターン先制（専用らしさ強化）"
                 },
                 {
                     "id": "ex_com_asmo",
                     "name": "煉獄の炎",
-                    "effect": "火傷状態の相手に攻撃強化",
+                    "effect": "攻撃命中時、火傷でない相手を火傷にする（毎バトル2回）。火傷状態の相手に攻撃強化（×1.3）",
                     "monster": "asmo",
                     "monster_name": "煉獄アスモ",
                     "category": "common",
-                    "trigger": "passive",
+                    "trigger": "passive_and_on_hit",
                     "condition": "opponent_burned",
-                    "damage_boost": 1.3
+                    "damage_boost": 1.3,
+                    "inflict_burn_on_hit": true,
+                    "burn_usage_limit": 2,
+                    "change_note": "v20.0: 攻撃命中時火傷付与(2回)追加 (B-→B Tier救済)"
                 },
                 {
                     "id": "ex_com_garm",
                     "name": "反骨の魂",
-                    "effect": "HP半分以下で被ダメージ軽減",
+                    "effect": "HP半分以下で被ダメ軽減（×0.8）、HP消費技使用時ATK↑1",
                     "monster": "garm",
                     "monster_name": "拳闘士ガルム",
                     "category": "common",
-                    "trigger": "passive",
+                    "trigger": "passive_and_on_hp_cost_skill",
                     "condition": "hp_half_or_less",
-                    "damage_reduction": 0.8
+                    "damage_reduction": 0.8,
+                    "stat_change_on_hp_cost": {"attack": 1},
+                    "change_note": "v19.0: HP消費技使用時ATK↑1追加（自傷活用明確化）"
                 },
                 {
                     "id": "ex_com_bitman",
-                    "name": "量産型の連携",
-                    "effect": "メカノイドの味方がいると攻撃強化",
+                    "name": "量産型の意地",
+                    "effect": "攻撃強化（×1.2）、後攻時さらに×1.15、メカ控えで更に強化（×1.4）",
                     "monster": "bitman",
                     "monster_name": "量産型ビットマン",
                     "category": "common",
                     "trigger": "passive",
+                    "damage_boost_solo": 1.2,
+                    "damage_boost_slow": 1.15,
+                    "damage_boost_with_mecha": 1.4,
                     "condition_ally": "mechanoid",
-                    "damage_boost": 1.3
+                    "condition_slow": "move_last",
+                    "change_note": "v21.0: ×1.15/×1.1/×1.35→×1.2/×1.15/×1.4に強化 (B-→B Tier救済)"
                 },
                 {
                     "id": "ex_com_mamon",
                     "name": "強欲の力",
-                    "effect": "攻撃命中で攻撃↑1",
+                    "effect": "登場時攻撃↑2、攻撃命中で攻撃↑1（1T1回）",
                     "monster": "mamon",
                     "monster_name": "貪欲マモン",
                     "category": "common",
-                    "trigger": "on_hit",
-                    "stat_change": {"attack": 1}
+                    "trigger": "on_entry_and_hit",
+                    "stat_change_on_entry": {"attack": 2},
+                    "stat_change_on_hit": {"attack": 1},
+                    "hit_limit_per_turn": 1,
+                    "change_note": "v21.0: 登場時ATK↑1→ATK↑2に強化 (B-→B Tier救済)"
                 },
                 {
                     "id": "ex_com_chris",
                     "name": "結晶の鎧",
-                    "effect": "攻撃技のダメージを大幅軽減",
+                    "effect": "攻撃技のダメージを軽減（×0.85）",
                     "monster": "chris",
                     "monster_name": "結晶体クリス",
                     "category": "common",
                     "trigger": "passive",
                     "damage_type": "attack",
-                    "damage_reduction": 0.7
+                    "damage_reduction": 0.85,
+                    "change_note": "v13.0: ×0.8→×0.85に変更（モンスターファイル準拠）"
                 },
                 {
                     "id": "ex_com_merlan",
                     "name": "七色の力",
-                    "effect": "技が相手の弱点属性に変化",
+                    "effect": "技が相手の弱点属性に変化（1バトル2回まで）",
                     "monster": "merlan",
                     "monster_name": "魔導師メルラン",
                     "category": "common",
                     "trigger": "passive",
-                    "effect_type": "weakness_targeting"
+                    "effect_type": "weakness_targeting",
+                    "usage_limit": 2,
+                    "change_note": "v10.6: 1バトル2回までに制限"
                 },
                 {
                     "id": "ex_com_sera",
                     "name": "聖なる守護",
-                    "effect": "交代する時、交代先を10%回復",
+                    "effect": "交代する時、交代先をHP20回復+次ターン被ダメ×0.8",
                     "monster": "sera",
                     "monster_name": "癒光セラ",
                     "category": "common",
                     "trigger": "on_switch_out",
-                    "target": "switch_target",
-                    "heal_percent": 10,
-                    "change_note": "v10.2: 防御↑1削除"
+                    "heal_type": "fixed",
+                    "heal_value": 20,
+                    "damage_reduction_next_turn": 0.8,
+                    "change_note": "v19.0: 交代時HP20回復+次T被ダメ×0.8に変更（ミカ＝自己復活、セラ＝味方保護で差別化）"
                 },
                 {
                     "id": "ex_com_talos",
-                    "name": "鉄壁",
-                    "effect": "HP半分以上で被ダメージ軽減",
+                    "name": "要塞の守り",
+                    "effect": "常時被ダメージ軽減（×0.80）。さらに後攻時、次ターン開始時に状態異常を1つ回復",
                     "monster": "talos",
                     "monster_name": "要塞タロス",
                     "category": "common",
                     "trigger": "passive",
-                    "condition": "hp_half_or_more",
-                    "damage_reduction": 0.85
+                    "damage_reduction": 0.80,
+                    "slow_heal_ailment": true,
+                    "change_note": "v18.0: ×0.85→×0.80強化、後攻時状態異常回復追加 (B-→B 救済)"
                 },
                 {
                     "id": "ex_com_zela",
-                    "name": "深淵の呼び声",
-                    "effect": "初期コスト+1",
+                    "name": "深淵の目覚め",
+                    "effect": "初期コスト+1。コスト5技使用後コスト+1",
                     "monster": "zela",
                     "monster_name": "深淵ゼラ",
                     "category": "common",
-                    "trigger": "passive",
-                    "initial_cost_bonus": 1
+                    "trigger": "passive_and_on_cost5_skill",
+                    "initial_cost_bonus": 1,
+                    "cost5_skill_cost_bonus": 1,
+                    "change_note": "v20.0: コスト5技使用後コスト+1追加 (B-→B Tier救済)"
                 },
                 {
                     "id": "ex_com_sheela",
-                    "name": "深海の圧力",
-                    "effect": "登場時、相手はこのターン交代できない",
+                    "name": "深海の支配",
+                    "effect": "登場時、2ターン相手は交代できない＋相手SPD↓2",
                     "monster": "sheela",
                     "monster_name": "深海魚シーラ",
                     "category": "common",
                     "trigger": "on_entry",
                     "effect_type": "switch_block",
-                    "duration": 1,
-                    "change_note": "v10.3: 魔力↓1→このターン交代不可"
+                    "duration": 2,
+                    "stat_change": {"speed": -2},
+                    "change_note": "v21.0: SPD↓1→SPD↓2に強化 (B-→B Tier救済)"
                 },
                 {
                     "id": "ex_com_mof",
                     "name": "毒の親和",
-                    "effect": "毒状態の相手への攻撃大幅強化",
+                    "effect": "毒状態の相手へ攻撃大幅強化（×1.5）、毒技命中時追加10固定ダメージ",
                     "monster": "mof",
                     "monster_name": "擬態キノコ・モフ",
                     "category": "common",
                     "trigger": "passive",
                     "condition": "opponent_poisoned",
-                    "damage_boost": 1.5
+                    "damage_boost": 1.5,
+                    "poison_skill_bonus_damage": 10,
+                    "change_note": "v15.0: 毒技命中時+10固定ダメージ追加（B- Tier完全救済）"
                 },
                 {
                     "id": "ex_com_kagura",
                     "name": "炎の守護",
-                    "effect": "炎ダメージを無効化",
+                    "effect": "炎ダメージを無効化。炎技使用時、自分のHPを8回復",
                     "monster": "kagura",
                     "monster_name": "灯火カグラ",
                     "category": "common",
-                    "trigger": "passive",
+                    "trigger": "passive_and_on_fire_skill",
                     "element": "fire",
                     "resistance": 0,
-                    "change_note": "v10.2: HP1耐え削除"
+                    "heal_type": "fixed",
+                    "heal_value": 8,
+                    "change_note": "v19.0: 炎無効+炎技使用時HP8回復に変更（タマモ＝状態異常火力、カグラ＝炎属性回復で差別化）"
                 },
                 {
                     "id": "ex_com_scorpion",
                     "name": "精密照準",
-                    "effect": "急所時に相手防御↓1",
+                    "effect": "急所率+1段階。急所時に相手防御↓1",
                     "monster": "scorpion",
                     "monster_name": "狙撃機スコーピオン",
                     "category": "common",
-                    "trigger": "on_critical",
+                    "trigger": "passive_and_on_critical",
+                    "critical_boost": 1,
                     "stat_change": {"defense": -1},
-                    "change_note": "v10.2: 急所+2削除（必殺の型と差別化）"
+                    "change_note": "v21.0: 急所率+1段階追加 (B-→B Tier救済)"
                 },
                 {
                     "id": "ex_com_chrome",
-                    "name": "鋼の意志",
-                    "effect": "後攻時、攻撃大幅強化",
+                    "name": "鋼の守り",
+                    "effect": "後攻時、被ダメージ軽減（×0.85）",
                     "monster": "chrome",
                     "monster_name": "鉄竜クロム",
                     "category": "common",
                     "trigger": "passive",
                     "condition": "move_last",
-                    "damage_boost": 1.5
+                    "damage_reduction": 0.85,
+                    "change_note": "v18.0: ×0.9→×0.85強化 (B-→B 救済)"
                 },
                 {
                     "id": "ex_com_noel",
                     "name": "聖なる祈り",
-                    "effect": "毎ターン味方を5%回復",
+                    "effect": "毎ターン終了時、控えをHP15回復",
                     "monster": "noel",
                     "monster_name": "祈り子ノエル",
                     "category": "common",
                     "trigger": "turn_end",
-                    "ally_heal_percent": 5,
-                    "change_note": "v10.2: 登場時防御↑1削除"
+                    "heal_type": "fixed",
+                    "heal_value": 15,
+                    "target": "bench",
+                    "change_note": "v10.4: 味方5%→控え固定15回復（共鳴の波と差別化）"
                 },
                 {
                     "id": "ex_com_kaito",
@@ -931,14 +1233,45 @@
         }
     },
     "summary": {
-        "total_abilities": 90,
+        "total_abilities": 97,
+        "v21_balance_notes": {
+            "b_minus_tier_buffs": [
+                "スコーピオン: 精密照準 急所率+1段階追加, DEF34→44, MDEF37→47, total238→258",
+                "カラス: 神速の翼 ×1.1→×1.2, DEF28→38, MDEF33→43, total237→257",
+                "ビットマン: 量産型の意地 ×1.15/×1.1/×1.35→×1.2/×1.15/×1.4",
+                "マモン: 強欲の力 登場時ATK↑1→ATK↑2",
+                "シーラ: 深海の支配 SPD↓1→SPD↓2, SPD45→55, total262→272"
+            ]
+        },
         "breakdown": {
-            "common": 23,
-            "rare": 20,
+            "common": 29,
+            "rare": 21,
             "species": 7,
             "exclusive_legendary": 7,
             "exclusive_rare": 11,
             "exclusive_common": 22
+        },
+        "v14_balance_notes": {
+            "a_tier_nerfs": [
+                "ジャック: 海賊魂 ×1.3→×1.25",
+                "テュール: 暴君のオーラ ×1.15/×1.15→×1.1/×1.2",
+                "タマモ: 狐火の魂 ×1.3→×1.25",
+                "ミカ: 女神の祝福 HP40→HP30復活",
+                "ヴェル: 終わりなき飢え 10%→8%吸収",
+                "スライム: 無限適応 ×0.85/3→×0.9/2",
+                "レオン: 聖盾の誓い ×0.5→×0.6、聖なる護り ×0.5→×0.75"
+            ],
+            "b_minus_tier_buffs": [
+                "ジェイド: 翡翠の加護→翡翠の守護（HP半分以上で被ダメ×0.85）",
+                "ビットマン: 量産型の連携→量産型の意地（単体×1.15、メカ控え×1.35）",
+                "シーラ: 深海の束縛→深海の支配（2T交代不可+SPD↓1）"
+            ],
+            "new_abilities": [
+                "com_027 逆襲の構え: 後攻時急所率+2",
+                "com_028 遅延戦術: 毎T相手SPD↓1（最大2回）",
+                "com_029 堅守の型: 被ダメ時次T被ダメ×0.9",
+                "rare_021 逆転の一手: HP半分以下で技威力×1.3"
+            ]
         }
     }
 }

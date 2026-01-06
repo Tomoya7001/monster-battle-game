@@ -1,0 +1,108 @@
+{
+  "version": "1.0.0",
+  "created_at": "2026-01-07",
+  "updated_at": "2026-01-07",
+  "description": "クリティカルシステム設定（battle_system_v12.4.0準拠）",
+  "source_document": "docs/battle_system_v8.7.md",
+  "design_philosophy": {
+    "principle": "運要素完全排除",
+    "method": "確率ではなく条件を満たせば確定発動",
+    "goal": "読み・準備・戦略で発動をコントロール"
+  },
+  "damage_multiplier": 1.5,
+  "buff_ignore": {
+    "enabled": true,
+    "targets": ["defense", "magic_defense"],
+    "description": "相手の防御/魔防バフを無視"
+  },
+  "base_probability": {
+    "enabled": false,
+    "value": 0,
+    "note": "基本クリティカル率は廃止（運要素排除）"
+  },
+  "trigger_conditions": [
+    {
+      "id": "after_preparation",
+      "name": "準備技使用後",
+      "description": "準備技を使った次ターンの攻撃",
+      "examples": ["照準固定", "剣士の誇り"]
+    },
+    {
+      "id": "low_hp",
+      "name": "HP条件",
+      "description": "自分HP30%以下で攻撃時",
+      "hp_threshold": 0.30,
+      "examples": ["決死の一撃"]
+    },
+    {
+      "id": "multi_hit",
+      "name": "連撃系",
+      "description": "2回攻撃の2発目",
+      "examples": ["連撃"]
+    },
+    {
+      "id": "weakness_attack",
+      "name": "弱点攻撃時",
+      "description": "弱点属性で攻撃成功時",
+      "examples": ["弱点突き"]
+    },
+    {
+      "id": "skill_effect",
+      "name": "技効果",
+      "description": "技自体にクリティカル確定効果",
+      "examples": ["剣聖閃"]
+    }
+  ],
+  "preparation_skills": [
+    {
+      "skill_id": "aim_lock",
+      "name": "照準固定",
+      "cost": 2,
+      "effect": "次の攻撃がクリティカル確定",
+      "duration": 1,
+      "learner": "スコーピオン"
+    },
+    {
+      "skill_id": "swordsman_pride",
+      "name": "剣士の誇り",
+      "cost": 2,
+      "effect": "3ターン間、攻撃がクリティカル確定",
+      "duration": 3,
+      "learners": ["アーサー", "カイト"]
+    },
+    {
+      "skill_id": "pirate_style",
+      "name": "海賊の流儀",
+      "cost": 3,
+      "effect": "次の攻撃がクリティカル確定",
+      "duration": 1,
+      "learner": "ジャック"
+    }
+  ],
+  "related_abilities": [
+    {
+      "ability_id": "ex_leg_arthur",
+      "name": "剣聖の極意",
+      "monster": "アーサー",
+      "effect": "クリティカル発動時、攻撃↑1"
+    }
+  ],
+  "deprecated_features": [
+    {
+      "feature": "基本クリティカル率6%",
+      "reason": "運要素排除"
+    },
+    {
+      "feature": "クリティカルランク制",
+      "reason": "確率上昇システム廃止"
+    },
+    {
+      "feature": "急所表記",
+      "reason": "クリティカルに統一"
+    }
+  ],
+  "terminology": {
+    "current": "クリティカル",
+    "deprecated": "急所"
+  }
+}

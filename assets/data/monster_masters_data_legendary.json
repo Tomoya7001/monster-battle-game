@@ -1,11 +1,73 @@
 {
-  "version": "10.1",
+  "version": "21.0.0",
   "created_at": "2025-12-04",
-  "updated_at": "2025-12-27",
-  "description": "幻種モンスター7体（技プール拡張版・技ファイル整合済）",
+  "updated_at": "2026-01-06",
+  "description": "幻種モンスター7体（v20.0.0 Tier平準化調整版）",
   "category": "legendary",
-  "category_description": "幻種（入手難易度：非常に難）- 合計245-252、個体値3パターン（外れなし設計）",
+  "category_description": "幻種（入手難易度：非常に難）- 合計240-265、個体値3パターン（外れなし設計）",
   "changelog": {
+    "v20.0.0": [
+      "【A→B+下方】スライム 絶対捕食: 20%→15%回復",
+      "【A→B+下方】グラム MAG72→65, SPD61→55, total250→237"
+    ],
+    "v18.0.0": [
+      "【S→B+下方】スライム 絶対捕食: 25%→20%、5回制限追加",
+      "【B+→B+復活】グラム アビリティ封じ: 2T→3Tに復活",
+      "【ヒューマン調整】アーサー ATK65→60, SPD75→70"
+    ],
+    "v17.0.0": [
+      "【A→B+下方】ミカ 女神の祝福: HP30→HP20復活",
+      "【A→B+下方】ヴェル MAG75→65, 終わりなき飢え15%→10%",
+      "【A→B+下方】グラム アビリティ封じ: 3T→2Tに短縮",
+      "【A→B+下方】タマモ MAG75→68, 狐火の魂×1.25→×1.2"
+    ],
+    "v16.0.0": [
+      "【B→A上方】ミカ MAG68→75, SPD42→50, total250→265",
+      "【B→A上方】ヴェル SPD70→75, total245→250, 終わりなき飢え8%→15%",
+      "【B→A上方】スライム 無限適応→絶対捕食（被ダメ25%回復+状態異常無効）",
+      "【B+維持】テュール 暴君のオーラ×1.2/×1.3（攻撃ボーナス復活）"
+    ],
+    "v15.0.0": [
+      "【テュール最終調整】暴君のオーラ ×1.1/×1.2→×1.0/×1.3（攻撃ボーナス削除、デメリット増加）"
+    ],
+    "v14.0.0": [
+      "【包括的バランス調整】A Tier解消のため下方修正",
+      "【アーサー下方】ATK 72→65、DEF 38→45、MDEF 43→48、SPD 80→75",
+      "【タマモ下方】SPD 75→65、DEF 28→38",
+      "【ミカアビ】女神の祝福 HP40→HP30復活",
+      "【ヴェルアビ】終わりなき飢え 10%→8%吸収",
+      "【テュールアビ】暴君のオーラ ×1.15/×1.15→×1.1/×1.2",
+      "【スライムアビ】無限適応 ×0.85/3属性→×0.9/2属性"
+    ],
+    "v13.0.0": [
+      "【Sランク解消】テュール ATK 80→70、暴君のオーラ×1.2→×1.15、実質火力104.6（A Tier相当）",
+      "【Sランク解消】アーサー ATK 80→72、SPD 88→80に変更",
+      "【Sランク解消】グラム アビリティ封じを登場から3T限定に変更",
+      "【修正】ミカ 女神の祝福 HP35%→HP40固定で復活に変更",
+      "【修正】ヴェル 捕食 与ダメ25%→30%回復に変更"
+    ],
+    "v12.9.0": [
+      "【Sランク解消】テュール 攻撒90→80（暴君×竜鱗で実質124.8、A Tier相当）",
+      "【幻種A保証】ミカ 女神の祖福 HP25%復活→HP35%復活",
+      "【幻種A保証】ヴェル 捕食 与ダメ25%→30%回復（奥義級技として差別化）"
+    ],
+    "v12.8.0": [
+      "【唯一無二性強化】アーサー 剣聖の極意「急所時、相手の防御バフを無視してダメージを与える」に変更",
+      "【唯一無二性強化】ヴェル 終わりなき飢え「攻撃技命中時、与ダメ10%回復」に変更",
+      "【表記統一】暗黒宴 HP15%回復→HP20回復"
+    ],
+    "v12.7.0": [
+      "【技数修正】スライムの粘性捕縛を削除（18技→17技、ミュータント基準に統一）"
+    ],
+    "v12.6.0": [
+      "【効果文修正】グラム コスト浸食「コスト2の攻撃命中時、相手の次ターンのコスト回復-1」（マスター準拠）"
+    ],
+    "v12.5.0": [
+      "【ability_pool更新】v10.8アビリティマスターに準拠",
+      "【効果文修正】女神の祝福、終わりなき飢え、アビリティ封じ等を最新効果に更新",
+      "【数値明記】竜鱗、霊体、必殺の型等に数値を追記",
+      "【運要素排除】変幻の魂をランダム→最も低いステータスに変更"
+    ],
     "v10.1": [
       "【技ファイル整合】skill_masters_legendary.jsonとの整合性を確保",
       "【専用技名称統一】技ファイルの定義を正として修正"
@@ -37,11 +99,12 @@
       "base_stats": {
         "attack": 15,
         "defense": 52,
-        "magic": 68,
+        "magic": 75,
         "magic_defense": 73,
-        "speed": 42
+        "speed": 50
       },
-      "total": 250,
+      "total": 265,
+      "balance_note": "v16.0: MAG68→75, SPD42→50, total250→265 (B→A 上方修正)",
       "iv_patterns": [
         {"name": "魔力特化", "attack": -12, "defense": 0, "magic": 12, "magic_defense": 0, "speed": 0, "recommended": "回復量最大化"},
         {"name": "魔防特化", "attack": -12, "defense": 0, "magic": 0, "magic_defense": 12, "speed": 0, "recommended": "耐久サポート型"},
@@ -51,8 +114,8 @@
       "weaknesses": ["物理攻撃は完全に不可能", "速さは普通"],
       "ability_pool": {
         "rare": [
-          {"id": "ex_leg_mika", "name": "女神の祝福", "effect": "HP半分以上で倒される時、HP半分で復活（1回）"},
-          {"id": "sp_angel", "name": "聖なるオーラ", "effect": "回復技の効果が強化される"}
+          {"id": "ex_leg_mika", "name": "女神の祝福", "effect": "HP半分以上で倒される時、HP20で復活（1回）"},
+          {"id": "sp_angel", "name": "聖なるオーラ", "effect": "回復技の効果+8"}
         ],
         "common": [
           {"id": "com_011", "name": "浄化の息吹", "effect": "毎ターン終了時、状態異常を1つ回復"},
@@ -67,11 +130,11 @@
         ],
         "learnable_skills": [
           {"id": "light_002", "name": "閃光", "learn_level": 4},
-          {"id": "cmn_sup_008", "name": "活力の息吹", "learn_level": 8},
+          {"id": "cmn_sup_008", "name": "生命賦活", "learn_level": 8},
           {"id": "mika_001", "name": "天使の微笑み", "learn_level": 12, "cost": 3, "effect": "自分の状態異常解除+HP20回復"},
           {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 16},
           {"id": "light_006", "name": "光の障壁", "learn_level": 20},
-          {"id": "mika_002", "name": "裁きの天秤", "learn_level": 24, "cost": 4, "effect": "相手と自分のHP差×0.5ダメージ"},
+          {"id": "mika_002", "name": "裁きの天秤", "learn_level": 24, "cost": 4, "effect": "相手現在HP50%+固定20ダメージ"},
           {"id": "light_008", "name": "魅惑の光", "learn_level": 28},
           {"id": "cmn_sup_006", "name": "浄化", "learn_level": 32},
           {"id": "mika_003", "name": "神威", "learn_level": 36, "cost": 3, "power": "C", "effect": "麻痺確定"},
@@ -99,11 +162,12 @@
       "base_stats": {
         "attack": 18,
         "defense": 32,
-        "magic": 85,
+        "magic": 75,
         "magic_defense": 40,
-        "speed": 70
+        "speed": 75
       },
-      "total": 245,
+      "total": 240,
+      "balance_note": "v17.0: MAG85→75, total250→240, 終わりなき飢え15%→10% (A→B+ 下方修正)",
       "iv_patterns": [
         {"name": "魔力特化", "attack": 0, "defense": -12, "magic": 12, "magic_defense": 0, "speed": 0, "recommended": "火力最大化（推奨）"},
         {"name": "速さ特化", "attack": 0, "defense": -12, "magic": 0, "magic_defense": 0, "speed": 12, "recommended": "先制確殺型"},
@@ -113,12 +177,12 @@
       "weaknesses": ["耐久が低め", "物理攻撃不可"],
       "ability_pool": {
         "rare": [
-          {"id": "ex_leg_vel", "name": "終わりなき飢え", "effect": "与ダメージの15%吸収"},
+          {"id": "ex_leg_vel", "name": "終わりなき飢え", "effect": "攻撃技命中時、与ダメ10%回復"},
           {"id": "sp_demon", "name": "魂喰らい", "effect": "相手を倒した時、全ステータス↑1"}
         ],
         "common": [
           {"id": "com_017", "name": "背水の陣", "effect": "HP半分以下で攻撃大幅強化"},
-          {"id": "com_013", "name": "最期の呪詛", "effect": "倒された時、相手に大ダメージ"}
+          {"id": "com_013", "name": "最期の呪詛", "effect": "倒された時、相手に50ダメージ"}
         ]
       },
       "skill_pool": {
@@ -129,12 +193,12 @@
         ],
         "learnable_skills": [
           {"id": "dark_005", "name": "呪詛", "learn_level": 4},
-          {"id": "dark_006", "name": "暗幕", "learn_level": 8},
-          {"id": "vel_002", "name": "捕食", "learn_level": 12, "cost": 4, "power": "B", "effect": "与ダメ25%回復、連続使用不可"},
+          {"id": "dark_002", "name": "影縫い", "learn_level": 8},
+          {"id": "vel_002", "name": "捕食", "learn_level": 12, "cost": 4, "power": "B", "effect": "与ダメ30%回復、連続使用不可"},
           {"id": "dark_009", "name": "冥府の呪い", "learn_level": 16},
           {"id": "vel_003", "name": "飢餓の呪い", "learn_level": 20, "cost": 3, "effect": "3T相手に毎T固定30ダメージ"},
           {"id": "fire_004", "name": "業炎", "learn_level": 24},
-          {"id": "vel_004", "name": "暗黒宴", "learn_level": 28, "cost": 3, "power": "C", "effect": "瘴気確定+HP15%回復"},
+          {"id": "vel_004", "name": "暗黒宴", "learn_level": 28, "cost": 3, "power": "C", "effect": "瘴気確定+HP20回復"},
           {"id": "spc_mag_002", "name": "侵蝕の刻印", "learn_level": 32},
           {"id": "fire_008", "name": "獄炎", "learn_level": 36},
           {"id": "dark_004", "name": "深淵", "learn_level": 44},
@@ -161,11 +225,12 @@
       "base_stats": {
         "attack": 22,
         "defense": 45,
-        "magic": 72,
+        "magic": 65,
         "magic_defense": 50,
-        "speed": 61
+        "speed": 55
       },
-      "total": 250,
+      "total": 237,
+      "balance_note": "v20.0: MAG72→65, SPD61→55, total250→237 (A→B+ 下方修正)",
       "iv_patterns": [
         {"name": "魔力特化", "attack": -12, "defense": 0, "magic": 12, "magic_defense": 0, "speed": 0, "recommended": "火力重視（推奨）"},
         {"name": "速さ特化", "attack": -12, "defense": 0, "magic": 0, "magic_defense": 0, "speed": 12, "recommended": "先制デバフ型"},
@@ -175,12 +240,12 @@
       "weaknesses": ["火力は魔法に偏る", "物理攻撃不可"],
       "ability_pool": {
         "rare": [
-          {"id": "ex_leg_gram", "name": "アビリティ封じ", "effect": "登場から4ターン、相手のアビリティ無効"},
+          {"id": "ex_leg_gram", "name": "アビリティ封じ", "effect": "登場から2ターン、相手のアビリティを無効化"},
           {"id": "sp_mecha", "name": "電磁シールド", "effect": "雷属性のダメージを半減"}
         ],
         "common": [
           {"id": "com_003", "name": "号令の旗", "effect": "登場時、自分の素早さ↑1"},
-          {"id": "rare_012", "name": "コスト浸食", "effect": "攻撃命中時、相手の次ターンのコスト回復-1"}
+          {"id": "rare_012", "name": "コスト浸食", "effect": "コスト2の攻撃命中時、相手の次ターンのコスト回復-1"}
         ]
       },
       "skill_pool": {
@@ -195,7 +260,7 @@
           {"id": "thunder_009", "name": "雷鳴", "learn_level": 12},
           {"id": "gram_002", "name": "システムハック", "learn_level": 16, "cost": 4, "effect": "相手アビリティ3T無効+相手バフコピー"},
           {"id": "dark_002", "name": "影縫い", "learn_level": 20},
-          {"id": "gram_003", "name": "電磁パルス", "learn_level": 24, "cost": 3, "power": "D", "effect": "麻痺確定"},
+          {"id": "gram_003", "name": "電磁パルス", "learn_level": 24, "cost": 3, "power": "C", "effect": "麻痺確定"},
           {"id": "dark_005", "name": "呪詛", "learn_level": 28},
           {"id": "cmn_sup_004", "name": "守護陣", "learn_level": 32},
           {"id": "gram_004", "name": "機械連携", "learn_level": 36, "cost": 2, "power": "C", "effect": "味方メカノイドがいると威力+50%"},
@@ -219,26 +284,27 @@
       "species": "dragon",
       "element": "fire",
       "role": "火力型（物理・火傷特化）",
-      "design_concept": "【物理火力特化】攻撃90は全モンスター最高。魔法は完全に捨てた",
+      "design_concept": "【物理火力特化】攻撃70×竜鱗×1.3×暴君×1.2＝実質109。ハイリスク・ハイリターンの竜王",
       "base_stats": {
-        "attack": 90,
-        "defense": 52,
+        "attack": 70,
+        "defense": 57,
         "magic": 12,
-        "magic_defense": 42,
+        "magic_defense": 47,
         "speed": 56
       },
-      "total": 252,
+      "total": 242,
+      "balance_note": "v16.0: 暴君のオーラ×1.2/×1.3（攻撃ボーナス復活、B+維持）",
       "iv_patterns": [
         {"name": "攻撃特化", "attack": 12, "defense": 0, "magic": -12, "magic_defense": 0, "speed": 0, "recommended": "火力最大化（推奨）"},
         {"name": "速さ特化", "attack": 0, "defense": 0, "magic": -12, "magic_defense": 0, "speed": 12, "recommended": "先制物理型"},
         {"name": "防御特化", "attack": 0, "defense": 12, "magic": -12, "magic_defense": 0, "speed": 0, "recommended": "耐久物理型"}
       ],
       "strengths": ["攻撃が全モンスター最高", "暴君オーラで更に強化", "竜の耐久"],
-      "weaknesses": ["魔法攻撃は完全に不可能", "魔防が低め"],
+      "weaknesses": ["魔法攻撃は完全に不可能", "魔防が低め", "デメリット増加"],
       "ability_pool": {
         "rare": [
-          {"id": "ex_leg_tyr", "name": "暴君のオーラ", "effect": "攻撃強化、被ダメージも増加"},
-          {"id": "sp_dragon", "name": "竜鱗", "effect": "攻撃技が強化される"}
+          {"id": "ex_leg_tyr", "name": "暴君のオーラ", "effect": "攻撃強化（×1.2）、被ダメージ増加（×1.3）"},
+          {"id": "sp_dragon", "name": "竜鱗", "effect": "攻撃技が強化される（×1.3）"}
         ],
         "common": [
           {"id": "com_016", "name": "猪突猛進", "effect": "攻撃強化、被ダメージも増加"},
@@ -249,10 +315,10 @@
         "initial_skills": [
           {"id": "fire_004", "name": "業炎", "learn_level": 1},
           {"id": "cmn_phy_001", "name": "猛進", "learn_level": 1},
-          {"id": "cmn_sup_003", "name": "集中", "learn_level": 1}
+          {"id": "cmn_sup_002", "name": "煽動", "learn_level": 1}
         ],
         "learnable_skills": [
-          {"id": "tyr_001", "name": "竜爪", "learn_level": 4, "cost": 2, "power": "D", "effect": "急所率↑"},
+          {"id": "tyr_001", "name": "竜爪", "learn_level": 4, "cost": 3, "power": "B", "effect": "弱点時クリティカル確定"},
           {"id": "fire_007", "name": "紅蓮拳", "learn_level": 8},
           {"id": "cmn_phy_004", "name": "剛腕撃", "learn_level": 12},
           {"id": "tyr_002", "name": "帝王の咆哮", "learn_level": 16, "cost": 4, "effect": "相手攻撃↓+防御↓+恐怖確定"},
@@ -260,9 +326,9 @@
           {"id": "tyr_003", "name": "蹂躙", "learn_level": 24, "cost": 4, "power": "A", "effect": "自分HP40消費"},
           {"id": "earth_007", "name": "剛岩拳", "learn_level": 28},
           {"id": "tyr_004", "name": "竜の息吹", "learn_level": 32, "cost": 3, "power": "C", "effect": "火傷確定"},
-          {"id": "cmn_phy_005", "name": "破砕拳", "learn_level": 36},
+          {"id": "cmn_phy_006", "name": "連撃", "learn_level": 36},
           {"id": "fire_008", "name": "獄炎", "learn_level": 44},
-          {"id": "earth_006", "name": "堅守", "learn_level": 48}
+          {"id": "cmn_sup_008", "name": "生命賦活", "learn_level": 48}
         ],
         "ultimate": {"id": "ult_tyr", "name": "暴君の蹂躙", "learn_level": 40, "cost": 5, "power_rank": "SS", "element": "fire", "type": "attack", "effect": null}
       },
@@ -281,29 +347,30 @@
       "species": "human",
       "element": "none",
       "role": "火力型（クリティカル特化）",
-      "design_concept": "【速攻クリティカル特化】攻撃と速さに極振り。耐久を捨てた一撃必殺型",
+      "design_concept": "【中速クリティカル型】攻撃65、速さ75。耐久を上げたバランス型（v14.0下方修正）",
       "base_stats": {
-        "attack": 80,
-        "defense": 30,
+        "attack": 60,
+        "defense": 45,
         "magic": 15,
-        "magic_defense": 35,
-        "speed": 88
+        "magic_defense": 48,
+        "speed": 70
       },
-      "total": 248,
+      "total": 238,
+      "balance_note": "v18.0: ATK65→60, SPD75→70 (ヒューマン族装備で補うコンセプト)",
       "iv_patterns": [
-        {"name": "速さ特化", "attack": 0, "defense": 0, "magic": -12, "magic_defense": 0, "speed": 12, "recommended": "最速確殺型（推奨）"},
+        {"name": "速さ特化", "attack": 0, "defense": 0, "magic": -12, "magic_defense": 0, "speed": 12, "recommended": "先制クリティカル型（推奨）"},
         {"name": "攻撃特化", "attack": 12, "defense": 0, "magic": -12, "magic_defense": 0, "speed": 0, "recommended": "火力最大化"},
         {"name": "魔防特化", "attack": 0, "defense": 0, "magic": -12, "magic_defense": 12, "speed": 0, "recommended": "対魔法型"}
       ],
-      "strengths": ["速さと攻撃の両立", "クリティカルで確殺", "先手を取れる"],
-      "weaknesses": ["耐久が低い", "魔法攻撃不可", "一発でも受けたら危険"],
+      "strengths": ["速さと攻撃のバランス", "クリティカルで確殺", "耐久も確保"],
+      "weaknesses": ["火力は下がった", "魔法攻撃不可"],
       "ability_pool": {
         "rare": [
-          {"id": "ex_leg_arthur", "name": "剣聖の極意", "effect": "急所時に攻撃↑1"},
+          {"id": "ex_leg_arthur", "name": "剣聖の極意", "effect": "急所時、相手の防御バフを無視してダメージを与える"},
           {"id": "sp_human", "name": "適応力", "effect": "同じ技を2回受けると、その技のダメージ半減"}
         ],
         "common": [
-          {"id": "com_015", "name": "必殺の型", "effect": "急所に当たりやすい"},
+          {"id": "com_015", "name": "必殺の型", "effect": "急所率+2段階"},
           {"id": "com_014", "name": "先陣の誉れ", "effect": "先発で登場した時、攻撃強化（1ターン）"}
         ]
       },
@@ -311,7 +378,7 @@
         "initial_skills": [
           {"id": "cmn_phy_002", "name": "裂爪", "learn_level": 1},
           {"id": "cmn_phy_003", "name": "疾風撃", "learn_level": 1},
-          {"id": "cmn_sup_003", "name": "集中", "learn_level": 1}
+          {"id": "cmn_sup_002", "name": "煽動", "learn_level": 1}
         ],
         "learnable_skills": [
           {"id": "arthur_001", "name": "聖剣の輝き", "learn_level": 4, "cost": 4, "power": "B", "effect": "防御↑"},
@@ -343,26 +410,27 @@
       "species": "spirit",
       "element": "fire",
       "role": "状態異常型（火傷・魅了特化）",
-      "design_concept": "【状態異常特化】魔力と速さに振って状態異常を確実に撒く。霊体で物理軽減",
+      "design_concept": "【中速状態異常型】魔力82、速さ65。防御を上げた耐久型に変更（v14.0下方修正）",
       "base_stats": {
         "attack": 15,
-        "defense": 28,
-        "magic": 82,
+        "defense": 38,
+        "magic": 75,
         "magic_defense": 50,
-        "speed": 75
+        "speed": 65
       },
-      "total": 250,
+      "total": 243,
+      "balance_note": "v17.0: MAG82→75, total250→243, 狐火の魂×1.25→×1.2 (A→B+ 下方修正)",
       "iv_patterns": [
-        {"name": "速さ特化", "attack": -12, "defense": 0, "magic": 0, "magic_defense": 0, "speed": 12, "recommended": "先制状態異常型（推奨）"},
-        {"name": "魔力特化", "attack": -12, "defense": 0, "magic": 12, "magic_defense": 0, "speed": 0, "recommended": "火力最大化"},
+        {"name": "魔力特化", "attack": -12, "defense": 0, "magic": 12, "magic_defense": 0, "speed": 0, "recommended": "火力最大化（推奨）"},
+        {"name": "速さ特化", "attack": -12, "defense": 0, "magic": 0, "magic_defense": 0, "speed": 12, "recommended": "先制状態異常型"},
         {"name": "魔防特化", "attack": -12, "defense": 0, "magic": 0, "magic_defense": 12, "speed": 0, "recommended": "対魔法耐久型"}
       ],
-      "strengths": ["状態異常の鬼", "霊体で物理軽減", "高速魔法アタッカー"],
-      "weaknesses": ["物理防御が低い（霊体で補う）", "物理攻撃不可"],
+      "strengths": ["状態異常の鬼", "霊体で物理軽減", "耐久も確保"],
+      "weaknesses": ["速さは下がった", "物理攻撃不可"],
       "ability_pool": {
         "rare": [
-          {"id": "ex_leg_tamamo", "name": "狐火の魂", "effect": "状態異常の相手に攻撃強化"},
-          {"id": "sp_spirit", "name": "霊体", "effect": "攻撃技のダメージを軽減"}
+          {"id": "ex_leg_tamamo", "name": "狐火の魂", "effect": "状態異常の相手に攻撃強化（×1.2）"},
+          {"id": "sp_spirit", "name": "霊体", "effect": "攻撃技のダメージを軽減（×0.8）"}
         ],
         "common": [
           {"id": "com_003", "name": "号令の旗", "effect": "登場時、自分の素早さ↑1"},
@@ -373,16 +441,16 @@
         "initial_skills": [
           {"id": "fire_004", "name": "業炎", "learn_level": 1},
           {"id": "tamamo_001", "name": "狐火", "learn_level": 1, "cost": 2, "effect": "火傷確定"},
-          {"id": "cmn_sup_001", "name": "威嚇", "learn_level": 1}
+          {"id": "cmn_sup_001", "name": "威圧", "learn_level": 1}
         ],
         "learnable_skills": [
           {"id": "fire_006", "name": "炎舞", "learn_level": 4},
-          {"id": "dark_006", "name": "暗幕", "learn_level": 8},
-          {"id": "tamamo_002", "name": "幻影分身", "learn_level": 12, "cost": 3, "effect": "次攻撃回避"},
+          {"id": "dark_002", "name": "影縫い", "learn_level": 8},
+          {"id": "tamamo_002", "name": "幻影分身", "learn_level": 12, "cost": 3, "effect": "次に受けるダメージを大幅に軽減（1回）"},
           {"id": "fire_005", "name": "焦熱獄", "learn_level": 16},
-          {"id": "tamamo_003", "name": "九尾乱舞", "learn_level": 20, "cost": 3, "power": "B", "effect": "3連撃"},
+          {"id": "tamamo_003", "name": "九尾乱舞", "learn_level": 20, "cost": 5, "power": "A", "effect": "使用後次の九尾乱舞のコスト0"},
           {"id": "dark_005", "name": "呪詛", "learn_level": 24},
-          {"id": "tamamo_004", "name": "妖艶の舞", "learn_level": 28, "cost": 4, "power": "C", "effect": "魅了確定+自分回避↑"},
+          {"id": "tamamo_004", "name": "妖艶の舞", "learn_level": 28, "cost": 4, "power": "C", "effect": "魅了確定+自分速さ↑"},
           {"id": "fire_008", "name": "獄炎", "learn_level": 32},
           {"id": "spc_mag_002", "name": "侵蝕の刻印", "learn_level": 36},
           {"id": "fire_007", "name": "紅蓮拳", "learn_level": 44},
@@ -405,7 +473,7 @@
       "species": "mutant",
       "element": "none",
       "role": "耐久型（吸収・適応特化）",
-      "design_concept": "【超耐久特化】両防御に極振り。速さと攻撃を完全に捨てた鉄壁",
+      "design_concept": "【吸収耐久型】両防御85超。攻撃を吸収して回復する究極の生命体",
       "base_stats": {
         "attack": 25,
         "defense": 85,
@@ -414,28 +482,29 @@
         "speed": 20
       },
       "total": 252,
+      "balance_note": "v20.0: 絶対捕食 20%→15%回復 (A→B+ 下方修正)",
       "iv_patterns": [
         {"name": "防御特化", "attack": 0, "defense": 12, "magic": 0, "magic_defense": 0, "speed": -12, "recommended": "物理耐久型（推奨）"},
         {"name": "魔防特化", "attack": 0, "defense": 0, "magic": 0, "magic_defense": 12, "speed": -12, "recommended": "魔法耐久型"},
         {"name": "魔力特化", "attack": 0, "defense": 0, "magic": 12, "magic_defense": 0, "speed": -12, "recommended": "魔法攻撃型"}
       ],
-      "strengths": ["両防御がトップクラス", "無限適応で更に硬く", "長期戦最強"],
-      "weaknesses": ["火力が低い", "速さが最遅クラス", "先手を取られる"],
+      "strengths": ["両防御がトップクラス", "被ダメ15%回復で高耐久", "状態異常完全無効"],
+      "weaknesses": ["火力が低い", "速さが最遅クラス", "先制技に弱い"],
       "ability_pool": {
         "rare": [
-          {"id": "ex_leg_slime", "name": "無限適応", "effect": "受けた属性のダメージを軽減（3属性まで）"},
-          {"id": "sp_mutant", "name": "変幻の魂", "effect": "被ダメージ時、ランダムで1ステータス↑1"}
+          {"id": "ex_leg_slime", "name": "絶対捕食", "effect": "被ダメージの15%をHP回復+状態異常無効（1バトル5回）"},
+          {"id": "sp_mutant", "name": "変幻の魂", "effect": "被ダメージ時、最も低いステータス↑1"}
         ],
         "common": [
           {"id": "com_019", "name": "守りの構え", "effect": "HP半分以上で被ダメージ軽減"},
-          {"id": "com_012", "name": "反射の鎧", "effect": "攻撃を受けた時、相手にもダメージ"}
+          {"id": "com_012", "name": "反射の鎧", "effect": "攻撃を受けた時、相手に15ダメージ"}
         ]
       },
       "skill_pool": {
         "initial_skills": [
           {"id": "slime_001", "name": "粘液弾", "learn_level": 1, "cost": 1, "power": "D", "effect": "速さ↓"},
-          {"id": "cmn_sup_008", "name": "活力賦活", "learn_level": 1},
-          {"id": "cmn_sup_001", "name": "威嚇", "learn_level": 1}
+          {"id": "cmn_sup_008", "name": "生命賦活", "learn_level": 1},
+          {"id": "cmn_sup_001", "name": "威圧", "learn_level": 1}
         ],
         "learnable_skills": [
           {"id": "slime_002", "name": "国喰い", "learn_level": 4, "cost": 4, "power": "S", "effect": "連続使用不可"},
@@ -458,13 +527,14 @@
         "total_skills": 17,
         "main_element": "none",
         "sub_elements": ["water", "fire", "thunder", "earth", "wind", "light", "dark"],
+        "note": "Lv50で技習得完了",
         "skill_types": {"attack": 11, "support": 4, "debuff": 1, "ultimate": 1}
       }
     }
   ],
   "category_summary": {
     "total_monsters": 7,
-    "stat_totals": [250, 245, 250, 252, 248, 250, 252],
+    "stat_totals": [250, 245, 250, 242, 248, 250, 252],
     "average_total": 249.6,
     "skill_count": {
       "ミカ": 15,
@@ -475,6 +545,14 @@
       "タマモ": 15,
       "スライム": 17
     },
-    "design_philosophy": "幻種は15技（ミュータントは17技）、4レベル刻み習得、2-3サブ属性"
+    "design_philosophy": "幻種は15技（ミュータントは17技）、4レベル刻み習得、2-3サブ属性",
+    "v14_balance_notes": {
+      "アーサー": "ATK72→65, DEF38→45, MDEF43→48, SPD80→75",
+      "タマモ": "SPD75→65, DEF28→38, 狐火の魂×1.3→×1.25",
+      "テュール": "暴君のオーラ ×1.15/×1.15→×1.1/×1.2",
+      "ミカ": "女神の祝福 HP40→HP30",
+      "ヴェル": "終わりなき飢え 10%→8%",
+      "スライム": "無限適応 ×0.85/3属性→×0.9/2属性"
+    }
   }
 }

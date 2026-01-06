@@ -1,0 +1,101 @@
+{
+  "version": "1.0.0",
+  "created_at": "2026-01-07",
+  "updated_at": "2026-01-07",
+  "description": "バフ/デバフシステム設定（battle_system_v12.4.0準拠）",
+  "source_document": "docs/battle_system_v8.7.md",
+  "stage_multipliers": {
+    "+3": 1.50,
+    "+2": 1.33,
+    "+1": 1.17,
+    "0": 1.00,
+    "-1": 0.85,
+    "-2": 0.75,
+    "-3": 0.67
+  },
+  "stage_limits": {
+    "max": 3,
+    "min": -3
+  },
+  "default_duration": 3,
+  "duration_types": {
+    "standard": 3,
+    "long": 5,
+    "short": 2,
+    "permanent": -1
+  },
+  "applicable_stats": [
+    {
+      "id": "attack",
+      "name": "攻撃",
+      "name_en": "Attack",
+      "affects": "攻撃技ダメージ"
+    },
+    {
+      "id": "defense",
+      "name": "防御",
+      "name_en": "Defense",
+      "affects": "攻撃技被ダメージ軽減"
+    },
+    {
+      "id": "magic",
+      "name": "魔力",
+      "name_en": "Magic",
+      "affects": "魔力技ダメージ"
+    },
+    {
+      "id": "magic_defense",
+      "name": "魔防",
+      "name_en": "Magic Defense",
+      "affects": "魔力技被ダメージ軽減"
+    },
+    {
+      "id": "speed",
+      "name": "素早さ",
+      "name_en": "Speed",
+      "affects": "行動順"
+    },
+    {
+      "id": "accuracy",
+      "name": "命中率",
+      "name_en": "Accuracy",
+      "affects": "技命中判定"
+    },
+    {
+      "id": "evasion",
+      "name": "回避率",
+      "name_en": "Evasion",
+      "affects": "技回避判定"
+    },
+    {
+      "id": "critical",
+      "name": "クリティカル率",
+      "name_en": "Critical Rate",
+      "affects": "クリティカル判定"
+    }
+  ],
+  "reset_conditions": {
+    "on_switch": true,
+    "on_battle_end": true,
+    "on_specific_skill": "技の効果による"
+  },
+  "activation_timing": {
+    "buff_start": "付与直後から効果発動",
+    "debuff_start": "付与直後から効果発動"
+  },
+  "status_ailment_interaction": {
+    "separate_calculation": true,
+    "calculation_order": "基礎値 × バフ段階倍率 × 状態異常倍率",
+    "example": "攻撃100、攻撃↑1（×1.17）、火傷（-10%）= 100 × 1.17 × 0.9 = 105.3",
+    "note": "状態異常効果はバフ段階に変換されない"
+  },
+  "display_text": {
+    "+3": "↑↑↑",
+    "+2": "↑↑",
+    "+1": "↑",
+    "0": "",
+    "-1": "↓",
+    "-2": "↓↓",
+    "-3": "↓↓↓"
+  }
+}

@@ -2,8 +2,8 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Legendary Species Unique Skills - Phase 1 v9.0",
   "description": "幻種モンスター専用技マスターデータ（カテゴリシステム移行版）",
-  "version": "12.0.0",
-  "last_updated": "2025-12-29",
+  "version": "17.0.0",
+  "last_updated": "2026-01-05",
   "category": "legendary",
   "category_description": "幻種（入手難易度：非常に難）- カテゴリは入手難易度であり強さではない",
   "design_philosophy": {
@@ -40,6 +40,7 @@
     {
       "skill_id": "mika_001",
       "name": "天使の微笑み",
+      "name_reading": "てんしのほほえみ",
       "name_en": "Angel's Smile",
       "category": "support_only",
       "element": "light",
@@ -67,30 +68,35 @@
     {
       "skill_id": "mika_002",
       "name": "裁きの天秤",
+      "name_reading": "さばきのてんびん",
       "name_en": "Scales of Judgment",
       "category": "attack_plus_effect",
       "element": "light",
       "cost": 4,
-      "damage_type": "magic",
+      "damage_type": "fixed",
       "power": 0,
       "power_rank": "-",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "(|相手HP-自分HP|)×0.5ダメージ、最低30ダメージ保証",
+      "description": "相手の現在HPの半分ダメージ+20固定ダメージ",
       "special_effects": [
         {
-          "effect_type": "hp_difference_damage",
-          "multiplier": 0.5,
-          "minimum_damage": 30
+          "effect_type": "current_hp_percent_damage",
+          "percent": 50
+        },
+        {
+          "effect_type": "fixed_damage",
+          "damage": 20
         }
       ],
       "owner_id": "mika",
-      "balance_note": "v12.0: HP差が0以下でも最低30ダメージ保証追加"
+      "balance_note": "v12.1: 効果変更（相手現在HP50%+固定20ダメージ）"
     },
     {
       "skill_id": "mika_003",
       "name": "神威",
+      "name_reading": "しんい",
       "name_en": "Divine Authority",
       "category": "attack_plus_effect",
       "element": "light",
@@ -111,6 +117,7 @@
     {
       "skill_id": "ult_mika",
       "name": "天界の裁き",
+      "name_reading": "てんかいのさばき",
       "name_en": "Divine Judgment",
       "category": "support_only",
       "element": "light",
@@ -145,10 +152,11 @@
     {
       "skill_id": "vel_001",
       "name": "飢餓",
+      "name_reading": "きが",
       "name_en": "Hunger",
       "category": "attack_plus_effect",
       "element": "dark",
-      "cost": 1,
+      "cost": 2,
       "damage_type": "fixed",
       "power": 30,
       "power_rank": "-",
@@ -163,11 +171,12 @@
         }
       ],
       "owner_id": "vel",
-      "balance_note": "v12.0: damage_type none→fixedに統一"
+      "balance_note": "v12.1: コスト1→2（固定ダメージはコスト2が適正）"
     },
     {
       "skill_id": "vel_002",
       "name": "捕食",
+      "name_reading": "ほしょく",
       "name_en": "Devour",
       "category": "attack_plus_effect",
       "element": "dark",
@@ -195,6 +204,7 @@
     {
       "skill_id": "vel_003",
       "name": "飢餓の呪い",
+      "name_reading": "きがののろい",
       "name_en": "Hunger Curse",
       "category": "support_only",
       "element": "dark",
@@ -218,6 +228,7 @@
     {
       "skill_id": "vel_004",
       "name": "暗黒宴",
+      "name_reading": "あんこくえん",
       "name_en": "Dark Feast",
       "category": "attack_plus_effect",
       "element": "dark",
@@ -239,6 +250,7 @@
     {
       "skill_id": "ult_vel",
       "name": "飢餓地獄",
+      "name_reading": "きがじごく",
       "name_en": "Hunger Hell",
       "category": "damage_only",
       "element": "dark",
@@ -258,6 +270,7 @@
     {
       "skill_id": "gram_001",
       "name": "強制交代",
+      "name_reading": "きょうせいこうたい",
       "name_en": "Forced Switch",
       "category": "attack_plus_effect",
       "element": "thunder",
@@ -280,6 +293,7 @@
     {
       "skill_id": "gram_002",
       "name": "システムハック",
+      "name_reading": "システムハック",
       "name_en": "System Hack",
       "category": "support_only",
       "element": "thunder",
@@ -307,13 +321,14 @@
     {
       "skill_id": "gram_003",
       "name": "電磁パルス",
+      "name_reading": "でんじパルス",
       "name_en": "EMP",
       "category": "attack_plus_effect",
       "element": "thunder",
       "cost": 3,
       "damage_type": "magic",
-      "power": 30,
-      "power_rank": "D",
+      "power": 55,
+      "power_rank": "C",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
@@ -325,11 +340,13 @@
           "probability": 100
         }
       ],
-      "owner_id": "gram"
+      "owner_id": "gram",
+      "balance_note": "v12.4: 威力D→C（天罰と同等、速さ↓なしで差別化）"
     },
     {
       "skill_id": "gram_004",
       "name": "機械連携",
+      "name_reading": "きかいれんけい",
       "name_en": "Machine Coordination",
       "category": "attack_plus_effect",
       "element": "thunder",
@@ -350,6 +367,7 @@
     {
       "skill_id": "ult_gram",
       "name": "完全掌握",
+      "name_reading": "かんぜんしょうあく",
       "name_en": "Total Control",
       "category": "attack_plus_effect",
       "element": "thunder",
@@ -375,28 +393,31 @@
     {
       "skill_id": "tyr_001",
       "name": "竜爪",
+      "name_reading": "りゅうそう",
       "name_en": "Dragon Claw",
       "category": "attack_plus_effect",
       "element": "fire",
-      "cost": 2,
+      "cost": 3,
       "damage_type": "attack",
-      "power": 30,
-      "power_rank": "D",
+      "power": 80,
+      "power_rank": "B",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "急所に当たりやすい",
+      "description": "弱点時クリティカル確定",
       "special_effects": [
         {
-          "effect_type": "critical_boost",
-          "modifier": 1
+          "effect_type": "critical_on_weakness",
+          "value": true
         }
       ],
-      "owner_id": "tyr"
+      "owner_id": "tyr",
+      "balance_note": "v12.4: コスト2→3（B威力+効果はコスト3が適正）"
     },
     {
       "skill_id": "tyr_002",
       "name": "帝王の咆哮",
+      "name_reading": "ていおうのほうこう",
       "name_en": "Emperor's Roar",
       "category": "support_only",
       "element": "fire",
@@ -432,6 +453,7 @@
     {
       "skill_id": "tyr_003",
       "name": "蹂躙",
+      "name_reading": "じゅうりん",
       "name_en": "Rampage",
       "category": "attack_plus_effect",
       "element": "fire",
@@ -454,6 +476,7 @@
     {
       "skill_id": "tyr_004",
       "name": "竜の息吹",
+      "name_reading": "りゅうのいぶき",
       "name_en": "Dragon's Breath",
       "category": "attack_plus_effect",
       "element": "fire",
@@ -474,6 +497,7 @@
     {
       "skill_id": "ult_tyr",
       "name": "暴君の蹂躙",
+      "name_reading": "ぼうくんのじゅうりん",
       "name_en": "Tyrant's Rampage",
       "category": "damage_only",
       "element": "fire",
@@ -493,6 +517,7 @@
     {
       "skill_id": "arthur_001",
       "name": "聖剣の輝き",
+      "name_reading": "せいけんのかがやき",
       "name_en": "Holy Sword Gleam",
       "category": "attack_plus_effect",
       "element": "none",
@@ -517,6 +542,7 @@
     {
       "skill_id": "arthur_002",
       "name": "王の覇気",
+      "name_reading": "おうのはき",
       "name_en": "King's Aura",
       "category": "support_only",
       "element": "none",
@@ -546,6 +572,7 @@
     {
       "skill_id": "arthur_003",
       "name": "聖剣",
+      "name_reading": "せいけん",
       "name_en": "Holy Sword",
       "category": "attack_plus_effect",
       "element": "light",
@@ -566,6 +593,7 @@
     {
       "skill_id": "arthur_004",
       "name": "閃光突き",
+      "name_reading": "せんこうづき",
       "name_en": "Flash Thrust",
       "category": "attack_plus_effect",
       "element": "light",
@@ -594,6 +622,7 @@
     {
       "skill_id": "ult_arthur",
       "name": "聖剣エクスカリバー",
+      "name_reading": "せいけんエクスカリバー",
       "name_en": "Excalibur",
       "category": "damage_only",
       "element": "none",
@@ -613,6 +642,7 @@
     {
       "skill_id": "tamamo_001",
       "name": "狐火",
+      "name_reading": "きつねび",
       "name_en": "Fox Fire",
       "category": "support_only",
       "element": "fire",
@@ -636,6 +666,7 @@
     {
       "skill_id": "tamamo_002",
       "name": "幻影分身",
+      "name_reading": "げんえいぶんしん",
       "name_en": "Phantom Clone",
       "category": "support_only",
       "element": "fire",
@@ -646,20 +677,23 @@
       "accuracy": 100,
       "priority": 0,
       "target": "self",
-      "description": "次攻撃回避",
+      "description": "次に受けるダメージを大幅に軽減（1回）",
       "special_effects": [
         {
-          "effect_type": "evade_next",
-          "value": true
+          "effect_type": "damage_reduction_next",
+          "reduction_percentage": 50,
+          "uses": 1
         }
       ],
-      "owner_id": "tamamo"
+      "owner_id": "tamamo",
+      "balance_note": "v12.3: description表記統一（大幅に軽減=50%、1回限定）"
     },
     {
       "skill_id": "tamamo_003",
       "name": "九尾乱舞",
+      "name_reading": "きゅうびらんぶ",
       "name_en": "Nine-Tail Dance",
-      "category": "damage_only",
+      "category": "attack_plus_effect",
       "element": "fire",
       "cost": 5,
       "damage_type": "magic",
@@ -668,14 +702,17 @@
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "A威力の炎攻撃",
-      "special_effects": [],
+      "description": "A威力の炎攻撃。使用後、次の九尾乱舞のコストが0になる",
+      "special_effects": [
+        {"effect_type": "next_skill_cost_zero", "skill_id": "tamamo_003"}
+      ],
       "owner_id": "tamamo",
-      "balance_note": "v12.0: 威力B→A、複雑な効果削除（シンプル化）"
+      "balance_note": "v12.1: 使用後次回コスト0効果追加（奥義との差別化）"
     },
     {
       "skill_id": "tamamo_004",
       "name": "妖艶の舞",
+      "name_reading": "ようえんのまい",
       "name_en": "Enchanting Dance",
       "category": "attack_plus_effect",
       "element": "fire",
@@ -686,17 +723,18 @@
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "魅了確定+自分回避↑",
+      "description": "魅了確定+自分速さ↑",
       "special_effects": [
         {"effect_type": "status_condition", "status": "charm", "probability": 100},
-        {"effect_type": "stat_change", "stat": "evasion", "modifier": 1, "target": "self"}
+        {"effect_type": "stat_change", "stat": "speed", "modifier": 1, "target": "self"}
       ],
       "owner_id": "tamamo",
-      "balance_note": "v10.5: 重複していた九尾乱舞を妖艶の舞に変更（状態異常型コンセプト強化）"
+      "balance_note": "v12.2: 回避↑→速さ↑（運要素排除）"
     },
     {
       "skill_id": "ult_tamamo",
       "name": "狐火・九重",
+      "name_reading": "きつねび・ここのえ",
       "name_en": "Nine-Tail Flame Dance",
       "category": "attack_plus_effect",
       "element": "fire",
@@ -727,6 +765,7 @@
     {
       "skill_id": "slime_001",
       "name": "粘液弾",
+      "name_reading": "ねんえきだん",
       "name_en": "Slime Shot",
       "category": "attack_plus_effect",
       "element": "none",
@@ -751,38 +790,35 @@
     {
       "skill_id": "slime_002",
       "name": "国喰い",
+      "name_reading": "くにぐい",
       "name_en": "Nation Eater",
       "category": "damage_only",
       "element": "none",
-      "cost": 4,
+      "cost": 5,
       "damage_type": "attack",
       "power": 150,
       "power_rank": "S",
       "accuracy": 100,
       "priority": 0,
       "target": "opponent",
-      "description": "連続使用不可、使用後次ターンのコスト回復-1",
+      "description": "連続使用不可",
       "special_effects": [
         {
           "effect_type": "no_consecutive_use",
           "value": true
-        },
-        {
-          "effect_type": "cost_recovery_penalty",
-          "penalty": -1,
-          "duration": 1
         }
       ],
       "owner_id": "slime",
-      "balance_note": "v12.0: 次ターンコスト回復-1追加（S威力コスト4のバランス調整）"
+      "balance_note": "v12.4: コスト4→5、コスト回復ペナ削除（S威力はコスト5が適正）"
     },
     {
       "skill_id": "slime_003",
       "name": "吸収同化",
+      "name_reading": "きゅうしゅうどうか",
       "name_en": "Absorb Assimilate",
       "category": "support_only",
       "element": "none",
-      "cost": 2,
+      "cost": 3,
       "damage_type": "none",
       "power": 0,
       "power_rank": "-",
@@ -796,11 +832,13 @@
           "target": "opponent"
         }
       ],
-      "owner_id": "slime"
+      "owner_id": "slime",
+      "balance_note": "v12.4: コスト2→3（バフ全奪取はコスト3が適正）"
     },
     {
       "skill_id": "slime_004",
       "name": "分裂",
+      "name_reading": "ぶんれつ",
       "name_en": "Split",
       "category": "support_only",
       "element": "none",
@@ -827,10 +865,11 @@
     {
       "skill_id": "slime_005",
       "name": "溶解液",
+      "name_reading": "ようかいえき",
       "name_en": "Dissolving Acid",
       "category": "attack_plus_effect",
       "element": "none",
-      "cost": 3,
+      "cost": 4,
       "damage_type": "attack",
       "power": 80,
       "power_rank": "B",
@@ -842,11 +881,12 @@
         {"effect_type": "stat_change", "stat": "defense", "modifier": -2, "target": "opponent"}
       ],
       "owner_id": "slime",
-      "balance_note": "v10.4: モンスターファイルから追加（耐久型にデバフは有用）"
+      "balance_note": "v12.4: コスト3→4（B威力+2段階デバフはコスト4が適正）"
     },
     {
       "skill_id": "slime_006",
       "name": "粘性捕縛",
+      "name_reading": "ねんせいほばく",
       "name_en": "Viscous Capture",
       "category": "attack_plus_effect",
       "element": "none",
@@ -877,6 +917,7 @@
     {
       "skill_id": "ult_slime",
       "name": "完全吸収",
+      "name_reading": "かんぜんきゅうしゅう",
       "name_en": "Complete Absorption",
       "category": "attack_plus_effect",
       "element": "none",
@@ -908,6 +949,28 @@
     "total_skills": 36,
     "ultimate_count": 7,
     "changelog": {
+      "v12.4.0": [
+        "【バランス調整】コスト対効果の適正化",
+        "竜爪(tyr_001): コスト2→3（B威力+効果はコスト3が適正）",
+        "国喰い(slime_002): コスト4→5、コスト回復ペナ削除（S威力はコスト5が適正）",
+        "吸収同化(slime_003): コスト2→3（バフ全奪取はコスト3が適正）",
+        "溶解液(slime_005): コスト3→4（B威力+2段階デバフはコスト4が適正）",
+        "電磁パルス(gram_003): 威力D→C（天罰と同等）"
+      ],
+      "v12.3.0": [
+        "【軽減効果統一】軽減=25%（フィールドのみ）、大幅に軽減=50%（次1回のみ）",
+        "幻影分身(tamamo_002): description表記統一（大幅に軽減=50%）"
+      ],
+      "v12.2.0": [
+        "竜爪: 威力D→B、クリ率+1→弱点時クリ確定（運要素排除）",
+        "幻影分身: 次回避→次被ダメ半減（運要素排除）",
+        "妖艶の舞: 回避↑→速さ↑（運要素排除）"
+      ],
+      "v12.1.0": [
+        "飢餓のコスト1→2（vel_001）",
+        "九尾乱舞に次回コスト0効果追加（tamamo_003）",
+        "裁きの天秤の効果を相手HP50%+固定20に変更（mika_002）"
+      ],
       "v12.0.0": [
         "味方→控え表記に統一（gram_004）",
         "瘆気確定+HP15%回復→HP30回復（vel_004）",

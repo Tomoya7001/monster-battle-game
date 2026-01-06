@@ -1,120 +1,1573 @@
 {
-    "stages": [
-        {
-            "stage_id": "stage_001",
-            "name": "初心者の森",
-            "stage_type": "normal",
-            "difficulty": 1,
-            "recommendedLevel": 5,
-            "description": "冒険者たちが最初に訪れる平和な森。弱いスライムたちが生息している。",
-            "encounter_monster_ids": [
-                "21",
-                "22",
-                "23",
-                "24",
-                "25"
-            ],
-            "encounters_to_boss": 5,
-            "boss_stage_id": "stage_001_boss",
-            "rewards": {
-                "exp": 30,
-                "gold": 50,
-                "gems": 0,
-                "drop_items": [
-                    {
-                        "item_id": "slime_gel",
-                        "drop_rate": 30
-                    },
-                    {
-                        "item_id": "common_ore",
-                        "drop_rate": 10
-                    }
-                ]
-            }
-        },
-        {
-            "stage_id": "stage_001_boss",
-            "name": "初心者の森ボス",
-            "stage_type": "boss",
-            "difficulty": 2,
-            "recommendedLevel": 8,
-            "description": "森の奥深くに潜むボスモンスターたち。3体連続で戦うことになる。",
-            "parent_stage_id": "stage_001",
-            "boss_monster_ids": [
-                "11",
-                "12",
-                "13"
-            ],
-            "rewards": {
-                "exp": 200,
-                "gold": 500,
-                "gems": 10,
-                "drop_items": [
-                    {
-                        "item_id": "forest_gem",
-                        "drop_rate": 50
-                    },
-                    {
-                        "item_id": "forest_sword",
-                        "drop_rate": 20
-                    }
-                ]
-            }
-        },
-        {
-            "stage_id": "stage_002",
-            "name": "炎の洞窟",
-            "stage_type": "normal",
-            "difficulty": 2,
-            "recommendedLevel": 10,
-            "description": "灼熱の溶岩が流れる危険な洞窟。炎属性のモンスターが多く生息する。",
-            "encounter_monster_ids": [
-                "21",
-                "29",
-                "11"
-            ],
-            "encounters_to_boss": 5,
-            "boss_stage_id": "stage_002_boss",
-            "rewards": {
-                "exp": 50,
-                "gold": 80,
-                "gems": 0,
-                "drop_items": [
-                    {
-                        "item_id": "fire_crystal",
-                        "drop_rate": 25
-                    }
-                ]
-            }
-        },
-        {
-            "stage_id": "stage_002_boss",
-            "name": "炎の洞窟ボス",
-            "stage_type": "boss",
-            "difficulty": 3,
-            "recommendedLevel": 15,
-            "description": "洞窟の最奥に君臨する炎の支配者たち。強力な炎技を使ってくる。",
-            "parent_stage_id": "stage_002",
-            "boss_monster_ids": [
-                "7",
-                "11",
-                "1"
-            ],
-            "rewards": {
-                "exp": 300,
-                "gold": 800,
-                "gems": 15,
-                "drop_items": [
-                    {
-                        "item_id": "dragon_scale",
-                        "drop_rate": 40
-                    },
-                    {
-                        "item_id": "flame_armor",
-                        "drop_rate": 15
-                    }
-                ]
-            }
-        }
+  "version": "2.0.0",
+  "lastUpdated": "2026-01-06",
+  "changelog": {
+    "v2.0.0": [
+      "【全面刷新】10エリア×6ステージ構成に再設計",
+      "【冒険システム】通常戦闘・ボス戦の報酬設計",
+      "【探検システム】放置報酬の設計",
+      "【素材ドロップ】基本素材2種、属性素材、種族素材対応",
+      "【レアモンスター】希少種・幻種の出現率設定"
+    ],
+    "v1.0.0": [
+      "初期サンプルデータ作成"
     ]
+  },
+  "areas": [
+    {
+      "id": "area_01",
+      "name": "始まりの草原",
+      "nameEn": "Starting Meadow",
+      "difficulty": 1,
+      "recommendedLevelMin": 1,
+      "recommendedLevelMax": 5,
+      "theme": "チュートリアル",
+      "mainElement": "none",
+      "description": "冒険の始まり。穏やかな草原で基本を学ぶ",
+      "unlockCondition": null,
+      "bgm": "bgm_area_01",
+      "background": "bg_meadow",
+      "dropMaterials": {
+        "base": ["MAT_BASE_01", "MAT_BASE_02"],
+        "element": [],
+        "bossCategory": ["MAT_CAT_01", "MAT_CAT_09"]
+      },
+      "rareMonsterRate": 0,
+      "legendaryMonsterRate": 0,
+      "isActive": true
+    },
+    {
+      "id": "area_02",
+      "name": "深緑の森",
+      "nameEn": "Deep Green Forest",
+      "difficulty": 1,
+      "recommendedLevelMin": 5,
+      "recommendedLevelMax": 10,
+      "theme": "自然・植物",
+      "mainElement": "wind",
+      "description": "鬱蒼とした森。風属性モンスターの巣窟",
+      "unlockCondition": "area_01_boss_clear",
+      "bgm": "bgm_area_02",
+      "background": "bg_forest",
+      "dropMaterials": {
+        "base": ["MAT_BASE_01", "MAT_BASE_02"],
+        "element": ["MAT_ELEM_01"],
+        "bossCategory": ["MAT_CAT_01", "MAT_CAT_09"]
+      },
+      "rareMonsterRate": 0,
+      "legendaryMonsterRate": 0,
+      "isActive": true
+    },
+    {
+      "id": "area_03",
+      "name": "炎熱の洞窟",
+      "nameEn": "Blazing Cavern",
+      "difficulty": 2,
+      "recommendedLevelMin": 10,
+      "recommendedLevelMax": 15,
+      "theme": "溶岩・火山",
+      "mainElement": "fire",
+      "description": "灼熱の溶岩洞窟。炎属性の試練",
+      "unlockCondition": "area_02_boss_clear",
+      "bgm": "bgm_area_03",
+      "background": "bg_cavern",
+      "dropMaterials": {
+        "base": ["MAT_BASE_03", "MAT_BASE_04"],
+        "element": ["MAT_ELEM_02"],
+        "bossCategory": ["MAT_CAT_02", "MAT_CAT_09"]
+      },
+      "rareMonsterRate": 0,
+      "legendaryMonsterRate": 0,
+      "isActive": true
+    },
+    {
+      "id": "area_04",
+      "name": "水晶の湖畔",
+      "nameEn": "Crystal Lakeside",
+      "difficulty": 2,
+      "recommendedLevelMin": 15,
+      "recommendedLevelMax": 20,
+      "theme": "湖・氷",
+      "mainElement": "water",
+      "description": "神秘的な湖。水属性と氷の世界",
+      "unlockCondition": "area_03_boss_clear",
+      "bgm": "bgm_area_04",
+      "background": "bg_lake",
+      "dropMaterials": {
+        "base": ["MAT_BASE_03", "MAT_BASE_04"],
+        "element": ["MAT_ELEM_03"],
+        "bossCategory": ["MAT_CAT_02", "MAT_CAT_09"]
+      },
+      "rareMonsterRate": 0,
+      "legendaryMonsterRate": 0,
+      "isActive": true
+    },
+    {
+      "id": "area_05",
+      "name": "雷鳴の峡谷",
+      "nameEn": "Thunder Canyon",
+      "difficulty": 3,
+      "recommendedLevelMin": 20,
+      "recommendedLevelMax": 25,
+      "theme": "崖・嵐",
+      "mainElement": "thunder",
+      "description": "常に雷雲が渦巻く峡谷。雷属性の聖地",
+      "unlockCondition": "area_04_boss_clear",
+      "bgm": "bgm_area_05",
+      "background": "bg_canyon",
+      "dropMaterials": {
+        "base": ["MAT_BASE_05", "MAT_BASE_06"],
+        "element": ["MAT_ELEM_04"],
+        "bossCategory": ["MAT_CAT_03", "MAT_CAT_08"]
+      },
+      "rareMonsterRate": 3,
+      "legendaryMonsterRate": 0,
+      "isActive": true
+    },
+    {
+      "id": "area_06",
+      "name": "大地の迷宮",
+      "nameEn": "Earth Labyrinth",
+      "difficulty": 3,
+      "recommendedLevelMin": 25,
+      "recommendedLevelMax": 30,
+      "theme": "遺跡・地下",
+      "mainElement": "earth",
+      "description": "地下に広がる古代遺跡。地属性の迷宮",
+      "unlockCondition": "area_05_boss_clear",
+      "bgm": "bgm_area_06",
+      "background": "bg_labyrinth",
+      "dropMaterials": {
+        "base": ["MAT_BASE_05", "MAT_BASE_06"],
+        "element": ["MAT_ELEM_05"],
+        "bossCategory": ["MAT_CAT_04", "MAT_CAT_08"]
+      },
+      "rareMonsterRate": 3,
+      "legendaryMonsterRate": 0,
+      "isActive": true
+    },
+    {
+      "id": "area_07",
+      "name": "天空の神殿",
+      "nameEn": "Celestial Temple",
+      "difficulty": 4,
+      "recommendedLevelMin": 30,
+      "recommendedLevelMax": 35,
+      "theme": "天界・聖域",
+      "mainElement": "light",
+      "description": "天界に浮かぶ神殿。光属性の聖域",
+      "unlockCondition": "area_06_boss_clear",
+      "bgm": "bgm_area_07",
+      "background": "bg_temple",
+      "dropMaterials": {
+        "base": ["MAT_BASE_07", "MAT_BASE_08"],
+        "element": ["MAT_ELEM_06"],
+        "bossCategory": ["MAT_CAT_05"]
+      },
+      "rareMonsterRate": 5,
+      "legendaryMonsterRate": 1,
+      "isActive": true
+    },
+    {
+      "id": "area_08",
+      "name": "冥府の深淵",
+      "nameEn": "Abyssal Depths",
+      "difficulty": 4,
+      "recommendedLevelMin": 35,
+      "recommendedLevelMax": 40,
+      "theme": "魔界・暗黒",
+      "mainElement": "dark",
+      "description": "魔界の最深部。闇属性の地獄",
+      "unlockCondition": "area_07_boss_clear",
+      "bgm": "bgm_area_08",
+      "background": "bg_abyss",
+      "dropMaterials": {
+        "base": ["MAT_BASE_07", "MAT_BASE_08"],
+        "element": ["MAT_ELEM_07"],
+        "bossCategory": ["MAT_CAT_06"]
+      },
+      "rareMonsterRate": 5,
+      "legendaryMonsterRate": 1,
+      "isActive": true
+    },
+    {
+      "id": "area_09",
+      "name": "機械の廃都",
+      "nameEn": "Ruined Mechapolis",
+      "difficulty": 5,
+      "recommendedLevelMin": 40,
+      "recommendedLevelMax": 45,
+      "theme": "機械・未来",
+      "mainElement": "thunder",
+      "description": "滅びた機械文明の都市。メカノイドの聖地",
+      "unlockCondition": "area_08_boss_clear",
+      "bgm": "bgm_area_09",
+      "background": "bg_mechapolis",
+      "dropMaterials": {
+        "base": ["MAT_BASE_09", "MAT_BASE_10"],
+        "element": ["MAT_ELEM_04"],
+        "bossCategory": ["MAT_CAT_07"]
+      },
+      "rareMonsterRate": 8,
+      "legendaryMonsterRate": 2,
+      "isActive": true
+    },
+    {
+      "id": "area_10",
+      "name": "混沌の終焉",
+      "nameEn": "Chaos Terminus",
+      "difficulty": 5,
+      "recommendedLevelMin": 45,
+      "recommendedLevelMax": 50,
+      "theme": "最終決戦",
+      "mainElement": "all",
+      "description": "世界の果て。全属性が混在する最終決戦の地",
+      "unlockCondition": "area_09_boss_clear",
+      "bgm": "bgm_area_10",
+      "background": "bg_chaos",
+      "dropMaterials": {
+        "base": ["MAT_BASE_09", "MAT_BASE_10"],
+        "element": ["MAT_ELEM_08"],
+        "bossCategory": ["MAT_CAT_10"]
+      },
+      "rareMonsterRate": 8,
+      "legendaryMonsterRate": 2,
+      "isActive": true
+    }
+  ],
+  "stages": [
+    {
+      "id": "stage_01_1",
+      "areaId": "area_01",
+      "name": "草原の入口",
+      "stageNumber": 1,
+      "stageType": "normal",
+      "recommendedLevel": 1,
+      "description": "最初の一歩。弱いスライムが出現",
+      "encounterCount": 3,
+      "rewards": {
+        "expMin": 10,
+        "expMax": 15,
+        "goldMin": 5,
+        "goldMax": 10,
+        "baseDropRate1": 25,
+        "baseDropRate2": 25
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_01_2",
+      "areaId": "area_01",
+      "name": "花咲く小道",
+      "stageNumber": 2,
+      "stageType": "normal",
+      "recommendedLevel": 2,
+      "description": "花畑の中を進む。植物系モンスター",
+      "encounterCount": 3,
+      "rewards": {
+        "expMin": 10,
+        "expMax": 15,
+        "goldMin": 5,
+        "goldMax": 10,
+        "baseDropRate1": 25,
+        "baseDropRate2": 25
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_01_3",
+      "areaId": "area_01",
+      "name": "小川のほとり",
+      "stageNumber": 3,
+      "stageType": "normal",
+      "recommendedLevel": 3,
+      "description": "小川沿いの道。水辺の生物も出現",
+      "encounterCount": 3,
+      "rewards": {
+        "expMin": 10,
+        "expMax": 15,
+        "goldMin": 5,
+        "goldMax": 10,
+        "baseDropRate1": 25,
+        "baseDropRate2": 25
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_01_4",
+      "areaId": "area_01",
+      "name": "丘の上",
+      "stageNumber": 4,
+      "stageType": "normal",
+      "recommendedLevel": 4,
+      "description": "見晴らしの良い丘。風が強い",
+      "encounterCount": 4,
+      "rewards": {
+        "expMin": 10,
+        "expMax": 15,
+        "goldMin": 5,
+        "goldMax": 10,
+        "baseDropRate1": 25,
+        "baseDropRate2": 25
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_01_5",
+      "areaId": "area_01",
+      "name": "古びた祠",
+      "stageNumber": 5,
+      "stageType": "normal",
+      "recommendedLevel": 5,
+      "description": "草原の奥にある祠。やや強い敵",
+      "encounterCount": 4,
+      "rewards": {
+        "expMin": 10,
+        "expMax": 15,
+        "goldMin": 5,
+        "goldMax": 10,
+        "baseDropRate1": 25,
+        "baseDropRate2": 25
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_01_boss",
+      "areaId": "area_01",
+      "name": "草原の主",
+      "stageNumber": 6,
+      "stageType": "boss",
+      "recommendedLevel": 5,
+      "description": "ボス: 巨大スライム",
+      "bossSpecies": "mutant",
+      "bossElement": "none",
+      "rewards": {
+        "firstClearExp": 100,
+        "firstClearGold": 100,
+        "repeatExp": 30,
+        "repeatGold": 20,
+        "categoryMaterials": ["MAT_CAT_01", "MAT_CAT_09"],
+        "categoryMaterialCount": 1,
+        "championMedalFirstClear": 3,
+        "championMedalRepeat": 1,
+        "speciesDropRate": 15
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_02_1",
+      "areaId": "area_02",
+      "name": "森の入口",
+      "stageNumber": 1,
+      "stageType": "normal",
+      "recommendedLevel": 5,
+      "description": "木漏れ日が差す森の入口",
+      "encounterCount": 3,
+      "rewards": {
+        "expMin": 15,
+        "expMax": 25,
+        "goldMin": 10,
+        "goldMax": 20,
+        "baseDropRate1": 20,
+        "baseDropRate2": 20,
+        "elementDropRate": 10
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_02_2",
+      "areaId": "area_02",
+      "name": "茂みの迷路",
+      "stageNumber": 2,
+      "stageType": "normal",
+      "recommendedLevel": 6,
+      "description": "茂みが生い茂る迷路のような道",
+      "encounterCount": 3,
+      "rewards": {
+        "expMin": 15,
+        "expMax": 25,
+        "goldMin": 10,
+        "goldMax": 20,
+        "baseDropRate1": 20,
+        "baseDropRate2": 20,
+        "elementDropRate": 10
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_02_3",
+      "areaId": "area_02",
+      "name": "巨木の根元",
+      "stageNumber": 3,
+      "stageType": "normal",
+      "recommendedLevel": 7,
+      "description": "巨大な樹の根元。精霊が棲む",
+      "encounterCount": 4,
+      "rewards": {
+        "expMin": 15,
+        "expMax": 25,
+        "goldMin": 10,
+        "goldMax": 20,
+        "baseDropRate1": 20,
+        "baseDropRate2": 20,
+        "elementDropRate": 10
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_02_4",
+      "areaId": "area_02",
+      "name": "霧の森",
+      "stageNumber": 4,
+      "stageType": "normal",
+      "recommendedLevel": 8,
+      "description": "霧が立ち込める不気味なエリア",
+      "encounterCount": 4,
+      "rewards": {
+        "expMin": 15,
+        "expMax": 25,
+        "goldMin": 10,
+        "goldMax": 20,
+        "baseDropRate1": 20,
+        "baseDropRate2": 20,
+        "elementDropRate": 10
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_02_5",
+      "areaId": "area_02",
+      "name": "森の最深部",
+      "stageNumber": 5,
+      "stageType": "normal",
+      "recommendedLevel": 9,
+      "description": "光が届かない森の奥地",
+      "encounterCount": 5,
+      "rewards": {
+        "expMin": 15,
+        "expMax": 25,
+        "goldMin": 10,
+        "goldMax": 20,
+        "baseDropRate1": 20,
+        "baseDropRate2": 20,
+        "elementDropRate": 10
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_02_boss",
+      "areaId": "area_02",
+      "name": "森の守護者",
+      "stageNumber": 6,
+      "stageType": "boss",
+      "recommendedLevel": 10,
+      "description": "ボス: 古代樹の精霊",
+      "bossSpecies": "spirit",
+      "bossElement": "wind",
+      "rewards": {
+        "firstClearExp": 200,
+        "firstClearGold": 200,
+        "repeatExp": 60,
+        "repeatGold": 40,
+        "categoryMaterials": ["MAT_CAT_01", "MAT_CAT_09"],
+        "categoryMaterialCount": 1,
+        "championMedalFirstClear": 3,
+        "championMedalRepeat": 1,
+        "speciesDropRate": 15
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_03_1",
+      "areaId": "area_03",
+      "name": "洞窟の入口",
+      "stageNumber": 1,
+      "stageType": "normal",
+      "recommendedLevel": 10,
+      "description": "熱気が漂う洞窟の入口",
+      "encounterCount": 4,
+      "rewards": {
+        "expMin": 25,
+        "expMax": 40,
+        "goldMin": 20,
+        "goldMax": 35,
+        "baseDropRate1": 20,
+        "baseDropRate2": 20,
+        "elementDropRate": 15
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_03_2",
+      "areaId": "area_03",
+      "name": "溶岩の道",
+      "stageNumber": 2,
+      "stageType": "normal",
+      "recommendedLevel": 11,
+      "description": "溶岩が流れる危険な通路",
+      "encounterCount": 4,
+      "rewards": {
+        "expMin": 25,
+        "expMax": 40,
+        "goldMin": 20,
+        "goldMax": 35,
+        "baseDropRate1": 20,
+        "baseDropRate2": 20,
+        "elementDropRate": 15
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_03_3",
+      "areaId": "area_03",
+      "name": "灼熱の間",
+      "stageNumber": 3,
+      "stageType": "normal",
+      "recommendedLevel": 12,
+      "description": "温度が極めて高いエリア",
+      "encounterCount": 4,
+      "rewards": {
+        "expMin": 25,
+        "expMax": 40,
+        "goldMin": 20,
+        "goldMax": 35,
+        "baseDropRate1": 20,
+        "baseDropRate2": 20,
+        "elementDropRate": 15
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_03_4",
+      "areaId": "area_03",
+      "name": "火山の胎内",
+      "stageNumber": 4,
+      "stageType": "normal",
+      "recommendedLevel": 13,
+      "description": "火山活動が活発な場所",
+      "encounterCount": 5,
+      "rewards": {
+        "expMin": 25,
+        "expMax": 40,
+        "goldMin": 20,
+        "goldMax": 35,
+        "baseDropRate1": 20,
+        "baseDropRate2": 20,
+        "elementDropRate": 15
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_03_5",
+      "areaId": "area_03",
+      "name": "炎の祭壇",
+      "stageNumber": 5,
+      "stageType": "normal",
+      "recommendedLevel": 14,
+      "description": "炎を祀る古代の祭壇",
+      "encounterCount": 5,
+      "rewards": {
+        "expMin": 25,
+        "expMax": 40,
+        "goldMin": 20,
+        "goldMax": 35,
+        "baseDropRate1": 20,
+        "baseDropRate2": 20,
+        "elementDropRate": 15
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_03_boss",
+      "areaId": "area_03",
+      "name": "炎竜の巣",
+      "stageNumber": 6,
+      "stageType": "boss",
+      "recommendedLevel": 15,
+      "description": "ボス: 炎を纏う竜",
+      "bossSpecies": "dragon",
+      "bossElement": "fire",
+      "rewards": {
+        "firstClearExp": 400,
+        "firstClearGold": 400,
+        "repeatExp": 100,
+        "repeatGold": 80,
+        "categoryMaterials": ["MAT_CAT_02", "MAT_CAT_09"],
+        "categoryMaterialCount": 1,
+        "championMedalFirstClear": 3,
+        "championMedalRepeat": 1,
+        "speciesDropRate": 15
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_04_1",
+      "areaId": "area_04",
+      "name": "湖畔の道",
+      "stageNumber": 1,
+      "stageType": "normal",
+      "recommendedLevel": 15,
+      "description": "透き通った湖のほとり",
+      "encounterCount": 4,
+      "rewards": {
+        "expMin": 40,
+        "expMax": 60,
+        "goldMin": 35,
+        "goldMax": 50,
+        "baseDropRate1": 20,
+        "baseDropRate2": 20,
+        "elementDropRate": 15
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_04_2",
+      "areaId": "area_04",
+      "name": "水中神殿跡",
+      "stageNumber": 2,
+      "stageType": "normal",
+      "recommendedLevel": 16,
+      "description": "水没した古代神殿",
+      "encounterCount": 4,
+      "rewards": {
+        "expMin": 40,
+        "expMax": 60,
+        "goldMin": 35,
+        "goldMax": 50,
+        "baseDropRate1": 20,
+        "baseDropRate2": 20,
+        "elementDropRate": 15
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_04_3",
+      "areaId": "area_04",
+      "name": "凍てつく岸辺",
+      "stageNumber": 3,
+      "stageType": "normal",
+      "recommendedLevel": 17,
+      "description": "一部が凍った湖岸",
+      "encounterCount": 4,
+      "rewards": {
+        "expMin": 40,
+        "expMax": 60,
+        "goldMin": 35,
+        "goldMax": 50,
+        "baseDropRate1": 20,
+        "baseDropRate2": 20,
+        "elementDropRate": 15
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_04_4",
+      "areaId": "area_04",
+      "name": "氷の洞穴",
+      "stageNumber": 4,
+      "stageType": "normal",
+      "recommendedLevel": 18,
+      "description": "氷で覆われた洞穴",
+      "encounterCount": 5,
+      "rewards": {
+        "expMin": 40,
+        "expMax": 60,
+        "goldMin": 35,
+        "goldMax": 50,
+        "baseDropRate1": 20,
+        "baseDropRate2": 20,
+        "elementDropRate": 15
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_04_5",
+      "areaId": "area_04",
+      "name": "水晶の間",
+      "stageNumber": 5,
+      "stageType": "normal",
+      "recommendedLevel": 19,
+      "description": "水晶が輝く神秘的な空間",
+      "encounterCount": 5,
+      "rewards": {
+        "expMin": 40,
+        "expMax": 60,
+        "goldMin": 35,
+        "goldMax": 50,
+        "baseDropRate1": 20,
+        "baseDropRate2": 20,
+        "elementDropRate": 15
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_04_boss",
+      "areaId": "area_04",
+      "name": "湖底の主",
+      "stageNumber": 6,
+      "stageType": "boss",
+      "recommendedLevel": 20,
+      "description": "ボス: 水竜",
+      "bossSpecies": "dragon",
+      "bossElement": "water",
+      "rewards": {
+        "firstClearExp": 600,
+        "firstClearGold": 600,
+        "repeatExp": 150,
+        "repeatGold": 120,
+        "categoryMaterials": ["MAT_CAT_02", "MAT_CAT_09"],
+        "categoryMaterialCount": 1,
+        "championMedalFirstClear": 3,
+        "championMedalRepeat": 1,
+        "speciesDropRate": 15
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_05_1",
+      "areaId": "area_05",
+      "name": "峡谷の入口",
+      "stageNumber": 1,
+      "stageType": "normal",
+      "recommendedLevel": 20,
+      "description": "雷鳴が響く峡谷の入口",
+      "encounterCount": 4,
+      "rewards": {
+        "expMin": 60,
+        "expMax": 80,
+        "goldMin": 50,
+        "goldMax": 70,
+        "baseDropRate1": 15,
+        "baseDropRate2": 15,
+        "elementDropRate": 20
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_05_2",
+      "areaId": "area_05",
+      "name": "断崖の道",
+      "stageNumber": 2,
+      "stageType": "normal",
+      "recommendedLevel": 21,
+      "description": "崖沿いの危険な道",
+      "encounterCount": 4,
+      "rewards": {
+        "expMin": 60,
+        "expMax": 80,
+        "goldMin": 50,
+        "goldMax": 70,
+        "baseDropRate1": 15,
+        "baseDropRate2": 15,
+        "elementDropRate": 20
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_05_3",
+      "areaId": "area_05",
+      "name": "嵐の中心",
+      "stageNumber": 3,
+      "stageType": "normal",
+      "recommendedLevel": 22,
+      "description": "常に嵐が吹き荒れる場所",
+      "encounterCount": 5,
+      "rewards": {
+        "expMin": 60,
+        "expMax": 80,
+        "goldMin": 50,
+        "goldMax": 70,
+        "baseDropRate1": 15,
+        "baseDropRate2": 15,
+        "elementDropRate": 20
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_05_4",
+      "areaId": "area_05",
+      "name": "雷の塔",
+      "stageNumber": 4,
+      "stageType": "normal",
+      "recommendedLevel": 23,
+      "description": "雷が集まる古代の塔",
+      "encounterCount": 5,
+      "rewards": {
+        "expMin": 60,
+        "expMax": 80,
+        "goldMin": 50,
+        "goldMax": 70,
+        "baseDropRate1": 15,
+        "baseDropRate2": 15,
+        "elementDropRate": 20
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_05_5",
+      "areaId": "area_05",
+      "name": "雲上の道",
+      "stageNumber": 5,
+      "stageType": "normal",
+      "recommendedLevel": 24,
+      "description": "雲の上を歩く道",
+      "encounterCount": 5,
+      "rewards": {
+        "expMin": 60,
+        "expMax": 80,
+        "goldMin": 50,
+        "goldMax": 70,
+        "baseDropRate1": 15,
+        "baseDropRate2": 15,
+        "elementDropRate": 20
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_05_boss",
+      "areaId": "area_05",
+      "name": "雷神の試練",
+      "stageNumber": 6,
+      "stageType": "boss",
+      "recommendedLevel": 25,
+      "description": "ボス: 雷を操る獣",
+      "bossSpecies": "mutant",
+      "bossElement": "thunder",
+      "rewards": {
+        "firstClearExp": 800,
+        "firstClearGold": 800,
+        "repeatExp": 200,
+        "repeatGold": 160,
+        "categoryMaterials": ["MAT_CAT_03", "MAT_CAT_08"],
+        "categoryMaterialCount": 1,
+        "championMedalFirstClear": 3,
+        "championMedalRepeat": 1,
+        "speciesDropRate": 15
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_06_1",
+      "areaId": "area_06",
+      "name": "迷宮の入口",
+      "stageNumber": 1,
+      "stageType": "normal",
+      "recommendedLevel": 25,
+      "description": "地下へ続く階段",
+      "encounterCount": 4,
+      "rewards": {
+        "expMin": 80,
+        "expMax": 100,
+        "goldMin": 70,
+        "goldMax": 90,
+        "baseDropRate1": 15,
+        "baseDropRate2": 15,
+        "elementDropRate": 20
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_06_2",
+      "areaId": "area_06",
+      "name": "石造りの回廊",
+      "stageNumber": 2,
+      "stageType": "normal",
+      "recommendedLevel": 26,
+      "description": "古代文明の回廊",
+      "encounterCount": 5,
+      "rewards": {
+        "expMin": 80,
+        "expMax": 100,
+        "goldMin": 70,
+        "goldMax": 90,
+        "baseDropRate1": 15,
+        "baseDropRate2": 15,
+        "elementDropRate": 20
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_06_3",
+      "areaId": "area_06",
+      "name": "罠の間",
+      "stageNumber": 3,
+      "stageType": "normal",
+      "recommendedLevel": 27,
+      "description": "様々な罠が仕掛けられた部屋",
+      "encounterCount": 5,
+      "rewards": {
+        "expMin": 80,
+        "expMax": 100,
+        "goldMin": 70,
+        "goldMax": 90,
+        "baseDropRate1": 15,
+        "baseDropRate2": 15,
+        "elementDropRate": 20
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_06_4",
+      "areaId": "area_06",
+      "name": "地底湖",
+      "stageNumber": 4,
+      "stageType": "normal",
+      "recommendedLevel": 28,
+      "description": "地下深くにある湖",
+      "encounterCount": 5,
+      "rewards": {
+        "expMin": 80,
+        "expMax": 100,
+        "goldMin": 70,
+        "goldMax": 90,
+        "baseDropRate1": 15,
+        "baseDropRate2": 15,
+        "elementDropRate": 20
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_06_5",
+      "areaId": "area_06",
+      "name": "王の間",
+      "stageNumber": 5,
+      "stageType": "normal",
+      "recommendedLevel": 29,
+      "description": "かつての王が眠る場所",
+      "encounterCount": 5,
+      "rewards": {
+        "expMin": 80,
+        "expMax": 100,
+        "goldMin": 70,
+        "goldMax": 90,
+        "baseDropRate1": 15,
+        "baseDropRate2": 15,
+        "elementDropRate": 20
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_06_boss",
+      "areaId": "area_06",
+      "name": "迷宮の番人",
+      "stageNumber": 6,
+      "stageType": "boss",
+      "recommendedLevel": 30,
+      "description": "ボス: 古代ゴーレム",
+      "bossSpecies": "mechanoid",
+      "bossElement": "earth",
+      "rewards": {
+        "firstClearExp": 1000,
+        "firstClearGold": 1000,
+        "repeatExp": 250,
+        "repeatGold": 200,
+        "categoryMaterials": ["MAT_CAT_04", "MAT_CAT_08"],
+        "categoryMaterialCount": 1,
+        "championMedalFirstClear": 3,
+        "championMedalRepeat": 1,
+        "speciesDropRate": 15
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_07_1",
+      "areaId": "area_07",
+      "name": "天への階段",
+      "stageNumber": 1,
+      "stageType": "normal",
+      "recommendedLevel": 30,
+      "description": "雲の上へ続く階段",
+      "encounterCount": 5,
+      "rewards": {
+        "expMin": 100,
+        "expMax": 130,
+        "goldMin": 90,
+        "goldMax": 120,
+        "baseDropRate1": 10,
+        "baseDropRate2": 10,
+        "elementDropRate": 25
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_07_2",
+      "areaId": "area_07",
+      "name": "雲の回廊",
+      "stageNumber": 2,
+      "stageType": "normal",
+      "recommendedLevel": 31,
+      "description": "雲で作られた道",
+      "encounterCount": 5,
+      "rewards": {
+        "expMin": 100,
+        "expMax": 130,
+        "goldMin": 90,
+        "goldMax": 120,
+        "baseDropRate1": 10,
+        "baseDropRate2": 10,
+        "elementDropRate": 25
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_07_3",
+      "areaId": "area_07",
+      "name": "光の間",
+      "stageNumber": 3,
+      "stageType": "normal",
+      "recommendedLevel": 32,
+      "description": "まばゆい光に満ちた空間",
+      "encounterCount": 5,
+      "rewards": {
+        "expMin": 100,
+        "expMax": 130,
+        "goldMin": 90,
+        "goldMax": 120,
+        "baseDropRate1": 10,
+        "baseDropRate2": 10,
+        "elementDropRate": 25
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_07_4",
+      "areaId": "area_07",
+      "name": "天使の庭",
+      "stageNumber": 4,
+      "stageType": "normal",
+      "recommendedLevel": 33,
+      "description": "天使たちが憩う庭園",
+      "encounterCount": 5,
+      "rewards": {
+        "expMin": 100,
+        "expMax": 130,
+        "goldMin": 90,
+        "goldMax": 120,
+        "baseDropRate1": 10,
+        "baseDropRate2": 10,
+        "elementDropRate": 25
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_07_5",
+      "areaId": "area_07",
+      "name": "神殿の最奥",
+      "stageNumber": 5,
+      "stageType": "normal",
+      "recommendedLevel": 34,
+      "description": "神殿の中心部",
+      "encounterCount": 5,
+      "rewards": {
+        "expMin": 100,
+        "expMax": 130,
+        "goldMin": 90,
+        "goldMax": 120,
+        "baseDropRate1": 10,
+        "baseDropRate2": 10,
+        "elementDropRate": 25
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_07_boss",
+      "areaId": "area_07",
+      "name": "天空の守護者",
+      "stageNumber": 6,
+      "stageType": "boss",
+      "recommendedLevel": 35,
+      "description": "ボス: 大天使",
+      "bossSpecies": "angel",
+      "bossElement": "light",
+      "rewards": {
+        "firstClearExp": 1500,
+        "firstClearGold": 1500,
+        "repeatExp": 350,
+        "repeatGold": 300,
+        "categoryMaterials": ["MAT_CAT_05"],
+        "categoryMaterialCount": 1,
+        "championMedalFirstClear": 3,
+        "championMedalRepeat": 1,
+        "speciesDropRate": 15
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_08_1",
+      "areaId": "area_08",
+      "name": "冥府の門",
+      "stageNumber": 1,
+      "stageType": "normal",
+      "recommendedLevel": 35,
+      "description": "魔界への入口",
+      "encounterCount": 5,
+      "rewards": {
+        "expMin": 130,
+        "expMax": 160,
+        "goldMin": 120,
+        "goldMax": 150,
+        "baseDropRate1": 10,
+        "baseDropRate2": 10,
+        "elementDropRate": 25
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_08_2",
+      "areaId": "area_08",
+      "name": "嘆きの河",
+      "stageNumber": 2,
+      "stageType": "normal",
+      "recommendedLevel": 36,
+      "description": "魂が流れる河",
+      "encounterCount": 5,
+      "rewards": {
+        "expMin": 130,
+        "expMax": 160,
+        "goldMin": 120,
+        "goldMax": 150,
+        "baseDropRate1": 10,
+        "baseDropRate2": 10,
+        "elementDropRate": 25
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_08_3",
+      "areaId": "area_08",
+      "name": "亡者の道",
+      "stageNumber": 3,
+      "stageType": "normal",
+      "recommendedLevel": 37,
+      "description": "亡霊が彷徨う道",
+      "encounterCount": 5,
+      "rewards": {
+        "expMin": 130,
+        "expMax": 160,
+        "goldMin": 120,
+        "goldMax": 150,
+        "baseDropRate1": 10,
+        "baseDropRate2": 10,
+        "elementDropRate": 25
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_08_4",
+      "areaId": "area_08",
+      "name": "悪魔の城",
+      "stageNumber": 4,
+      "stageType": "normal",
+      "recommendedLevel": 38,
+      "description": "悪魔たちの居城",
+      "encounterCount": 5,
+      "rewards": {
+        "expMin": 130,
+        "expMax": 160,
+        "goldMin": 120,
+        "goldMax": 150,
+        "baseDropRate1": 10,
+        "baseDropRate2": 10,
+        "elementDropRate": 25
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_08_5",
+      "areaId": "area_08",
+      "name": "玉座の間",
+      "stageNumber": 5,
+      "stageType": "normal",
+      "recommendedLevel": 39,
+      "description": "闇の支配者の玉座",
+      "encounterCount": 5,
+      "rewards": {
+        "expMin": 130,
+        "expMax": 160,
+        "goldMin": 120,
+        "goldMax": 150,
+        "baseDropRate1": 10,
+        "baseDropRate2": 10,
+        "elementDropRate": 25
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_08_boss",
+      "areaId": "area_08",
+      "name": "冥府の王",
+      "stageNumber": 6,
+      "stageType": "boss",
+      "recommendedLevel": 40,
+      "description": "ボス: 魔王",
+      "bossSpecies": "demon",
+      "bossElement": "dark",
+      "rewards": {
+        "firstClearExp": 2000,
+        "firstClearGold": 2000,
+        "repeatExp": 450,
+        "repeatGold": 400,
+        "categoryMaterials": ["MAT_CAT_06"],
+        "categoryMaterialCount": 1,
+        "championMedalFirstClear": 3,
+        "championMedalRepeat": 1,
+        "speciesDropRate": 15
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_09_1",
+      "areaId": "area_09",
+      "name": "廃都の入口",
+      "stageNumber": 1,
+      "stageType": "normal",
+      "recommendedLevel": 40,
+      "description": "朽ちた都市の入口",
+      "encounterCount": 5,
+      "rewards": {
+        "expMin": 160,
+        "expMax": 200,
+        "goldMin": 150,
+        "goldMax": 200,
+        "baseDropRate1": 10,
+        "baseDropRate2": 8,
+        "elementDropRate": 30
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_09_2",
+      "areaId": "area_09",
+      "name": "工場跡",
+      "stageNumber": 2,
+      "stageType": "normal",
+      "recommendedLevel": 41,
+      "description": "稼働を停止した工場",
+      "encounterCount": 5,
+      "rewards": {
+        "expMin": 160,
+        "expMax": 200,
+        "goldMin": 150,
+        "goldMax": 200,
+        "baseDropRate1": 10,
+        "baseDropRate2": 8,
+        "elementDropRate": 30
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_09_3",
+      "areaId": "area_09",
+      "name": "動力炉",
+      "stageNumber": 3,
+      "stageType": "normal",
+      "recommendedLevel": 42,
+      "description": "まだ動いている動力炉",
+      "encounterCount": 5,
+      "rewards": {
+        "expMin": 160,
+        "expMax": 200,
+        "goldMin": 150,
+        "goldMax": 200,
+        "baseDropRate1": 10,
+        "baseDropRate2": 8,
+        "elementDropRate": 30
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_09_4",
+      "areaId": "area_09",
+      "name": "中央制御室",
+      "stageNumber": 4,
+      "stageType": "normal",
+      "recommendedLevel": 43,
+      "description": "都市を制御していた部屋",
+      "encounterCount": 5,
+      "rewards": {
+        "expMin": 160,
+        "expMax": 200,
+        "goldMin": 150,
+        "goldMax": 200,
+        "baseDropRate1": 10,
+        "baseDropRate2": 8,
+        "elementDropRate": 30
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_09_5",
+      "areaId": "area_09",
+      "name": "最終防衛ライン",
+      "stageNumber": 5,
+      "stageType": "normal",
+      "recommendedLevel": 44,
+      "description": "最後の防衛機構",
+      "encounterCount": 5,
+      "rewards": {
+        "expMin": 160,
+        "expMax": 200,
+        "goldMin": 150,
+        "goldMax": 200,
+        "baseDropRate1": 10,
+        "baseDropRate2": 8,
+        "elementDropRate": 30
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_09_boss",
+      "areaId": "area_09",
+      "name": "機械神",
+      "stageNumber": 6,
+      "stageType": "boss",
+      "recommendedLevel": 45,
+      "description": "ボス: 古代の戦闘兵器",
+      "bossSpecies": "mechanoid",
+      "bossElement": "thunder",
+      "rewards": {
+        "firstClearExp": 3000,
+        "firstClearGold": 3000,
+        "repeatExp": 600,
+        "repeatGold": 500,
+        "categoryMaterials": ["MAT_CAT_07"],
+        "categoryMaterialCount": 1,
+        "championMedalFirstClear": 3,
+        "championMedalRepeat": 1,
+        "speciesDropRate": 15
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_10_1",
+      "areaId": "area_10",
+      "name": "混沌の門",
+      "stageNumber": 1,
+      "stageType": "normal",
+      "recommendedLevel": 45,
+      "description": "混沌が渦巻く空間への入口",
+      "encounterCount": 5,
+      "rewards": {
+        "expMin": 200,
+        "expMax": 250,
+        "goldMin": 200,
+        "goldMax": 300,
+        "baseDropRate1": 10,
+        "baseDropRate2": 10,
+        "elementDropRate": 30
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_10_2",
+      "areaId": "area_10",
+      "name": "歪んだ回廊",
+      "stageNumber": 2,
+      "stageType": "normal",
+      "recommendedLevel": 46,
+      "description": "空間が歪んだ回廊",
+      "encounterCount": 5,
+      "rewards": {
+        "expMin": 200,
+        "expMax": 250,
+        "goldMin": 200,
+        "goldMax": 300,
+        "baseDropRate1": 10,
+        "baseDropRate2": 10,
+        "elementDropRate": 30
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_10_3",
+      "areaId": "area_10",
+      "name": "次元の狭間",
+      "stageNumber": 3,
+      "stageType": "normal",
+      "recommendedLevel": 47,
+      "description": "複数の次元が交差する場所",
+      "encounterCount": 5,
+      "rewards": {
+        "expMin": 200,
+        "expMax": 250,
+        "goldMin": 200,
+        "goldMax": 300,
+        "baseDropRate1": 10,
+        "baseDropRate2": 10,
+        "elementDropRate": 30
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_10_4",
+      "areaId": "area_10",
+      "name": "虚無の間",
+      "stageNumber": 4,
+      "stageType": "normal",
+      "recommendedLevel": 48,
+      "description": "全てが無に帰す空間",
+      "encounterCount": 5,
+      "rewards": {
+        "expMin": 200,
+        "expMax": 250,
+        "goldMin": 200,
+        "goldMax": 300,
+        "baseDropRate1": 10,
+        "baseDropRate2": 10,
+        "elementDropRate": 30
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_10_5",
+      "areaId": "area_10",
+      "name": "終焉の祭壇",
+      "stageNumber": 5,
+      "stageType": "normal",
+      "recommendedLevel": 49,
+      "description": "世界の終わりを司る祭壇",
+      "encounterCount": 5,
+      "rewards": {
+        "expMin": 200,
+        "expMax": 250,
+        "goldMin": 200,
+        "goldMax": 300,
+        "baseDropRate1": 10,
+        "baseDropRate2": 10,
+        "elementDropRate": 30
+      },
+      "isActive": true
+    },
+    {
+      "id": "stage_10_boss",
+      "areaId": "area_10",
+      "name": "混沌の化身",
+      "stageNumber": 6,
+      "stageType": "boss",
+      "recommendedLevel": 50,
+      "description": "ボス: 混沌の具現化",
+      "bossSpecies": "all",
+      "bossElement": "all",
+      "rewards": {
+        "firstClearExp": 5000,
+        "firstClearGold": 5000,
+        "repeatExp": 1000,
+        "repeatGold": 800,
+        "categoryMaterials": ["MAT_CAT_10"],
+        "categoryMaterialCount": 1,
+        "championMedalFirstClear": 5,
+        "championMedalRepeat": 1,
+        "speciesDropRate": 15,
+        "randomSpeciesDrop": true
+      },
+      "isActive": true
+    }
+  ],
+  "exploration": {
+    "description": "放置で素材・経験値・ゴールドを獲得するシステム",
+    "durations": [
+      { "hours": 1, "bonus": 1.0 },
+      { "hours": 4, "bonus": 1.1 },
+      { "hours": 8, "bonus": 1.2 }
+    ],
+    "rewardsPerHour": [
+      {
+        "areaId": "area_01",
+        "exp": 20,
+        "gold": 10,
+        "baseMaterial1Rate": 0.3,
+        "baseMaterial2Rate": 0.2,
+        "elementRate": 0,
+        "categoryRate": 0
+      },
+      {
+        "areaId": "area_02",
+        "exp": 35,
+        "gold": 20,
+        "baseMaterial1Rate": 0.3,
+        "baseMaterial2Rate": 0.2,
+        "elementRate": 0.1,
+        "categoryRate": 0
+      },
+      {
+        "areaId": "area_03",
+        "exp": 50,
+        "gold": 30,
+        "baseMaterial1Rate": 0.25,
+        "baseMaterial2Rate": 0.15,
+        "elementRate": 0.15,
+        "categoryRate": 0.02
+      },
+      {
+        "areaId": "area_04",
+        "exp": 70,
+        "gold": 45,
+        "baseMaterial1Rate": 0.25,
+        "baseMaterial2Rate": 0.15,
+        "elementRate": 0.15,
+        "categoryRate": 0.02
+      },
+      {
+        "areaId": "area_05",
+        "exp": 90,
+        "gold": 60,
+        "baseMaterial1Rate": 0.2,
+        "baseMaterial2Rate": 0.1,
+        "elementRate": 0.2,
+        "categoryRate": 0.03
+      },
+      {
+        "areaId": "area_06",
+        "exp": 110,
+        "gold": 80,
+        "baseMaterial1Rate": 0.2,
+        "baseMaterial2Rate": 0.1,
+        "elementRate": 0.2,
+        "categoryRate": 0.03
+      },
+      {
+        "areaId": "area_07",
+        "exp": 140,
+        "gold": 100,
+        "baseMaterial1Rate": 0.15,
+        "baseMaterial2Rate": 0.05,
+        "elementRate": 0.25,
+        "categoryRate": 0.04
+      },
+      {
+        "areaId": "area_08",
+        "exp": 170,
+        "gold": 130,
+        "baseMaterial1Rate": 0.15,
+        "baseMaterial2Rate": 0.05,
+        "elementRate": 0.25,
+        "categoryRate": 0.04
+      },
+      {
+        "areaId": "area_09",
+        "exp": 200,
+        "gold": 160,
+        "baseMaterial1Rate": 0.1,
+        "baseMaterial2Rate": 0.05,
+        "elementRate": 0.3,
+        "categoryRate": 0.05
+      },
+      {
+        "areaId": "area_10",
+        "exp": 250,
+        "gold": 200,
+        "baseMaterial1Rate": 0.1,
+        "baseMaterial2Rate": 0.05,
+        "elementRate": 0.3,
+        "categoryRate": 0.05
+      }
+    ]
+  },
+  "metadata": {
+    "totalAreas": 10,
+    "totalStages": 60,
+    "normalStages": 50,
+    "bossStages": 10,
+    "maxPlayerLevel": 50
+  }
 }

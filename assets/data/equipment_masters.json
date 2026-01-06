@@ -1,6 +1,51 @@
 {
-  "version": "1.2",
-  "lastUpdated": "2024-12-23",
+  "version": "4.0",
+  "lastUpdated": "2026-01-04",
+  "changelog": {
+    "v4.0": [
+      "【後攻装備追加】EQ907 不屈の心得（後攻時状態異常無効・1回）",
+      "【後攻装備追加】EQ908 反撃の刃（後攻時クリティカル率+2段階）"
+    ],
+    "v3.0": [
+      "【包括的バランス調整】人間装備制限、後攻有利装備追加",
+      "【人間装備制限】EQ002/EQ004/EQ007 火力装備にhuman制限追加",
+      "【人間装備制限】EQ201-207 属性エンブレムにhuman制限追加",
+      "【新規追加】EQ904 鈍重の誓い（後攻時攻撃×1.2）",
+      "【新規追加】EQ905 不動の構え（後攻時被ダメ×0.85）",
+      "【新規追加】EQ906 逆転の兆し（HP半分以下で先制権）",
+      "【強化】EQ903 先制封じの札に相手SPD-10追加"
+    ],
+    "v2.2": [
+      "【新規追加】EQ901 時空の砂時計（速度対策：行動順逆転）",
+      "【新規追加】EQ902 重力の腕輪（速度対策：相手速度-20%）",
+      "【新規追加】EQ903 先制封じの札（速度対策：先制攻撃無効化）"
+    ],
+    "v2.1": [
+      "【新規追加】EQ111 解放の指輪（封印無効）",
+      "【カウント修正】metadata全体を実数に合わせて修正"
+    ],
+    "v2.0": [
+      "【構造変更】speciesRestriction → excludedSpecies（使用不可種族を明確化）",
+      "【用語統一】bind → restraint（アビリティマスターと統一）",
+      "【運要素排除】賭博師のダイス: ランダム倍率 → HP条件倍率に変更",
+      "【新規追加】EQ110 清浄の指輪（瘴気無効）",
+      "【新規追加】EQ609 怨念の瘴気（倒れた時瘴気付与）",
+      "【新規追加】EQ610 怨念の封印（倒れた時封印付与）"
+    ],
+    "v1.2": [
+      "撤退の護符、鈍足の靴を追加"
+    ]
+  },
+  "design_rules": {
+    "effect_count": "最大1つまで",
+    "same_equipment_limit": "同じ装備は2つセット不可（ヒューマンでも）",
+    "species_slot": {
+      "human": 2,
+      "other": 1
+    },
+    "excluded_species_note": "excludedSpecies に指定された種族は装備不可（ヒューマン2枠悪用防止等）",
+    "no_random_effects": "運要素は完全排除"
+  },
   "equipments": [
     {
       "id": "EQ001",
@@ -13,7 +58,7 @@
         "value": 50
       },
       "description": "最大HPが50増加する",
-      "speciesRestriction": null,
+      "excludedSpecies": null,
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -28,9 +73,10 @@
         "value": 15
       },
       "description": "攻撃技の火力が上がる",
-      "speciesRestriction": null,
+      "excludedSpecies": ["human"],
       "pvpEnabled": true,
-      "pveEnabled": true
+      "pveEnabled": true,
+      "balance_note": "v3.0: 人間装備刹2枚による過剰火力防止"
     },
     {
       "id": "EQ003",
@@ -43,7 +89,7 @@
         "value": 15
       },
       "description": "攻撃技への耐久が上がる",
-      "speciesRestriction": null,
+      "excludedSpecies": null,
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -58,9 +104,10 @@
         "value": 15
       },
       "description": "魔法技の火力が上がる",
-      "speciesRestriction": null,
+      "excludedSpecies": ["human"],
       "pvpEnabled": true,
-      "pveEnabled": true
+      "pveEnabled": true,
+      "balance_note": "v3.0: 人間装備刹2枚による過剰火力防止"
     },
     {
       "id": "EQ005",
@@ -73,7 +120,7 @@
         "value": 15
       },
       "description": "魔法技への耐久が上がる",
-      "speciesRestriction": null,
+      "excludedSpecies": null,
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -87,7 +134,7 @@
         "status": "poison"
       },
       "description": "毒状態にならない",
-      "speciesRestriction": null,
+      "excludedSpecies": null,
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -101,7 +148,7 @@
         "status": "burn"
       },
       "description": "火傷状態にならない",
-      "speciesRestriction": null,
+      "excludedSpecies": null,
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -115,7 +162,7 @@
         "status": "paralysis"
       },
       "description": "麻痺状態にならない",
-      "speciesRestriction": null,
+      "excludedSpecies": null,
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -126,10 +173,10 @@
       "category": "status_immunity",
       "effect": {
         "type": "status_immunity",
-        "status": "bind"
+        "status": "restraint"
       },
-      "description": "束縛状態にならない",
-      "speciesRestriction": null,
+      "description": "拘束状態にならない",
+      "excludedSpecies": null,
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -143,7 +190,7 @@
         "status": "nightmare"
       },
       "description": "悪夢状態にならない",
-      "speciesRestriction": null,
+      "excludedSpecies": null,
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -157,7 +204,7 @@
         "status": "fear"
       },
       "description": "恐怖状態にならない",
-      "speciesRestriction": null,
+      "excludedSpecies": null,
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -171,7 +218,7 @@
         "status": "charm"
       },
       "description": "魅了状態にならない",
-      "speciesRestriction": null,
+      "excludedSpecies": null,
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -185,7 +232,7 @@
         "status": "any"
       },
       "description": "状態異常を1回だけ無効にする（1回限り）",
-      "speciesRestriction": null,
+      "excludedSpecies": null,
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -199,9 +246,39 @@
         "status": "any"
       },
       "description": "状態異常を受けた時、代わりに相手に付与（1回限り）",
-      "speciesRestriction": null,
+      "excludedSpecies": null,
       "pvpEnabled": true,
       "pveEnabled": true
+    },
+    {
+      "id": "EQ110",
+      "name": "清浄の指輪",
+      "rarity": "rare",
+      "category": "status_immunity",
+      "effect": {
+        "type": "status_immunity",
+        "status": "miasma"
+      },
+      "description": "瘴気状態にならない",
+      "excludedSpecies": null,
+      "pvpEnabled": true,
+      "pveEnabled": true,
+      "added_in": "v2.0"
+    },
+    {
+      "id": "EQ111",
+      "name": "解放の指輪",
+      "rarity": "rare",
+      "category": "status_immunity",
+      "effect": {
+        "type": "status_immunity",
+        "status": "seal"
+      },
+      "description": "封印状態にならない",
+      "excludedSpecies": null,
+      "pvpEnabled": true,
+      "pveEnabled": true,
+      "added_in": "v2.1"
     },
     {
       "id": "EQ201",
@@ -214,9 +291,10 @@
         "multiplier": 1.2
       },
       "description": "火属性技の威力が上がる",
-      "speciesRestriction": null,
+      "excludedSpecies": ["human"],
       "pvpEnabled": true,
-      "pveEnabled": true
+      "pveEnabled": true,
+      "balance_note": "v3.0: 人間装備刹2枚による過剰火力防止"
     },
     {
       "id": "EQ202",
@@ -229,9 +307,10 @@
         "multiplier": 1.2
       },
       "description": "水属性技の威力が上がる",
-      "speciesRestriction": null,
+      "excludedSpecies": ["human"],
       "pvpEnabled": true,
-      "pveEnabled": true
+      "pveEnabled": true,
+      "balance_note": "v3.0: 人間装備刹2枚による過剰火力防止"
     },
     {
       "id": "EQ203",
@@ -244,9 +323,10 @@
         "multiplier": 1.2
       },
       "description": "雷属性技の威力が上がる",
-      "speciesRestriction": null,
+      "excludedSpecies": ["human"],
       "pvpEnabled": true,
-      "pveEnabled": true
+      "pveEnabled": true,
+      "balance_note": "v3.0: 人間装備刹2枚による過剰火力防止"
     },
     {
       "id": "EQ204",
@@ -259,9 +339,10 @@
         "multiplier": 1.2
       },
       "description": "風属性技の威力が上がる",
-      "speciesRestriction": null,
+      "excludedSpecies": ["human"],
       "pvpEnabled": true,
-      "pveEnabled": true
+      "pveEnabled": true,
+      "balance_note": "v3.0: 人間装備刹2枚による過剰火力防止"
     },
     {
       "id": "EQ205",
@@ -274,9 +355,10 @@
         "multiplier": 1.2
       },
       "description": "地属性技の威力が上がる",
-      "speciesRestriction": null,
+      "excludedSpecies": ["human"],
       "pvpEnabled": true,
-      "pveEnabled": true
+      "pveEnabled": true,
+      "balance_note": "v3.0: 人間装備刹2枚による過剰火力防止"
     },
     {
       "id": "EQ206",
@@ -289,9 +371,10 @@
         "multiplier": 1.2
       },
       "description": "光属性技の威力が上がる",
-      "speciesRestriction": null,
+      "excludedSpecies": ["human"],
       "pvpEnabled": true,
-      "pveEnabled": true
+      "pveEnabled": true,
+      "balance_note": "v3.0: 人間装備刹2枚による過剰火力防止"
     },
     {
       "id": "EQ207",
@@ -304,9 +387,10 @@
         "multiplier": 1.2
       },
       "description": "闇属性技の威力が上がる",
-      "speciesRestriction": null,
+      "excludedSpecies": ["human"],
       "pvpEnabled": true,
-      "pveEnabled": true
+      "pveEnabled": true,
+      "balance_note": "v3.0: 人間装備刹2枚による過剰火力防止"
     },
     {
       "id": "EQ208",
@@ -318,7 +402,7 @@
         "value": 10
       },
       "description": "弱点を突いた時、追加で10ダメージ",
-      "speciesRestriction": null,
+      "excludedSpecies": null,
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -333,7 +417,7 @@
         "value": 1
       },
       "description": "相手を倒した時、コストが1増える",
-      "speciesRestriction": null,
+      "excludedSpecies": null,
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -349,7 +433,7 @@
         "value": 1
       },
       "description": "瀕死以外で交代した時、交代先のコストが1増える",
-      "speciesRestriction": ["human"],
+      "excludedSpecies": ["human"],
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -363,7 +447,7 @@
         "value": 1
       },
       "description": "奥義の必要コストが1減る",
-      "speciesRestriction": ["human"],
+      "excludedSpecies": ["human"],
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -380,7 +464,7 @@
         "once": true
       },
       "description": "HP50%以下になった時、コストが1増える（1回限り）",
-      "speciesRestriction": null,
+      "excludedSpecies": null,
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -395,7 +479,7 @@
         "value": 1
       },
       "description": "待機を選択したターン、コストが1増える",
-      "speciesRestriction": null,
+      "excludedSpecies": null,
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -410,7 +494,7 @@
         "costIncrease": 1
       },
       "description": "技の威力が上がる代わりに、コストが+1される",
-      "speciesRestriction": null,
+      "excludedSpecies": null,
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -424,7 +508,7 @@
         "percentOfMaxHp": 6
       },
       "description": "ターン終了時、HPが少し回復する（最大HPの6%）",
-      "speciesRestriction": ["angel"],
+      "excludedSpecies": ["angel"],
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -440,7 +524,7 @@
         "percentOfMaxHp": 6
       },
       "description": "攻撃技を受けた時、相手に少しダメージ（最大HPの6%）",
-      "speciesRestriction": null,
+      "excludedSpecies": null,
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -456,7 +540,7 @@
         "percentOfMaxHp": 6
       },
       "description": "魔法技を受けた時、相手に少しダメージ（最大HPの6%）",
-      "speciesRestriction": null,
+      "excludedSpecies": null,
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -473,7 +557,7 @@
         "once": true
       },
       "description": "弱点を突かれた時、攻撃と魔力が1段階上がる（1回限り）",
-      "speciesRestriction": null,
+      "excludedSpecies": null,
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -488,7 +572,7 @@
         "once": true
       },
       "description": "デバフを受けた時、それを相手に跳ね返す（1回限り）",
-      "speciesRestriction": null,
+      "excludedSpecies": null,
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -501,7 +585,7 @@
         "type": "debuff_block_once"
       },
       "description": "デバフを1回だけ無効にする（1回限り）",
-      "speciesRestriction": null,
+      "excludedSpecies": null,
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -516,7 +600,7 @@
         "once": true
       },
       "description": "相手がバフを得た時、同じバフを1つコピー（1回限り）",
-      "speciesRestriction": null,
+      "excludedSpecies": null,
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -533,7 +617,7 @@
         "once": true
       },
       "description": "HP50%以下になった時、HPを30回復する（1回限り）",
-      "speciesRestriction": null,
+      "excludedSpecies": null,
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -548,7 +632,7 @@
         "multiplier": 1.15
       },
       "description": "後攻時、与ダメージが少し上がる（×1.15）",
-      "speciesRestriction": null,
+      "excludedSpecies": null,
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -563,7 +647,7 @@
         "multipliers": [1.1, 1.2, 1.3]
       },
       "description": "同じ技を連続使用すると威力が少し上がる（最大3回）",
-      "speciesRestriction": null,
+      "excludedSpecies": null,
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -573,14 +657,15 @@
       "rarity": "epic",
       "category": "battle_effect",
       "effect": {
-        "type": "random_damage_multiplier",
-        "minMultiplier": 0.7,
-        "maxMultiplier": 1.5
+        "type": "hp_conditional_damage",
+        "hp_half_or_less_multiplier": 1.3,
+        "hp_over_half_multiplier": 0.85
       },
-      "description": "与ダメージが0.7倍〜1.5倍の間でランダムに変動",
-      "speciesRestriction": null,
+      "description": "HP半分以下で与ダメージ×1.3、HP半分超で与ダメージ×0.85",
+      "excludedSpecies": null,
       "pvpEnabled": true,
-      "pveEnabled": true
+      "pveEnabled": true,
+      "change_note": "v2.0: ランダム倍率→HP条件倍率に変更（運要素排除）"
     },
     {
       "id": "EQ412",
@@ -591,7 +676,7 @@
         "type": "always_move_last"
       },
       "description": "必ず後攻になる",
-      "speciesRestriction": null,
+      "excludedSpecies": null,
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -606,7 +691,7 @@
         "multiplier": 1.3
       },
       "description": "ドラゴン種族への与ダメージが上がる",
-      "speciesRestriction": null,
+      "excludedSpecies": null,
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -621,7 +706,7 @@
         "multiplier": 1.3
       },
       "description": "デーモン種族への与ダメージが上がる",
-      "speciesRestriction": null,
+      "excludedSpecies": null,
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -636,7 +721,7 @@
         "multiplier": 1.3
       },
       "description": "スピリット種族への与ダメージが上がる",
-      "speciesRestriction": null,
+      "excludedSpecies": null,
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -651,7 +736,7 @@
         "multiplier": 1.3
       },
       "description": "エンジェル種族への与ダメージが上がる",
-      "speciesRestriction": null,
+      "excludedSpecies": null,
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -666,7 +751,7 @@
         "multiplier": 1.3
       },
       "description": "ヒューマン種族への与ダメージが上がる",
-      "speciesRestriction": null,
+      "excludedSpecies": null,
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -681,7 +766,7 @@
         "multiplier": 1.3
       },
       "description": "メカノイド種族への与ダメージが上がる",
-      "speciesRestriction": null,
+      "excludedSpecies": null,
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -696,7 +781,7 @@
         "multiplier": 1.3
       },
       "description": "ミュータント種族への与ダメージが上がる",
-      "speciesRestriction": null,
+      "excludedSpecies": null,
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -712,7 +797,7 @@
         "once": true
       },
       "description": "HP満タンで致死ダメージを受けた時、HP1で耐える（1回限り）",
-      "speciesRestriction": ["human"],
+      "excludedSpecies": ["human"],
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -728,7 +813,7 @@
         "stages": 1
       },
       "description": "相手を倒した時、攻撃が1段階上がる",
-      "speciesRestriction": ["human"],
+      "excludedSpecies": ["human"],
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -744,7 +829,7 @@
         "value": 10
       },
       "description": "味方が2体瀕死の時、全ステータス+10",
-      "speciesRestriction": null,
+      "excludedSpecies": null,
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -759,7 +844,7 @@
         "percentOfMaxHp": 25
       },
       "description": "倒れた時、相手に最大HPの25%ダメージ",
-      "speciesRestriction": null,
+      "excludedSpecies": null,
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -774,7 +859,7 @@
         "status": "poison"
       },
       "description": "倒れた時、相手に毒を付与",
-      "speciesRestriction": null,
+      "excludedSpecies": null,
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -789,7 +874,7 @@
         "status": "burn"
       },
       "description": "倒れた時、相手に火傷を付与",
-      "speciesRestriction": null,
+      "excludedSpecies": null,
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -804,7 +889,7 @@
         "status": "paralysis"
       },
       "description": "倒れた時、相手に麻痺を付与",
-      "speciesRestriction": null,
+      "excludedSpecies": null,
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -816,10 +901,10 @@
       "effect": {
         "type": "on_faint",
         "action": "inflict_status",
-        "status": "bind"
+        "status": "restraint"
       },
-      "description": "倒れた時、相手に束縛を付与",
-      "speciesRestriction": null,
+      "description": "倒れた時、相手に拘束を付与",
+      "excludedSpecies": null,
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -834,7 +919,7 @@
         "status": "nightmare"
       },
       "description": "倒れた時、相手に悪夢を付与",
-      "speciesRestriction": null,
+      "excludedSpecies": null,
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -849,7 +934,7 @@
         "status": "fear"
       },
       "description": "倒れた時、相手に恐怖を付与",
-      "speciesRestriction": null,
+      "excludedSpecies": null,
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -864,9 +949,41 @@
         "status": "charm"
       },
       "description": "倒れた時、相手に魅了を付与",
-      "speciesRestriction": null,
+      "excludedSpecies": null,
       "pvpEnabled": true,
       "pveEnabled": true
+    },
+    {
+      "id": "EQ609",
+      "name": "怨念の瘴気",
+      "rarity": "epic",
+      "category": "on_faint",
+      "effect": {
+        "type": "on_faint",
+        "action": "inflict_status",
+        "status": "miasma"
+      },
+      "description": "倒れた時、相手に瘴気を付与",
+      "excludedSpecies": null,
+      "pvpEnabled": true,
+      "pveEnabled": true,
+      "added_in": "v2.0"
+    },
+    {
+      "id": "EQ610",
+      "name": "怨念の封印",
+      "rarity": "epic",
+      "category": "on_faint",
+      "effect": {
+        "type": "on_faint",
+        "action": "inflict_status",
+        "status": "seal"
+      },
+      "description": "倒れた時、相手に封印を付与",
+      "excludedSpecies": null,
+      "pvpEnabled": true,
+      "pveEnabled": true,
+      "added_in": "v2.0"
     },
     {
       "id": "EQ701",
@@ -879,7 +996,7 @@
         "once": true
       },
       "description": "攻撃を受けた時、任意で交代できる（1回限り）",
-      "speciesRestriction": null,
+      "excludedSpecies": null,
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -894,7 +1011,7 @@
         "value": 20
       },
       "description": "相手が交代した時、交代先に20ダメージ",
-      "speciesRestriction": null,
+      "excludedSpecies": null,
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -909,7 +1026,7 @@
         "value": 30
       },
       "description": "倒れた時、交代先のHPを30回復",
-      "speciesRestriction": null,
+      "excludedSpecies": null,
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -924,7 +1041,7 @@
         "once": true
       },
       "description": "デバフを受けた時、任意で交代できる（1回限り）",
-      "speciesRestriction": null,
+      "excludedSpecies": null,
       "pvpEnabled": true,
       "pveEnabled": true
     },
@@ -938,7 +1055,7 @@
         "percentBonus": 20
       },
       "description": "獲得経験値が20%増加する",
-      "speciesRestriction": null,
+      "excludedSpecies": null,
       "pvpEnabled": false,
       "pveEnabled": true
     },
@@ -952,7 +1069,7 @@
         "percentBonus": 20
       },
       "description": "獲得ゴールドが20%増加する",
-      "speciesRestriction": null,
+      "excludedSpecies": null,
       "pvpEnabled": false,
       "pveEnabled": true
     },
@@ -966,7 +1083,7 @@
         "percentBonus": 15
       },
       "description": "素材ドロップ率が15%増加する",
-      "speciesRestriction": null,
+      "excludedSpecies": null,
       "pvpEnabled": false,
       "pveEnabled": true
     },
@@ -980,31 +1097,180 @@
         "percentBonus": 10
       },
       "description": "レアドロップ率が10%増加する",
-      "speciesRestriction": null,
+      "excludedSpecies": null,
       "pvpEnabled": false,
       "pveEnabled": true
+    },
+    {
+      "id": "EQ901",
+      "name": "時空の砂時計",
+      "rarity": "epic",
+      "category": "battle_effect",
+      "effect": {
+        "type": "on_entry",
+        "action": "reverse_speed_order",
+        "duration": 3
+      },
+      "description": "登場時、3ターン行動順を速度の遅い順に変更",
+      "excludedSpecies": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ902",
+      "name": "重力の腕輪",
+      "rarity": "rare",
+      "category": "battle_effect",
+      "effect": {
+        "type": "on_battle_start",
+        "action": "reduce_opponent_speed",
+        "percentReduction": 20
+      },
+      "description": "戦闘開始時、相手の速度を-20%",
+      "excludedSpecies": null,
+      "pvpEnabled": true,
+      "pveEnabled": true
+    },
+    {
+      "id": "EQ903",
+      "name": "先制封じの札",
+      "rarity": "epic",
+      "category": "battle_effect",
+      "effect": {
+        "type": "on_receive_priority",
+        "action": "nullify_priority_attack",
+        "opponent_speed_reduction": 10,
+        "once": true
+      },
+      "description": "先制攻撃を１回無効化、相手SPD-10",
+      "excludedSpecies": null,
+      "pvpEnabled": true,
+      "pveEnabled": true,
+      "balance_note": "v3.0: 相手SPD-10追加で速度偏重対策強化"
+    },
+    {
+      "id": "EQ904",
+      "name": "鈍重の誓い",
+      "rarity": "epic",
+      "category": "battle_effect",
+      "effect": {
+        "type": "on_move_last",
+        "action": "damage_multiplier",
+        "multiplier": 1.2
+      },
+      "description": "後攻時、与ダメージが上がる（×1.2）",
+      "excludedSpecies": null,
+      "pvpEnabled": true,
+      "pveEnabled": true,
+      "added_in": "v3.0",
+      "design_note": "速度偏重対策、遅いモンスターの火力補助"
+    },
+    {
+      "id": "EQ905",
+      "name": "不動の構え",
+      "rarity": "epic",
+      "category": "battle_effect",
+      "effect": {
+        "type": "on_move_last",
+        "action": "damage_reduction",
+        "multiplier": 0.85
+      },
+      "description": "後攻時、被ダメージ軽減（×0.85）",
+      "excludedSpecies": null,
+      "pvpEnabled": true,
+      "pveEnabled": true,
+      "added_in": "v3.0",
+      "design_note": "速度偏重対策、遅いモンスターの耐久補助"
+    },
+    {
+      "id": "EQ906",
+      "name": "逆転の兆し",
+      "rarity": "epic",
+      "category": "battle_effect",
+      "effect": {
+        "type": "on_hp_threshold",
+        "condition": "hp_half_or_less",
+        "action": "priority_boost",
+        "once": true
+      },
+      "description": "HP50%以下になった時、次の技が先制になる（1回限り）",
+      "excludedSpecies": null,
+      "pvpEnabled": true,
+      "pveEnabled": true,
+      "added_in": "v3.0",
+      "design_note": "速度偏重対策、逆転の一手を与える"
+    },
+    {
+      "id": "EQ907",
+      "name": "不屈の心得",
+      "rarity": "epic",
+      "category": "battle_effect",
+      "effect": {
+        "type": "on_move_last",
+        "action": "status_immunity",
+        "once": true
+      },
+      "description": "後攻時、状態異常を1回無効化",
+      "excludedSpecies": null,
+      "pvpEnabled": true,
+      "pveEnabled": true,
+      "added_in": "v4.0",
+      "design_note": "速度偏重対策、遅いモンスターが状態異常を耐えやすく"
+    },
+    {
+      "id": "EQ908",
+      "name": "反撃の刃",
+      "rarity": "epic",
+      "category": "battle_effect",
+      "effect": {
+        "type": "on_move_last",
+        "action": "critical_boost",
+        "stages": 2
+      },
+      "description": "後攻時、急所率+2段階",
+      "excludedSpecies": null,
+      "pvpEnabled": true,
+      "pveEnabled": true,
+      "added_in": "v4.0",
+      "design_note": "速度偏重対策、遅いモンスターにクリティカルのチャンスを与える"
     }
   ],
   "metadata": {
-    "totalCount": 64,
+    "totalCount": 78,
     "byRarity": {
       "common": 7,
-      "rare": 16,
-      "epic": 31,
+      "rare": 19,
+      "epic": 40,
       "legendary": 10
     },
     "byCategory": {
       "stat_boost": 5,
-      "status_immunity": 7,
+      "status_immunity": 9,
       "status_protection": 2,
       "element_boost": 8,
       "cost_control": 6,
-      "battle_effect": 12,
+      "battle_effect": 20,
       "species_killer": 7,
       "legendary_special": 3,
-      "on_faint": 8,
+      "on_faint": 10,
       "switch": 4,
       "pve_only": 4
-    }
+    },
+    "speed_counter_equipment": [
+      "EQ901 - 時空の砂時計: 行動順逆転",
+      "EQ902 - 重力の腕輪: 相手速度-20%",
+      "EQ903 - 先制封じの札: 先制攻撃1回無効化+SPD-10",
+      "EQ904 - 鈍重の誓い: 後攻時攻撃×1.2",
+      "EQ905 - 不動の構え: 後攻時被ダメ×0.85",
+      "EQ906 - 逆転の兆し: HP50%以下で先制権",
+      "EQ907 - 不屈の心得: 後攻時状態異常無効（1回）",
+      "EQ908 - 反撃の刃: 後攻時急所率+2段階"
+    ],
+    "human_restricted_equipment": [
+      "EQ002 - 闘士の腕輪: ATK+15",
+      "EQ004 - 賢者の首飾り: MAG+15",
+      "EQ201-207 - 属性エンブレム: 属性技×1.2"
+    ],
+    "v3_balance_notes": "人間は装備月2つだが、火力装備が制限され耐久/ユーティリティ装備で組む形に"
   }
 }

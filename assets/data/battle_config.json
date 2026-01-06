@@ -1,0 +1,115 @@
+{
+  "version": "1.0.0",
+  "created_at": "2026-01-07",
+  "updated_at": "2026-01-07",
+  "description": "バトルシステム基本設定（battle_system_v12.4.0準拠）",
+  "source_document": "docs/battle_system_v8.7.md",
+  "cost_system": {
+    "initial": 4,
+    "max": 7,
+    "recovery_per_turn": 2,
+    "on_switch": "reset_to_initial",
+    "on_switch_value": 4
+  },
+  "hp_system": {
+    "fixed_value": 150,
+    "lv1_value": 52,
+    "growth_per_level": 2,
+    "calculation": "HP = 52 + (Lv - 1) × 2"
+  },
+  "party_system": {
+    "party_size": 5,
+    "max_battle_monsters": 3,
+    "selection_method": "during_battle",
+    "category_restriction": false
+  },
+  "victory_condition": {
+    "type": "defeat_count",
+    "target": 3,
+    "description": "相手モンスター3体先に倒す"
+  },
+  "ultimate_restriction": {
+    "limit_per_battle": 1,
+    "scope": "party",
+    "cost": 5,
+    "description": "パーティ全体で1回のみ使用可能"
+  },
+  "pvp_level_normalization": {
+    "enabled": true,
+    "normalized_level": 50,
+    "hp": 150,
+    "stat_points": 200,
+    "unallocated_points_distribution": "equal_to_5_stats"
+  },
+  "pvp_time_limits": {
+    "turn_seconds": 45,
+    "total_minutes": 15,
+    "timeout_penalty": {
+      "first": "random_action",
+      "consecutive": "force_lose"
+    }
+  },
+  "pve_time_limits": {
+    "enabled": false
+  },
+  "priority_system": {
+    "switch": 4,
+    "pursuit_on_switch": 3,
+    "strong_priority": 2,
+    "normal_priority": 1,
+    "normal": 0,
+    "slow_move": -1
+  },
+  "same_speed_resolution": {
+    "method": "random",
+    "probability": 0.5
+  },
+  "damage_formula": {
+    "attack_skill": "(攻撃 / 100) × 威力 × バフ補正 × 状態異常補正 × タイプ一致 × タイプ相性 × 防御補正 × 乱数 × クリティカル × アビリティ補正 × 激昂補正",
+    "magic_skill": "(魔力 / 100) × 威力 × バフ補正 × 状態異常補正 × タイプ一致 × タイプ相性 × 魔防補正 × 乱数 × クリティカル × アビリティ補正 × 激昂補正",
+    "defense_modifier": "50 / (50 + 防御 × 防御バフ)",
+    "magic_defense_modifier": "50 / (50 + 魔防 × 魔防バフ)"
+  },
+  "damage_random": {
+    "min": 0.85,
+    "max": 1.00
+  },
+  "power_rank_values": {
+    "D": 30,
+    "C": 55,
+    "B": 80,
+    "A": 110,
+    "S": 150,
+    "SS": 200
+  },
+  "switch_processing": {
+    "cost_consumed": false,
+    "action_consumed": true,
+    "buff_reset": true,
+    "debuff_reset": true,
+    "status_ailment_persist": true,
+    "hp_persist": true,
+    "ultimate_flag_persist": true
+  },
+  "field_effects": {
+    "max_per_side": 1,
+    "overlap_behavior": "overwrite"
+  },
+  "healing_fixed_values": {
+    "少し回復": 15,
+    "回復": 30,
+    "多く回復": 50,
+    "大きく回復": 80,
+    "全回復": 150
+  },
+  "healing_rules": {
+    "revive_not_implemented": true,
+    "heal_target_filter": "currentHp > 0",
+    "description": "HP0の瀕死モンスターは回復対象外。復活効果は現仕様で存在しない"
+  },
+  "term_definitions": {
+    "self": "現在場に出ているモンスター本体",
+    "ally": "控え（ベンチ）のモンスターのみ",
+    "self_and_ally": "自分 + 控え全員"
+  }
+}

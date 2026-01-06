@@ -2,8 +2,8 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Shared Skills - Phase 1 v7.0",
   "description": "複数モンスター共有技マスターデータ（状態異常100%確定システム対応）",
-  "version": "11.0.0",
-  "last_updated": "2025-12-28",
+  "version": "17.0.0",
+  "last_updated": "2026-01-05",
   "damage_type_reference": {
     "attack": "攻撃技（攻撃ステータス参照）",
     "magic": "魔力技（魔力ステータス参照）",
@@ -14,6 +14,7 @@
     {
       "skill_id": "shared_001",
       "name": "天魔共鳴",
+      "name_reading": "てんまきょうめい",
       "name_en": "Divine Demon Resonance",
       "category": "damage_only",
       "element": "light_dark",
@@ -31,6 +32,7 @@
     {
       "skill_id": "shared_002",
       "name": "機械連結",
+      "name_reading": "きかいれんけつ",
       "name_en": "Machine Link",
       "category": "attack_plus_effect",
       "element": "thunder",
@@ -48,6 +50,7 @@
     {
       "skill_id": "shared_003",
       "name": "竜の絆",
+      "name_reading": "りゅうのきずな",
       "name_en": "Dragon Bond",
       "category": "support_only",
       "element": "fire",
@@ -69,23 +72,26 @@
     {
       "skill_id": "shared_004",
       "name": "剣士の誇り",
+      "name_reading": "けんしのほこり",
       "name_en": "Swordsman's Pride",
       "category": "support_only",
       "element": "none",
-      "cost": 2,
+      "cost": 3,
       "damage_type": "none",
       "power": 0,
       "power_rank": "-",
       "accuracy": 100,
       "priority": 0,
       "target": "self",
-      "description": "クリ率+30%（3T）",
-      "special_effects": [{"effect_type": "critical_rate_boost", "boost_percentage": 30, "duration": 3}],
-      "owner_ids": ["arthur", "kaito"]
+      "description": "2Tクリティカル確定",
+      "special_effects": [{"effect_type": "guaranteed_critical", "duration": 2}],
+      "owner_ids": ["arthur", "kaito"],
+      "balance_note": "v12.2: コスト2→3、クリ率+30%(3T)→2Tクリ確定（運要素排除）"
     },
     {
       "skill_id": "shared_005",
       "name": "炎の継承",
+      "name_reading": "ほのおのけいしょう",
       "name_en": "Flame Inheritance",
       "category": "support_only",
       "element": "fire",
@@ -103,6 +109,7 @@
     {
       "skill_id": "shared_006",
       "name": "深淵の力",
+      "name_reading": "しんえんのちから",
       "name_en": "Abyss Power",
       "category": "attack_plus_effect",
       "element": "dark",
@@ -125,6 +132,7 @@
     {
       "skill_id": "shared_007",
       "name": "鋼鉄同盟",
+      "name_reading": "こうてつどうめい",
       "name_en": "Steel Alliance",
       "category": "support_only",
       "element": "earth",
@@ -145,6 +153,7 @@
     {
       "skill_id": "shared_008",
       "name": "小さな悪戯",
+      "name_reading": "ちいさないたずら",
       "name_en": "Little Mischief",
       "category": "support_only",
       "element": "light",
@@ -163,6 +172,7 @@
     {
       "skill_id": "shared_009",
       "name": "炎の舞",
+      "name_reading": "ほのおのまい",
       "name_en": "Flame Dance",
       "category": "attack_plus_effect",
       "element": "fire",
@@ -184,6 +194,7 @@
     {
       "skill_id": "shared_010",
       "name": "雷光一閃",
+      "name_reading": "らいこういっせん",
       "name_en": "Lightning Flash",
       "category": "attack_plus_effect",
       "element": "thunder",
@@ -205,6 +216,7 @@
     {
       "skill_id": "shared_011",
       "name": "闇の契約",
+      "name_reading": "やみのけいやく",
       "name_en": "Dark Contract",
       "category": "support_only",
       "element": "dark",
@@ -226,6 +238,7 @@
     {
       "skill_id": "shared_012",
       "name": "大地の守り",
+      "name_reading": "だいちのまもり",
       "name_en": "Earth Guard",
       "category": "support_only",
       "element": "earth",
@@ -246,6 +259,7 @@
     {
       "skill_id": "shared_013",
       "name": "疾風迅雷",
+      "name_reading": "しっぷうじんらい",
       "name_en": "Swift Thunder",
       "category": "damage_only",
       "element": "wind",
@@ -266,6 +280,7 @@
     {
       "skill_id": "shared_014",
       "name": "癒しの共鳴",
+      "name_reading": "いやしのきょうめい",
       "name_en": "Healing Resonance",
       "category": "support_only",
       "element": "light",
@@ -286,6 +301,15 @@
     "total_skills": 14,
     "description": "複数のモンスターが習得できる共有技",
     "changelog": {
+      "v12.4.0": [
+        "バージョン同期（共有技該当なし）"
+      ],
+      "v12.3.0": [
+        "【軽減効果統一】軽減=25%（フィールドのみ）、大幅に軽減=50%（次1回のみ）"
+      ],
+      "v12.2.0": [
+        "剣士の誇り: コスト2→3、クリ率30%(3T)→2Tクリ確定（運要素排除）"
+      ],
       "v11.0.0": [
         "damage_type用語変更: physical→attack, magical→magic",
         "damage_type_reference追加"
